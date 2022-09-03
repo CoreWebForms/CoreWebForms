@@ -29,7 +29,8 @@ public class PageGenerator : IIncrementalGenerator
         using (var writer = new IndentedTextWriter(stringWriter))
         {
             writer.Write("public partial class ");
-            writer.WriteLine(page.Name);
+            writer.Write(page.Name);
+            writer.WriteLine(" : global::System.Web.UI.Page");
             writer.WriteLine("{");
             writer.WriteLine("}");
         }

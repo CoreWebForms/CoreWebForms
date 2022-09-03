@@ -16,6 +16,9 @@ public static partial class GeneratorVerifier<TSourceGenerator>
 
         public Test()
         {
+            TestState.ReferenceAssemblies = ReferenceAssemblies.Net.Net60;
+            TestState.AdditionalReferences.Add(typeof(System.Web.UI.Page).Assembly);
+            TestState.AdditionalReferences.Add(typeof(System.Web.HttpContext).Assembly);
         }
 
         public LanguageVersion LanguageVersion { get; set; } = LanguageVersion.Default;
