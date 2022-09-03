@@ -4,7 +4,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <AssemblyName>Microsoft.AspNetCore.SystemWebAdapters.UI.Generator</AssemblyName>
+    <AssemblyName>Microsoft.AspNetCore.SystemWebAdapters.UI</AssemblyName>
     <RootNamespace>System.Web.UI</RootNamespace>
   </PropertyGroup>
 
