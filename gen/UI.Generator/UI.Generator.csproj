@@ -5,6 +5,7 @@
     <Nullable>enable</Nullable>
     <IsRoslynComponent>true</IsRoslynComponent>
     <AssemblyName>Microsoft.AspNetCore.SystemWebAdapters.UI.Generator</AssemblyName>
+    <RootNamespace>Microsoft.AspNetCore.SystemWebAdapters.UI.Generator</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

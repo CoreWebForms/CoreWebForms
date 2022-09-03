@@ -1,4 +1,3 @@
-
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.3.32819.101
@@ -7,9 +6,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "gen", "gen", "{3C6A0B2B-E09
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UI.Generator", "gen\UI.Generator\UI.Generator.csproj", "{4F4404E0-0AC6-4534-8166-D50A49038557}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Generator.Tests", "test\Generator.Tests\Generator.Tests.csproj", "{4D334DD2-C9FF-4D04-A09E-D128C47D373A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Generator.Tests", "test\Generator.Tests\Generator.Tests.csproj", "{4D334DD2-C9FF-4D04-A09E-D128C47D373A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{0E3C5885-15E6-4F5F-8D2C-088A0E255666}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UI", "src\UI\UI.csproj", "{5020FD4F-BA42-4057-8D3F-66A0AB233895}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{D3D2945C-76BA-4DE3-90D2-259E2B1406C5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Handlers", "src\Handlers\Handlers.csproj", "{A8FC25D7-17C3-4822-955B-C2E5426C87BB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,6 +30,14 @@ Global
 		{4D334DD2-C9FF-4D04-A09E-D128C47D373A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4D334DD2-C9FF-4D04-A09E-D128C47D373A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4D334DD2-C9FF-4D04-A09E-D128C47D373A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5020FD4F-BA42-4057-8D3F-66A0AB233895}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5020FD4F-BA42-4057-8D3F-66A0AB233895}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5020FD4F-BA42-4057-8D3F-66A0AB233895}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5020FD4F-BA42-4057-8D3F-66A0AB233895}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A8FC25D7-17C3-4822-955B-C2E5426C87BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A8FC25D7-17C3-4822-955B-C2E5426C87BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A8FC25D7-17C3-4822-955B-C2E5426C87BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A8FC25D7-17C3-4822-955B-C2E5426C87BB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -32,6 +45,8 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{4F4404E0-0AC6-4534-8166-D50A49038557} = {3C6A0B2B-E091-4352-8F49-0336903254A2}
 		{4D334DD2-C9FF-4D04-A09E-D128C47D373A} = {0E3C5885-15E6-4F5F-8D2C-088A0E255666}
+		{5020FD4F-BA42-4057-8D3F-66A0AB233895} = {D3D2945C-76BA-4DE3-90D2-259E2B1406C5}
+		{A8FC25D7-17C3-4822-955B-C2E5426C87BB} = {D3D2945C-76BA-4DE3-90D2-259E2B1406C5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B89024DA-2E51-49B1-8D52-651372AB5C83}
