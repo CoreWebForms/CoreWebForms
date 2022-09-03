@@ -1,6 +1,6 @@
 ﻿namespace System.Web.UI;
 
-public class Page : IHttpHandler
+public class Page : TemplateControl, IHttpHandler
 {
     bool IHttpHandler.IsReusable => false;
 
