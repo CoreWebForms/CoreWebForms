@@ -4,11 +4,7 @@
 // </copyright>                                                                
 //------------------------------------------------------------------------------
 
-/*
- * StringUtil class
- * 
- * Copyright (c) 1999 Microsoft Corporation
- */
+#nullable disable
 
 namespace System.Web.Util {
 using System.Text;

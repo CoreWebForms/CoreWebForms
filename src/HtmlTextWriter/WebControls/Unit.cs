@@ -4,6 +4,8 @@
 // </copyright>                                                                
 //------------------------------------------------------------------------------
 
+#nullable disable
+
 namespace System.Web.UI.WebControls {
 
     using System;
@@ -187,7 +189,7 @@ namespace System.Web.UI.WebControls {
         ///    <para>[To be supplied.]</para>
         /// </devdoc>
         public override int GetHashCode() {
-            return HashCodeCombiner.CombineHashCodes(type.GetHashCode(), value.GetHashCode());
+            return HashCode.Combine(type, value);
         }
 
 

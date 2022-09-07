@@ -10,8 +10,11 @@
  * Copyright (c) 2009 Microsoft Corporation
  */
 
+#nullable disable
+
 namespace System.Web.Util {
     using System;
+    using System.Diagnostics;
     using System.Web;
 
     internal static class HttpEncoderUtility {

@@ -4,6 +4,8 @@
 // </copyright>                                                                
 //------------------------------------------------------------------------------
 
+#nullable disable
+
 namespace System.Web.UI.WebControls {
 
     using System.ComponentModel.Design;

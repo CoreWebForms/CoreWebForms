@@ -10,6 +10,8 @@
  * Copyright (c) 1999 Microsoft Corporation
  */
 
+#nullable disable
+
 namespace System.Web.Util {
 using System.Text;
 using System.Runtime.Serialization.Formatters;
@@ -17,11 +19,12 @@ using System.Runtime.InteropServices;
 using System.Collections;
 using System.Globalization;
 using System.IO;
+    using System.Diagnostics;
 
-/*
- * Code to perform Url path combining
- */
-internal static class UrlPath {
+    /*
+     * Code to perform Url path combining
+     */
+    internal static class UrlPath {
 
     internal const char appRelativeCharacter = '~';
     internal const string appRelativeCharacterString = "~/";
@@ -153,7 +156,8 @@ internal static class UrlPath {
         }
     }
 
-    private static String Combine(String appPath, String basepath, String relative) {
+#if FALSE
+        private static String Combine(String appPath, String basepath, String relative) {
         String path;
 
         if (String.IsNullOrEmpty(relative))
@@ -239,8 +243,8 @@ internal static class UrlPath {
         return (queryString != null) ? (path + queryString) : path;
     }
 
-    // Same as Reduce, but for a virtual path that is known to be well formed
-    internal static String ReduceVirtualPath(String path) {
+        // Same as Reduce, but for a virtual path that is known to be well formed
+        internal static String ReduceVirtualPath(String path) {
 
         int length = path.Length;
         int examine;
@@ -339,8 +343,8 @@ internal static class UrlPath {
     // in a case insensitive way (VSWhidbey 80078)
     private const string dummyProtocolAndServer = "file://foo";
 
-    // Return the relative vpath path from one rooted vpath to another
-    internal static string MakeRelative(string from, string to) {
+        // Return the relative vpath path from one rooted vpath to another
+        internal static string MakeRelative(string from, string to) {
 
         // If either path is app relative (~/...), make it absolute, since the Uri
         // class wouldn't know how to deal with it.
@@ -401,6 +405,7 @@ internal static class UrlPath {
         // Note that we need to re-append the query string and fragment (e.g. #anchor)
         return relativePath + queryString + toUri.Fragment;
     }
+#endif
 
     internal static string GetDirectoryOrRootName(string path) {
         string dir;
@@ -537,7 +542,8 @@ internal static class UrlPath {
         return true;
     }
 
-    internal static bool VirtualPathStartsWithAppPath(string virtualPath) {
+#if FALSE
+        internal static bool VirtualPathStartsWithAppPath(string virtualPath) {
         Debug.Assert(HttpRuntime.AppDomainAppVirtualPathObject != null);
         return VirtualPathStartsWithVirtualPath(virtualPath,
             HttpRuntime.AppDomainAppVirtualPathString);
@@ -555,6 +561,7 @@ internal static class UrlPath {
         return MakeVirtualPathAppRelative(virtualPath,
             HttpRuntime.AppDomainAppVirtualPathString, true /*nullIfNotInApp*/);
     }
+#endif
 
     // If a virtual path starts with the app path, make it start with
     // ~ instead, so that it becomes application agnostic
@@ -598,10 +605,12 @@ internal static class UrlPath {
         return appRelativeCharacter + virtualPath.Substring(appPathLength-1);
     }
 
-    internal static string MakeVirtualPathAppAbsolute(string virtualPath) {
+#if FALSE
+        internal static string MakeVirtualPathAppAbsolute(string virtualPath) {
         Debug.Assert(HttpRuntime.AppDomainAppVirtualPathObject != null);
         return MakeVirtualPathAppAbsolute(virtualPath, HttpRuntime.AppDomainAppVirtualPathString);
     }
+#endif
 
     // If a virtual path is app relative (i.e. starts with ~/), change it to
     // start with the actuall app path.
@@ -633,9 +642,10 @@ internal static class UrlPath {
         return virtualPath;
     }
 
-    // To be called by APIs accepting virtual path that is expectedto be within the app.
-    // returns reduced absolute virtual path or throws
-    internal static string MakeVirtualPathAppAbsoluteReduceAndCheck(string virtualPath) {
+#if FALSE
+        // To be called by APIs accepting virtual path that is expectedto be within the app.
+        // returns reduced absolute virtual path or throws
+        internal static string MakeVirtualPathAppAbsoluteReduceAndCheck(string virtualPath) {
         if (virtualPath == null) {
             throw new ArgumentNullException("virtualPath");
         }
@@ -648,6 +658,7 @@ internal static class UrlPath {
 
         return path;
     }
+#endif
 
     internal static bool PathEndsWithExtraSlash(String path) {
         if (path == null)
@@ -723,8 +734,7 @@ internal static class UrlPath {
             // MSRC 11063
             // A failure to construct absolute url (by System.Uri) doesn't implictly mean the url is relative (on the same server)
             // Make sure the url path can't be recognized as absolute
-            return AppSettings.AllowRelaxedRelativeUrl ||
-                   ((IsRooted(absUriOrLocalPath) || IsRelativeUrl(absUriOrLocalPath)) && !absUriOrLocalPath.TrimStart(' ').StartsWith("//", StringComparison.Ordinal));
+                   return ((IsRooted(absUriOrLocalPath) || IsRelativeUrl(absUriOrLocalPath)) && !absUriOrLocalPath.TrimStart(' ').StartsWith("//", StringComparison.Ordinal));
         }
 
         return absUri.IsLoopback || string.Equals(currentRequestUri.Host, absUri.Host, StringComparison.OrdinalIgnoreCase);

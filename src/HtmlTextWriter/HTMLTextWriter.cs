@@ -6,6 +6,9 @@
 
 // HtmlTextWriter.cs
 //
+
+#nullable disable
+
 namespace System.Web.UI {
     using System;
     using System.Collections;
@@ -593,7 +596,6 @@ namespace System.Web.UI {
             tabsPending = true;
         }
 
-        [CLSCompliant(false)]
         public override void WriteLine(UInt32 value) {
             if (tabsPending) {
                 OutputTabs();

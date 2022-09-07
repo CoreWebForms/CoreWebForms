@@ -4,6 +4,8 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
+#nullable disable
+
 namespace System.Web.UI.WebControls {
 
     using System;
@@ -390,9 +392,9 @@ namespace System.Web.UI.WebControls {
         /// <devdoc>
         /// </devdoc>
         public void AddAttributesToRender(HtmlTextWriter writer) {
+#if FALSE
             AddAttributesToRender(writer, null);
         }
-
 
         /// <devdoc>
         ///    <para>
@@ -401,8 +403,8 @@ namespace System.Web.UI.WebControls {
         ///    </para>
         /// </devdoc>
         public virtual void AddAttributesToRender(HtmlTextWriter writer, WebControl owner) {
+#endif
             string cssClass = String.Empty;
-            bool renderInlineStyle = true;
 
             if (IsSet(PROP_CSSCLASS)) {
                 cssClass = (string)ViewState["CssClass"];
@@ -411,7 +413,6 @@ namespace System.Web.UI.WebControls {
                 }
             }
             if (!String.IsNullOrEmpty(registeredCssClass)) {
-                renderInlineStyle = false;
                 if (cssClass.Length != 0) {
                     cssClass += " " + registeredCssClass;
                 }
@@ -424,12 +425,13 @@ namespace System.Web.UI.WebControls {
                writer.AddAttribute(HtmlTextWriterAttribute.Class, cssClass);
             }
 
+#if FALSE
             if (renderInlineStyle) {
                 CssStyleCollection styleAttributes = GetStyleAttributes(owner);
                 styleAttributes.Render(writer);
             }
+#endif
         }
-
 
         /// <devdoc>
         ///    <para>
@@ -840,7 +842,7 @@ namespace System.Web.UI.WebControls {
             registeredCssClass = cssClass;
         }
 
-        #region Implementation of IStateManager
+#region Implementation of IStateManager
 
         /// <internalonly/>
         bool IStateManager.IsTrackingViewState {
@@ -866,7 +868,7 @@ namespace System.Web.UI.WebControls {
         object IStateManager.SaveViewState() {
             return SaveViewState();
         }
-        #endregion
+#endregion
     }
 }
 

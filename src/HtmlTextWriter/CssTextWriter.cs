@@ -4,6 +4,8 @@
 // </copyright>                                                                
 //------------------------------------------------------------------------------
 
+#nullable disable
+
 namespace System.Web.UI {
     using System;
     using System.Collections;
