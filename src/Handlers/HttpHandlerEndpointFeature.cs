@@ -14,7 +14,7 @@ using Microsoft.AspNetCore.Http.Features;
 
 namespace Microsoft.AspNetCore.SystemWebAdapters;
 
-internal class HttpHandlerEndpointFeature : IHttpHandlerFeature, IEndpointFeature
+public class HttpHandlerEndpointFeature : IHttpHandlerFeature, IEndpointFeature
 {
     private static readonly ConditionalWeakTable<IHttpHandler, HandlerEndpoint> _table = new();
 
@@ -106,7 +106,7 @@ internal class HttpHandlerEndpointFeature : IHttpHandlerFeature, IEndpointFeatur
         }
     }
 
-    private class HandlerEndpoint : Endpoint
+    public class HandlerEndpoint : Endpoint
     {
         private static readonly ImmutableList<object> _metadata = new object[]
         {
