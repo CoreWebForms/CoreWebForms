@@ -6,6 +6,7 @@
     <Nullable>enable</Nullable>
     <AssemblyName>Microsoft.AspNetCore.SystemWebAdapters.UI</AssemblyName>
     <RootNamespace>System.Web.UI</RootNamespace>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <ItemGroup>
