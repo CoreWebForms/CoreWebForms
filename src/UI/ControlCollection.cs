@@ -11,6 +11,8 @@ public class ControlCollection : ICollection
 {
     private readonly List<Control> _controls = new();
 
+    public void Add(Control control) => _controls.Add(control);
+
     public int Count => ((ICollection)_controls).Count;
 
     public bool IsSynchronized => ((ICollection)_controls).IsSynchronized;

@@ -33,6 +33,16 @@ public class PageTests
         Assert.Equal("hello", result);
     }
 
+    [Fact]
+    public async Task PageLoadAddControl()
+    {
+        // Arrange/Act
+        var result = await RunPage<Page3>();
+
+        // Assert
+        Assert.Equal("hello", result);
+    }
+
     private async Task<string> RunPage<TPage>()
         where TPage : Page
     {
@@ -81,6 +91,14 @@ public class PageTests
         protected override void Render(HtmlTextWriter writer)
         {
             writer.Write("hello");
+        }
+    }
+
+    private class Page3 : Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            Controls.Add(new LiteralControl("hello"));
         }
     }
 
