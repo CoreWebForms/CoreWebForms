@@ -1,43 +1,6 @@
-﻿using System.Reflection;
+﻿using System.Web.UI.Features;
 
 namespace System.Web.UI;
-
-internal interface IPageEvents
-{
-    void OnPageLoad(Page page);
-}
-
-internal class PageEvents : IPageEvents
-{
-    private readonly Type _type;
-    private readonly Action<object, EventArgs>? _onLoad;
-
-    public PageEvents(Type type)
-    {
-        _type = type;
-
-        var method = type.GetMethod("Page_Load", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-
-        if (method is not null && method.ReturnType == typeof(void))
-        {
-            var parameters = method.GetParameters();
-
-            if (parameters.Length == 0)
-            {
-                _onLoad = (object target, EventArgs o) => method.Invoke(target, null);
-            }
-            else if (parameters.Length == 2 && parameters[0].ParameterType == typeof(object) && parameters[1].ParameterType == typeof(EventArgs))
-            {
-                _onLoad = (object target, EventArgs o) => method.Invoke(target, new object[] { target, o });
-            }
-        }
-    }
-
-    public void OnPageLoad(Page page)
-    {
-        _onLoad?.Invoke(page, EventArgs.Empty);
-    }
-}
 
 public class Page : TemplateControl, IHttpAsyncHandler
 {
@@ -46,6 +9,8 @@ public class Page : TemplateControl, IHttpAsyncHandler
     public Page()
     {
         _events = new PageEvents(GetType());
+
+        Features.Set<Page>(this);
     }
 
     bool IHttpHandler.IsReusable => false;
@@ -61,6 +26,9 @@ public class Page : TemplateControl, IHttpAsyncHandler
 
     private Task ProcessAsync(HttpContext context)
     {
+        Features.Set(context);
+        this.EnableUniqueIdGenerator();
+
         _events.OnPageLoad(this);
 
         using var writer = new HtmlTextWriter(context.Response.Output);
@@ -68,5 +36,14 @@ public class Page : TemplateControl, IHttpAsyncHandler
         Render(writer);
 
         return Task.CompletedTask;
+    }
+
+    private const string HiddenClassName = "aspNetHidden";
+
+    internal void BeginFormRender(HtmlTextWriter writer, string formUniqueID)
+    {
+        writer.WriteBeginTag("div");
+        writer.WriteAttribute("class", HiddenClassName);
+        writer.WriteEndTag("div");
     }
 }

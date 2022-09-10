@@ -1,20 +1,58 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.ServiceProcess;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Http.Features;
+using System.Web.UI.Features;
 
 namespace System.Web.UI;
 
 public class Control : IDisposable
 {
-    public Control? Parent { get; }
+    private StateBag? _viewState;
+    private ControlCollection? _children;
+    private IFeatureCollection? _features;
+
+    internal IFeatureCollection Features => _features ??= new FeatureCollection();
+
+    public Control? Parent { get; internal set; }
 
     public bool Visible { get; set; }
 
-    public ControlCollection Controls { get; } = new();
+    public ControlCollection Controls => _children ??= new(this);
+
+    protected StateBag ViewState => _viewState ??= new();
+
+    private string? _uniqueId;
+
+    private string? _id;
+
+    public string? Id
+    {
+        get => _id;
+        set
+        {
+            if (string.IsNullOrEmpty(value))
+            {
+                value = null;
+            }
+
+            _id = value;
+        }
+    }
+
+    public string? UniqueID
+    {
+        get
+        {
+            if (_uniqueId is null && GetHierarchicalFeature<IUniqueIdGeneratorFeature>() is { } generator)
+            {
+                _uniqueId = generator.GetUniqueIdGenerator(this);
+            }
+
+            return _uniqueId;
+        }
+    }
+
+    protected Page? Page => GetHierarchicalFeature<Page>();
+ 
+    protected HttpContext Context => GetHierarchicalFeature<HttpContext>() ?? throw new NotImplementedException();
 
     public virtual void RenderControl(HtmlTextWriter writer)
         => Render(writer);
@@ -28,6 +66,21 @@ public class Control : IDisposable
         {
             child.RenderControl(writer);
         }
+    }
+
+    private protected T? GetHierarchicalFeature<T>()
+    {
+        if (_features is not null && _features.Get<T>() is { } t)
+        {
+            return t;
+        }
+
+        if (Parent is { } p)
+        {
+            return p.GetHierarchicalFeature<T>();
+        }
+
+        return default;
     }
 
     public virtual void Dispose()

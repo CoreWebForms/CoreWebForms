@@ -10,8 +10,18 @@ namespace System.Web.UI;
 public class ControlCollection : ICollection
 {
     private readonly List<Control> _controls = new();
+    private readonly Control _owner;
 
-    public void Add(Control control) => _controls.Add(control);
+    public ControlCollection(Control owner)
+    {
+        _owner = owner;
+    }
+
+    public void Add(Control control)
+    {
+        control.Parent = _owner;
+        _controls.Add(control);
+    }
 
     public int Count => ((ICollection)_controls).Count;
 

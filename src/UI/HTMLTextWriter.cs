@@ -1172,11 +1172,6 @@ namespace System.Web.UI {
             Write("<br />");
         }
 
-        // DevDiv 33149: A backward compat. switch for Everett rendering
-        internal void WriteObsoleteBreak() {
-            Write("<br>");
-        }
-
         public virtual void WriteFullBeginTag(string tagName) {
             if (tabsPending) {
                 OutputTabs();

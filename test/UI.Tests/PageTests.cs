@@ -7,6 +7,8 @@ using System.Diagnostics;
 using System.Text;
 using System.Web;
 using System.Web.UI;
+using System.Web.UI.HtmlControls;
+using System.Web.UI.WebControls;
 using Xunit;
 
 namespace Microsoft.AspNetCore.SystemWebAdapters.UI.Tests;
@@ -41,6 +43,16 @@ public class PageTests
 
         // Assert
         Assert.Equal("hello", result);
+    }
+
+    [Fact]
+    public async Task PageWithForm()
+    {
+        // Arrange/Act
+        var result = await RunPage<Page4>();
+
+        // Assert
+        Assert.Equal("<form method=\"post\" action=\"/path\"><div class=\"aspNetHidden\"</div></form>", result);
     }
 
     private async Task<string> RunPage<TPage>()
@@ -99,6 +111,17 @@ public class PageTests
         protected void Page_Load(object sender, EventArgs e)
         {
             Controls.Add(new LiteralControl("hello"));
+        }
+    }
+
+    private class Page4 : Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            var form = new HtmlForm();
+            form.Controls.Add(new TextBox());
+
+            Controls.Add(form);
         }
     }
 

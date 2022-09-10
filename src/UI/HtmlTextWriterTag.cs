@@ -4,9 +4,8 @@
 // </copyright>                                                                
 //------------------------------------------------------------------------------
 
-namespace System.Web.UI {
-    using System;
-
+namespace System.Web.UI
+{
 
     /// <devdoc>
     ///    <para>[To be supplied.]</para>
