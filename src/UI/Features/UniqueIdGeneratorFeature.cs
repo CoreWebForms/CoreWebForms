@@ -35,7 +35,7 @@ internal class UniqueIdGeneratorFeature : IUniqueIdGeneratorFeature
         _owner = owner;
     }
 
-    public string GetUniqueIdGenerator(Control control)
+    public string? GetUniqueIdGenerator(Control control)
     {
         if (object.ReferenceEquals(_owner, control))
         {

@@ -2,5 +2,5 @@
 
 internal interface IUniqueIdGeneratorFeature
 {
-    string GetUniqueIdGenerator(Control control);
+    string? GetUniqueIdGenerator(Control control);
 }

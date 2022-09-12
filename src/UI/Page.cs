@@ -40,7 +40,7 @@ public class Page : TemplateControl, IHttpAsyncHandler
 
     private const string HiddenClassName = "aspNetHidden";
 
-    internal void BeginFormRender(HtmlTextWriter writer, string formUniqueID)
+    internal void BeginFormRender(HtmlTextWriter writer, string? formUniqueID)
     {
         writer.WriteBeginTag("div");
         writer.WriteAttribute("class", HiddenClassName);

@@ -8,6 +8,8 @@ public class Control : IDisposable
     private StateBag? _viewState;
     private ControlCollection? _children;
     private IFeatureCollection? _features;
+    private string? _uniqueId;
+    private string? _id;
 
     internal IFeatureCollection Features => _features ??= new FeatureCollection();
 
@@ -19,9 +21,6 @@ public class Control : IDisposable
 
     protected StateBag ViewState => _viewState ??= new();
 
-    private string? _uniqueId;
-
-    private string? _id;
 
     public string? Id
     {
