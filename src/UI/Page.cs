@@ -7,13 +7,11 @@ namespace System.Web.UI;
 
 public class Page : TemplateControl, IHttpAsyncHandler
 {
-    private readonly IPageEvents _events;
-
     public Page()
     {
-        _events = new PageEvents(GetType());
-
         Features.Set<Page>(this);
+        Features.Set<IUniqueIdGeneratorFeature>(new UniqueIdGeneratorFeature(this));
+        Features.Set<IPageEvents>(new PageEvents(GetType()));
     }
 
     bool IHttpHandler.IsReusable => false;
@@ -29,10 +27,16 @@ public class Page : TemplateControl, IHttpAsyncHandler
 
     private Task ProcessAsync(HttpContext context)
     {
-        Features.Set(context);
-        this.EnableUniqueIdGenerator();
+        if (Features.Get<HttpContext>() is { })
+        {
+            throw new InvalidOperationException("Page has already been processed.");
+        }
 
-        _events.OnPageLoad(this);
+        var events = Features.Get<IPageEvents>()!;
+
+        Features.Set(context);
+
+        events.OnPageLoad(this);
 
         using var writer = new HtmlTextWriter(context.Response.Output);
 
