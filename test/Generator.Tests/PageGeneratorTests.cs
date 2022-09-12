@@ -1,3 +1,6 @@
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+
 using Microsoft.AspNetCore.SystemWebAdapters.UI.Generator;
 using Xunit;
 
@@ -11,7 +14,7 @@ public class PageGeneratorTests
     [Fact]
     public async Task Empty()
     {
-        await new VerifyCS.Test().RunAsync();
+        await new VerifyCS.Test().RunAsync().ConfigureAwait(false);
     }
 
     [Fact]
@@ -36,6 +39,6 @@ public class PageGeneratorTests
                     (typeof(PageGenerator), "page.aspx.g.cs", generated),
                 },
             },
-        }.RunAsync();
+        }.RunAsync().ConfigureAwait(false);
     }
 }

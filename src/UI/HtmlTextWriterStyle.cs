@@ -1,104 +1,95 @@
-//------------------------------------------------------------------------------
-// <copyright file="HtmlTextWriterStyle.cs" company="Microsoft">
-//     Copyright (c) Microsoft Corporation.  All rights reserved.
-// </copyright>                                                                
-//------------------------------------------------------------------------------
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
+namespace System.Web.UI;
+/// <devdoc>
+/// </devdoc>
+public enum HtmlTextWriterStyle
+{
 
+    BackgroundColor,
 
-namespace System.Web.UI {
-    using System;
+    BackgroundImage,
 
+    BorderCollapse,
 
-    /// <devdoc>
-    /// </devdoc>
-    public enum HtmlTextWriterStyle {
+    BorderColor,
 
-        BackgroundColor,
+    BorderStyle,
 
-        BackgroundImage,
+    BorderWidth,
 
-        BorderCollapse,
+    Color,
 
-        BorderColor,
+    FontFamily,
 
-        BorderStyle,
+    FontSize,
 
-        BorderWidth,
+    FontStyle,
 
-        Color,
+    FontWeight,
 
-        FontFamily,
+    Height,
 
-        FontSize,
+    TextDecoration,
 
-        FontStyle,
+    Width,
 
-        FontWeight,
+    ListStyleImage,
 
-        Height,
+    ListStyleType,
 
-        TextDecoration,
+    Cursor,
 
-        Width,
+    Direction,
 
-        ListStyleImage,
+    Display,
 
-        ListStyleType,
+    Filter,
 
+    FontVariant,
 
-        Cursor,
+    Left,
 
-        Direction,
+    Margin,
 
-        Display,
+    MarginBottom,
 
-        Filter,
+    MarginLeft,
 
-        FontVariant,
+    MarginRight,
 
-        Left,
+    MarginTop,
 
-        Margin,
+    Overflow,
 
-        MarginBottom,
+    OverflowX,
 
-        MarginLeft,
+    OverflowY,
 
-        MarginRight,
+    Padding,
 
-        MarginTop,
+    PaddingBottom,
 
-        Overflow,
+    PaddingLeft,
 
-        OverflowX,
+    PaddingRight,
 
-        OverflowY,
+    PaddingTop,
 
-        Padding,
+    Position,
 
-        PaddingBottom,
+    TextAlign,
 
-        PaddingLeft,
+    VerticalAlign,
 
-        PaddingRight,
+    TextOverflow,
 
-        PaddingTop,
+    Top,
 
-        Position,
+    Visibility,
 
-        TextAlign,
+    WhiteSpace,
 
-        VerticalAlign,
-
-        TextOverflow,
-
-        Top,
-
-        Visibility,
-
-        WhiteSpace,
-
-        ZIndex
-    }
+    ZIndex
 }

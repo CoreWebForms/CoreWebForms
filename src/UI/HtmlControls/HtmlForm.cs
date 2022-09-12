@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 namespace System.Web.UI.HtmlControls;
 
 public class HtmlForm : HtmlContainerControl
 {
-    private const string _aspnetFormID = "aspnetForm";
-
     public HtmlForm()
         : base("form")
     {
@@ -31,9 +26,9 @@ public class HtmlForm : HtmlContainerControl
     {
         var page = Page;
 
-        if(page is not null)
+        if (page is not null)
         {
-            page.BeginFormRender(writer, UniqueID);
+            Page.BeginFormRender(writer, UniqueID);
         }
     }
 
@@ -50,7 +45,7 @@ public class HtmlForm : HtmlContainerControl
         base.RenderAttributes(writer);
     }
 
-    private void EnsureId()
+    private static void EnsureId()
     {
     }
 

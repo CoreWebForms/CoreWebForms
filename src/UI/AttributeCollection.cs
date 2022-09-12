@@ -1,4 +1,7 @@
-﻿using System.Collections;
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+
+using System.Collections;
 using System.Web.Util;
 
 namespace System.Web.UI;
@@ -18,9 +21,13 @@ public sealed class AttributeCollection
         get
         {
             if (_styleColl != null && StringUtil.EqualsIgnoreCase(key, "style"))
+            {
                 return _styleColl.Value;
+            }
             else
+            {
                 return _bag[key] as string;
+            }
         }
         set => Add(key, value);
     }
@@ -30,7 +37,6 @@ public sealed class AttributeCollection
     public int Count => _bag.Count;
 
     public CssStyleCollection CssStyle => _styleColl ??= new CssStyleCollection(_bag);
-
 
     public void Add(string key, string? value)
     {
@@ -80,16 +86,22 @@ public sealed class AttributeCollection
     public void Remove(string key)
     {
         if (_styleColl != null && StringUtil.EqualsIgnoreCase(key, "style"))
+        {
             _styleColl.Clear();
+        }
         else
+        {
             _bag.Remove(key);
+        }
     }
 
     public void Clear()
     {
         _bag.Clear();
         if (_styleColl != null)
+        {
             _styleColl.Clear();
+        }
     }
 
     public void Render(HtmlTextWriter writer)

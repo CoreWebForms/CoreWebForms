@@ -1,6 +1,9 @@
-﻿namespace System.Web.UI.Features;
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
-internal class UniqueIdGeneratorFeature : IUniqueIdGeneratorFeature
+namespace System.Web.UI.Features;
+
+internal sealed class UniqueIdGeneratorFeature : IUniqueIdGeneratorFeature
 {
     private const string _prefix = "ctl";
     private int _nextId;
@@ -28,7 +31,6 @@ internal class UniqueIdGeneratorFeature : IUniqueIdGeneratorFeature
             "ctl121", "ctl122", "ctl123", "ctl124", "ctl125", "ctl126", "ctl127"
 
         };
-
 
     public UniqueIdGeneratorFeature(Control owner)
     {

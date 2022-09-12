@@ -3,10 +3,8 @@
 
 #if NETCOREAPP
 
-using System;
 using System.Collections.Immutable;
 using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
 using System.Web;
 using System.Web.SessionState;
 using Microsoft.AspNetCore.Http;
@@ -86,7 +84,7 @@ public class HttpHandlerEndpointFeature : IHttpHandlerFeature, IEndpointFeature
         return newEndpoint;
     }
 
-    private class EndpointHandler : HttpTaskAsyncHandler
+    private sealed class EndpointHandler : HttpTaskAsyncHandler
     {
         public EndpointHandler(Endpoint endpoint)
         {
@@ -142,11 +140,11 @@ public class HttpHandlerEndpointFeature : IHttpHandlerFeature, IEndpointFeature
         {
             if (handler is HttpTaskAsyncHandler task)
             {
-                await task.ProcessRequestAsync(context);
+                await task.ProcessRequestAsync(context).ConfigureAwait(false);
             }
             else if (handler is IHttpAsyncHandler asyncHandler)
             {
-                await Task.Factory.FromAsync((cb, state) => asyncHandler.BeginProcessRequest(context, cb, state), asyncHandler.EndProcessRequest, null);
+                await Task.Factory.FromAsync((cb, state) => asyncHandler.BeginProcessRequest(context, cb, state), asyncHandler.EndProcessRequest, null).ConfigureAwait(false);
             }
             else
             {

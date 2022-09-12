@@ -1,5 +1,8 @@
-﻿using Microsoft.AspNetCore.Http.Features;
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+
 using System.Web.UI.Features;
+using Microsoft.AspNetCore.Http.Features;
 
 namespace System.Web.UI;
 
@@ -20,7 +23,6 @@ public class Control : IDisposable
     public ControlCollection Controls => _children ??= new(this);
 
     protected StateBag ViewState => _viewState ??= new();
-
 
     public string? Id
     {
@@ -50,7 +52,7 @@ public class Control : IDisposable
     }
 
     protected Page? Page => GetHierarchicalFeature<Page>();
- 
+
     protected HttpContext Context => GetHierarchicalFeature<HttpContext>() ?? throw new NotImplementedException();
 
     public virtual void RenderControl(HtmlTextWriter writer)

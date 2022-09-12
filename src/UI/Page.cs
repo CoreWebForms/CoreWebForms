@@ -1,4 +1,7 @@
-﻿using System.Web.UI.Features;
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+
+using System.Web.UI.Features;
 
 namespace System.Web.UI;
 
@@ -40,7 +43,7 @@ public class Page : TemplateControl, IHttpAsyncHandler
 
     private const string HiddenClassName = "aspNetHidden";
 
-    internal void BeginFormRender(HtmlTextWriter writer, string? formUniqueID)
+    internal static void BeginFormRender(HtmlTextWriter writer, string? formUniqueID)
     {
         writer.WriteBeginTag("div");
         writer.WriteAttribute("class", HiddenClassName);

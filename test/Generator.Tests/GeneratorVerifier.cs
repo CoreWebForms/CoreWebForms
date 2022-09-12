@@ -1,9 +1,12 @@
-﻿using Microsoft.CodeAnalysis;
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+
+using System.Collections.Immutable;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Testing;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Testing.Verifiers;
-using System.Collections.Immutable;
 
 namespace Microsoft.AspNetCore.SystemWebAdapters.UI.Generator.Tests;
 

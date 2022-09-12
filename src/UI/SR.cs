@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 namespace System.Web;
 
@@ -30,9 +27,9 @@ internal static class SR
     public const string Style_ForeColor = nameof(Style_RegisteredStylesAreReadOnly);
     public const string Style_Height = nameof(Style_RegisteredStylesAreReadOnly);
     public const string Style_Width = nameof(Style_RegisteredStylesAreReadOnly);
-    public const string Style_InvalidBorderWidth= nameof(Style_RegisteredStylesAreReadOnly);
-    public const string Style_InvalidHeight= nameof(Style_RegisteredStylesAreReadOnly);
-    public const string Style_InvalidWidth= nameof(Style_RegisteredStylesAreReadOnly);
+    public const string Style_InvalidBorderWidth = nameof(Style_RegisteredStylesAreReadOnly);
+    public const string Style_InvalidHeight = nameof(Style_RegisteredStylesAreReadOnly);
+    public const string Style_InvalidWidth = nameof(Style_RegisteredStylesAreReadOnly);
     public const string FontInfo_Bold = nameof(Style_RegisteredStylesAreReadOnly);
     public const string FontInfo_Italic = nameof(Style_RegisteredStylesAreReadOnly);
     public const string FontInfo_Name = nameof(Style_RegisteredStylesAreReadOnly);

@@ -1,21 +1,19 @@
-//------------------------------------------------------------------------------
-// <copyright file="IStateManager.cs" company="Microsoft">
-//     Copyright (c) Microsoft Corporation.  All rights reserved.
-// </copyright>                                                                
-//------------------------------------------------------------------------------
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 /*
  * Interface implemented by objects that support state management.
  *
  * Copyright (c) 1999 Microsoft Corporation
  */
-namespace System.Web.UI {
+namespace System.Web.UI;
 
 /// <devdoc>
 ///    <para>Defines the contract that controls must implement to support state 
 ///       management.</para>
 /// </devdoc>
-public interface IStateManager {
+public interface IStateManager
+{
     /*
      * Return true if tracking state changes.
      */
@@ -23,10 +21,11 @@ public interface IStateManager {
     /// <devdoc>
     ///    <para>Determines if state changes are being tracked.</para>
     ///    </devdoc>
-    bool IsTrackingViewState {
+    bool IsTrackingViewState
+    {
         get;
     }
-    
+
     /*
      * Load previously saved state.
      */
@@ -54,7 +53,5 @@ public interface IStateManager {
     ///    </devdoc>
     void TrackViewState();
 
-
 }
 
-}

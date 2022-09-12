@@ -1,14 +1,15 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+
+using System.Diagnostics;
+using System.Web.UI;
+using System.Web.UI.HtmlControls;
+using System.Web.UI.WebControls;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
-using System.Diagnostics;
-using System.Text;
-using System.Web;
-using System.Web.UI;
-using System.Web.UI.HtmlControls;
-using System.Web.UI.WebControls;
 using Xunit;
 
 namespace Microsoft.AspNetCore.SystemWebAdapters.UI.Tests;
@@ -19,7 +20,7 @@ public class PageTests
     public async Task EmptyPage()
     {
         // Arrange/Act
-        var result = await RunPage<Page1>();
+        var result = await RunPage<Page1>().ConfigureAwait(false);
 
         // Assert
         Assert.Empty(result);
@@ -29,7 +30,7 @@ public class PageTests
     public async Task CustomRender()
     {
         // Arrange/Act
-        var result = await RunPage<Page2>();
+        var result = await RunPage<Page2>().ConfigureAwait(false);
 
         // Assert
         Assert.Equal("hello", result);
@@ -39,7 +40,7 @@ public class PageTests
     public async Task PageLoadAddControl()
     {
         // Arrange/Act
-        var result = await RunPage<Page3>();
+        var result = await RunPage<Page3>().ConfigureAwait(false);
 
         // Assert
         Assert.Equal("hello", result);
@@ -49,13 +50,13 @@ public class PageTests
     public async Task PageWithForm()
     {
         // Arrange/Act
-        var result = await RunPage<Page4>();
+        var result = await RunPage<Page4>().ConfigureAwait(false);
 
         // Assert
         Assert.Equal("<form method=\"post\" action=\"/path\"><div class=\"aspNetHidden\"</div></form>", result);
     }
 
-    private async Task<string> RunPage<TPage>()
+    private static async Task<string> RunPage<TPage>()
         where TPage : Page
     {
         // Arrange
@@ -86,7 +87,7 @@ public class PageTests
         httpContext.Response.Body = body;
 
         // Act
-        await pipeline(httpContext);
+        await pipeline(httpContext).ConfigureAwait(false);
 
         body.Position = 0;
 
@@ -94,11 +95,11 @@ public class PageTests
         return reader.ReadToEnd();
     }
 
-    private class Page1 : Page
+    private sealed class Page1 : Page
     {
     }
 
-    private class Page2 : Page
+    private sealed class Page2 : Page
     {
         protected override void Render(HtmlTextWriter writer)
         {
@@ -106,7 +107,7 @@ public class PageTests
         }
     }
 
-    private class Page3 : Page
+    private sealed class Page3 : Page
     {
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -114,7 +115,7 @@ public class PageTests
         }
     }
 
-    private class Page4 : Page
+    private sealed class Page4 : Page
     {
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -125,7 +126,7 @@ public class PageTests
         }
     }
 
-    private class Env : IHostEnvironment
+    private sealed class Env : IHostEnvironment
     {
         public Env()
         {

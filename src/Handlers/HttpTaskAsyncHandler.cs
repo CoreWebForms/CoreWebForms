@@ -2,8 +2,6 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.ComponentModel;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace System.Web;
 
@@ -22,7 +20,7 @@ public abstract class HttpTaskAsyncHandler : IHttpAsyncHandler, IHttpHandler
     void IHttpAsyncHandler.EndProcessRequest(IAsyncResult result)
         => ((TaskWithState)result).Wait();
 
-    private class TaskWithState : IAsyncResult
+    private sealed class TaskWithState : IAsyncResult
     {
         private readonly IAsyncResult _task;
 

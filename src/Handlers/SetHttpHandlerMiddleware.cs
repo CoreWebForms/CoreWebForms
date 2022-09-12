@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Http.Features;
 
 namespace Microsoft.AspNetCore.SystemWebAdapters;
 
-internal class SetHttpHandlerMiddleware
+internal sealed class SetHttpHandlerMiddleware
 {
     private readonly RequestDelegate _next;
 
