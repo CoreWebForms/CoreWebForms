@@ -22,6 +22,7 @@ internal sealed class CssTextWriter : TextWriter
     private static readonly Hashtable attrKeyLookupTable;
     private static readonly AttributeInformation[] attrNameLookupArray;
 
+    [Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1810:Initialize reference type static fields inline", Justification = "<Pending>")]
     static CssTextWriter()
     {
         // register known style attributes, HtmlTextWriterStyle.Length

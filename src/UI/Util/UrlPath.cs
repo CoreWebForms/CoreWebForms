@@ -734,7 +734,7 @@ internal static string MakeVirtualPathAppRelativeOrNull(string virtualPath) {
             }
             else
             {
-                return "/" + virtualPath.Substring(2);
+                return string.Concat("/", virtualPath.AsSpan(2));
             }
         }
 

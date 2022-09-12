@@ -37,7 +37,7 @@ internal static class TaskAsyncHelper
             }
             else
             {
-                task.ContinueWith(_ => callback(resultToReturn));
+                task.ContinueWith(_ => callback(resultToReturn), TaskScheduler.Current);
             }
         }
 

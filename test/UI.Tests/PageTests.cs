@@ -109,7 +109,7 @@ public class PageTests
 
     private sealed class Page3 : Page
     {
-        protected void Page_Load(object sender, EventArgs e)
+        private void Page_Load(object sender, EventArgs e)
         {
             Controls.Add(new LiteralControl("hello"));
         }
@@ -117,7 +117,7 @@ public class PageTests
 
     private sealed class Page4 : Page
     {
-        protected void Page_Load(object sender, EventArgs e)
+        private void Page_Load(object sender, EventArgs e)
         {
             var form = new HtmlForm();
             form.Controls.Add(new TextBox());

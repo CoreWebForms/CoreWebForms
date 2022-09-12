@@ -132,6 +132,7 @@ public class HtmlTextWriter : TextWriter
     private HtmlTextWriterTag _tagKey;
     private string _tagName;
 
+    [Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1810:Initialize reference type static fields inline", Justification = "<Pending>")]
     static HtmlTextWriter()
     {
 
