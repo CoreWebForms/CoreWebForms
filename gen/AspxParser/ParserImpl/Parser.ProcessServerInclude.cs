@@ -2,10 +2,10 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Text.RegularExpressions;
-using Microsoft.AspNetCore.SystemWebAdapters.UI.AspxParser;
-using Microsoft.AspNetCore.SystemWebAdapters.UI.AspxParser.ParserImpl;
+using Microsoft.AspNetCore.SystemWebAdapters.UI.PageParser;
+using Microsoft.AspNetCore.SystemWebAdapters.UI.PageParser.ParserImpl;
 
-namespace AspxParser;
+namespace Microsoft.AspNetCore.SystemWebAdapters.UI.PageParser;
 
 partial class Parser
 {

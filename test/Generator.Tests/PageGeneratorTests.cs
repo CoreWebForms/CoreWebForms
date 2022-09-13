@@ -20,9 +20,15 @@ public class PageGeneratorTests
     [Fact]
     public async Task EmptyAspx()
     {
+        const string BaseClass = @"namespace WebApplication12
+{
+    public class About : global::System.Web.UI.Page
+    {
+    }
+}";
         var aspx = "<%@ Page Title=\"About\" Language=\"C#\" MasterPageFile=\"~/Site.Master\" AutoEventWireup=\"true\" CodeBehind=\"About.aspx.cs\" Inherits=\"WebApplication12.About\" %>\r\n";
         var generated = @"[Microsoft.AspNetCore.SystemWebAdapters.UI.AspxPageAttribute(""/page.aspx"")]
-public partial class About : global::System.Web.UI.Page
+internal partial class About_aspx_cs : WebApplication12.About
 {
 }
 ";
@@ -31,6 +37,10 @@ public partial class About : global::System.Web.UI.Page
         {
             TestState =
             {
+                Sources =
+                {
+                    ("/about.cs", BaseClass),
+                },
                 AdditionalFiles =
                 {
                     ("/page.aspx", aspx),

@@ -4,7 +4,7 @@
 using System.IO;
 using System.Runtime.InteropServices;
 
-namespace Microsoft.AspNetCore.SystemWebAdapters.UI.AspxParser;
+namespace Microsoft.AspNetCore.SystemWebAdapters.UI.PageParser;
 
 public static class PathUtils
 {

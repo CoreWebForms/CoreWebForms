@@ -4,9 +4,9 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using Microsoft.AspNetCore.SystemWebAdapters.UI.AspxParser.ParserImpl;
+using Microsoft.AspNetCore.SystemWebAdapters.UI.PageParser.ParserImpl;
 
-namespace Microsoft.AspNetCore.SystemWebAdapters.UI.AspxParser;
+namespace Microsoft.AspNetCore.SystemWebAdapters.UI.PageParser;
 
 public abstract class AspxNode
 {

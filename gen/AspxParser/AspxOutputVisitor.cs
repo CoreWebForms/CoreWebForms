@@ -3,9 +3,9 @@
 
 using System.Diagnostics;
 using System.IO;
-using Microsoft.AspNetCore.SystemWebAdapters.UI.AspxParser.ParserImpl;
+using Microsoft.AspNetCore.SystemWebAdapters.UI.PageParser.ParserImpl;
 
-namespace Microsoft.AspNetCore.SystemWebAdapters.UI.AspxParser;
+namespace Microsoft.AspNetCore.SystemWebAdapters.UI.PageParser;
 
 internal class AspxOutputVisitor : DepthFirstAspxVisitor<object>
 {

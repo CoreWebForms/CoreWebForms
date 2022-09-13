@@ -4,7 +4,7 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 
-namespace Microsoft.AspNetCore.SystemWebAdapters.UI.AspxParser.ParserImpl;
+namespace Microsoft.AspNetCore.SystemWebAdapters.UI.PageParser.ParserImpl;
 
 public struct TagAttributes : IEnumerable<KeyValuePair<string, string>>
 {

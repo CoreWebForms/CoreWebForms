@@ -3,7 +3,7 @@
 
 using System.Collections.Immutable;
 
-namespace Microsoft.AspNetCore.SystemWebAdapters.UI.AspxParser;
+namespace Microsoft.AspNetCore.SystemWebAdapters.UI.PageParser;
 
 public class AspxParseResult
 {

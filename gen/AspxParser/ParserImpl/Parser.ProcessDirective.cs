@@ -3,7 +3,7 @@
 
 using System.Text.RegularExpressions;
 
-namespace AspxParser;
+namespace Microsoft.AspNetCore.SystemWebAdapters.UI.PageParser;
 
 partial class Parser
 {

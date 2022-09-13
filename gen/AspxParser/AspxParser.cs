@@ -4,26 +4,21 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.IO;
-using System.Threading;
-using AspxParser;
-using Microsoft.AspNetCore.SystemWebAdapters.UI.AspxParser.ParserImpl;
+using Microsoft.AspNetCore.SystemWebAdapters.UI.PageParser.ParserImpl;
 
-namespace Microsoft.AspNetCore.SystemWebAdapters.UI.AspxParser;
+namespace Microsoft.AspNetCore.SystemWebAdapters.UI.PageParser;
 
 public sealed class AspxParser : IParserEventListener
 {
     private readonly HashSet<string> currentFiles = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
     private readonly ImmutableArray<AspxParseError>.Builder errors = ImmutableArray.CreateBuilder<AspxParseError>();
-    private readonly string rootDirectory;
     private readonly bool isFw40;
     private AspxNode currentNode;
 
     /// <param name="rootDirectory">A directory to a parsed document</param>
     /// <param name="isFw40">If true use .NET 4 regex, otherwise use .NET 3.5 regex</param>
-    public AspxParser(string rootDirectory, bool isFw40 = true)
+    public AspxParser(bool isFw40 = true)
     {
-        this.rootDirectory = rootDirectory;
         this.isFw40 = isFw40;
     }
 
@@ -88,6 +83,8 @@ public sealed class AspxParser : IParserEventListener
 
     void IParserEventListener.OnInclude(Location location, IncludePathType pathType, string path)
     {
+        throw new NotImplementedException();
+#if FALSE
         var normalizedPath = path.TrimStart(Path.DirectorySeparatorChar).TrimStart(Path.AltDirectorySeparatorChar);
 
         string resolvedPath;
@@ -136,6 +133,7 @@ public sealed class AspxParser : IParserEventListener
         {
             AddError(location, $"Exception occured while parsing included file `{resolvedPath}`: {ex}");
         }
+#endif
     }
 
     void IParserEventListener.OnCodeBlock(Location location, CodeBlockType blockType, string code, bool isEncode)

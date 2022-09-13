@@ -2,8 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <AssemblyName>Microsoft.AspNetCore.SystemWebAdapters.UI.AspxParser</AssemblyName>
-    <RootNamespace>Microsoft.AspNetCore.SystemWebAdapters.UI.AspxParser</RootNamespace>
+    <AssemblyName>Microsoft.AspNetCore.SystemWebAdapters.UI.PageParser</AssemblyName>
+    <RootNamespace>Microsoft.AspNetCore.SystemWebAdapters.UI.PageParser</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
