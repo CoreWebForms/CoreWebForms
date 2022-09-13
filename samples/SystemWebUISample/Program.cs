@@ -25,6 +25,6 @@ app.UseRouting();
 app.UseSystemWebAdapters();
 
 app.MapAspxPages();
-app.MapDynamicAspxPages(new PhysicalFileProvider(AppContext.BaseDirectory));
+app.MapDynamicAspxPages(app.Environment.ContentRootFileProvider);
 
 app.Run();

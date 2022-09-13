@@ -10,17 +10,20 @@ namespace Microsoft.AspNetCore.SystemWebAdapters.UI.RuntimeCompilation;
 internal sealed class CompilationCollection : ICompiledPagesCollection
 {
     private readonly ILogger<CompilationCollection> _logger;
+    private readonly IQueue _queue;
     private readonly IFileProvider _files;
     private readonly IPageCompiler _compiler;
+
     private Dictionary<string, TypeInfo> _types;
     private List<Type> _endpointTypes;
 
     private CancellationTokenSource _cts;
     private CancellationChangeToken _token;
 
-    public CompilationCollection(IFileProvider files, IPageCompiler compiler, ILoggerFactory logger)
+    public CompilationCollection(IFileProvider files, IPageCompiler compiler, IQueue queue, ILoggerFactory logger)
     {
         _logger = logger.CreateLogger<CompilationCollection>();
+        _queue = queue;
         _files = files;
         _compiler = compiler;
         _types = new();
@@ -37,18 +40,8 @@ internal sealed class CompilationCollection : ICompiledPagesCollection
 
     IChangeToken ICompiledPagesCollection.ChangeToken => _token;
 
-    // TODO: Use a background service instead of async void!!
-    private async void OnFileChange()
-    {
-        try
-        {
-            await UpdateTypesAsync(default).ConfigureAwait(false);
-        }
-        catch (Exception e)
-        {
-            _logger.LogError(e, "Unexpected error");
-        }
-    }
+    private void OnFileChange()
+        => _queue.Add(UpdateTypesAsync);
 
     private async Task UpdateTypesAsync(CancellationToken token)
     {

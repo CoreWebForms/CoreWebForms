@@ -12,5 +12,7 @@ public static class DynamicPagesServices
     {
         services.Services.AddTransient<IPageCompiler, RoslynPageCompiler>();
         services.Services.AddSingleton<ICompilationRegistrar, CompilationRegistrar>();
+        services.Services.AddSingleton<IQueue, ChannelQueue>();
+        services.Services.AddHostedService<SerializedCompilation>();
     }
 }

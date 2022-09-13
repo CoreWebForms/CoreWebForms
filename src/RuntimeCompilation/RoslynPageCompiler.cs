@@ -26,23 +26,29 @@ internal sealed class RoslynPageCompiler : IPageCompiler
     {
         try
         {
-            var (contents, className) = await GetSourceAsync(file.Directory, file.File).ConfigureAwait(false);
-
-            var normalized = NormalizeName(file.Directory, file.File.Name);
+            var (contents, className, endpointPath) = await GetSourceAsync(file.Directory, file.File).ConfigureAwait(false);
 
             var tree = CSharpSyntaxTree.ParseText(contents, cancellationToken: token);
 
-            var compilation = CSharpCompilation.Create(normalized,
+            var compilation = CSharpCompilation.Create(className,
                 options: new CSharpCompilationOptions(outputKind: OutputKind.DynamicallyLinkedLibrary),
                 syntaxTrees: new[] { tree },
                 references: GetMetadataReferences());
+
+            var diagnostics = compilation.GetDiagnostics(token);
+
+            if (diagnostics.Length > 0)
+            {
+                _logger.LogWarning("Errors found compiling {Route}", endpointPath);
+                return null;
+            }
 
             using (var ms = new MemoryStream())
             {
                 compilation.Emit(ms, cancellationToken: token);
                 ms.Position = 0;
 
-                var context = new PageAssemblyLoadContext(normalized, _factory.CreateLogger<PageAssemblyLoadContext>());
+                var context = new PageAssemblyLoadContext(endpointPath, _factory.CreateLogger<PageAssemblyLoadContext>());
                 var assembly = context.LoadFromStream(ms);
 
                 return assembly.GetType(className) ?? throw new InvalidOperationException("Could not find class in generated assembly");
@@ -79,8 +85,8 @@ internal sealed class RoslynPageCompiler : IPageCompiler
             return $"{name}:{count}";
         }
 
-        public PageAssemblyLoadContext(string name, ILogger<PageAssemblyLoadContext> logger)
-            : base(GetName(name), isCollectible: true)
+        public PageAssemblyLoadContext(string route, ILogger<PageAssemblyLoadContext> logger)
+            : base(GetName(route), isCollectible: true)
         {
             _logger = logger;
 
@@ -114,7 +120,7 @@ internal sealed class RoslynPageCompiler : IPageCompiler
             .Replace("/", "_")
             .Replace("\\", "_");
 
-    private static async Task<(string Contents, string name)> GetSourceAsync(string directory, IFileInfo file)
+    private static async Task<(string Contents, string ClassName, string EndpointPath)> GetSourceAsync(string directory, IFileInfo file)
     {
         using var stringWriter = new StringWriter();
         using var writer = new IndentedTextWriter(stringWriter);
@@ -124,7 +130,7 @@ internal sealed class RoslynPageCompiler : IPageCompiler
 
         generator.WriteSource();
 
-        return (stringWriter.ToString(), generator.Name);
+        return (stringWriter.ToString(), generator.ClassName, generator.Path);
     }
 
     private static async Task<string> GetContentsAsync(IFileInfo file)

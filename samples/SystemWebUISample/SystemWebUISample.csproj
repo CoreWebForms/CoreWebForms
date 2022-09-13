@@ -8,4 +8,9 @@
     <ProjectReference Include="..\..\src\RuntimeCompilation\RuntimeCompilation.csproj" />
     <ProjectReference Include="..\..\src\WebForms\WebForms.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <None Update="dynamic_page.aspx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>

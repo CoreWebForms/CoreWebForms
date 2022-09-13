@@ -31,7 +31,7 @@ public class PageGeneratorTests
 }";
         var aspx = "<%@ Page Title=\"About\" Language=\"C#\" MasterPageFile=\"~/Site.Master\" AutoEventWireup=\"true\" CodeBehind=\"About.aspx.cs\" Inherits=\"WebApplication12.About\" %>\r\n";
         var generated = @"[Microsoft.AspNetCore.SystemWebAdapters.UI.AspxPageAttribute(""/page.aspx"")]
-internal partial class About_aspx_cs : WebApplication12.About
+internal partial class _page_aspx : WebApplication12.About
 {
     protected override void InitializeComponents()
     {
@@ -72,7 +72,7 @@ internal partial class About_aspx_cs : WebApplication12.About
 <div />
 ";
         var generated = @$"[Microsoft.AspNetCore.SystemWebAdapters.UI.AspxPageAttribute(""/page.aspx"")]
-internal partial class About_aspx_cs : WebApplication12.About
+internal partial class _page_aspx : WebApplication12.About
 {{
     protected override void InitializeComponents()
     {{

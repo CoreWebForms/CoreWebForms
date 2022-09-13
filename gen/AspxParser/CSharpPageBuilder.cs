@@ -11,7 +11,6 @@ namespace Microsoft.AspNetCore.SystemWebAdapters.UI.PageParser;
 
 public class CSharpPageBuilder
 {
-    private readonly string _path;
     private readonly IndentedTextWriter _writer;
     private readonly IDisposable _indentClose;
     private readonly IDisposable _blockClose;
@@ -21,18 +20,22 @@ public class CSharpPageBuilder
 
     public CSharpPageBuilder(string path, IndentedTextWriter writer, string contents)
     {
-        _path = path;
+        Path = NormalizePath(path);
+        ClassName = ConvertPathToClassName(Path);
+
         _writer = writer;
         _indentClose = new IndentClose(writer, includeBrace: false);
         _blockClose = new IndentClose(writer, includeBrace: true);
 
         var parser = new AspxParser();
-        var source = new AspxSource(_path, contents);
+        var source = new AspxSource(Path, contents);
 
         _tree = parser.Parse(source);
     }
 
-    public string Name { get; private set; }
+    public string ClassName { get; }
+
+    public string Path { get; }
 
     public void WriteSource()
     {
@@ -53,15 +56,12 @@ public class CSharpPageBuilder
     private void WriteDirectiveDetails(AspxNode.AspxDirective d)
     {
         var info = new DirectiveDetails(d);
-        var className = ConvertPathToClassName(info.CodeBehind);
-
-        Name = className;
 
         _writer.Write("[Microsoft.AspNetCore.SystemWebAdapters.UI.AspxPageAttribute(\"");
-        _writer.Write(_path);
+        _writer.Write(Path);
         _writer.WriteLine("\")]");
         _writer.Write("internal partial class ");
-        _writer.Write(className);
+        _writer.Write(ClassName);
         _writer.Write(" : ");
         _writer.WriteLine(info.Inherits);
     }
@@ -121,6 +121,20 @@ public class CSharpPageBuilder
         => input
             .Replace("\n", "\\n")
             .Replace("\r", "\\r");
+
+    private static string NormalizePath(string path)
+    {
+        var sb = new StringBuilder(path);
+
+        if (sb[0] != '/')
+        {
+            sb.Insert(0, '/');
+        }
+
+        sb.Replace("\\", "/");
+
+        return sb.ToString();
+    }
 
     private string GetNextControlName() => $"control{_count++}";
 
