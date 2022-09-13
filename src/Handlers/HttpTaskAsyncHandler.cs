@@ -15,7 +15,7 @@ public abstract class HttpTaskAsyncHandler : IHttpAsyncHandler, IHttpHandler
     public abstract Task ProcessRequestAsync(HttpContext context);
 
     IAsyncResult IHttpAsyncHandler.BeginProcessRequest(HttpContext context, AsyncCallback cb, object? extraData)
-        => new TaskWithState(ProcessRequestAsync(context).ContinueWith(t => cb(t)), extraData);
+        => new TaskWithState(ProcessRequestAsync(context).ContinueWith(t => cb(t), TaskScheduler.Current), extraData);
 
     void IHttpAsyncHandler.EndProcessRequest(IAsyncResult result)
         => ((TaskWithState)result).Wait();

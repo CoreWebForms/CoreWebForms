@@ -42,7 +42,7 @@ internal sealed class CompilationCollection : ICompiledPagesCollection
     {
         try
         {
-            await UpdateTypesAsync(default);
+            await UpdateTypesAsync(default).ConfigureAwait(false);
         }
         catch (Exception e)
         {
