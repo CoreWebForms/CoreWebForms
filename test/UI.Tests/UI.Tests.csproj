@@ -21,6 +21,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\Handlers\Handlers.csproj" />
-    <ProjectReference Include="..\..\src\UI\UI.csproj" />
+    <ProjectReference Include="..\..\src\WebForms\WebForms.csproj" />
   </ItemGroup>
 </Project>

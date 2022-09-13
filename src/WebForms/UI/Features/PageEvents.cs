@@ -3,7 +3,7 @@
 
 using System.Reflection;
 
-namespace System.Web.UI;
+namespace System.Web.UI.Features;
 
 internal sealed class PageEvents : IPageEvents
 {

@@ -1,14 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
-
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\..\src\RuntimeCompilation\RuntimeCompilation.csproj" />
-    <ProjectReference Include="..\..\src\UI\UI.csproj" />
+    <ProjectReference Include="..\..\src\WebForms\WebForms.csproj" />
   </ItemGroup>
-
 </Project>

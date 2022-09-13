@@ -5,12 +5,12 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <AssemblyName>Microsoft.AspNetCore.SystemWebAdapters.UI</AssemblyName>
-    <RootNamespace>System.Web.UI</RootNamespace>
+    <RootNamespace>System.Web</RootNamespace>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <ItemGroup>
-    <InternalsVisibleTo Include="Microsoft.AspNetCore.SystemWebAdapters.UI.DynamicCompilation"/>
+    <InternalsVisibleTo Include="Microsoft.AspNetCore.SystemWebAdapters.UI.DynamicCompilation" />
   </ItemGroup>
 
   <ItemGroup>
