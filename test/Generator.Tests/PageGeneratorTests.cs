@@ -30,6 +30,54 @@ public class PageGeneratorTests
         var generated = @"[Microsoft.AspNetCore.SystemWebAdapters.UI.AspxPageAttribute(""/page.aspx"")]
 internal partial class About_aspx_cs : WebApplication12.About
 {
+    protected override void InitializeComponents()
+    {
+    }
+}
+";
+
+        await new VerifyCS.Test()
+        {
+            TestState =
+            {
+                Sources =
+                {
+                    ("/about.cs", BaseClass),
+                },
+                AdditionalFiles =
+                {
+                    ("/page.aspx", aspx),
+                },
+                GeneratedSources =
+                {
+                    (typeof(PageGenerator), "page.aspx.g.cs", generated),
+                },
+            },
+        }.RunAsync().ConfigureAwait(false);
+    }
+
+    [Fact]
+    public async Task JustHtml()
+    {
+        const string BaseClass = @"namespace WebApplication12
+{
+    public class About : global::System.Web.UI.Page
+    {
+    }
+}";
+        var aspx = @"<%@ Page Title=""About"" Language=""C#"" MasterPageFile=""~/Site.Master"" AutoEventWireup=""true"" CodeBehind=""About.aspx.cs"" Inherits=""WebApplication12.About"" %>
+<div />
+";
+        var generated = @"[Microsoft.AspNetCore.SystemWebAdapters.UI.AspxPageAttribute(""/page.aspx"")]
+internal partial class About_aspx_cs : WebApplication12.About
+{
+    protected override void InitializeComponents()
+    {
+        var control0 = new global::System.Web.UI.LiteralControl(""<div />"");
+        Controls.Add(control0);
+        var control1 = new global::System.Web.UI.LiteralControl(""\r\n"");
+        Controls.Add(control1);
+    }
 }
 ";
 

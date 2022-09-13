@@ -117,7 +117,7 @@ public class PageTests
 
     private sealed class Page4 : Page
     {
-        private void Page_Load(object sender, EventArgs e)
+        protected override void InitializeComponents()
         {
             var form = new HtmlForm();
             form.Controls.Add(new TextBox());

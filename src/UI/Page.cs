@@ -27,6 +27,8 @@ public class Page : TemplateControl, IHttpAsyncHandler
             throw new InvalidOperationException("Page has already been processed.");
         }
 
+        InitializeComponents();
+
         var events = Features.Get<IPageEvents>()!;
 
         Features.Set(context);
@@ -47,5 +49,9 @@ public class Page : TemplateControl, IHttpAsyncHandler
         writer.WriteBeginTag("div");
         writer.WriteAttribute("class", HiddenClassName);
         writer.WriteEndTag("div");
+    }
+
+    protected virtual void InitializeComponents()
+    {
     }
 }
