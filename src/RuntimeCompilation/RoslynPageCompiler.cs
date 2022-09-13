@@ -14,10 +14,12 @@ namespace Microsoft.AspNetCore.SystemWebAdapters.UI.RuntimeCompilation;
 internal sealed class RoslynPageCompiler : IPageCompiler
 {
     private readonly ILogger<RoslynPageCompiler> _logger;
+    private readonly ILoggerFactory _factory;
 
-    public RoslynPageCompiler(ILogger<RoslynPageCompiler> logger)
+    public RoslynPageCompiler(ILoggerFactory factory)
     {
-        _logger = logger;
+        _logger = factory.CreateLogger<RoslynPageCompiler>();
+        _factory = factory;
     }
 
     public async Task<Type?> CompilePageAsync(PageFile file, CancellationToken token)
@@ -40,7 +42,7 @@ internal sealed class RoslynPageCompiler : IPageCompiler
                 compilation.Emit(ms, cancellationToken: token);
                 ms.Position = 0;
 
-                var context = new PageAssemblyLoadContext(normalized);
+                var context = new PageAssemblyLoadContext(normalized, _factory.CreateLogger<PageAssemblyLoadContext>());
                 var assembly = context.LoadFromStream(ms);
 
                 return assembly.GetType(className) ?? throw new InvalidOperationException("Could not find class in generated assembly");
@@ -67,9 +69,31 @@ internal sealed class RoslynPageCompiler : IPageCompiler
 
     private sealed class PageAssemblyLoadContext : AssemblyLoadContext
     {
-        public PageAssemblyLoadContext(string name)
-            : base(name, isCollectible: true)
+        private readonly ILogger<PageAssemblyLoadContext> _logger;
+        private static long _count;
+
+        private static string GetName(string name)
         {
+            var count = Interlocked.Increment(ref _count);
+
+            return $"{name}:{count}";
+        }
+
+        public PageAssemblyLoadContext(string name, ILogger<PageAssemblyLoadContext> logger)
+            : base(GetName(name), isCollectible: true)
+        {
+            _logger = logger;
+
+            logger.LogInformation("Created assembly for {Path}", Name);
+
+            Unloading += PageAssemblyLoadContext_Unloading;
+        }
+
+        private void PageAssemblyLoadContext_Unloading(AssemblyLoadContext obj)
+        {
+            Unloading -= PageAssemblyLoadContext_Unloading;
+
+            _logger.LogInformation("Unloading assembly load context for {Path}", Name);
         }
     }
 
