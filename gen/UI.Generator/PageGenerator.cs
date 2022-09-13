@@ -17,12 +17,13 @@ public class PageGenerator : IIncrementalGenerator
         var aspxFiles = context.AdditionalTextsProvider
             .Where(text => text.Path.EndsWith(".aspx", StringComparison.OrdinalIgnoreCase))
             .Select((text, token) => Parse(text, token));
+
         context.RegisterSourceOutput(aspxFiles, GenerateSource);
     }
 
     private void GenerateSource(SourceProductionContext context, ParsedPage page)
     {
-        context.AddSource(page.Path, GetSource(page));
+        context.AddSource(page.GeneratedFilePath, GetSource(page));
     }
 
     private string GetSource(ParsedPage page)
@@ -31,6 +32,9 @@ public class PageGenerator : IIncrementalGenerator
 
         using (var writer = new IndentedTextWriter(stringWriter))
         {
+            writer.Write("[Microsoft.AspNetCore.SystemWebAdapters.UI.AspxPageAttribute(\"");
+            writer.Write(page.Path);
+            writer.WriteLine("\")]");
             writer.Write("public partial class ");
             writer.Write(page.Name);
             writer.WriteLine(" : global::System.Web.UI.Page");
@@ -47,7 +51,8 @@ public class PageGenerator : IIncrementalGenerator
 
         return new ParsedPage
         {
-            Path = path,
+            GeneratedFilePath = path,
+            Path = text.Path,
             Name = "About",
         };
     }
@@ -57,5 +62,6 @@ public class PageGenerator : IIncrementalGenerator
         public string Path { get; set; } = null!;
 
         public string Name { get; set; } = null!;
+        public string GeneratedFilePath { get; set; } = null!;
     }
 }

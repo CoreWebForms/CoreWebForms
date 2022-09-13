@@ -21,7 +21,8 @@ public class PageGeneratorTests
     public async Task EmptyAspx()
     {
         var aspx = "<%@ Page Title=\"About\" Language=\"C#\" MasterPageFile=\"~/Site.Master\" AutoEventWireup=\"true\" CodeBehind=\"About.aspx.cs\" Inherits=\"WebApplication12.About\" %>\r\n";
-        var generated = @"public partial class About : global::System.Web.UI.Page
+        var generated = @"[Microsoft.AspNetCore.SystemWebAdapters.UI.AspxPageAttribute(""/page.aspx"")]
+public partial class About : global::System.Web.UI.Page
 {
 }
 ";
