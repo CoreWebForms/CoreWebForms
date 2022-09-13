@@ -11,7 +11,6 @@ public class Page : TemplateControl, IHttpAsyncHandler
     {
         Features.Set<Page>(this);
         Features.Set<IUniqueIdGeneratorFeature>(new UniqueIdGeneratorFeature(this));
-        Features.Set<IPageEvents>(new PageEvents(GetType()));
     }
 
     bool IHttpHandler.IsReusable => false;
@@ -25,7 +24,7 @@ public class Page : TemplateControl, IHttpAsyncHandler
     void IHttpHandler.ProcessRequest(HttpContext context)
         => throw new InvalidOperationException();
 
-    private Task ProcessAsync(HttpContext context)
+    internal Task ProcessAsync(HttpContext context)
     {
         if (Features.Get<HttpContext>() is { })
         {

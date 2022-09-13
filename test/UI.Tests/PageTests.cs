@@ -1,4 +1,4 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
+// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Diagnostics;
@@ -135,7 +135,7 @@ public class PageTests
             ContentRootFileProvider = new PhysicalFileProvider(ContentRootPath);
         }
 
-        public string ApplicationName { get; set; } = nameof(ApplicationName);
+        public string? ApplicationName { get; set; } = nameof(ApplicationName);
         public IFileProvider ContentRootFileProvider { get; set; }
         public string ContentRootPath { get; set; }
         public string EnvironmentName { get; set; } = string.Empty;

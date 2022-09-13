@@ -67,14 +67,17 @@ public static class PageEndpointBuilder
         private static RequestDelegate CreateRequest(Type type)
         {
             var factory = ActivatorUtilities.CreateFactory(type, Array.Empty<Type>());
+            var pageEvents = new PageEvents(type);
 
             return Create;
 
-            Task Create(Microsoft.AspNetCore.Http.HttpContext context)
+            Task Create(HttpContextCore context)
             {
-                var page = (IHttpAsyncHandler)factory(context.RequestServices, null);
+                var page = (Page)factory(context.RequestServices, null);
 
-                return Task.Factory.FromAsync((cb, state) => page.BeginProcessRequest(context, cb, state), page.EndProcessRequest, null);
+                page.Features.Set<IPageEvents>(pageEvents);
+
+                return page.ProcessAsync(context);
             }
         }
 
