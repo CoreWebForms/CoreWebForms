@@ -82,7 +82,7 @@ internal sealed class RoslynPageCompiler : IPageCompiler
         {
             var count = Interlocked.Increment(ref _count);
 
-            return $"{name}:{count}";
+            return $"WebForms:{name}:{count}";
         }
 
         public PageAssemblyLoadContext(string route, ILogger<PageAssemblyLoadContext> logger)
