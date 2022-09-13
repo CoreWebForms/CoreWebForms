@@ -13,4 +13,8 @@
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.3" PrivateAssets="all" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\AspxParser\AspxParser.csproj" />
+  </ItemGroup>
+
 </Project>

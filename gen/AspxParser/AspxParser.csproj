@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <AssemblyName>Microsoft.AspNetCore.SystemWebAdapters.UI.AspxParser</AssemblyName>
+    <RootNamespace>Microsoft.AspNetCore.SystemWebAdapters.UI.AspxParser</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Collections.Immutable" Version="6.0.0" />
+  </ItemGroup>
+
+</Project>
