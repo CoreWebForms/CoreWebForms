@@ -23,6 +23,6 @@ app.UseRouting();
 
 app.UseSystemWebAdapters();
 
-app.MapPage<TestPage>("/test.aspx");
+app.MapAspxPages();
 
 app.Run();

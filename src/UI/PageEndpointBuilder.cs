@@ -15,11 +15,18 @@ namespace Microsoft.AspNetCore.Builder;
 
 public static class PageEndpointBuilder
 {
-    public static void MapPages(this IEndpointRouteBuilder builder, params Assembly[] assemblies)
+    public static void MapAspxPages(this IEndpointRouteBuilder builder, params Assembly[] assemblies)
     {
         if (assemblies.Length == 0)
         {
-            assemblies = new[] { Assembly.GetExecutingAssembly() };
+            if (Assembly.GetEntryAssembly() is { } entry)
+            {
+                assemblies = new[] { entry };
+            }
+            else
+            {
+                return;
+            }
         }
 
         var dataSource = builder.GetPageDataSource();
@@ -36,6 +43,10 @@ public static class PageEndpointBuilder
         }
     }
 
+    public static void MapAspxPage<TPage>(this IEndpointRouteBuilder endpoints, PathString path)
+        where TPage : Page
+        => endpoints.GetPageDataSource().Add(typeof(TPage), path);
+
     private static PageEndpointDataSource GetPageDataSource(this IEndpointRouteBuilder endpoints)
     {
         var dataSource = endpoints.DataSources.OfType<PageEndpointDataSource>().FirstOrDefault();
@@ -48,10 +59,6 @@ public static class PageEndpointBuilder
 
         return dataSource;
     }
-
-    public static void MapPage<TPage>(this IEndpointRouteBuilder endpoints, PathString path)
-        where TPage : Page
-        => endpoints.GetPageDataSource().Add(typeof(TPage), path);
 
     private sealed class PageEndpointDataSource : EndpointDataSource, IChangeToken, IDisposable
     {

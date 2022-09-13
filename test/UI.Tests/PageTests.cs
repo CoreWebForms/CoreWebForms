@@ -77,7 +77,7 @@ public class PageTests
         app.UseSystemWebAdapters();
         app.UseEndpoints(endpoints =>
         {
-            endpoints.MapPage<TPage>("/path");
+            endpoints.MapAspxPage<TPage>("/path");
         });
 
         var pipeline = app.Build();
