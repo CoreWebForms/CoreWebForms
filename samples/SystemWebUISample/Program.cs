@@ -1,11 +1,13 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using Microsoft.Extensions.FileProviders;
 using SystemWebUISample.Pages;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddSystemWebAdapters();
+builder.Services.AddSystemWebAdapters()
+    .AddDynamicPages();
 
 var app = builder.Build();
 
@@ -24,5 +26,6 @@ app.UseRouting();
 app.UseSystemWebAdapters();
 
 app.MapAspxPages();
+app.MapDynamicAspxPages(new PhysicalFileProvider(AppContext.BaseDirectory));
 
 app.Run();

@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\RuntimeCompilation\RuntimeCompilation.csproj" />
     <ProjectReference Include="..\..\src\UI\UI.csproj" />
   </ItemGroup>
 

@@ -32,6 +32,8 @@ public class CSharpPageBuilder
         _tree = parser.Parse(source);
     }
 
+    public string Name { get; private set; }
+
     public void WriteSource()
     {
         if (_tree.RootNode.Children.OfType<AspxNode.AspxDirective>().FirstOrDefault() is not { } d)
@@ -51,12 +53,15 @@ public class CSharpPageBuilder
     private void WriteDirectiveDetails(AspxNode.AspxDirective d)
     {
         var info = new DirectiveDetails(d);
+        var className = ConvertPathToClassName(info.CodeBehind);
+
+        Name = className;
 
         _writer.Write("[Microsoft.AspNetCore.SystemWebAdapters.UI.AspxPageAttribute(\"");
         _writer.Write(_path);
         _writer.WriteLine("\")]");
         _writer.Write("internal partial class ");
-        _writer.Write(ConvertPathToClassName(info.CodeBehind));
+        _writer.Write(className);
         _writer.Write(" : ");
         _writer.WriteLine(info.Inherits);
     }

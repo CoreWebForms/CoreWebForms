@@ -22,7 +22,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sample", "sample", "{97FC5E
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SystemWebUISample", "samples\SystemWebUISample\SystemWebUISample.csproj", "{A6057678-BE15-4627-ACD4-7BD7DB72E8FA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspxParser", "gen\AspxParser\AspxParser.csproj", "{85310CFA-06FB-4EBA-B7A0-F5A48F213CEE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspxParser", "gen\AspxParser\AspxParser.csproj", "{85310CFA-06FB-4EBA-B7A0-F5A48F213CEE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RuntimeCompilation", "src\RuntimeCompilation\RuntimeCompilation.csproj", "{D73C8FBC-B669-4130-83EB-B01A6F49D2BC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -58,6 +60,10 @@ Global
 		{85310CFA-06FB-4EBA-B7A0-F5A48F213CEE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{85310CFA-06FB-4EBA-B7A0-F5A48F213CEE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{85310CFA-06FB-4EBA-B7A0-F5A48F213CEE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D73C8FBC-B669-4130-83EB-B01A6F49D2BC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D73C8FBC-B669-4130-83EB-B01A6F49D2BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D73C8FBC-B669-4130-83EB-B01A6F49D2BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D73C8FBC-B669-4130-83EB-B01A6F49D2BC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -70,6 +76,7 @@ Global
 		{A8186D39-0E3D-4CA5-BF64-0414CACC18A6} = {0E3C5885-15E6-4F5F-8D2C-088A0E255666}
 		{A6057678-BE15-4627-ACD4-7BD7DB72E8FA} = {97FC5E53-F4F6-40BE-9927-2D2EB1DC01D9}
 		{85310CFA-06FB-4EBA-B7A0-F5A48F213CEE} = {3C6A0B2B-E091-4352-8F49-0336903254A2}
+		{D73C8FBC-B669-4130-83EB-B01A6F49D2BC} = {D3D2945C-76BA-4DE3-90D2-259E2B1406C5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B89024DA-2E51-49B1-8D52-651372AB5C83}
