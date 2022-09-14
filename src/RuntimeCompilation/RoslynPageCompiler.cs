@@ -3,21 +3,26 @@
 
 using System.CodeDom.Compiler;
 using System.Runtime.Loader;
+using System.Text;
 using Microsoft.AspNetCore.SystemWebAdapters.UI.PageParser;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Text;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 namespace Microsoft.AspNetCore.SystemWebAdapters.UI.RuntimeCompilation;
 
 internal sealed class RoslynPageCompiler : IPageCompiler
 {
+    private readonly bool _isDebug;
     private readonly ILogger<RoslynPageCompiler> _logger;
     private readonly ILoggerFactory _factory;
 
-    public RoslynPageCompiler(ILoggerFactory factory)
+    public RoslynPageCompiler(ILoggerFactory factory, IHostEnvironment env)
     {
+        _isDebug = env.IsDevelopment();
         _logger = factory.CreateLogger<RoslynPageCompiler>();
         _factory = factory;
     }
@@ -26,33 +31,45 @@ internal sealed class RoslynPageCompiler : IPageCompiler
     {
         try
         {
-            var (contents, className, endpointPath) = await GetSourceAsync(file.Directory, file.File).ConfigureAwait(false);
+            using var sourceStream = new MemoryStream();
+            var (className, endpointPath) = await GetSourceAsync(file.Directory, file.File, sourceStream).ConfigureAwait(false);
 
-            var tree = CSharpSyntaxTree.ParseText(contents, cancellationToken: token);
+            sourceStream.Position = 0;
 
-            var compilation = CSharpCompilation.Create(className,
-                options: new CSharpCompilationOptions(outputKind: OutputKind.DynamicallyLinkedLibrary),
+            var sourceText = SourceText.From(sourceStream, Encoding.UTF8, canBeEmbedded: true);
+            var tree = CSharpSyntaxTree.ParseText(sourceText, cancellationToken: token)
+                .WithFilePath($"{className}.cs");
+            var optimization = _isDebug ? OptimizationLevel.Debug : OptimizationLevel.Release;
+
+            var compilation = CSharpCompilation.Create($"WebForms.{className}",
+                options: new CSharpCompilationOptions(
+                    outputKind: OutputKind.DynamicallyLinkedLibrary,
+                    optimizationLevel: optimization),
                 syntaxTrees: new[] { tree },
                 references: GetMetadataReferences());
 
-            var diagnostics = compilation.GetDiagnostics(token);
+            using var peStream = new MemoryStream();
+            using var pdbStream = new MemoryStream();
 
-            if (diagnostics.Length > 0)
+            var result = compilation.Emit(
+                embeddedTexts: new[] { EmbeddedText.FromSource(tree.FilePath, sourceText) },
+                peStream: peStream,
+                pdbStream: pdbStream,
+                cancellationToken: token);
+
+            if (!result.Success)
             {
-                _logger.LogWarning("Errors found compiling {Route}", endpointPath);
+                _logger.LogWarning("{ErrorCount} error(s) found compiling {Route}", result.Diagnostics.Length, endpointPath);
                 return null;
             }
 
-            using (var ms = new MemoryStream())
-            {
-                compilation.Emit(ms, cancellationToken: token);
-                ms.Position = 0;
+            pdbStream.Position = 0;
+            peStream.Position = 0;
 
-                var context = new PageAssemblyLoadContext(endpointPath, _factory.CreateLogger<PageAssemblyLoadContext>());
-                var assembly = context.LoadFromStream(ms);
+            var context = new PageAssemblyLoadContext(endpointPath, _factory.CreateLogger<PageAssemblyLoadContext>());
+            var assembly = context.LoadFromStream(peStream, pdbStream);
 
-                return assembly.GetType(className) ?? throw new InvalidOperationException("Could not find class in generated assembly");
-            }
+            return assembly.GetType(className) ?? throw new InvalidOperationException("Could not find class in generated assembly");
         }
         catch (Exception e)
         {
@@ -76,6 +93,7 @@ internal sealed class RoslynPageCompiler : IPageCompiler
     private sealed class PageAssemblyLoadContext : AssemblyLoadContext
     {
         private readonly ILogger<PageAssemblyLoadContext> _logger;
+
         private static long _count;
 
         private static string GetName(string name)
@@ -114,23 +132,17 @@ internal sealed class RoslynPageCompiler : IPageCompiler
         }
     }
 
-    private static string NormalizeName(string directory, string name)
-        => Path.Combine(directory, name)
-            .Replace(".", "_")
-            .Replace("/", "_")
-            .Replace("\\", "_");
-
-    private static async Task<(string Contents, string ClassName, string EndpointPath)> GetSourceAsync(string directory, IFileInfo file)
+    private static async Task<(string ClassName, string EndpointPath)> GetSourceAsync(string directory, IFileInfo file, Stream stream)
     {
-        using var stringWriter = new StringWriter();
-        using var writer = new IndentedTextWriter(stringWriter);
+        using var streamWriter = new StreamWriter(stream, leaveOpen: true);
+        using var writer = new IndentedTextWriter(streamWriter);
 
         var contents = await GetContentsAsync(file).ConfigureAwait(false);
         var generator = new CSharpPageBuilder(Path.Combine(directory, file.Name), writer, contents);
 
         generator.WriteSource();
 
-        return (stringWriter.ToString(), generator.ClassName, generator.Path);
+        return (generator.ClassName, generator.Path);
     }
 
     private static async Task<string> GetContentsAsync(IFileInfo file)
