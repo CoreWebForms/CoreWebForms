@@ -107,11 +107,30 @@ public class CSharpPageBuilder
 
         _writer.Write("var ");
         _writer.Write(name);
-        _writer.Write(" = new global::System.Web.UI.LiteralControl(\"");
-        _writer.Write("<");
-        _writer.Write(tag.Name);
-        _writer.Write(" />");
-        _writer.WriteLine("\");");
+
+        if (tag.Attributes.IsRunAtServer)
+        {
+            _writer.Write(" = new global::System.Web.UI.HtmlControls.HtmlGenericControl(\"");
+            _writer.Write(tag.Name);
+            _writer.WriteLine("\");");
+        }
+        else
+        {
+            _writer.Write(" = new global::System.Web.UI.LiteralControl(\"");
+            _writer.Write("<");
+            _writer.Write(tag.Name);
+            _writer.Write(" />");
+            _writer.WriteLine("\");");
+        }
+
+        if (!string.IsNullOrEmpty(tag.Attributes.Id))
+        {
+            _writer.Write(name);
+            _writer.Write(".Id = \"");
+            _writer.Write(tag.Attributes.Id);
+            _writer.WriteLine("\";");
+        }
+
         _writer.Write("Controls.Add(");
         _writer.Write(name);
         _writer.WriteLine(");");
