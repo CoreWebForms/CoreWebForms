@@ -1,11 +1,17 @@
 # WebForms on ASP.NET Core
 
-The goal of this project is to explore building some of the basic building blocks of the WebForms on ASP.NET Core. This will isolate out the actual components needed to build a functional page, including:
+The goal of this project is to explore building some of the basic building blocks of the WebForms on ASP.NET Core. This will isolate out the actual components needed to build a functional page.
 
+In scope:
+
+- `System.Web.IHttpHandler`
 - `System.Web.UI.Page`
 - `System.Web.UI.HtmlTextWriter`
 - `System.Web.UI.HtmlControls.*`
 - `System.Web.UI.WebControls.*`
+
+Stretch goals:
+
 - Compilation of `.aspx` and `.ashx`
 - Runtime compilation of `.aspx` and `.ashx` pages
 - Master pages
