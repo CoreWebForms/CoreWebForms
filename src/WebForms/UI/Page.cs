@@ -24,6 +24,8 @@ public class Page : TemplateControl, IHttpAsyncHandler
 
     internal Task ProcessAsync(HttpContext context)
     {
+        context.Response.ContentType = "text/html";
+
         if (Features.Get<HttpContext>() is { })
         {
             throw new InvalidOperationException("Page has already been processed.");
