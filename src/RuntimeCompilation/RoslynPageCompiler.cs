@@ -51,8 +51,10 @@ internal sealed class RoslynPageCompiler : IPageCompiler
             using var peStream = new MemoryStream();
             using var pdbStream = new MemoryStream();
 
+            var embeddedTexts = _isDebug ? new[] { EmbeddedText.FromSource(tree.FilePath, sourceText) } : null;
+
             var result = compilation.Emit(
-                embeddedTexts: new[] { EmbeddedText.FromSource(tree.FilePath, sourceText) },
+                embeddedTexts: embeddedTexts,
                 peStream: peStream,
                 pdbStream: pdbStream,
                 cancellationToken: token);
