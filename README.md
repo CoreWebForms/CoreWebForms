@@ -9,6 +9,7 @@ In scope:
 - `System.Web.UI.HtmlTextWriter`
 - `System.Web.UI.HtmlControls.*`
 - `System.Web.UI.WebControls.*`
+- Source compatibility
 
 Stretch goals:
 
@@ -18,6 +19,8 @@ Stretch goals:
 
 What is *NOT* in scope for this project:
 
+- Binary compatibility (i.e. projects will need to be recompiled)
+    - A separate project could look at bridging this gap, but I'd rather not be constrained by these limitations will prototyping it
 - Designer support
 - `System.Web` hosting model
 - `System.Web` membership model
