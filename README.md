@@ -27,31 +27,7 @@ This will make use of `Microsoft.AspNetCore.SystemWebAdapters` to provide the `S
 
 # Architecture
 
-There are a few components that are needed to make `.ashx`/`.aspx` to work.
-
-In the case of static compilation (i.e. the `Compile` process below is done at build time):
-
-```mermaid
-graph TD
-    ashx[.ashx] -->|Compile| handler(IHttpHandler)
-    aspx[.aspx] -->|Compile| page(Page)
-    page --> handler
-    handler --> endpoint(ASP.NET Core Endpoint)
-```
-
-However, in the dynamic compilation mode (i.e. an `.aspx` page is found in the directory at run time and the code is generated on the fly), it would look more like this:
-
-```mermaid
-graph TD
-    watcher[IFileProvider.Watch] --> ashx
-    watcher --> aspx
-    ashx[.ashx] -->|Compile| handler(IHttpHandler)
-    aspx[.aspx] -->|Compile| page(Page)
-    page --> handler
-    handler --> alc[AssemblyLoadContext]
-    alc --> datasource[EndpointDataSource]
-    datasource --> endpoint
-```
+![Architecture](./docs/images/ui-arch.png)
 
 ## IHttpHandler/IHttpModule infrastructure
 
@@ -87,6 +63,32 @@ app.UseSystemWebAdapters();
 app.MapAspxPages();
 app.MapAspxPage<MyPage>("/some/path.aspx");
 app.MapDynamicAspxPages(app.Environment.ContentRootFileProvider);
+```
+
+Pages can by dynamically or statically served. Dynamic is similar to the process of ASP.NET Framework WebForms, while statically would be similar to using `aspnet_compiler`.
+
+In the case of static compilation (i.e. the `Compile` process below is done at build time):
+
+```mermaid
+graph TD
+    ashx[.ashx] -->|Compile| handler(IHttpHandler)
+    aspx[.aspx] -->|Compile| page(Page)
+    page --> handler
+    handler --> endpoint(ASP.NET Core Endpoint)
+```
+
+However, in the dynamic compilation mode (i.e. an `.aspx` page is found in the directory at run time and the code is generated on the fly), it would look more like this:
+
+```mermaid
+graph TD
+    watcher[IFileProvider.Watch] --> ashx
+    watcher --> aspx
+    ashx[.ashx] -->|Compile| handler(IHttpHandler)
+    aspx[.aspx] -->|Compile| page(Page)
+    page --> handler
+    handler --> alc[AssemblyLoadContext]
+    alc --> datasource[EndpointDataSource]
+    datasource --> endpoint
 ```
 
 ## Compilation
