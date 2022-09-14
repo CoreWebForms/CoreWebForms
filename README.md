@@ -28,6 +28,12 @@ What is *NOT* in scope for this project:
 
 This will make use of `Microsoft.AspNetCore.SystemWebAdapters` to provide the `System.Web.HttpContext` that is at the core of the WebForms pipeline.
 
+# Try it out!
+
+Clone the project and run the sample. Two pages are available:
+  - `https://localhost:7226/dynamic_page.aspx` - Change the text in `dynamic_page.aspx` and watch it reload
+  - `https://localhost:7226/test.aspx` - A static page that just implements `System.Web.UI.Page`
+
 # Architecture
 
 ![Architecture](./docs/images/ui-arch.png)
