@@ -40,7 +40,14 @@ internal class PageEndpointRouteBuilder
             throw new InvalidOperationException("Page must have a path attribute");
         }
 
-        return Create(type, aspx.Path);
+        var path = aspx.Path;
+
+        if (!path.StartsWith('/'))
+        {
+            path = "/" + path;
+        }
+
+        return Create(type, path);
     }
 
     public static Endpoint Create(Type type, PathString path)
@@ -77,7 +84,6 @@ internal class PageEndpointRouteBuilder
                 return page.ProcessAsync(context);
             }
         }
-
     }
 
     private static RouteEndpointBuilder AddPageMetadata(RouteEndpointBuilder builder, Type type)
