@@ -3,8 +3,8 @@
 
 using System.Text;
 using System.Text.RegularExpressions;
-using Microsoft.AspNetCore.SystemWebAdapters.UI.PageParser;
 using Microsoft.AspNetCore.SystemWebAdapters.UI.PageParser.ParserImpl;
+using Microsoft.AspNetCore.SystemWebAdapters.UI.PageParser.Syntax;
 
 namespace Microsoft.AspNetCore.SystemWebAdapters.UI.PageParser;
 

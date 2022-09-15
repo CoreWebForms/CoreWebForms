@@ -4,7 +4,7 @@
 using System;
 using System.Diagnostics;
 
-namespace Microsoft.AspNetCore.SystemWebAdapters.UI.PageParser;
+namespace Microsoft.AspNetCore.SystemWebAdapters.UI.PageParser.Syntax;
 
 [DebuggerDisplay("{ToString()}:{GetText()}")]
 public struct Location : IEquatable<Location>

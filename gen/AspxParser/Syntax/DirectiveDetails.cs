@@ -3,7 +3,7 @@
 
 using System.Runtime.CompilerServices;
 
-namespace Microsoft.AspNetCore.SystemWebAdapters.UI.PageParser;
+namespace Microsoft.AspNetCore.SystemWebAdapters.UI.PageParser.Syntax;
 
 internal readonly struct DirectiveDetails
 {

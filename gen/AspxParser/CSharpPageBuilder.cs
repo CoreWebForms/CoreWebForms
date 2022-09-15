@@ -6,8 +6,9 @@ using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.AspNetCore.SystemWebAdapters.UI.PageParser.Syntax;
 
-using static Microsoft.AspNetCore.SystemWebAdapters.UI.PageParser.AspxNode;
+using static Microsoft.AspNetCore.SystemWebAdapters.UI.PageParser.Syntax.AspxNode;
 
 namespace Microsoft.AspNetCore.SystemWebAdapters.UI.PageParser;
 
