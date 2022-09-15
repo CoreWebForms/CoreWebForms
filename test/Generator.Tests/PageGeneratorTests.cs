@@ -150,7 +150,7 @@ internal partial class _page_aspx : WebApplication12.About
     }
 
     [Fact]
-    public async Task TextBoxInContent()
+    public async Task NestedTextBox()
     {
         const string BaseClass = @"namespace WebApplication12
 {
@@ -182,6 +182,55 @@ internal partial class _page_aspx : WebApplication12.About
         }}
         var control_2 = new global::System.Web.UI.LiteralControl(""{NewLine}"");
         Controls.Add(control_2);
+    }}
+}}
+";
+
+        await new VerifyCS.Test()
+        {
+            TestState =
+            {
+                Sources =
+                {
+                    ("/about.cs", BaseClass),
+                },
+                AdditionalFiles =
+                {
+                    ("/page.aspx", aspx),
+                },
+                GeneratedSources =
+                {
+                    (typeof(PageGenerator), "page.aspx.g.cs", generated),
+                },
+            },
+        }.RunAsync().ConfigureAwait(false);
+    }
+
+    [Fact]
+    public async Task NestedLiterals()
+    {
+        const string BaseClass = @"namespace WebApplication12
+{
+    public class About : global::System.Web.UI.Page
+    {
+    }
+}";
+        var aspx = @"<%@ Page Title=""About"" Language=""C#"" MasterPageFile=""~/Site.Master"" AutoEventWireup=""true"" CodeBehind=""About.aspx.cs"" Inherits=""WebApplication12.About"" %>
+<h1>Hello</h1>
+";
+        var generated = @$"[Microsoft.AspNetCore.SystemWebAdapters.UI.AspxPageAttribute(""/page.aspx"")]
+internal partial class _page_aspx : WebApplication12.About
+{{
+    protected override void InitializeComponents()
+    {{
+        var control_1 = new global::System.Web.UI.LiteralControl(""<h1>"");
+        Controls.Add(control_1);
+        var control_2 = new global::System.Web.UI.LiteralControl(""Hello"");
+        Controls.Add(control_2);
+        var control_3 = new global::System.Web.UI.LiteralControl(""</h1>"");
+        Controls.Add(control_3);
+        var control_4 = new global::System.Web.UI.LiteralControl(""\r\n"");
+        Controls.Add(control_4);
     }}
 }}
 ";

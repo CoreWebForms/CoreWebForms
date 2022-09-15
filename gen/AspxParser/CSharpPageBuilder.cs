@@ -6,14 +6,14 @@ using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Xml.Linq;
+
+using static Microsoft.AspNetCore.SystemWebAdapters.UI.PageParser.AspxNode;
 
 namespace Microsoft.AspNetCore.SystemWebAdapters.UI.PageParser;
 
-public class CSharpPageBuilder : DepthFirstAspxWithoutCloseTagVisitor<object>
+public class CSharpPageBuilder : DepthFirstAspxVisitor<object>
 {
     private readonly IndentedTextWriter _writer;
-    private readonly IDisposable _indentClose;
     private readonly IDisposable _blockClose;
     private readonly AspxParseResult _tree;
 
@@ -23,7 +23,6 @@ public class CSharpPageBuilder : DepthFirstAspxWithoutCloseTagVisitor<object>
         ClassName = ConvertPathToClassName(Path);
 
         _writer = writer;
-        _indentClose = new IndentClose(writer, includeBrace: false);
         _blockClose = new IndentClose(writer, includeBrace: true);
 
         var parser = new AspxParser();
@@ -38,7 +37,7 @@ public class CSharpPageBuilder : DepthFirstAspxWithoutCloseTagVisitor<object>
 
     public void WriteSource()
     {
-        if (_tree.RootNode.Children.OfType<AspxNode.AspxDirective>().FirstOrDefault() is not { } d)
+        if (_tree.RootNode.Children.OfType<AspxDirective>().FirstOrDefault() is not { } d)
         {
             // Should raise error
             return;
@@ -77,7 +76,7 @@ public class CSharpPageBuilder : DepthFirstAspxWithoutCloseTagVisitor<object>
         private string Prefix { get; }
     }
 
-    private void WriteDirectiveDetails(AspxNode.AspxDirective node)
+    private void WriteDirectiveDetails(AspxDirective node)
     {
         var info = new DirectiveDetails(node);
 
@@ -95,6 +94,11 @@ public class CSharpPageBuilder : DepthFirstAspxWithoutCloseTagVisitor<object>
         if (node.Children.Count == 0)
         {
             return _tree;
+        }
+
+        if (node is HtmlTag { Attributes.IsRunAtServer: false })
+        {
+            return base.VisitChildren(node);
         }
 
         if (_componentsStack.Count == 0)
@@ -120,25 +124,48 @@ public class CSharpPageBuilder : DepthFirstAspxWithoutCloseTagVisitor<object>
         return _tree;
     }
 
-    public override object Visit(AspxNode.Literal node)
+    public override object Visit(Literal node)
+        => WriteLiteral(NormalizeLiteral(node.Text));
+
+    public override object Visit(SelfClosingHtmlTag node)
+    {
+        VisitTag(node, true);
+        return default;
+    }
+
+    private object WriteLiteral(string text)
     {
         var name = Current.GetNextControlName();
-        var normalized = NormalizeLiteral(node.Text);
 
         _writer.Write("var ");
         _writer.Write(name);
         _writer.Write(" = new global::System.Web.UI.LiteralControl(\"");
-        _writer.Write(normalized);
+        _writer.Write(text);
         _writer.WriteLine("\");");
-        _writer.Write(Current.Controls);
-        _writer.Write(".Add(");
-        _writer.Write(name);
-        _writer.WriteLine(");");
+        WriteControls(name);
 
         return _tree;
     }
 
-    public override object Visit(AspxNode.AspxTag tag)
+    public override object Visit(CloseHtmlTag node)
+        => default;
+
+    public override object Visit(CloseAspxTag node)
+        => default;
+
+    public override object Visit(SelfClosingAspxTag tag)
+    {
+        VisitTag(tag);
+        return base.Visit(tag);
+    }
+
+    public override object Visit(OpenAspxTag tag)
+    {
+        VisitTag(tag);
+        return base.Visit(tag);
+    }
+
+    private void VisitTag(AspxTag tag)
     {
         // TODO: Handle prefix
         // node.Prefix
@@ -159,12 +186,7 @@ public class CSharpPageBuilder : DepthFirstAspxWithoutCloseTagVisitor<object>
             _writer.WriteLine("\";");
         }
 
-        _writer.Write(Current.Controls);
-        _writer.Write(".Add(");
-        _writer.Write(name);
-        _writer.WriteLine(");");
-
-        return base.Visit(tag);
+        WriteControls(name);
     }
 
     private readonly Dictionary<string, string> _htmlControls = new()
@@ -172,7 +194,20 @@ public class CSharpPageBuilder : DepthFirstAspxWithoutCloseTagVisitor<object>
         { "form", "HtmlForm" },
     };
 
-    public override object Visit(AspxNode.HtmlTag tag)
+    public override object Visit(OpenHtmlTag tag)
+    {
+        VisitTag(tag, false);
+        base.Visit(tag);
+
+        if (tag is { Attributes.IsRunAtServer: false })
+        {
+            WriteLiteral($"</{tag.Name}>");
+        }
+
+        return default;
+    }
+
+    private void VisitTag(HtmlTag tag, bool isClosing)
     {
         var name = Current.GetNextControlName();
 
@@ -193,30 +228,33 @@ public class CSharpPageBuilder : DepthFirstAspxWithoutCloseTagVisitor<object>
                 _writer.Write(tag.Name);
                 _writer.WriteLine("\");");
             }
+
+            if (!string.IsNullOrEmpty(tag.Attributes.Id))
+            {
+                _writer.Write(name);
+                _writer.Write(".Id = \"");
+                _writer.Write(tag.Attributes.Id);
+                _writer.WriteLine("\";");
+            }
         }
         else
         {
             _writer.Write(" = new global::System.Web.UI.LiteralControl(\"");
             _writer.Write("<");
             _writer.Write(tag.Name);
-            _writer.Write(" />");
+            _writer.Write(isClosing ? " />" : ">");
             _writer.WriteLine("\");");
         }
 
-        if (!string.IsNullOrEmpty(tag.Attributes.Id))
-        {
-            _writer.Write(name);
-            _writer.Write(".Id = \"");
-            _writer.Write(tag.Attributes.Id);
-            _writer.WriteLine("\";");
-        }
+        WriteControls(name);
+    }
 
+    private void WriteControls(string name)
+    {
         _writer.Write(Current.Controls);
         _writer.Write(".Add(");
         _writer.Write(name);
         _writer.WriteLine(");");
-
-        return base.Visit(tag);
     }
 
     private string NormalizeLiteral(string input)
