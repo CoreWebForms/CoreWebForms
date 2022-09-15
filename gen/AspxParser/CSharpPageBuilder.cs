@@ -6,17 +6,16 @@ using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Xml.Linq;
 
 namespace Microsoft.AspNetCore.SystemWebAdapters.UI.PageParser;
 
-public class CSharpPageBuilder
+public class CSharpPageBuilder : DepthFirstAspxWithoutCloseTagVisitor<object>
 {
     private readonly IndentedTextWriter _writer;
     private readonly IDisposable _indentClose;
     private readonly IDisposable _blockClose;
     private readonly AspxParseResult _tree;
-
-    private int _count;
 
     public CSharpPageBuilder(string path, IndentedTextWriter writer, string contents)
     {
@@ -49,13 +48,38 @@ public class CSharpPageBuilder
 
         using (Block())
         {
-            WriteInitializeComponents(_tree.RootNode.Children);
+            _tree.RootNode.Accept(this);
         }
     }
 
-    private void WriteDirectiveDetails(AspxNode.AspxDirective d)
+    private readonly Stack<ComponentLevel> _componentsStack = new();
+
+    private ComponentLevel Current => _componentsStack.Peek();
+
+    private class ComponentLevel
     {
-        var info = new DirectiveDetails(d);
+        private int _count = 0;
+
+        public ComponentLevel(string controls, string prefix)
+        {
+            Prefix = prefix;
+            Controls = controls;
+        }
+
+        public string CurrentLevel { get; private set; }
+
+        public string GetNextControlName() => CurrentLevel = $"{Prefix}_{++_count}";
+
+        public ComponentLevel GetNextLevel() => new($"{CurrentLevel}.Controls", CurrentLevel);
+
+        public string Controls { get; }
+
+        private string Prefix { get; }
+    }
+
+    private void WriteDirectiveDetails(AspxNode.AspxDirective node)
+    {
+        var info = new DirectiveDetails(node);
 
         _writer.Write("[Microsoft.AspNetCore.SystemWebAdapters.UI.AspxPageAttribute(\"");
         _writer.Write(Path);
@@ -66,53 +90,109 @@ public class CSharpPageBuilder
         _writer.WriteLine(info.Inherits);
     }
 
-    private void WriteInitializeComponents(IEnumerable<AspxNode> nodes)
+    protected override object VisitChildren(AspxNode node)
     {
-        _writer.WriteLine("protected override void InitializeComponents()");
-
-        using (Block())
+        if (node.Children.Count == 0)
         {
-            foreach (var node in nodes)
-            {
-                if (node is AspxNode.Literal literal)
-                {
-                    Write(literal);
-                }
-                else if (node is AspxNode.SelfClosingHtmlTag selfClosing)
-                {
-                    Write(selfClosing);
-                }
-            }
+            return _tree;
         }
+
+        if (_componentsStack.Count == 0)
+        {
+            _writer.WriteLine("protected override void InitializeComponents()");
+            _componentsStack.Push(new("Controls", "control"));
+        }
+        else
+        {
+            _componentsStack.Push(Current.GetNextLevel());
+        }
+
+        _writer.WriteLine("{");
+        _writer.Indent++;
+
+        base.VisitChildren(node);
+
+        _componentsStack.Pop();
+
+        _writer.Indent--;
+        _writer.WriteLine("}");
+
+        return _tree;
     }
 
-    private void Write(AspxNode.Literal literal)
+    public override object Visit(AspxNode.Literal node)
     {
-        var name = GetNextControlName();
-        var normalized = NormalizeLiteral(literal.Text);
+        var name = Current.GetNextControlName();
+        var normalized = NormalizeLiteral(node.Text);
 
         _writer.Write("var ");
         _writer.Write(name);
         _writer.Write(" = new global::System.Web.UI.LiteralControl(\"");
         _writer.Write(normalized);
         _writer.WriteLine("\");");
-        _writer.Write("Controls.Add(");
+        _writer.Write(Current.Controls);
+        _writer.Write(".Add(");
         _writer.Write(name);
         _writer.WriteLine(");");
+
+        return _tree;
     }
 
-    private void Write(AspxNode.SelfClosingHtmlTag tag)
+    public override object Visit(AspxNode.AspxTag tag)
     {
-        var name = GetNextControlName();
+        // TODO: Handle prefix
+        // node.Prefix
+        var name = Current.GetNextControlName();
+
+        _writer.Write("var ");
+        _writer.Write(name);
+
+        _writer.Write(" = new global::System.Web.UI.WebControls.");
+        _writer.Write(tag.ControlName);
+        _writer.WriteLine("();");
+
+        if (!string.IsNullOrEmpty(tag.Attributes.Id))
+        {
+            _writer.Write(name);
+            _writer.Write(".Id = \"");
+            _writer.Write(tag.Attributes.Id);
+            _writer.WriteLine("\";");
+        }
+
+        _writer.Write(Current.Controls);
+        _writer.Write(".Add(");
+        _writer.Write(name);
+        _writer.WriteLine(");");
+
+        return base.Visit(tag);
+    }
+
+    private readonly Dictionary<string, string> _htmlControls = new()
+    {
+        { "form", "HtmlForm" },
+    };
+
+    public override object Visit(AspxNode.HtmlTag tag)
+    {
+        var name = Current.GetNextControlName();
 
         _writer.Write("var ");
         _writer.Write(name);
 
         if (tag.Attributes.IsRunAtServer)
         {
-            _writer.Write(" = new global::System.Web.UI.HtmlControls.HtmlGenericControl(\"");
-            _writer.Write(tag.Name);
-            _writer.WriteLine("\");");
+            if (_htmlControls.TryGetValue(tag.Name, out var known))
+            {
+                _writer.Write(" = new global::System.Web.UI.HtmlControls.");
+                _writer.Write(known);
+                _writer.WriteLine("();");
+            }
+            else
+            {
+                _writer.Write(" = new global::System.Web.UI.HtmlControls.HtmlGenericControl(\"");
+                _writer.Write(tag.Name);
+                _writer.WriteLine("\");");
+            }
         }
         else
         {
@@ -131,9 +211,12 @@ public class CSharpPageBuilder
             _writer.WriteLine("\";");
         }
 
-        _writer.Write("Controls.Add(");
+        _writer.Write(Current.Controls);
+        _writer.Write(".Add(");
         _writer.Write(name);
         _writer.WriteLine(");");
+
+        return base.Visit(tag);
     }
 
     private string NormalizeLiteral(string input)
@@ -154,8 +237,6 @@ public class CSharpPageBuilder
 
         return sb.ToString();
     }
-
-    private string GetNextControlName() => $"control{_count++}";
 
     private IDisposable Block()
     {
