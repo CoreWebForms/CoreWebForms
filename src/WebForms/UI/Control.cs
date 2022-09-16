@@ -1,6 +1,7 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using System.ComponentModel;
 using System.Web.UI.Features;
 using Microsoft.AspNetCore.Http.Features;
 
@@ -8,6 +9,14 @@ namespace System.Web.UI;
 
 public class Control : IDisposable
 {
+    internal static readonly object EventDataBinding = new object();
+    internal static readonly object EventInit = new object();
+    internal static readonly object EventLoad = new object();
+    internal static readonly object EventUnload = new object();
+    internal static readonly object EventPreRender = new object();
+    private static readonly object EventDisposed = new object();
+
+    private EventHandlerList? _events;
     private StateBag? _viewState;
     private ControlCollection? _children;
     private IFeatureCollection? _features;
@@ -42,6 +51,17 @@ public class Control : IDisposable
             _id = value;
         }
     }
+    protected EventHandlerList Events
+    {
+        get
+        {
+            if (_events == null)
+            {
+                _events = new EventHandlerList();
+            }
+            return _events;
+        }
+    }
 
     public string? UniqueID
     {
@@ -74,6 +94,14 @@ public class Control : IDisposable
         }
     }
 
+    protected internal virtual void OnPreRender(EventArgs e)
+    {
+        if (_events?[EventPreRender] is EventHandler handler)
+        {
+            handler(this, e);
+        }
+    }
+
     private protected T? GetHierarchicalFeature<T>()
     {
         if (_features is not null && _features.Get<T>() is { } t)
@@ -88,6 +116,22 @@ public class Control : IDisposable
 
         return default;
     }
+
+    internal void ValidateEvent(string uniqueID)
+    {
+        ValidateEvent(uniqueID, String.Empty);
+    }
+
+    // Helper function to call validateEvent.
+    internal void ValidateEvent(string uniqueID, string eventArgument)
+    {
+        if (Page != null && SupportsEventValidation)
+        {
+            Page.ClientScript.ValidateEvent(uniqueID, eventArgument);
+        }
+    }
+
+    private static bool SupportsEventValidation => true;            //return SupportsEventValidationAttribute.SupportsEventValidation(this.GetType());
 
     public virtual void Dispose()
     {

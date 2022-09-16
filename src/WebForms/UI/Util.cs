@@ -30,4 +30,16 @@ internal static class Util
             throw e.InnerException;
         }
     }
+    internal static string EnsureEndWithSemiColon(string value)
+    {
+        if (value != null)
+        {
+            int length = value.Length;
+            if (length > 0 && value[length - 1] != ';')
+            {
+                return (value + ";");
+            }
+        }
+        return value;
+    }
 }

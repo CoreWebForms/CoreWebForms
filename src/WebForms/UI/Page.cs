@@ -2,11 +2,16 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Web.UI.Features;
+using System.Web.UI.HtmlControls;
+using System.Web.UI.WebControls;
 
 namespace System.Web.UI;
-
 public class Page : TemplateControl, IHttpAsyncHandler
 {
+    private const string HiddenClassName = "aspNetHidden";
+
+    private ClientScriptManager? _clientScriptManager;
+
     public Page()
     {
     }
@@ -46,7 +51,7 @@ public class Page : TemplateControl, IHttpAsyncHandler
         return Task.CompletedTask;
     }
 
-    private const string HiddenClassName = "aspNetHidden";
+    public HtmlForm? Form => null;
 
     internal static void BeginFormRender(HtmlTextWriter writer, string? formUniqueID)
     {
@@ -54,8 +59,34 @@ public class Page : TemplateControl, IHttpAsyncHandler
         writer.WriteAttribute("class", HiddenClassName);
         writer.WriteEndTag("div");
     }
+    public ClientScriptManager ClientScript => _clientScriptManager ??= new ClientScriptManager(this);
+
+    public bool IsPostBackEventControlRegistered { get; internal set; }
+
+    internal Control? AutoPostBackControl { get; set; }
 
     protected virtual void InitializeComponents()
     {
+    }
+
+    internal void RegisterEnabledControl(TextBox textBox)
+    {
+    }
+
+    internal void RegisterWebFormsScript()
+    {
+    }
+
+    internal void RegisterPostBackScript()
+    {
+    }
+
+    internal void RegisterFocusScript()
+    {
+    }
+
+    internal void Validate(string validationGroup)
+    {
+        throw new NotImplementedException();
     }
 }
