@@ -229,7 +229,7 @@ internal partial class _page_aspx : WebApplication12.About
         Controls.Add(control_2);
         var control_3 = new global::System.Web.UI.LiteralControl(""</h1>"");
         Controls.Add(control_3);
-        var control_4 = new global::System.Web.UI.LiteralControl(""\r\n"");
+        var control_4 = new global::System.Web.UI.LiteralControl(""{NewLine}"");
         Controls.Add(control_4);
     }}
 }}
