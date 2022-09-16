@@ -5,7 +5,7 @@ using System.Threading.Channels;
 
 namespace Microsoft.AspNetCore.SystemWebAdapters.UI.RuntimeCompilation;
 
-internal class ChannelQueue : IQueue
+internal sealed class ChannelQueue : IQueue
 {
     private readonly Channel<Func<CancellationToken, Task>> _queue;
 

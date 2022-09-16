@@ -221,9 +221,9 @@ public class Style : Component, IStateManager
             if (IsSet(PROP_CSSCLASS))
             {
                 string s = (string)ViewState["CssClass"];
-                return (s == null) ? String.Empty : s;
+                return (s == null) ? string.Empty : s;
             }
-            return String.Empty;
+            return string.Empty;
         }
         set
         {
@@ -358,7 +358,7 @@ public class Style : Component, IStateManager
         {
             if (registeredCssClass == null)
             {
-                return String.Empty;
+                return string.Empty;
             }
             return registeredCssClass;
         }
@@ -425,7 +425,6 @@ public class Style : Component, IStateManager
     /// </devdoc>
     public void AddAttributesToRender(HtmlTextWriter writer)
     {
-#if FALSE
         AddAttributesToRender(writer, null);
     }
 
@@ -435,19 +434,20 @@ public class Style : Component, IStateManager
     ///       to the client.
     ///    </para>
     /// </devdoc>
-    public virtual void AddAttributesToRender(HtmlTextWriter writer, WebControl owner) {
-#endif
-        string cssClass = String.Empty;
+    public virtual void AddAttributesToRender(HtmlTextWriter writer, WebControl owner)
+    {
+        string cssClass = string.Empty;
 
         if (IsSet(PROP_CSSCLASS))
         {
             cssClass = (string)ViewState["CssClass"];
             if (cssClass == null)
             {
-                cssClass = String.Empty;
+                cssClass = string.Empty;
             }
         }
-        if (!String.IsNullOrEmpty(registeredCssClass))
+
+        if (!string.IsNullOrEmpty(registeredCssClass))
         {
             if (cssClass.Length != 0)
             {
@@ -700,7 +700,7 @@ public class Style : Component, IStateManager
         }
 
         // 
-        string textDecoration = String.Empty;
+        string textDecoration = string.Empty;
         if (font.Underline)
         {
             textDecoration = "underline";
@@ -758,9 +758,9 @@ public class Style : Component, IStateManager
         }
         if (n == 0)
         {
-            return String.Empty;
+            return string.Empty;
         }
-        return String.Join(delimiter.ToString(CultureInfo.InvariantCulture), array);
+        return string.Join(delimiter.ToString(CultureInfo.InvariantCulture), array);
     }
 
     /// <devdoc>

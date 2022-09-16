@@ -14,6 +14,9 @@ public class Control : IDisposable
     private string? _uniqueId;
     private string? _id;
 
+    protected string? ID => Id;
+
+    protected string? ClientID => default;
     internal IFeatureCollection Features => _features ??= new FeatureCollection();
 
     public Control? Parent { get; internal set; }
@@ -23,6 +26,8 @@ public class Control : IDisposable
     public ControlCollection Controls => _children ??= new(this);
 
     protected StateBag ViewState => _viewState ??= new();
+
+    public bool IsTrackingViewState { get; set; }
 
     public string? Id
     {
