@@ -9,20 +9,18 @@ namespace Microsoft.AspNetCore.SystemWebAdapters.UI.RuntimeCompilation;
 
 internal sealed class CompilationCollection : ICompiledPagesCollection
 {
-    private readonly ILogger<CompilationCollection> _logger;
     private readonly IQueue _queue;
     private readonly IFileProvider _files;
     private readonly IPageCompiler _compiler;
 
     private Dictionary<string, TypeInfo> _types;
-    private List<Type> _endpointTypes;
+    private List<ICompiledPage> _endpointTypes;
 
     private CancellationTokenSource _cts;
     private CancellationChangeToken _token;
 
     public CompilationCollection(IFileProvider files, IPageCompiler compiler, IQueue queue, ILoggerFactory logger)
     {
-        _logger = logger.CreateLogger<CompilationCollection>();
         _queue = queue;
         _files = files;
         _compiler = compiler;
@@ -36,7 +34,7 @@ internal sealed class CompilationCollection : ICompiledPagesCollection
         OnFileChange();
     }
 
-    IReadOnlyList<Type> ICompiledPagesCollection.PageTypes => _endpointTypes;
+    IReadOnlyList<ICompiledPage> ICompiledPagesCollection.Pages => _endpointTypes;
 
     IChangeToken ICompiledPagesCollection.ChangeToken => _token;
 
@@ -60,7 +58,7 @@ internal sealed class CompilationCollection : ICompiledPagesCollection
         {
             if (_types.TryGetValue(removed, out var existing))
             {
-                _compiler.RemovePage(existing.type);
+                existing.Page.Dispose();
             }
         }
 
@@ -77,7 +75,7 @@ internal sealed class CompilationCollection : ICompiledPagesCollection
         foreach (var changed in tracker.Changed)
         {
             _types.Remove(changed.Id, out var existing);
-            _compiler.RemovePage(existing.type);
+            existing.Page.Dispose();
 
             var type = await _compiler.CompilePageAsync(changed, token).ConfigureAwait(false);
 
@@ -88,7 +86,7 @@ internal sealed class CompilationCollection : ICompiledPagesCollection
         }
 
         _types = updatedCollection;
-        _endpointTypes = updatedCollection.Select(u => u.Value.type).ToList();
+        _endpointTypes = updatedCollection.Select(u => u.Value.Page).ToList();
 
         var current = _cts;
 
@@ -164,5 +162,5 @@ internal sealed class CompilationCollection : ICompiledPagesCollection
         public IEnumerable<string> Removed => _existing;
     }
 
-    private readonly record struct TypeInfo(DateTimeOffset LastModified, Type type);
+    private readonly record struct TypeInfo(DateTimeOffset LastModified, ICompiledPage Page);
 }

@@ -1,13 +1,15 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using Microsoft.Extensions.Primitives;
+using Microsoft.AspNetCore.Http;
 
 namespace Microsoft.AspNetCore.SystemWebAdapters.UI.RuntimeCompilation;
 
-internal interface ICompiledPagesCollection
+internal interface ICompiledPage : IDisposable
 {
-    IReadOnlyList<ICompiledPage> Pages { get; }
+    PathString Path { get; }
 
-    IChangeToken ChangeToken { get; }
+    Type? Type { get; }
+
+    Memory<byte> Error { get; }
 }

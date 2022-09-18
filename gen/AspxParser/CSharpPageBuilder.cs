@@ -4,6 +4,7 @@
 using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
 using Microsoft.AspNetCore.SystemWebAdapters.UI.PageParser.Syntax;
@@ -32,17 +33,22 @@ public class CSharpPageBuilder : DepthFirstAspxVisitor<object>
         _tree = parser.Parse(source);
     }
 
+    public ImmutableArray<AspxParseError> Errors => _tree.ParseErrors;
+
     public string ClassName { get; }
 
     public string Path { get; }
+
+    public bool HasDirective { get; private set; }
 
     public void WriteSource()
     {
         if (_tree.RootNode.Children.OfType<AspxDirective>().FirstOrDefault() is not { } d)
         {
-            // Should raise error
             return;
         }
+
+        HasDirective = true;
 
         WriteDirectiveDetails(d);
 

@@ -5,7 +5,5 @@ namespace Microsoft.AspNetCore.SystemWebAdapters.UI.RuntimeCompilation;
 
 internal interface IPageCompiler
 {
-    Task<Type?> CompilePageAsync(PageFile file, CancellationToken token);
-
-    void RemovePage(Type type);
+    Task<ICompiledPage> CompilePageAsync(PageFile file, CancellationToken token);
 }

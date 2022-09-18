@@ -3,6 +3,7 @@
 
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.AspNetCore.Routing.Patterns;
 using Microsoft.AspNetCore.SystemWebAdapters.UI.RuntimeCompilation;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
@@ -28,27 +29,36 @@ public static class DynamicPageEndpointBuilder
         public DynamicPageEndpointDataSource(ICompiledPagesCollection collection)
         {
             _collection = collection;
-            _endpoints = new(Array.Empty<Endpoint>(), Array.Empty<Type>());
+            _endpoints = new(Array.Empty<Endpoint>(), Array.Empty<ICompiledPage>());
         }
 
         public override IReadOnlyList<Endpoint> Endpoints
         {
             get
             {
-                if (ReferenceEquals(_collection.PageTypes, _endpoints.Types))
+                if (ReferenceEquals(_collection.Pages, _endpoints.Types))
                 {
                     return _endpoints.Endpoints;
                 }
 
                 var newList = new List<Endpoint>();
-                var types = _collection.PageTypes;
+                var pages = _collection.Pages;
 
-                foreach (var type in types)
+                foreach (var page in pages)
                 {
-                    newList.Add(PageEndpointRouteBuilder.Create(type));
+                    if (page.Type is { } type)
+                    {
+                        newList.Add(PageEndpointRouteBuilder.Create(type, page.Path));
+                    }
+                    else
+                    {
+                        var pattern = RoutePatternFactory.Parse(page.Path);
+                        var endpoint = new RouteEndpoint(ctx => ctx.Response.Body.WriteAsync(page.Error).AsTask(), pattern, 0, null, null);
+                        newList.Add(endpoint);
+                    }
                 }
 
-                _endpoints = new(newList, types);
+                _endpoints = new(newList, pages);
 
                 return newList;
             }
@@ -56,6 +66,6 @@ public static class DynamicPageEndpointBuilder
 
         public override IChangeToken GetChangeToken() => _collection.ChangeToken;
 
-        private readonly record struct CompiledEndpoint(IReadOnlyList<Endpoint> Endpoints, IReadOnlyList<Type> Types);
+        private readonly record struct CompiledEndpoint(IReadOnlyList<Endpoint> Endpoints, IReadOnlyList<ICompiledPage> Types);
     }
 }
