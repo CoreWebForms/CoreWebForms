@@ -11,9 +11,10 @@ namespace Microsoft.AspNetCore.Builder;
 
 public static class PageExtensions
 {
-    public static void AddWebForms(this ISystemWebAdapterBuilder services)
+    public static ISystemWebAdapterBuilder AddWebForms(this ISystemWebAdapterBuilder services)
     {
         services.AddHttpHandlers();
+        return services;
     }
 
     public static void UseWebForms(this IApplicationBuilder app)
