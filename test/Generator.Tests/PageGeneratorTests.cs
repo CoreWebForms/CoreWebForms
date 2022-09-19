@@ -121,7 +121,7 @@ internal partial class _page_aspx : WebApplication12.About
     protected override void InitializeComponents()
     {{
         var control_1 = new global::System.Web.UI.HtmlControls.HtmlGenericControl(""div"");
-        control_1.Id = ""hi"";
+        control_1.ID = ""hi"";
         Controls.Add(control_1);
         var control_2 = new global::System.Web.UI.LiteralControl(""{NewLine}"");
         Controls.Add(control_2);
@@ -169,13 +169,13 @@ internal partial class _page_aspx : WebApplication12.About
     protected override void InitializeComponents()
     {{
         var control_1 = new global::System.Web.UI.HtmlControls.HtmlForm();
-        control_1.Id = ""frm"";
+        control_1.ID = ""frm"";
         Controls.Add(control_1);
         {{
             var control_1_1 = new global::System.Web.UI.LiteralControl(""{NewLine}    "");
             control_1.Controls.Add(control_1_1);
             var control_1_2 = new global::System.Web.UI.WebControls.TextBox();
-            control_1_2.Id = ""txt"";
+            control_1_2.ID = ""txt"";
             control_1.Controls.Add(control_1_2);
             var control_1_3 = new global::System.Web.UI.LiteralControl(""{NewLine}"");
             control_1.Controls.Add(control_1_3);
