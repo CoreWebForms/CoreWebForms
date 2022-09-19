@@ -236,6 +236,7 @@ public class CSharpPageBuilder : DepthFirstAspxVisitor<object>
                 _writer.WriteLine("\");");
             }
 
+            //todo - add attribute support for "Value" for label
             if (!string.IsNullOrEmpty(tag.Attributes.Id))
             {
                 _writer.Write(name);

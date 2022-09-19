@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.ComponentModel;
+using System.Runtime.InteropServices;
 using System.Web.UI.Features;
 using Microsoft.AspNetCore.Http.Features;
 
@@ -77,6 +78,14 @@ public class Control : IDisposable
             return _uniqueId;
         }
     }
+
+    internal bool HasRenderingData() { return HasControls() || HasRenderDelegate(); }
+
+    public virtual bool HasControls() { return Controls != null && Controls.Count > 0; }
+
+    internal bool HasRenderDelegate() => false;
+
+    protected virtual void AddParsedSubObject(object obj) { Control control = obj as Control; if (control != null) { Controls.Add(control); } }
 
     protected Page? Page => GetHierarchicalFeature<Page>();
 

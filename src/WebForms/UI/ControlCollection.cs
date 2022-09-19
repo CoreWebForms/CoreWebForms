@@ -36,4 +36,9 @@ public class ControlCollection : ICollection
     {
         return ((IEnumerable)_controls).GetEnumerator();
     }
+
+    internal void Clear()
+    {
+        _controls.Clear();
+    }
 }
