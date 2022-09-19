@@ -244,7 +244,7 @@ public class TextBox : WebControl, IPostBackDataHandler, IEditableTextControl
     protected override void AddAttributesToRender(HtmlTextWriter writer)
     {
         // Make sure we are in a form tag with runat=server.
-        Page page = Page;
+        var page = Page;
         if (page != null)
         {
             // TODO

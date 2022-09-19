@@ -14,7 +14,9 @@ public class Control : IDisposable
     internal static readonly object EventLoad = new object();
     internal static readonly object EventUnload = new object();
     internal static readonly object EventPreRender = new object();
+#pragma warning disable CA1823 // Avoid unused private fields
     private static readonly object EventDisposed = new object();
+#pragma warning restore CA1823 // Avoid unused private fields
 
     private EventHandlerList? _events;
     private StateBag? _viewState;

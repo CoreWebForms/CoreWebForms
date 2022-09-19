@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Diagnostics;
+using System.Web;
 using System.Web.UI;
 using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
@@ -67,14 +68,17 @@ public class PageTests
         services.AddLogging();
         services.AddOptions();
         services.AddRouting();
-        services.AddSystemWebAdapters();
+        services.AddSystemWebAdapters()
+            .AddWebForms();
 
         using var provider = services.BuildServiceProvider();
 
         var app = new ApplicationBuilder(provider);
 
         app.UseRouting();
+        app.UseHttpHandlers();
         app.UseSystemWebAdapters();
+        app.UseWebForms();
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapAspxPage<TPage>("/path");
@@ -135,7 +139,7 @@ public class PageTests
             ContentRootFileProvider = new PhysicalFileProvider(ContentRootPath);
         }
 
-        public string? ApplicationName { get; set; } = nameof(ApplicationName);
+        public string ApplicationName { get; set; } = nameof(ApplicationName);
         public IFileProvider ContentRootFileProvider { get; set; }
         public string ContentRootPath { get; set; }
         public string EnvironmentName { get; set; } = string.Empty;

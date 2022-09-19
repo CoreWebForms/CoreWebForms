@@ -48,7 +48,7 @@ public static class DynamicPageEndpointBuilder
                 {
                     if (page.Type is { } type)
                     {
-                        newList.Add(PageEndpointRouteBuilder.Create(type, page.Path));
+                        newList.Add(PageEndpointRoute.Create(type, page.Path));
                     }
                     else
                     {

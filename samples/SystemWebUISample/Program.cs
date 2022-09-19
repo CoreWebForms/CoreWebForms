@@ -2,11 +2,13 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Runtime.Loader;
+using System.Web;
 using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddSystemWebAdapters()
+    .AddWebForms()
     .AddDynamicPages();
 
 var app = builder.Build();
@@ -23,7 +25,9 @@ app.UseHttpsRedirection();
 
 app.UseRouting();
 
+app.UseHttpHandlers();
 app.UseSystemWebAdapters();
+app.UseWebForms();
 
 app.Map("/alcs", () => AssemblyLoadContext.All.Select(a => new { a.Name, Count = a.Assemblies.Count() }).OrderBy(a => a.Name));
 app.MapAspxPages();

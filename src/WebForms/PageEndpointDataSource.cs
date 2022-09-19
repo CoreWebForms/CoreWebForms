@@ -13,14 +13,14 @@ internal sealed class PageEndpointDataSource : EndpointDataSource, IChangeToken
 
     public void Add(Type type)
     {
-        var endpoint = PageEndpointRouteBuilder.Create(type);
+        var endpoint = PageEndpointRoute.Create(type);
 
         _endpoints.Add(endpoint);
     }
 
     public void Add(Type type, PathString path)
     {
-        var endpoint = PageEndpointRouteBuilder.Create(type, path);
+        var endpoint = PageEndpointRoute.Create(type, path);
 
         _endpoints.Add(endpoint);
     }

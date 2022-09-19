@@ -38,6 +38,9 @@ public static class PageEndpointBuilder
         }
     }
 
+    public static void MapAspxPage(this IEndpointRouteBuilder endpoints, Type page, PathString path)
+        => endpoints.GetPageDataSource().Add(page, path);
+
     public static void MapAspxPage<TPage>(this IEndpointRouteBuilder endpoints, PathString path)
         where TPage : Page
         => endpoints.GetPageDataSource().Add(typeof(TPage), path);

@@ -12,4 +12,8 @@
     <PackageReference Include="Microsoft.AspNetCore.SystemWebAdapters" Version="1.0.0-preview.3.22370.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="Microsoft.AspNetCore.SystemWebAdapters.UI"/>
+  </ItemGroup>
+
 </Project>

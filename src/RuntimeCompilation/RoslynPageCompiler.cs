@@ -45,7 +45,7 @@ internal sealed class RoslynPageCompiler : IPageCompiler
             return new CompiledPage(writingResult.Path) { Error = Encoding.UTF8.GetBytes(errorMessage) };
         }
 
-        if (writingResult is { Errors.IsDefaultOrEmpty: true })
+        if (writingResult is { Errors.IsDefault: false, Errors.IsEmpty: false })
         {
             return new CompiledPage(writingResult.Path) { Error = JsonSerializer.SerializeToUtf8Bytes(writingResult.Errors) };
         }
@@ -183,22 +183,22 @@ internal sealed class RoslynPageCompiler : IPageCompiler
         var contents = await GetContentsAsync(file).ConfigureAwait(false);
         var generator = new CSharpPageBuilder(Path.Combine(directory, file.Name), writer, contents);
 
-        if (!generator.Errors.IsDefaultOrEmpty) 
+        if (!generator.Errors.IsDefaultOrEmpty)
         {
             return new WritingResult(generator.Path) { Errors = generator.Errors };
         }
+
+        generator.WriteSource();
 
         if (!generator.HasDirective)
         {
             return new WritingResult(generator.Path) { ErrorMessage = "File does not have a directive" };
         }
 
-        generator.WriteSource();
-
         return new WritingResult(generator.Path) { ClassName = generator.ClassName };
     }
 
-    private record WritingResult(string Path)
+    private sealed record WritingResult(string Path)
     {
         public string? ClassName { get; init; }
 

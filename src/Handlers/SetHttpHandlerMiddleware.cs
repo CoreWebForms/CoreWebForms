@@ -14,7 +14,7 @@ internal sealed class SetHttpHandlerMiddleware
 
     public Task InvokeAsync(HttpContext context)
     {
-        var feature = new HttpHandlerEndpointFeature();
+        var feature = new HttpHandlerEndpointFeature(context, context.Features.Get<IEndpointFeature>());
 
         context.Features.Set<IHttpHandlerFeature>(feature);
         context.Features.Set<IEndpointFeature>(feature);
