@@ -5,6 +5,7 @@ using System.CodeDom.Compiler;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Runtime.Loader;
 using System.Text;
 using System.Text.Json;
@@ -81,7 +82,10 @@ internal sealed class RoslynPageCompiler : IPageCompiler
         {
             _logger.LogWarning("{ErrorCount} error(s) found compiling {Route}", result.Diagnostics.Length, writingResult.Path);
 
-            var message = JsonSerializer.SerializeToUtf8Bytes(result.Diagnostics);
+            var error = result.Diagnostics
+                .Select(d => new { d.Id, Message = d.GetMessage(CultureInfo.CurrentCulture) });
+
+            var message = JsonSerializer.SerializeToUtf8Bytes(error);
 
             return new CompiledPage(writingResult.Path) { Error = message };
         }

@@ -67,6 +67,11 @@ public class Control : IDisposable
     {
         get
         {
+            if (_id is not null)
+            {
+                return _id;
+            }
+
             if (_uniqueId is null && GetHierarchicalFeature<IUniqueIdGeneratorFeature>() is { } generator)
             {
                 _uniqueId = generator.GetUniqueIdGenerator(this);
