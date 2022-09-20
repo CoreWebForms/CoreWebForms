@@ -4,7 +4,6 @@
 using System.Collections.Specialized;
 using System.Globalization;
 using System.IO.Compression;
-using System.Text.Json;
 using System.Web.UI.WebControls;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -70,11 +69,6 @@ internal class ViewStateManager : IViewStateManager
 
         ClientState = Convert.ToBase64String(ms.ToArray());
     }
-
-    private static readonly JsonSerializerOptions _options = new JsonSerializerOptions
-    {
-        UnknownTypeHandling = Text.Json.Serialization.JsonUnknownTypeHandling.JsonElement
-    };
 
     private ViewStateData? LoadDictionary(string state)
     {
