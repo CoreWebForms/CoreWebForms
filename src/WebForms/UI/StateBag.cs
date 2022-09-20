@@ -1,11 +1,10 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
 namespace System.Web.UI;
 
 using System.Collections;
+using System.Diagnostics.CodeAnalysis;
 
 /*
  * The StateBag class is a helper class used to manage state of properties.
@@ -63,7 +62,7 @@ public sealed class StateBag : IStateManager, IDictionary
     ///    when you set this property to <see langword='null'/>
     ///    the key will be saved to allow tracking of the item's state.</para>
     /// </devdoc>
-    public object this[string key]
+    public object? this[string key]
     {
         get
         {
@@ -79,21 +78,18 @@ public sealed class StateBag : IStateManager, IDictionary
 
             return null;
         }
-        set
-        {
-            Add(key, value);
-        }
+        set => Add(key, value);
     }
 
-    object IDictionary.this[object key]
+    object? IDictionary.this[object key]
     {
-        get { return this[(string)key]; }
-        set { this[(string)key] = value; }
+        get => this[(string)key];
+        set => this[(string)key] = value;
     }
 
-    public StateItem Add(string key, object value)
+    [return: NotNullIfNotNull(nameof(value))]
+    public StateItem? Add(string key, object? value)
     {
-
         if (string.IsNullOrEmpty(key))
         {
             throw new ArgumentOutOfRangeException(nameof(key));
@@ -119,7 +115,7 @@ public sealed class StateBag : IStateManager, IDictionary
             }
         }
 
-        if (item != null && IsTrackingViewState)
+        if (item is not null && IsTrackingViewState)
         {
             item.IsDirty = true;
         }
@@ -127,7 +123,7 @@ public sealed class StateBag : IStateManager, IDictionary
         return item;
     }
 
-    void IDictionary.Add(object key, object value) => Add((string)key, value);
+    void IDictionary.Add(object key, object? value) => Add((string)key, value);
 
     public void Clear() => bag.Clear();
 
@@ -199,9 +195,9 @@ public sealed class StateBag : IStateManager, IDictionary
 
         foreach (var item in bag)
         {
-            if (item.Value.IsDirty)
+            if (item.Value.IsDirty && item.Value.Value is { } value)
             {
-                (list ??= new()).Add(new(item.Key, item.Value.Value));
+                (list ??= new()).Add(new(item.Key, value));
             }
         }
 

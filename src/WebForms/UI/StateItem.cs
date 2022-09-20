@@ -13,16 +13,13 @@ namespace System.Web.UI;
 /// </devdoc>
 public sealed class StateItem
 {
-    private object value;
-    private bool isDirty;
-
     /*
      * Constructs a StateItem with an initial value.
      */
-    internal StateItem(object initialValue)
+    internal StateItem(object? initialValue)
     {
-        value = initialValue;
-        isDirty = false;
+        Value = initialValue;
+        IsDirty = false;
     }
 
     /*
@@ -32,17 +29,7 @@ public sealed class StateItem
     /// <devdoc>
     /// <para>Indicates whether the <see cref='System.Web.UI.StateItem'/> object has been modified.</para>
     /// </devdoc>
-    public bool IsDirty
-    {
-        get
-        {
-            return isDirty;
-        }
-        set
-        {
-            isDirty = value;
-        }
-    }
+    public bool IsDirty { get; set; }
 
     /*
      * Property to access the StateItem value.
@@ -52,15 +39,5 @@ public sealed class StateItem
     /// <para>Indicates the value of the item that is stored in the <see cref='System.Web.UI.StateBag'/> 
     /// object.</para>
     /// </devdoc>
-    public object Value
-    {
-        get
-        {
-            return value;
-        }
-        set
-        {
-            this.value = value;
-        }
-    }
+    public object? Value { get; set; }
 }
