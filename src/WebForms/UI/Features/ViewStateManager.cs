@@ -119,7 +119,11 @@ internal class ViewStateManager : IViewStateManager
             {
                 var key = reader.ReadString();
                 var value = _serializer.Deserialize(reader);
-                items.Add((key, value));
+
+                if (value is not null)
+                {
+                    items.Add((key, value));
+                }
             }
 
             result.Add(name, items);

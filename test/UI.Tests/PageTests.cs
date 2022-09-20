@@ -89,6 +89,7 @@ public class PageTests
         var httpContext = new DefaultHttpContext();
         httpContext.Request.Path = "/path";
         httpContext.Response.Body = body;
+        httpContext.RequestServices = provider;
 
         // Act
         await pipeline(httpContext).ConfigureAwait(false);
