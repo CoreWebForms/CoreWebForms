@@ -193,6 +193,14 @@ public class CSharpPageBuilder : DepthFirstAspxVisitor<object>
             _writer.WriteLine("\";");
         }
 
+        if (tag.Attributes.ContainsKey("Text") && !string.IsNullOrEmpty(tag.Attributes["Text"]))
+        {
+            _writer.Write(name);
+            _writer.Write(".Text = \"");
+            _writer.Write(tag.Attributes["Text"]);
+            _writer.WriteLine("\";");
+        }
+
         WriteControls(name);
     }
 

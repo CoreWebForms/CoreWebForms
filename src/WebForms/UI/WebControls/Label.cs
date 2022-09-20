@@ -104,10 +104,7 @@ namespace System.Web.UI.WebControls
                 {
                     Controls.Clear();
                 }
-#if false // todo
-
                 ViewState["Text"] = value;
-#endif                
             }
         }
 
