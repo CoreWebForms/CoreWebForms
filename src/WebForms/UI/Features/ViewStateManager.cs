@@ -47,8 +47,6 @@ internal class ViewStateManager : IViewStateManager
     public void RefreshControls()
     {
         var data = LoadDictionary(ClientState);
-        var eventSource = _form?[Page.postEventArgumentID];
-        var hasEventSource = !string.IsNullOrEmpty(eventSource);
 
         foreach (var child in _page.AllChildren)
         {
@@ -60,10 +58,9 @@ internal class ViewStateManager : IViewStateManager
                     {
                         postBack.LoadPostData(id, _form);
                     }
-
-                    if (hasEventSource && child is IPostBackEventHandler eventHandler && _form?[Page.postEventArgumentID] is { } eventArgument)
+                    else if (child is IPostBackEventHandler eventHandler)
                     {
-                        eventHandler.RaisePostBackEvent(eventArgument);
+                        eventHandler.RaisePostBackEvent(_form?[Page.postEventArgumentID]);
                     }
                 }
 

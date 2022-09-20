@@ -118,6 +118,8 @@ public class Page : TemplateControl, IHttpAsyncHandler
 
     internal void RegisterPostBackScript()
     {
+        ClientScript.RegisterHiddenField(postEventSourceID, String.Empty);
+        ClientScript.RegisterHiddenField(postEventArgumentID, String.Empty);
     }
 
     internal void RegisterFocusScript()
@@ -126,7 +128,6 @@ public class Page : TemplateControl, IHttpAsyncHandler
 
     internal void Validate(string validationGroup)
     {
-        throw new NotImplementedException();
     }
 
     internal NameValueCollection RequestValueCollection => Context.Request.Params;

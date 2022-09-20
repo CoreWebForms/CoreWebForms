@@ -26,7 +26,7 @@ public interface IPostBackEventHandler {
     ///       Enables a control to process the event fired by a form post back.
     ///    </para>
     /// </devdoc>
-    void RaisePostBackEvent(string eventArgument);
+    void RaisePostBackEvent(string? eventArgument);
 }
 
 }
