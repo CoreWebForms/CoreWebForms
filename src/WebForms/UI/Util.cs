@@ -11,6 +11,7 @@
 
 namespace System.Web.UI;
 
+using System.Diagnostics;
 using System.Reflection;
 using System.Text;
 
@@ -19,6 +20,25 @@ internal static class Util
     internal static string QuoteJScriptString(string value)
     {
         return QuoteJScriptString(value, false);
+    }
+
+    internal static string MergeScript(string firstScript, string secondScript)
+    {
+        Debug.Assert(!String.IsNullOrEmpty(secondScript));
+
+        if (!String.IsNullOrEmpty(firstScript))
+        {
+            // 
+            return firstScript + secondScript;
+        }
+        else
+        {
+            if (secondScript.TrimStart().StartsWith(ClientScriptManager.JscriptPrefix, StringComparison.Ordinal))
+            {
+                return secondScript;
+            }
+            return ClientScriptManager.JscriptPrefix + secondScript;
+        }
     }
 
     internal static string QuoteJScriptString(string value, bool forUrl)

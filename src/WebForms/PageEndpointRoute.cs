@@ -13,14 +13,14 @@ namespace Microsoft.AspNetCore.Builder;
 
 internal class PageEndpointRoute
 {
-    public static Endpoint Create(Type type)
+    public static Endpoint? Create(Type type)
     {
         if (type.GetCustomAttribute<AspxPageAttribute>() is { Path: { } path })
         {
             return Create(type, path);
         }
 
-        throw new InvalidOperationException("Page must be annotated with AspPageAttribute if path is not specified");
+        return null;
     }
 
     public static Endpoint Create(Type type, PathString path)

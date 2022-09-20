@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
+using System.Xml.Linq;
 using Microsoft.AspNetCore.SystemWebAdapters.UI.PageParser.Syntax;
 
 using static Microsoft.AspNetCore.SystemWebAdapters.UI.PageParser.Syntax.AspxNode;
@@ -185,6 +186,13 @@ public class CSharpPageBuilder : DepthFirstAspxVisitor<object>
         _writer.Write(tag.ControlName);
         _writer.WriteLine("();");
 
+        WriteAttributes(tag, name);
+
+        WriteControls(name);
+    }
+
+    private void WriteAttributes(AspxTag tag, string name)
+    {
         if (!string.IsNullOrEmpty(tag.Attributes.Id))
         {
             _writer.Write(name);
@@ -193,15 +201,70 @@ public class CSharpPageBuilder : DepthFirstAspxVisitor<object>
             _writer.WriteLine("\";");
         }
 
-        if (tag.Attributes.ContainsKey("Text") && !string.IsNullOrEmpty(tag.Attributes["Text"]))
+        foreach (var attribute in tag.Attributes)
         {
-            _writer.Write(name);
-            _writer.Write(".Text = \"");
-            _writer.Write(tag.Attributes["Text"]);
-            _writer.WriteLine("\";");
+            var kind = _knownTypes.TryGetValue(attribute.Key, out var type) ? type : DataType.None;
+
+            if (kind == DataType.None)
+            {
+                _writer.Write(name);
+                _writer.Write(".Attributes.Add(\"");
+                _writer.Write(attribute.Key);
+                _writer.Write("\", \"");
+                _writer.Write(attribute.Value);
+                _writer.WriteLine("\");");
+            }
+            else
+            {
+                _writer.Write(name);
+                _writer.Write(".");
+
+                var propertyName = attribute.Key == "OnClick" ? "Click" : attribute.Key;
+
+                _writer.Write(propertyName);
+
+                if (kind is DataType.Delegate)
+                {
+                    _writer.Write(" += ");
+                }
+                else
+                {
+                    _writer.Write(" = ");
+                }
+
+                WriteAttributeValue(kind, attribute.Value);
+
+                _writer.WriteLine(";");
+            }
+        }
+    }
+
+    private void WriteAttributeValue(DataType kind, string value)
+    {
+        if (kind == DataType.String)
+        {
+            _writer.Write('\"');
+            _writer.Write(value);
+            _writer.Write('\"');
         }
 
-        WriteControls(name);
+        if (kind == DataType.Delegate)
+        {
+            _writer.Write(value);
+        }
+    }
+
+    private readonly Dictionary<string, DataType> _knownTypes = new()
+    {
+        { "Text", DataType.String },
+        { "OnClick", DataType.Delegate},
+    };
+
+    private enum DataType
+    {
+        None,
+        String,
+        Delegate,
     }
 
     private readonly Dictionary<string, string> _htmlControls = new()

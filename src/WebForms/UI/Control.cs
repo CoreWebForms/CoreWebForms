@@ -198,6 +198,26 @@ public class Control : IDisposable
     {
     }
 
+    protected virtual bool OnBubbleEvent(object source, EventArgs args)
+    {
+        return false;
+    }
+
+    public string ResolveClientUrl(string relativeUrl) => relativeUrl;
+
+    protected void RaiseBubbleEvent(object source, EventArgs args)
+    {
+        var currentTarget = Parent;
+        while (currentTarget != null)
+        {
+            if (currentTarget.OnBubbleEvent(source, args))
+            {
+                return;
+            }
+            currentTarget = currentTarget.Parent;
+        }
+    }
+
     protected virtual void LoadViewState(object savedState)
     {
         if (savedState != null)

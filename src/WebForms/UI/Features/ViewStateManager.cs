@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections.Specialized;
+using System.Diagnostics.Tracing;
 using System.Globalization;
 using System.IO.Compression;
 using System.Web.UI.WebControls;
@@ -46,14 +47,24 @@ internal class ViewStateManager : IViewStateManager
     public void RefreshControls()
     {
         var data = LoadDictionary(ClientState);
+        var eventSource = _form?[Page.postEventArgumentID];
+        var hasEventSource = !string.IsNullOrEmpty(eventSource);
 
         foreach (var child in _page.AllChildren)
         {
             if (child.ID is { } id)
             {
-                if (_form is not null && child is IPostBackDataHandler postBack && _form.Get(id) is not null)
+                if (_form is not null && _form.Get(id) is not null)
                 {
-                    postBack.LoadPostData(id, _form);
+                    if (child is IPostBackDataHandler postBack)
+                    {
+                        postBack.LoadPostData(id, _form);
+                    }
+
+                    if (hasEventSource && child is IPostBackEventHandler eventHandler && _form?[Page.postEventArgumentID] is { } eventArgument)
+                    {
+                        eventHandler.RaisePostBackEvent(eventArgument);
+                    }
                 }
 
                 if (data is not null && data.TryGetValue(id, out var values))

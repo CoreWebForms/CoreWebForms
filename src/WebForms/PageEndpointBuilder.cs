@@ -32,7 +32,7 @@ public static class PageEndpointBuilder
             {
                 if (type.IsAssignableTo(typeof(Page)))
                 {
-                    dataSource.Add(type);
+                    dataSource.Add(type, false);
                 }
             }
         }

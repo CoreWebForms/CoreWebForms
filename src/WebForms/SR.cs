@@ -5,9 +5,15 @@ namespace System.Web;
 
 internal static class SR
 {
-    public static string GetString(string name, params object[] args)
-        => name;
-
+    public static string GetString(string name, params object[] args) => name;
+    
+    public const string Button_CausesValidation = nameof(Button_CausesValidation);
+    public const string Button_OnClick = nameof(Button_OnClick);
+    public const string Button_OnClientClick = nameof(Button_OnClientClick);
+    public const string Button_OnCommand = nameof(Button_OnCommand);
+    public const string Button_PostBackUrl = nameof(Button_PostBackUrl);
+    public const string Button_Text = nameof(Button_Text);
+    public const string Button_UseSubmitBehavior = nameof(Button_UseSubmitBehavior);
     public const string Cannot_exit_up_top_directory = nameof(Cannot_exit_up_top_directory);
     public const string ClientScriptManager_InvalidPostBackArgument = nameof(ClientScriptManager_InvalidPostBackArgument);
     public const string ClientScriptManager_JqueryNotRegistered = nameof(ClientScriptManager_JqueryNotRegistered);
@@ -26,11 +32,13 @@ internal static class SR
     public const string Invalid_vpath = nameof(Invalid_vpath);
     public const string InvalidOffsetOrCount = nameof(InvalidOffsetOrCount);
     public const string InvalidSerializedData = nameof(InvalidSerializedData);
+    public const string LabelForNotFound = nameof(LabelForNotFound);
     public const string Page_CallBackTargetInvalid = nameof(Page_CallBackTargetInvalid);
     public const string Parameter_NullOrEmpty = nameof(Parameter_NullOrEmpty);
     public const string Path_must_be_rooted = nameof(Path_must_be_rooted);
     public const string PersonalizationProviderHelper_TrimmedEmptyString = nameof(PersonalizationProviderHelper_TrimmedEmptyString);
     public const string Physical_path_not_allowed = nameof(Physical_path_not_allowed);
+    public const string PostBackControl_ValidationGroup = nameof(PostBackControl_ValidationGroup);
     public const string StateManagedCollection_InvalidIndex = nameof(StateManagedCollection_InvalidIndex);
     public const string StateManagedCollection_NoKnownTypes = nameof(StateManagedCollection_NoKnownTypes);
     public const string StringUtil_Trimmed_String_Exceed_Maximum_Length = nameof(StringUtil_Trimmed_String_Exceed_Maximum_Length);
@@ -50,5 +58,6 @@ internal static class SR
     public const string Type_not_creatable_from_string = nameof(Type_not_creatable_from_string);
     public const string UnitParseNoDigits = nameof(UnitParseNoDigits);
     public const string UnitParseNumericPart = nameof(UnitParseNumericPart);
+    public const string WebControl_CommandArgument = nameof(WebControl_CommandArgument);
+    public const string WebControl_CommandName = nameof(WebControl_CommandName);
 }
-

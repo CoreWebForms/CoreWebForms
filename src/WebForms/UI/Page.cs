@@ -135,6 +135,17 @@ public class Page : TemplateControl, IHttpAsyncHandler
 
     internal bool ShouldSuppressMacValidationException(Exception ex) => true;
 
+    internal void VerifyRenderingInServerForm(Control control)
+    {
+        if (!Features.GetRequired<IFormWriterFeature>().IsRendering)
+        {
+            throw new InvalidOperationException("Must be in a form");
+        }
+    }
+
+    internal IReadOnlyCollection<object> GetValidators(string validationGroup)
+        => Array.Empty<object>();
+
     internal bool ClientSupportsJavaScript => true;
 
     internal bool SupportsCallback => true;

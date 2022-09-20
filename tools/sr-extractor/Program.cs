@@ -1,6 +1,8 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using System.CodeDom.Compiler;
+using System.Diagnostics;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -30,7 +32,15 @@ public partial class Program
     {
         var regex = new Regex(@"SR\.\w*", RegexOptions.Compiled);
 
-        var files = Directory.EnumerateFiles(Path.Combine(GetGitDir(), "src", "WebForms"), "*.cs", new EnumerationOptions { RecurseSubdirectories = true });
+        var dir = Path.Combine(GetGitDir(), "src", "WebForms");
+        var srFile = Path.Combine(dir, "SR.cs");
+
+        if (File.Exists(srFile))
+        {
+            File.Delete(srFile);
+        }
+
+        var files = Directory.EnumerateFiles(dir, "*.cs", new EnumerationOptions { RecurseSubdirectories = true });
         var set = new HashSet<string>();
 
         foreach (var file in files)
@@ -39,6 +49,8 @@ public partial class Program
             {
                 continue;
             }
+
+            Console.WriteLine(file);
 
             var contents = File.ReadAllText(file);
             var matches = regex.Matches(contents);
@@ -50,7 +62,21 @@ public partial class Program
             }
         }
 
-        var sb = new StringBuilder();
+        using var fs = File.OpenWrite(srFile);
+        using var writer = new StreamWriter(fs);
+        using var indented = new IndentedTextWriter(writer);
+
+        indented.WriteLine("// Licensed to the .NET Foundation under one or more agreements.");
+        indented.WriteLine("// The .NET Foundation licenses this file to you under the MIT license.");
+        indented.WriteLine();
+        indented.WriteLine("namespace System.Web;");
+        indented.WriteLine();
+        indented.WriteLine("internal static class SR");
+        indented.WriteLine("{");
+
+        indented.Indent++;
+        indented.WriteLine("public static string GetString(string name, params object[] args) => name;");
+        indented.WriteLine();
 
         foreach (var item in set.OrderBy(s => s))
         {
@@ -59,9 +85,10 @@ public partial class Program
                 continue;
             }
 
-            sb.AppendLine($"public const string {item} = nameof({item});");
+            indented.WriteLine($"public const string {item} = nameof({item});");
         }
 
-        var result = sb.ToString();
+        indented.Indent--;
+        indented.WriteLine("}");
     }
 }

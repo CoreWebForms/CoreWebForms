@@ -11,11 +11,23 @@ internal sealed class PageEndpointDataSource : EndpointDataSource, IChangeToken
 {
     private readonly List<Endpoint> _endpoints = new();
 
-    public void Add(Type type)
+    public void Add(Type type) => Add(type, true);
+
+    internal void Add(Type type, bool requireAttribute)
     {
         var endpoint = PageEndpointRoute.Create(type);
 
-        _endpoints.Add(endpoint);
+        if (endpoint is null)
+        {
+            if (requireAttribute)
+            {
+                throw new InvalidOperationException("Page must be annotated with AspPageAttribute if path is not specified");
+            }
+        }
+        else
+        {
+            _endpoints.Add(endpoint);
+        }
     }
 
     public void Add(Type type, PathString path)
