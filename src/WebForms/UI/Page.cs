@@ -11,8 +11,6 @@ using System.Web.UI.WebControls;
 namespace System.Web.UI;
 public class Page : TemplateControl, IHttpAsyncHandler
 {
-    private const string HiddenClassName = "aspNetHidden";
-
     private ClientScriptManager? _clientScriptManager;
 
     public Page()
@@ -54,14 +52,8 @@ public class Page : TemplateControl, IHttpAsyncHandler
         return Task.CompletedTask;
     }
 
-    public HtmlForm? Form => null;
+    public HtmlForm? Form => Features.Get<IFormWriterFeature>()?.Form;
 
-    internal static void BeginFormRender(HtmlTextWriter writer, string? formUniqueID)
-    {
-        writer.WriteBeginTag("div");
-        writer.WriteAttribute("class", HiddenClassName);
-        writer.WriteEndTag("div");
-    }
     public ClientScriptManager ClientScript => _clientScriptManager ??= new ClientScriptManager(this);
 
     public bool IsPostBackEventControlRegistered { get; internal set; }

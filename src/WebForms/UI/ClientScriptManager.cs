@@ -12,6 +12,10 @@ public sealed class ClientScriptManager
         _page = page;
     }
 
+    internal void RenderHiddenFields(HtmlTextWriter writer)
+    {
+    }
+
     internal void ValidateEvent(string uniqueID, string eventArgument)
     {
         throw new NotImplementedException();

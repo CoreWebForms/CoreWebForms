@@ -188,7 +188,7 @@ public class CSharpPageBuilder : DepthFirstAspxVisitor<object>
         if (!string.IsNullOrEmpty(tag.Attributes.Id))
         {
             _writer.Write(name);
-            _writer.Write(".Id = \"");
+            _writer.Write(".ID = \"");
             _writer.Write(tag.Attributes.Id);
             _writer.WriteLine("\";");
         }
@@ -240,7 +240,7 @@ public class CSharpPageBuilder : DepthFirstAspxVisitor<object>
             if (!string.IsNullOrEmpty(tag.Attributes.Id))
             {
                 _writer.Write(name);
-                _writer.Write(".Id = \"");
+                _writer.Write(".ID = \"");
                 _writer.Write(tag.Attributes.Id);
                 _writer.WriteLine("\";");
             }

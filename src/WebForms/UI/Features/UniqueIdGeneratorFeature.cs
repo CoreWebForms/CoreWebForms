@@ -41,7 +41,7 @@ internal sealed class UniqueIdGeneratorFeature : IUniqueIdGeneratorFeature
     {
         if (object.ReferenceEquals(_owner, control))
         {
-            return control.Id;
+            return control.ID;
         }
 
         var id = _nextId++;

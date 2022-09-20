@@ -130,7 +130,7 @@ public class WebControl : Control
 
     public CssStyleCollection Style => Attributes.CssStyle;
 
-    public virtual bool Enabled { get; set; }
+    public virtual bool Enabled { get; set; } = true;
 
     public virtual FontInfo Font => ControlStyle.Font;
 
@@ -190,9 +190,9 @@ public class WebControl : Control
 
     protected virtual void AddAttributesToRender(HtmlTextWriter writer)
     {
-        if (ID != null)
+        if (ID is { } id)
         {
-            writer.AddAttribute(HtmlTextWriterAttribute.Id, ClientID);
+            writer.AddAttribute(HtmlTextWriterAttribute.Id, id);
         }
 
         if (AccessKey is { Length: > 0 } s)

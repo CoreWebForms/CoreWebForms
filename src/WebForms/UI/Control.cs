@@ -26,8 +26,6 @@ public class Control : IDisposable
     private string? _uniqueId;
     private string? _id;
 
-    protected string? ID => Id;
-
     protected string? ClientID => default;
     internal IFeatureCollection Features => _features ??= new FeatureCollection();
 
@@ -41,7 +39,7 @@ public class Control : IDisposable
 
     public bool IsTrackingViewState { get; set; }
 
-    public string? Id
+    public string? ID
     {
         get => _id;
         set
@@ -70,6 +68,11 @@ public class Control : IDisposable
     {
         get
         {
+            if (_id is not null)
+            {
+                return _id;
+            }
+
             if (_uniqueId is null && GetHierarchicalFeature<IUniqueIdGeneratorFeature>() is { } generator)
             {
                 _uniqueId = generator.GetUniqueIdGenerator(this);
