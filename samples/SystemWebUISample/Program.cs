@@ -3,7 +3,6 @@
 
 using System.Runtime.Loader;
 using System.Web;
-using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 

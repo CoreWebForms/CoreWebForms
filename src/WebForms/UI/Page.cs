@@ -9,6 +9,7 @@ using System.Web.UI.WebControls;
 
 // TODO: Remove once implemented
 #pragma warning disable CA1822 // Mark members as static
+#pragma warning disable CA1823 // Avoid unused private fields
 
 namespace System.Web.UI;
 
@@ -128,7 +129,7 @@ public class Page : TemplateControl, IHttpAsyncHandler
         throw new NotImplementedException();
     }
 
-    internal NameValueCollection RequestValueCollection { get; private set; }
+    internal NameValueCollection RequestValueCollection => Context.Request.Params;
 
     internal IStateFormatter2 CreateStateFormatter() => Features.GetRequired<IStateFormatter2>();
 
@@ -144,7 +145,8 @@ public class Page : TemplateControl, IHttpAsyncHandler
 
     internal string ClientState => Features.GetRequired<IViewStateManager>().ClientState;
 
-    internal string RequestViewStateString { get; set; }
+    internal string RequestViewStateString => Features.GetRequired<IViewStateManager>().OriginalState;
+
     public bool RenderDisabledControlsScript { get; internal set; }
 
     public int MaxPageStateFieldLength { get; internal set; } = 1000;

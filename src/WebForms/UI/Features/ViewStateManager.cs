@@ -29,6 +29,7 @@ internal class ViewStateManager : IViewStateManager
             if (string.Equals(GeneratorId, context.Request.Form[Page.ViewStateGeneratorFieldID], StringComparison.Ordinal))
             {
                 ClientState = context.Request.Form[Page.ViewStateFieldPrefixID];
+                OriginalState = ClientState;
                 _form = ((HttpContext)context).Request.Form;
             }
         }
@@ -37,6 +38,8 @@ internal class ViewStateManager : IViewStateManager
     public string ClientState { get; private set; } = string.Empty;
 
     public string GeneratorId { get; }
+
+    public string OriginalState { get; } = string.Empty;
 
     public void RefreshControls()
     {

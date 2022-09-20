@@ -7,6 +7,8 @@ internal interface IViewStateManager
 {
     string GeneratorId { get; }
 
+    string OriginalState { get; }
+
     string ClientState { get; }
 
     void UpdateClientState();
