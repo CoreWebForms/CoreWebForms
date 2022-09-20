@@ -6,6 +6,8 @@ using System.Web;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddDataProtection();
+
 builder.Services.AddSystemWebAdapters()
     .AddWebForms()
     .AddDynamicPages();

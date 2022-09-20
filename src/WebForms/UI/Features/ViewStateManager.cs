@@ -5,6 +5,7 @@ using System.Collections.Specialized;
 using System.Globalization;
 using System.IO.Compression;
 using System.Web.UI.WebControls;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.DependencyInjection;
 
 using ViewStateData = System.Collections.Generic.Dictionary<string, System.Collections.Generic.List<(string, object)>>;
@@ -15,12 +16,14 @@ internal class ViewStateManager : IViewStateManager
 {
     private readonly Page _page;
     private readonly IViewStateSerializer _serializer;
+    private readonly IDataProtector? _protector;
     private readonly NameValueCollection? _form;
 
     public ViewStateManager(Page page, HttpContextCore context)
     {
         _page = page;
         _serializer = context.RequestServices.GetRequiredService<IViewStateSerializer>();
+        _protector = context.RequestServices.GetService<IDataProtectionProvider>()?.CreateProtector(nameof(ViewStateManager));
         GeneratorId = _page.GetType().GetHashCode().ToString("X8", CultureInfo.InvariantCulture);
 
         if (context.Request.HasFormContentType)
@@ -67,7 +70,14 @@ internal class ViewStateManager : IViewStateManager
 
         WriteItems(ms);
 
-        ClientState = Convert.ToBase64String(ms.ToArray());
+        var array = ms.ToArray();
+
+        if (_protector is not null)
+        {
+            array = _protector.Protect(array);
+        }
+
+        ClientState = Convert.ToBase64String(array);
     }
 
     private ViewStateData? LoadDictionary(string state)
@@ -77,20 +87,20 @@ internal class ViewStateManager : IViewStateManager
             return null;
         }
 
-        if (_form is null || _form.Count == 0)
+        var data = Convert.FromBase64String(state);
+
+        if (_protector is not null)
+        {
+            data = _protector.Unprotect(data);
+        }
+
+        // Data protection will obfuscate the actual length, so let's check again
+        if (data.Length == 0)
         {
             return null;
         }
 
-        var result = GetFromState(state);
-
-
-        return result;
-    }
-
-    private ViewStateData GetFromState(string state)
-    {
-        using (var ms = new MemoryStream(Convert.FromBase64String(state)))
+        using (var ms = new MemoryStream(data))
         using (var stream = new GZipStream(ms, CompressionMode.Decompress))
         using (var reader = new BinaryReader(stream))
         {
@@ -145,7 +155,7 @@ internal class ViewStateManager : IViewStateManager
             {
                 if (control.ViewState.SaveViewState() is { Count: > 0 } state)
                 {
-                    (_list ??= new()).Add(new() { Id = id, Items = state });
+                    (_list ??= new()).Add(new(id, state));
 
                 }
             }
@@ -169,10 +179,16 @@ internal class ViewStateManager : IViewStateManager
         }
     }
 
-    private class ControlState
+    private readonly struct ControlState
     {
-        public string Id { get; set; } = null!;
+        public ControlState(string id, IReadOnlyCollection<KeyValuePair<string, object>> items)
+        {
+            Id = id;
+            Items = items;
+        }
 
-        public IReadOnlyCollection<KeyValuePair<string, object>> Items { get; set; } = null!;
+        public string Id { get; }
+
+        public IReadOnlyCollection<KeyValuePair<string, object>> Items { get; }
     }
 }
