@@ -53,6 +53,47 @@ public class Control : IDisposable
             _id = value;
         }
     }
+
+    internal IEnumerable<Control> AllChildren
+    {
+        get
+        {
+            var queue = new Queue<Control>(5);
+            queue.Enqueue(this);
+
+            while (queue.Count > 0)
+            {
+                var current = queue.Dequeue();
+
+                yield return current;
+
+                if (current._children is { } children)
+                {
+                    foreach (var child in children)
+                    {
+                        if (child is Control childControl)
+                        {
+                            queue.Enqueue(childControl);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public Control? FindControl(string id)
+    {
+        foreach (var control in AllChildren)
+        {
+            if (string.Equals(id, control.ID, StringComparison.OrdinalIgnoreCase))
+            {
+                return control;
+            }
+        }
+
+        return null;
+    }
+
     protected EventHandlerList Events
     {
         get

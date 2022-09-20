@@ -52,7 +52,7 @@ public class Page : TemplateControl, IHttpAsyncHandler
     void IHttpHandler.ProcessRequest(HttpContext context)
         => throw new InvalidOperationException();
 
-    internal bool EnableEventValidation => Features.Get<IPageEvents>() is not null;
+    internal bool EnableEventValidation => false;
 
     internal bool DesignMode => false;
 
