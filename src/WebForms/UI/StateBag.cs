@@ -348,35 +348,26 @@ public sealed class StateBag : IStateManager, IDictionary
     ///    <para>Returns an object that contains all state changes for items stored in the 
     ///    <see langword='StateBag'/> object.</para>
     /// </devdoc>
-    internal object SaveViewState()
+    internal IReadOnlyCollection<KeyValuePair<string, object>> SaveViewState()
     {
-        ArrayList data = null;
-
-        // 
-
-        if (bag.Count != 0)
+        if (bag.Count == 0)
         {
-            IDictionaryEnumerator e = bag.GetEnumerator();
-            while (e.MoveNext())
+            return Array.Empty<KeyValuePair<string, object>>();
+        }
+
+        var list = new List<KeyValuePair<string, object>>();
+
+        IDictionaryEnumerator e = bag.GetEnumerator();
+        while (e.MoveNext())
+        {
+            StateItem item = (StateItem)(e.Value);
+            //if (item.IsDirty)
             {
-                StateItem item = (StateItem)(e.Value);
-                if (item.IsDirty)
-                {
-                    if (data == null)
-                    {
-                        data = new ArrayList();
-                    }
-#if OBJECTSTATEFORMATTER
-                    data.Add(new IndexedString((string)e.Key));
-#else
-                    data.Add(e.Key);
-#endif
-                    data.Add(item.Value);
-                }
+                list.Add(new((string)e.Key, item.Value));
             }
         }
 
-        return data;
+        return list;
     }
 
     /// <devdoc>

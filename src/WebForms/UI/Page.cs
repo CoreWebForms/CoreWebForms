@@ -75,6 +75,11 @@ public class Page : TemplateControl, IHttpAsyncHandler
 
         InitializeComponents();
 
+        if (Features.Get<IViewStateManager>() is { } viewState)
+        {
+            viewState.RefreshControls();
+        }
+
         var events = Features.Get<IPageEvents>()!;
 
         Features.Set(context);

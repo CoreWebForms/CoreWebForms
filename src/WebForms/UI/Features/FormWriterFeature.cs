@@ -226,7 +226,16 @@ internal class FormWriterFeature : IFormWriterFeature
 
     internal IReadOnlyCollection<string> DecomposeViewStateIntoChunksInternal()
     {
-        string state = _owner.ClientState;
+        var stateManager = _owner.Features.Get<IViewStateManager>();
+
+        if (stateManager is null)
+        {
+            return Array.Empty<string>();
+        }
+
+        stateManager.UpdateClientState();
+        var state = stateManager.ClientState;
+
         if (state == null)
         {
             return Array.Empty<string>();

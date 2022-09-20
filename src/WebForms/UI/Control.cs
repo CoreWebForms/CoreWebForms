@@ -34,7 +34,9 @@ public class Control : IDisposable
 
     public ControlCollection Controls => _children ??= new(this);
 
-    protected StateBag ViewState => _viewState ??= new();
+    internal StateBag ViewState => _viewState ??= new();
+
+    internal bool HasViewState => _viewState is not null;
 
     public bool IsTrackingViewState { get; set; }
 

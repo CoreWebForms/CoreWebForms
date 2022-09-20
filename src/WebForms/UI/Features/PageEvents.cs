@@ -7,13 +7,10 @@ namespace System.Web.UI.Features;
 
 internal sealed class PageEvents : IPageEvents
 {
-    private readonly Type _type;
     private readonly Action<object, EventArgs>? _onLoad;
 
     public PageEvents(Type type)
     {
-        _type = type;
-
         var method = type.GetMethod("Page_Load", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
 
         if (method is not null && method.ReturnType == typeof(void))
