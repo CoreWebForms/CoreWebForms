@@ -14,14 +14,16 @@ internal class FormWriterFeature : IFormWriterFeature
 {
     private const string HiddenClassName = "aspNetHidden";
 
-    public FormWriterFeature(ClientScriptManager clientScript)
+    public FormWriterFeature(Page owner, ClientScriptManager clientScript)
     {
+        _owner = owner;
         ClientScript = clientScript;
     }
 
+    private readonly Page _owner;
+
     public ClientScriptManager ClientScript { get; }
 
-    private bool _inOnFormRender;
     private bool _fOnFormRenderCalled;
     private bool _fRequireWebFormsScript;
     private bool _fWebFormsScriptRendered;
@@ -40,10 +42,12 @@ internal class FormWriterFeature : IFormWriterFeature
         }
 
         _fOnFormRenderCalled = true;
-        _inOnFormRender = true;
+        IsRendering = true;
     }
 
     public HtmlForm? Form { get; set; }
+
+    public bool IsRendering { get; private set; }
 
     public void BeginFormRender(HtmlTextWriter writer, string? formUniqueID)
     {
@@ -53,8 +57,6 @@ internal class FormWriterFeature : IFormWriterFeature
 
         ClientScript.RenderHiddenFields(writer);
         RenderViewStateFields(writer);
-
-        writer.WriteEndTag("div");
     }
 
     private void RenderViewStateFields(HtmlTextWriter writer)
@@ -66,7 +68,7 @@ internal class FormWriterFeature : IFormWriterFeature
     /// </devdoc>
     public void OnFormPostRender(HtmlTextWriter writer)
     {
-        _inOnFormRender = false;
+        IsRendering = false;
         //if (_postFormRenderDelegate != null)
         //{
         //    _postFormRenderDelegate(writer, null);
@@ -87,61 +89,56 @@ internal class FormWriterFeature : IFormWriterFeature
 
     private void EndFormRenderArrayAndExpandoAttribute(HtmlTextWriter writer, string formUniqueID)
     {
-#if FALSE
         if (ClientSupportsJavaScript)
         {
+#if FALSE
             // Devdiv 9409 - Register the array for reenabling only after the controls have been processed,
             // so that list controls can have their children registered.
-            if (RenderDisabledControlsScript)
+            if (_owner.RenderDisabledControlsScript)
             {
-                foreach (Control control in EnabledControls)
+                foreach (Control control in _owner.EnabledControls)
                 {
                     ClientScript.RegisterArrayDeclaration(EnabledControlArray, "'" + control.ClientID + "'");
                 }
             }
+#endif
             ClientScript.RenderArrayDeclares(writer);
             ClientScript.RenderExpandoAttribute(writer);
         }
-#endif
     }
+
+    public bool RequiresViewStateEncryptionInternal => false;
 
     internal void EndFormRenderHiddenFields(HtmlTextWriter writer, string formUniqueID)
     {
-#if FALSE
         if (RequiresViewStateEncryptionInternal)
         {
-            ClientScript.RegisterHiddenField(ViewStateEncryptionID, String.Empty);
+            ClientScript.RegisterHiddenField(Page.ViewStateEncryptionID, String.Empty);
         }
 
+#if FALSE
         if (_containsCrossPagePost)
         {
             string path = EncryptString(Request.CurrentExecutionFilePath, Purpose.WebForms_Page_PreviousPageID);
             ClientScript.RegisterHiddenField(previousPageID, path);
         }
+#endif
 
-        if (EnableEventValidation)
+        if (_owner.EnableEventValidation)
         {
             ClientScript.SaveEventValidationField();
         }
 
         if (ClientScript.HasRegisteredHiddenFields)
         {
-            bool renderDivAroundHiddenInputs = RenderDivAroundHiddenInputs(writer);
-            if (renderDivAroundHiddenInputs)
-            {
-                writer.WriteLine();
-                writer.AddAttribute(HtmlTextWriterAttribute.Class, HiddenClassName);
-                writer.RenderBeginTag(HtmlTextWriterTag.Div);
-            }
+            writer.WriteLine();
+            writer.AddAttribute(HtmlTextWriterAttribute.Class, HiddenClassName);
+            writer.RenderBeginTag(HtmlTextWriterTag.Div);
 
             ClientScript.RenderHiddenFields(writer);
 
-            if (renderDivAroundHiddenInputs)
-            {
-                writer.RenderEndTag(); // DIV
-            }
+            writer.RenderEndTag();
         }
-#endif
     }
 
     private void EndFormRenderPostBackAndWebFormsScript(HtmlTextWriter writer, string formUniqueID)
@@ -161,4 +158,7 @@ internal class FormWriterFeature : IFormWriterFeature
         ClientScript.RenderClientStartupScripts(writer);
 #endif
     }
+
+    public void AddHiddenField(string name, string value)
+        => (_hiddenFieldsToRender ??= new())[name] = value;
 }

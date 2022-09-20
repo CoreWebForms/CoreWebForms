@@ -12,6 +12,7 @@ internal interface IFormWriterFeature
     void OnFormRender();
     void EndFormRender(HtmlTextWriter writer, string formUniqueID);
     void ResetOnFormRenderCalled();
-
+    void AddHiddenField(string name, string value);
     HtmlForm? Form { get; }
+    bool IsRendering { get; }
 }

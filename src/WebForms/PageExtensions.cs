@@ -30,7 +30,7 @@ public static class PageExtensions
 
                 page.Features.Set<Page>(page);
                 page.Features.Set<IUniqueIdGeneratorFeature>(new UniqueIdGeneratorFeature(page));
-                page.Features.Set<IFormWriterFeature>(new FormWriterFeature(page.ClientScript));
+                page.Features.Set<IFormWriterFeature>(new FormWriterFeature(page, page.ClientScript));
             }
 
             return next(ctx);

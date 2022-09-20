@@ -25,7 +25,7 @@ public class Control : IDisposable
     private string? _uniqueId;
     private string? _id;
 
-    protected string? ClientID => default;
+    public string? ClientID => default;
     internal IFeatureCollection Features => _features ??= new FeatureCollection();
 
     public Control? Parent { get; internal set; }
@@ -80,6 +80,10 @@ public class Control : IDisposable
             return _uniqueId;
         }
     }
+
+#pragma warning disable CA1822 // Mark members as static
+    internal bool EnableLegacyRendering => false;
+#pragma warning restore CA1822 // Mark members as static
 
     protected Page? Page => GetHierarchicalFeature<Page>();
 
