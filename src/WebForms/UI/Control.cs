@@ -188,4 +188,15 @@ public class Control : IDisposable
     public virtual void Dispose()
     {
     }
+
+    protected virtual void LoadViewState(object savedState)
+    {
+        if (savedState != null)
+        {
+            ViewState.LoadViewState(savedState);
+        }
+    }
+
+    internal void LoadViewStateInternal(object savedState)
+        => LoadViewState(savedState);
 }

@@ -8,13 +8,15 @@ using System.Text.Json;
 using System.Web.UI.WebControls;
 using Microsoft.Extensions.DependencyInjection;
 
+using ViewStateData = System.Collections.Generic.Dictionary<string, System.Collections.Generic.List<(string, object)>>;
+
 namespace System.Web.UI.Features;
 
 internal class ViewStateManager : IViewStateManager
 {
     private readonly Page _page;
     private readonly IViewStateSerializer _serializer;
-    private readonly NameValueCollection _form;
+    private readonly NameValueCollection? _form;
 
     public ViewStateManager(Page page, HttpContextCore context)
     {
@@ -38,25 +40,21 @@ internal class ViewStateManager : IViewStateManager
 
     public void RefreshControls()
     {
-        if (LoadDictionary(ClientState) is { } data)
-        {
-        }
-
-        ProcessPostbacks();
-    }
-
-    private void ProcessPostbacks()
-    {
-        if (_form is null)
-        {
-            return;
-        }
+        var data = LoadDictionary(ClientState);
 
         foreach (var child in _page.AllChildren)
         {
-            if (child is IPostBackDataHandler postBack && child.ID is { } id && _form.Get(id) is not null)
+            if (child.ID is { } id)
             {
-                postBack.LoadPostData(id, _form);
+                if (_form is not null && child is IPostBackDataHandler postBack && _form.Get(id) is not null)
+                {
+                    postBack.LoadPostData(id, _form);
+                }
+
+                if (data is not null && data.TryGetValue(id, out var values))
+                {
+                    child.LoadViewStateInternal(values);
+                }
             }
         }
     }
@@ -75,7 +73,7 @@ internal class ViewStateManager : IViewStateManager
         UnknownTypeHandling = Text.Json.Serialization.JsonUnknownTypeHandling.JsonElement
     };
 
-    private Dictionary<string, List<(string, object)>>? LoadDictionary(string state)
+    private ViewStateData? LoadDictionary(string state)
     {
         if (string.IsNullOrEmpty(state))
         {
@@ -93,7 +91,7 @@ internal class ViewStateManager : IViewStateManager
         return result;
     }
 
-    private Dictionary<string, List<(string, object)>> GetFromState(string state)
+    private ViewStateData GetFromState(string state)
     {
         using (var ms = new MemoryStream(Convert.FromBase64String(state)))
         using (var stream = new GZipStream(ms, CompressionMode.Decompress))
@@ -103,9 +101,9 @@ internal class ViewStateManager : IViewStateManager
         }
     }
 
-    private Dictionary<string, List<(string, object)>> ReadItems(BinaryReader reader)
+    private ViewStateData ReadItems(BinaryReader reader)
     {
-        var result = new Dictionary<string, List<(string, object)>>();
+        var result = new ViewStateData();
 
         var controlCount = reader.Read7BitEncodedInt();
 

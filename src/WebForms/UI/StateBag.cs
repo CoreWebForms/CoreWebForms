@@ -6,7 +6,6 @@
 namespace System.Web.UI;
 
 using System.Collections;
-using System.Collections.Specialized;
 
 /*
  * The StateBag class is a helper class used to manage state of properties.
@@ -28,83 +27,23 @@ using System.Collections.Specialized;
 /// </devdoc>
 public sealed class StateBag : IStateManager, IDictionary
 {
-    private readonly IDictionary bag;
-    private bool marked;
-    private readonly bool ignoreCase;
+    private readonly Dictionary<string, StateItem> bag;
 
-    /*
-     * Constructs an StateBag
-     */
-
-    /// <devdoc>
-    /// <para>Initializes a new instance of the <see cref='System.Web.UI.StateBag'/> class.</para>
-    /// </devdoc>
-    public StateBag() : this(false)
+    public StateBag()
+        : this(false)
     {
     }
-
-    /*
-     * Constructs an StateBag
-     */
-
-    /// <devdoc>
-    /// <para>Initializes a new instance of the <see cref='System.Web.UI.StateBag'/> class that allows stored state 
-    ///    values to be case-insensitive.</para>
-    /// </devdoc>
     public StateBag(bool ignoreCase)
     {
-        marked = false;
-        this.ignoreCase = ignoreCase;
-        bag = CreateBag();
+        IsTrackingViewState = false;
+        bag = new Dictionary<string, StateItem>(ignoreCase ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal);
     }
 
-    /*
-     * Return count of number of StateItems in the bag.
-     */
+    public int Count => bag.Count;
 
-    /// <devdoc>
-    /// <para>Indicates the number of items in the <see cref='System.Web.UI.StateBag'/> object. This property is 
-    ///    read-only.</para>
-    /// </devdoc>
-    public int Count
-    {
-        get
-        {
-            return bag.Count;
-        }
-    }
+    public ICollection Keys => bag.Keys;
 
-    /*
-     * Returns a collection of keys.
-     */
-
-    /// <devdoc>
-    /// <para>Indicates a collection of keys representing the items in the <see cref='System.Web.UI.StateBag'/> object. 
-    ///    This property is read-only.</para>
-    /// </devdoc>
-    public ICollection Keys
-    {
-        get
-        {
-            return bag.Keys;
-        }
-    }
-
-    /*
-     * Returns a collection of values.
-     */
-
-    /// <devdoc>
-    /// <para>Indicates a collection of view state values in the <see cref='System.Web.UI.StateBag'/> object. 
-    ///    This property is read-only.</para>
-    /// </devdoc>
-    public ICollection Values
-    {
-        get
-        {
-            return bag.Values;
-        }
-    }
+    public ICollection Values => bag.Values;
 
     /*
      * Get or set value of a StateItem.
@@ -128,13 +67,12 @@ public sealed class StateBag : IStateManager, IDictionary
     {
         get
         {
-            if (String.IsNullOrEmpty(key))
+            if (string.IsNullOrEmpty(key))
             {
                 ArgumentNullException.ThrowIfNull("key");
             }
 
-            StateItem item = bag[key] as StateItem;
-            if (item != null)
+            if (bag.TryGetValue(key, out var item))
             {
                 return item.Value;
             }
@@ -147,50 +85,23 @@ public sealed class StateBag : IStateManager, IDictionary
         }
     }
 
-    /*
-     * Private implementation of IDictionary item accessor
-     */
-
-    /// <internalonly/>
     object IDictionary.this[object key]
     {
         get { return this[(string)key]; }
         set { this[(string)key] = value; }
     }
 
-    private IDictionary CreateBag()
-    {
-        return new HybridDictionary(ignoreCase);
-    }
-
-    /*
-     * Add a new StateItem or update an existing StateItem in the bag.
-     */
-
-    /// <devdoc>
-    ///    <para>[To be supplied.]</para>
-    /// </devdoc>
     public StateItem Add(string key, object value)
     {
 
-        if (String.IsNullOrEmpty(key))
+        if (string.IsNullOrEmpty(key))
         {
             throw new ArgumentOutOfRangeException(nameof(key));
         }
 
-        StateItem item = bag[key] as StateItem;
-
-        if (item == null)
+        if (bag.TryGetValue(key, out var item))
         {
-            if (value != null || marked)
-            {
-                item = new StateItem(value);
-                bag.Add(key, item);
-            }
-        }
-        else
-        {
-            if (value == null && !marked)
+            if (value == null && !IsTrackingViewState)
             {
                 bag.Remove(key);
             }
@@ -199,61 +110,54 @@ public sealed class StateBag : IStateManager, IDictionary
                 item.Value = value;
             }
         }
-        if (item != null && marked)
+        else
+        {
+            if (value != null || IsTrackingViewState)
+            {
+                item = new StateItem(value);
+                bag.Add(key, item);
+            }
+        }
+
+        if (item != null && IsTrackingViewState)
         {
             item.IsDirty = true;
         }
+
         return item;
     }
 
-    /*
-     * Private implementation of IDictionary Add
-     */
+    void IDictionary.Add(object key, object value) => Add((string)key, value);
 
-    /// <internalonly/>
-    void IDictionary.Add(object key, object value)
+    public void Clear() => bag.Clear();
+
+    public IDictionaryEnumerator GetEnumerator() => new Wrapper(bag.GetEnumerator());
+
+    private class Wrapper : IDictionaryEnumerator
     {
-        Add((string)key, value);
+        private readonly IEnumerator<KeyValuePair<string, StateItem>> _inner;
+
+        public Wrapper(IEnumerator<KeyValuePair<string, StateItem>> inner)
+        {
+            _inner = inner;
+        }
+
+        public DictionaryEntry Entry => new(Key, Value);
+
+        public object Key => _inner.Current.Key;
+
+        public object Value => _inner.Current.Value;
+
+        public object Current => Entry;
+
+        public bool MoveNext() => _inner.MoveNext();
+
+        public void Reset() => _inner.Reset();
     }
 
-    /*
-     * Clear all StateItems from the bag.
-     */
-
-    /// <devdoc>
-    /// <para>Removes all controls from the <see cref='System.Web.UI.StateBag'/> object.</para>
-    /// </devdoc>
-    public void Clear()
-    {
-        bag.Clear();
-    }
-
-    /*
-     * Get an enumerator for the StateItems.
-     */
-
-    /// <devdoc>
-    ///    <para>Returns an enumerator that iterates over the key/value pairs stored in 
-    ///       the <see langword='StateBag'/>.</para>
-    /// </devdoc>
-    public IDictionaryEnumerator GetEnumerator()
-    {
-        return bag.GetEnumerator();
-    }
-
-    /*
-     * Return the dirty flag of the state item.
-     * Returns false if there is not an item for given key.
-     */
-
-    /// <devdoc>
-    /// <para>Checks an item stored in the <see langword='StateBag'/> to see if it has been 
-    ///    modified.</para>
-    /// </devdoc>
     public bool IsItemDirty(string key)
     {
-        StateItem item = bag[key] as StateItem;
-        if (item != null)
+        if (bag.TryGetValue(key, out var item))
         {
             return item.IsDirty;
         }
@@ -261,93 +165,29 @@ public sealed class StateBag : IStateManager, IDictionary
         return false;
     }
 
-    /*
-     * Return true if 'marked' and state changes are being tracked.
-     */
+    internal bool IsTrackingViewState { get; private set; }
 
-    /// <devdoc>
-    ///    <para>Determines if state changes in the StateBag object's store are being tracked.</para>
-    /// </devdoc>
-    internal bool IsTrackingViewState
-    {
-        get
-        {
-            return marked;
-        }
-    }
-
-    /*
-     * Restore state that was previously saved via SaveViewState.
-     */
-
-    /// <devdoc>
-    ///    <para>Loads the specified previously saved state information</para>
-    /// </devdoc>
     internal void LoadViewState(object state)
     {
-        if (state != null)
+        if (state is null)
         {
-            ArrayList data = (ArrayList)state;
+            return;
+        }
 
-            for (int i = 0; i < data.Count; i += 2)
-            {
-#if OBJECTSTATEFORMATTER
-                string key = ((IndexedString)data[i]).Value;
-#else
-                string key = (string)data[i];
-#endif
-                object value = data[i + 1];
+        var typed = (IReadOnlyCollection<KeyValuePair<string, object>>)state;
 
-                Add(key, value);
-            }
+        foreach (var item in typed)
+        {
+            Add(item.Key, item.Value);
         }
     }
 
-    /*
-     * Start tracking state changes after "mark".
-     */
+    internal void TrackViewState() => IsTrackingViewState = true;
 
-    /// <devdoc>
-    ///    <para>Initiates the tracking of state changes for items stored in the 
-    ///    <see langword='StateBag'/> object.</para>
-    /// </devdoc>
-    internal void TrackViewState()
-    {
-        marked = true;
-    }
+    public void Remove(string key) => bag.Remove(key);
 
-    /*
-     * Remove a StateItem from the bag altogether regardless of marked.
-     * Used internally by controls.
-     */
+    void IDictionary.Remove(object key) => Remove((string)key);
 
-    /// <devdoc>
-    /// <para>Removes the specified item from the <see cref='System.Web.UI.StateBag'/> object.</para>
-    /// </devdoc>
-    public void Remove(string key)
-    {
-        bag.Remove(key);
-    }
-
-    /*
-     * Private implementation of IDictionary Remove
-     */
-
-    /// <internalonly/>
-    void IDictionary.Remove(object key)
-    {
-        Remove((string)key);
-    }
-
-    /*
-     * Return object containing state that has been modified since "mark".
-     * Returns null if there is no modified state.
-     */
-
-    /// <devdoc>
-    ///    <para>Returns an object that contains all state changes for items stored in the 
-    ///    <see langword='StateBag'/> object.</para>
-    /// </devdoc>
     internal IReadOnlyCollection<KeyValuePair<string, object>> SaveViewState()
     {
         if (bag.Count == 0)
@@ -355,138 +195,62 @@ public sealed class StateBag : IStateManager, IDictionary
             return Array.Empty<KeyValuePair<string, object>>();
         }
 
-        var list = new List<KeyValuePair<string, object>>();
+        List<KeyValuePair<string, object>>? list = null;
 
-        IDictionaryEnumerator e = bag.GetEnumerator();
-        while (e.MoveNext())
+        foreach (var item in bag)
         {
-            StateItem item = (StateItem)(e.Value);
-            //if (item.IsDirty)
+            if (item.Value.IsDirty)
             {
-                list.Add(new((string)e.Key, item.Value));
+                (list ??= new()).Add(new(item.Key, item.Value.Value));
             }
+        }
+
+        if (list is null)
+        {
+            return Array.Empty<KeyValuePair<string, object>>();
         }
 
         return list;
     }
 
-    /// <devdoc>
-    /// Sets the dirty state of all item values currently in the StateBag.
-    /// </devdoc>
     public void SetDirty(bool dirty)
     {
         if (bag.Count != 0)
         {
-            foreach (StateItem item in bag.Values)
+            foreach (var item in bag.Values)
             {
                 item.IsDirty = dirty;
             }
         }
     }
 
-    /*
-     * Internal method for setting dirty flag on a state item.
-     * Used internallly to prevent state management of certain properties.
-     */
-
-    /// <internalonly/>
-    /// <devdoc>
-    /// </devdoc>
     public void SetItemDirty(string key, bool dirty)
     {
-        StateItem item = bag[key] as StateItem;
-        if (item != null)
+        if (bag.TryGetValue(key, out var item))
         {
             item.IsDirty = dirty;
         }
     }
 
-    /// <internalonly/>
-    bool IDictionary.IsFixedSize
-    {
-        get { return false; }
-    }
+    bool IDictionary.IsFixedSize => false;
 
-    /// <internalonly/>
-    bool IDictionary.IsReadOnly
-    {
-        get { return false; }
-    }
+    bool IDictionary.IsReadOnly => false;
 
-    /// <internalonly/>
-    bool ICollection.IsSynchronized
-    {
-        get { return false; }
-    }
+    bool ICollection.IsSynchronized => false;
 
-    /// <internalonly/>
-    object ICollection.SyncRoot
-    {
-        get { return this; }
-    }
+    object ICollection.SyncRoot => this;
 
-    /// <internalonly/>
-    bool IDictionary.Contains(object key)
-    {
-        return bag.Contains((string)key);
-    }
+    bool IDictionary.Contains(object key) => bag.ContainsKey((string)key);
 
-    /// <internalonly/>
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-        return ((IDictionary)this).GetEnumerator();
-    }
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-    /// <internalonly/>
-    void ICollection.CopyTo(Array array, int index)
-    {
-        Values.CopyTo(array, index);
-    }
+    void ICollection.CopyTo(Array array, int index) => Values.CopyTo(array, index);
 
-    /*
-     * Return true if tracking state changes.
-     * Method of private interface, IStateManager.
-     */
+    bool IStateManager.IsTrackingViewState => IsTrackingViewState;
 
-    /// <internalonly/>
-    bool IStateManager.IsTrackingViewState
-    {
-        get
-        {
-            return IsTrackingViewState;
-        }
-    }
+    void IStateManager.LoadViewState(object state) => LoadViewState(state);
 
-    /*
-     * Load previously saved state.
-     * Method of private interface, IStateManager.
-     */
+    void IStateManager.TrackViewState() => TrackViewState();
 
-    /// <internalonly/>
-    void IStateManager.LoadViewState(object state)
-    {
-        LoadViewState(state);
-    }
-
-    /*
-     * Start tracking state changes.
-     * Method of private interface, IStateManager.
-     */
-
-    /// <internalonly/>
-    void IStateManager.TrackViewState()
-    {
-        TrackViewState();
-    }
-
-    /*
-     * Return object containing state changes.
-     * Method of private interface, IStateManager.
-     */
-
-    /// <internalonly/>
-    object IStateManager.SaveViewState()
-    {
-        return SaveViewState();
-    }
+    object IStateManager.SaveViewState() => SaveViewState();
 }
