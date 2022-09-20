@@ -137,7 +137,26 @@ public class Control : IDisposable
 
     internal bool EnableLegacyRendering => false;
 
-    protected Page? Page => GetHierarchicalFeature<Page>();
+    internal Page? Page => GetHierarchicalFeature<Page>();
+
+    // Needed to support Validators in AJAX 1.0 (Windows OS Bugs 2015831)
+    private static Type _scriptManagerType;
+    internal Type ScriptManagerType
+    {
+        get
+        {
+            if (_scriptManagerType == null)
+            {
+                _scriptManagerType = BuildManager.GetType("System.Web.UI.ScriptManager", false);
+            }
+            return _scriptManagerType;
+        }
+        set
+        {
+            // Meant for unit testing
+            _scriptManagerType = value;
+        }
+    }
 
     protected HttpContext Context => GetHierarchicalFeature<HttpContext>() ?? throw new NotImplementedException();
 
@@ -228,4 +247,18 @@ public class Control : IDisposable
 
     internal void LoadViewStateInternal(object savedState)
         => LoadViewState(savedState);
+
+    protected bool HasEvents() => _events != null;
+
+    protected internal virtual void OnInit(EventArgs e)
+    {
+        if (HasEvents())
+        {
+            EventHandler handler = _events[EventInit] as EventHandler;
+            if (handler != null)
+            {
+                handler(this, e);
+            }
+        }
+    }
 }

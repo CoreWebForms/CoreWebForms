@@ -162,4 +162,23 @@ public class Page : TemplateControl, IHttpAsyncHandler
     public bool RenderDisabledControlsScript { get; internal set; }
 
     public int MaxPageStateFieldLength { get; internal set; } = 1000;
+
+    private UnobtrusiveValidationMode? _unobtrusiveValidationMode;
+
+    public UnobtrusiveValidationMode UnobtrusiveValidationMode
+    {
+        get
+        {
+            return _unobtrusiveValidationMode ?? ValidationSettings.UnobtrusiveValidationMode;
+        }
+        set
+        {
+            if (value < UnobtrusiveValidationMode.None || value > UnobtrusiveValidationMode.WebForms)
+            {
+                throw new ArgumentOutOfRangeException("value");
+            }
+
+            _unobtrusiveValidationMode = value;
+        }
+    }
 }

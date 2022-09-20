@@ -60,4 +60,13 @@ internal static class SR
     public const string UnitParseNumericPart = nameof(UnitParseNumericPart);
     public const string WebControl_CommandArgument = nameof(WebControl_CommandArgument);
     public const string WebControl_CommandName = nameof(WebControl_CommandName);
+    public const string Property_Not_Supported = nameof(Property_Not_Supported);
+    public const string BaseValidator_IsValid = nameof(BaseValidator_IsValid);
+    public const string BaseValidator_Display = nameof(BaseValidator_Display);
+    public const string BaseValidator_SetFocusOnError = nameof(BaseValidator_SetFocusOnError);
+    public const string BaseValidator_Text = nameof(BaseValidator_Text);
+    public const string BaseValidator_ValidationGroup = nameof(BaseValidator_ValidationGroup);
+    public const string Validator_control_not_found = nameof(Validator_control_not_found);
+    public const string Validator_bad_control_type = nameof(Validator_bad_control_type);
+    public const string Validator_control_blank = nameof(Validator_control_blank);
 }
