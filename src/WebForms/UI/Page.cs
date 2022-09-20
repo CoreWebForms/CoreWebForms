@@ -137,8 +137,10 @@ public class Page : TemplateControl, IHttpAsyncHandler
 
     public string? ClientOnSubmitEvent { get; internal set; }
 
-    internal string ClientState { get; set; }
+    internal string ClientState => Features.GetRequired<IViewStateManager>().ClientState;
 
     internal string RequestViewStateString { get; set; }
     public bool RenderDisabledControlsScript { get; internal set; }
+
+    public int MaxPageStateFieldLength { get; internal set; } = 1000;
 }
