@@ -1,6 +1,8 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+#pragma warning disable CA1822 // Mark members as static
+
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Web.UI.Features;
@@ -26,7 +28,7 @@ public class Control : IDisposable
     private string? _uniqueId;
     private string? _id;
 
-    protected string? ClientID => default;
+    public string? ClientID => default;
     internal IFeatureCollection Features => _features ??= new FeatureCollection();
 
     public Control? Parent { get; internal set; }
@@ -35,7 +37,9 @@ public class Control : IDisposable
 
     public ControlCollection Controls => _children ??= new(this);
 
-    protected StateBag ViewState => _viewState ??= new();
+    internal StateBag ViewState => _viewState ??= new();
+
+    internal bool HasViewState => _viewState is not null;
 
     public bool IsTrackingViewState { get; set; }
 
@@ -52,6 +56,47 @@ public class Control : IDisposable
             _id = value;
         }
     }
+
+    internal IEnumerable<Control> AllChildren
+    {
+        get
+        {
+            var queue = new Queue<Control>(5);
+            queue.Enqueue(this);
+
+            while (queue.Count > 0)
+            {
+                var current = queue.Dequeue();
+
+                yield return current;
+
+                if (current._children is { } children)
+                {
+                    foreach (var child in children)
+                    {
+                        if (child is Control childControl)
+                        {
+                            queue.Enqueue(childControl);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public Control? FindControl(string id)
+    {
+        foreach (var control in AllChildren)
+        {
+            if (string.Equals(id, control.ID, StringComparison.OrdinalIgnoreCase))
+            {
+                return control;
+            }
+        }
+
+        return null;
+    }
+
     protected EventHandlerList Events
     {
         get
@@ -89,6 +134,8 @@ public class Control : IDisposable
     internal bool HasRenderDelegate() => false;
 
     protected virtual void AddParsedSubObject(object obj) { Control control = obj as Control; if (control != null) { Controls.Add(control); } }
+
+    internal bool EnableLegacyRendering => false;
 
     protected Page? Page => GetHierarchicalFeature<Page>();
 
@@ -150,4 +197,15 @@ public class Control : IDisposable
     public virtual void Dispose()
     {
     }
+
+    protected virtual void LoadViewState(object savedState)
+    {
+        if (savedState != null)
+        {
+            ViewState.LoadViewState(savedState);
+        }
+    }
+
+    internal void LoadViewStateInternal(object savedState)
+        => LoadViewState(savedState);
 }

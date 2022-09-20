@@ -57,7 +57,7 @@ public class TextBox : WebControl, IPostBackDataHandler, IEditableTextControl
         {
             ViewState["AutoPostBack"] = value;
         }
-    }
+    } 
 
     public virtual bool CausesValidation
     {

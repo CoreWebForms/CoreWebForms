@@ -26,14 +26,20 @@ public class HtmlForm : HtmlContainerControl
 
     protected internal override void RenderChildren(HtmlTextWriter writer)
     {
-        var form = GetHierarchicalFeature<IFormWriterFeature>();
+        if (GetHierarchicalFeature<IFormWriterFeature>() is { } form)
+        {
+            form.OnFormRender();
+            form.BeginFormRender(writer, UniqueID);
 
-        form?.BeginFormRender(writer, UniqueID);
+            base.RenderChildren(writer);
 
-        base.RenderChildren(writer);
-
-        form?.EndFormRender(writer, UniqueID);
-        form?.OnFormPostRender(writer);
+            form.EndFormRender(writer, UniqueID);
+            form.OnFormPostRender(writer);
+        }
+        else
+        {
+            base.RenderChildren(writer);
+        }
     }
 
     protected override void RenderAttributes(HtmlTextWriter writer)
