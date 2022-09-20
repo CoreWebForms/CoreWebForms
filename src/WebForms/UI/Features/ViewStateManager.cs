@@ -1,4 +1,4 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
+// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections.Specialized;
@@ -107,26 +107,22 @@ internal class ViewStateManager : IViewStateManager
     {
         var result = new Dictionary<string, List<(string, object)>>();
 
-        try
+        var controlCount = reader.Read7BitEncodedInt();
+
+        for (int idx = 0; idx < controlCount; idx++)
         {
-            while (true)
+            var name = reader.ReadString();
+            var count = reader.Read7BitEncodedInt();
+            var items = new List<(string, object)>(count);
+
+            for (int i = 0; i < count; i++)
             {
-                var name = reader.ReadString();
-                var count = reader.Read7BitEncodedInt();
-                var items = new List<(string, object)>(count);
-
-                for (int i = 0; i < count; i++)
-                {
-                    var key = reader.ReadString();
-                    var value = _serializer.Deserialize(reader);
-                    items.Add((key, value));
-                }
-
-                result.Add(name, items);
+                var key = reader.ReadString();
+                var value = _serializer.Deserialize(reader);
+                items.Add((key, value));
             }
-        }
-        catch (EndOfStreamException)
-        {
+
+            result.Add(name, items);
         }
 
         return result;
@@ -140,26 +136,37 @@ internal class ViewStateManager : IViewStateManager
         RecurseControls(writer, _page);
     }
 
-    private void RecurseControls(BinaryWriter writer, Control control)
+    private void RecurseControls(BinaryWriter writer, Control parent)
     {
-        if (control.IsTrackingViewState && control.HasViewState && control.ID is { } id)
-        {
-            if (control.ViewState.SaveViewState() is { Count: > 0 } state)
-            {
-                writer.Write(id);
-                writer.Write7BitEncodedInt(state.Count);
+        List<ControlState>? _list = null;
 
-                foreach (var item in state)
+        foreach (var control in parent.AllChildren)
+        {
+            if (control.IsTrackingViewState && control.HasViewState && control.ID is { } id)
+            {
+                if (control.ViewState.SaveViewState() is { Count: > 0 } state)
+                {
+                    (_list ??= new()).Add(new() { Id = id, Items = state });
+
+                }
+            }
+        }
+
+        if (_list is not null)
+        {
+            writer.Write7BitEncodedInt(_list.Count);
+
+            foreach (var control in _list)
+            {
+                writer.Write(control.Id);
+                writer.Write7BitEncodedInt(control.Items.Count);
+
+                foreach (var item in control.Items)
                 {
                     writer.Write(item.Key);
                     _serializer.Serialize(writer, item.Value);
                 }
             }
-        }
-
-        foreach (var child in control.Controls.OfType<Control>())
-        {
-            RecurseControls(writer, child);
         }
     }
 
@@ -167,6 +174,6 @@ internal class ViewStateManager : IViewStateManager
     {
         public string Id { get; set; } = null!;
 
-        public List<Tuple<string, object>> Items { get; set; } = null!;
+        public IReadOnlyCollection<KeyValuePair<string, object>> Items { get; set; } = null!;
     }
 }
