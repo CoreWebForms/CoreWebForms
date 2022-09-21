@@ -6,6 +6,7 @@ using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 
 using Microsoft.AspNetCore.SystemWebAdapters.UI.PageParser.Syntax;
@@ -141,12 +142,14 @@ public class CSharpPageBuilder : DepthFirstAspxVisitor<object>
             count++;
         }
 
-        while (char.IsControl(line[n]))
+        var column = n - p;
+
+        if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
-            n--;
+            column--;
         }
 
-        return (count, n - p);
+        return (count, column);
     }
 
     private readonly Stack<ComponentLevel> _componentsStack = new();
