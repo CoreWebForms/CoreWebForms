@@ -21,6 +21,12 @@ public class CSharpPageBuilder : DepthFirstAspxVisitor<object>
     private readonly IDisposable _blockClose;
     private readonly AspxParseResult _tree;
 
+    private readonly string[] DefaultUsings = new[]
+    {
+        "System",
+        "System.Web",
+    };
+
     public CSharpPageBuilder(string path, IndentedTextWriter writer, string contents, IEnumerable<ControlInfo> controls)
     {
         _controls = controls.ToDictionary(c => c.Name, c => c);
@@ -54,11 +60,41 @@ public class CSharpPageBuilder : DepthFirstAspxVisitor<object>
 
         HasDirective = true;
 
+        foreach (var u in DefaultUsings)
+        {
+            _writer.Write("using ");
+            _writer.Write(u);
+            _writer.WriteLine(';');
+        }
+
+        _writer.WriteLine();
+
         WriteDirectiveDetails(d);
 
         using (Block())
         {
             _tree.RootNode.Accept(this);
+
+            WriteScripts();
+        }
+    }
+
+    private void WriteScripts()
+    {
+        if (_scripts.Count == 0)
+        {
+            return;
+        }
+
+        foreach (var script in _scripts)
+        {
+            foreach (var child in script.Children)
+            {
+                if (child is Literal literal)
+                {
+                    _writer.WriteLine(literal.Text.Trim());
+                }
+            }
         }
     }
 
@@ -277,19 +313,29 @@ public class CSharpPageBuilder : DepthFirstAspxVisitor<object>
 
     public override object Visit(OpenHtmlTag tag)
     {
-        VisitTag(tag, false);
-        base.Visit(tag);
-
-        if (tag is { Attributes.IsRunAtServer: false })
+        if (VisitTag(tag, false))
         {
-            WriteLiteral($"</{tag.Name}>");
+            base.Visit(tag);
+
+            if (tag is { Attributes.IsRunAtServer: false })
+            {
+                WriteLiteral($"</{tag.Name}>");
+            }
         }
 
         return default;
     }
 
-    private void VisitTag(HtmlTag tag, bool isClosing)
+    private readonly List<HtmlTag> _scripts = new();
+
+    private bool VisitTag(HtmlTag tag, bool isClosing)
     {
+        if (tag.Attributes.IsRunAtServer && string.Equals(tag.Name, "script", StringComparison.OrdinalIgnoreCase))
+        {
+            _scripts.Add(tag);
+            return false;
+        }
+
         var name = Current.GetNextControlName();
 
         _writer.Write("var ");
@@ -329,6 +375,8 @@ public class CSharpPageBuilder : DepthFirstAspxVisitor<object>
         }
 
         WriteControls(name);
+
+        return true;
     }
 
     private void WriteControls(string name)

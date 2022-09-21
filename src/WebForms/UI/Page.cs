@@ -69,14 +69,16 @@ public class Page : TemplateControl, IHttpAsyncHandler
             throw new InvalidOperationException("Page has already been processed.");
         }
 
+        var events = Features.Get<IPageEvents>()!;
+
+        events.OnPreInit(this);
+
         InitializeComponents();
 
         if (Features.Get<IViewStateManager>() is { } viewState)
         {
             viewState.RefreshControls();
         }
-
-        var events = Features.Get<IPageEvents>()!;
 
         Features.Set(context);
 

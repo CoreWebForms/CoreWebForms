@@ -29,13 +29,16 @@ public class PageGeneratorTests
     }
 }";
         var aspx = "<%@ Page Title=\"About\" Language=\"C#\" MasterPageFile=\"~/Site.Master\" AutoEventWireup=\"true\" CodeBehind=\"About.aspx.cs\" Inherits=\"WebApplication12.About\" %>\r\n";
-        var generated = @"[Microsoft.AspNetCore.SystemWebAdapters.UI.AspxPageAttribute(""/page.aspx"")]
+        var generated = @$"using System;
+using System.Web;
+
+[Microsoft.AspNetCore.SystemWebAdapters.UI.AspxPageAttribute(""/page.aspx"")]
 internal partial class _page_aspx : WebApplication12.About
-{
+{{
     protected override void InitializeComponents()
-    {
-    }
-}
+    {{
+    }}
+}}
 ";
 
         await new VerifyCS.Test()
@@ -70,7 +73,10 @@ internal partial class _page_aspx : WebApplication12.About
         var aspx = @"<%@ Page Title=""About"" Language=""C#"" MasterPageFile=""~/Site.Master"" AutoEventWireup=""true"" CodeBehind=""About.aspx.cs"" Inherits=""WebApplication12.About"" %>
 <div />
 ";
-        var generated = @$"[Microsoft.AspNetCore.SystemWebAdapters.UI.AspxPageAttribute(""/page.aspx"")]
+        var generated = @$"using System;
+using System.Web;
+
+[Microsoft.AspNetCore.SystemWebAdapters.UI.AspxPageAttribute(""/page.aspx"")]
 internal partial class _page_aspx : WebApplication12.About
 {{
     protected override void InitializeComponents()
@@ -115,7 +121,10 @@ internal partial class _page_aspx : WebApplication12.About
         var aspx = @"<%@ Page Title=""About"" Language=""C#"" MasterPageFile=""~/Site.Master"" AutoEventWireup=""true"" CodeBehind=""About.aspx.cs"" Inherits=""WebApplication12.About"" %>
 <div runat=""server"" id=""hi"" />
 ";
-        var generated = @$"[Microsoft.AspNetCore.SystemWebAdapters.UI.AspxPageAttribute(""/page.aspx"")]
+        var generated = @$"using System;
+using System.Web;
+
+[Microsoft.AspNetCore.SystemWebAdapters.UI.AspxPageAttribute(""/page.aspx"")]
 internal partial class _page_aspx : WebApplication12.About
 {{
     protected override void InitializeComponents()
@@ -163,7 +172,10 @@ internal partial class _page_aspx : WebApplication12.About
     <asp:TextBox id=""txt"" runat=""server"" />
 </form>
 ";
-        var generated = @$"[Microsoft.AspNetCore.SystemWebAdapters.UI.AspxPageAttribute(""/page.aspx"")]
+        var generated = @$"using System;
+using System.Web;
+
+[Microsoft.AspNetCore.SystemWebAdapters.UI.AspxPageAttribute(""/page.aspx"")]
 internal partial class _page_aspx : WebApplication12.About
 {{
     protected override void InitializeComponents()
@@ -218,7 +230,10 @@ internal partial class _page_aspx : WebApplication12.About
         var aspx = @"<%@ Page Title=""About"" Language=""C#"" MasterPageFile=""~/Site.Master"" AutoEventWireup=""true"" CodeBehind=""About.aspx.cs"" Inherits=""WebApplication12.About"" %>
 <h1>Hello</h1>
 ";
-        var generated = @$"[Microsoft.AspNetCore.SystemWebAdapters.UI.AspxPageAttribute(""/page.aspx"")]
+        var generated = @$"using System;
+using System.Web;
+
+[Microsoft.AspNetCore.SystemWebAdapters.UI.AspxPageAttribute(""/page.aspx"")]
 internal partial class _page_aspx : WebApplication12.About
 {{
     protected override void InitializeComponents()
@@ -254,4 +269,63 @@ internal partial class _page_aspx : WebApplication12.About
             },
         }.RunAsync().ConfigureAwait(false);
     }
-}
+
+    [Fact]
+    public async Task ScriptRunAtServer()
+    {
+        const string BaseClass = @"namespace WebApplication12
+{
+    public class About : global::System.Web.UI.Page
+    {
+    }
+}";
+        var aspx = @"<%@ Page Title=""About"" Language=""C#"" MasterPageFile=""~/Site.Master"" AutoEventWireup=""true"" CodeBehind=""About.aspx.cs"" Inherits=""WebApplication12.About"" %>
+<h1>Hello</h1>
+<script runat=""server"">
+    protected void Page_PreInit(object sender, EventArgs e)
+    {
+    }
+</script>";
+        var generated = @$"using System;
+using System.Web;
+
+[Microsoft.AspNetCore.SystemWebAdapters.UI.AspxPageAttribute(""/page.aspx"")]
+internal partial class _page_aspx : WebApplication12.About
+{{
+    protected override void InitializeComponents()
+    {{
+        var control_1 = new global::System.Web.UI.LiteralControl(""<h1>"");
+        Controls.Add(control_1);
+        var control_2 = new global::System.Web.UI.LiteralControl(""Hello"");
+        Controls.Add(control_2);
+        var control_3 = new global::System.Web.UI.LiteralControl(""</h1>"");
+        Controls.Add(control_3);
+        var control_4 = new global::System.Web.UI.LiteralControl(""{NewLine}"");
+        Controls.Add(control_4);
+    }}
+    protected void Page_PreInit(object sender, EventArgs e)
+    {{
+    }}
+}}
+";
+
+        await new VerifyCS.Test()
+        {
+            TestState =
+            {
+                Sources =
+                {
+                    ("/about.cs", BaseClass),
+                },
+                AdditionalFiles =
+                {
+                    ("/page.aspx", aspx),
+                },
+                GeneratedSources =
+                {
+                    (typeof(PageGenerator), "page.aspx.g.cs", generated),
+                },
+            },
+        }.RunAsync().ConfigureAwait(false);
+    }
+    }

@@ -6,4 +6,6 @@ namespace System.Web.UI.Features;
 internal interface IPageEvents
 {
     void OnPageLoad(Page page);
+
+    void OnPreInit(Page page);
 }
