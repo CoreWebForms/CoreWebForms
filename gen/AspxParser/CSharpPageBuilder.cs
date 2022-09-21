@@ -115,6 +115,7 @@ public class CSharpPageBuilder : DepthFirstAspxVisitor<object>
                 {
                     WriteLineInfo(literal.Location);
                     _writer.WriteLine(literal.Text.Trim());
+                    _writer.WriteLine("#line default");
                 }
             }
         }
