@@ -6,6 +6,7 @@
 
 <script runat="server">
     protected void Page_PreInit(object sender, EventArgs e) {
+        System.Diagnostics.Debugger.Break();
     }
 </script>
   

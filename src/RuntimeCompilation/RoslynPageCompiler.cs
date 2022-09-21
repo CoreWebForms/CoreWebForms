@@ -95,7 +95,12 @@ internal sealed class RoslynPageCompiler : IPageCompiler
         using var peStream = new MemoryStream();
         using var pdbStream = new MemoryStream();
 
-        var embeddedTexts = _isDebug ? new[] { EmbeddedText.FromSource(tree.FilePath, sourceText) } : null;
+        var embeddedTexts = new List<EmbeddedText> { EmbeddedText.FromSource(tree.FilePath, sourceText) };
+
+        if (writingResult.AspxContents is { } aspx)
+        {
+            embeddedTexts.Add(EmbeddedText.FromSource(file.File.Name, SourceText.From(aspx)));
+        }
 
         var result = compilation.Emit(
             embeddedTexts: embeddedTexts,
@@ -302,6 +307,8 @@ internal sealed class RoslynPageCompiler : IPageCompiler
         public string? ClassName { get; init; }
 
         public string? ErrorMessage { get; init; }
+
+        public string? AspxContents { get; init; }
 
         public ImmutableArray<AspxParseError> Errors { get; init; }
     }

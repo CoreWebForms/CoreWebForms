@@ -92,10 +92,51 @@ public class CSharpPageBuilder : DepthFirstAspxVisitor<object>
             {
                 if (child is Literal literal)
                 {
+                    WriteLineInfo(literal.Location);
                     _writer.WriteLine(literal.Text.Trim());
                 }
             }
         }
+    }
+
+    private void WriteLineInfo(Location location)
+    {
+        _writer.Write("#line (");
+        var start = GetSpan(location.Start, location.Source.Text);
+        var end = GetSpan(location.End, location.Source.Text);
+        _writer.Write(start.line);
+        _writer.Write(", ");
+        _writer.Write(start.column);
+        _writer.Write(") - (");
+        _writer.Write(end.line);
+        _writer.Write(", ");
+        _writer.Write(end.column);
+        _writer.Write(") \"");
+        _writer.Write(Path.Trim('/'));
+        _writer.WriteLine('\"');
+    }
+
+    private (int line, int column) GetSpan(int offset, string line)
+    {
+        var count = 1;
+        var n = 0;
+        var p = 0;
+
+        while (n < offset)
+        {
+            p = n;
+            var idx = line.IndexOf('\n', n);
+
+            if (idx < 0)
+            {
+                break;
+            }
+
+            n = idx + 1;
+            count++;
+        }
+
+        return (count, n - p);
     }
 
     private readonly Stack<ComponentLevel> _componentsStack = new();

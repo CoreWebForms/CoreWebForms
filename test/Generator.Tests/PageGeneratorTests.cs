@@ -303,6 +303,7 @@ internal partial class _page_aspx : WebApplication12.About
         var control_4 = new global::System.Web.UI.LiteralControl(""{NewLine}"");
         Controls.Add(control_4);
     }}
+    #line (4, 25) - (7, 7) ""page.aspx""
     protected void Page_PreInit(object sender, EventArgs e)
     {{
     }}
@@ -328,4 +329,4 @@ internal partial class _page_aspx : WebApplication12.About
             },
         }.RunAsync().ConfigureAwait(false);
     }
-    }
+}
