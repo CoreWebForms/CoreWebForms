@@ -142,7 +142,7 @@ public class Label : WebControl, ITextControl
         if (savedState != null)
         {
             base.LoadViewState(savedState);
-            
+
             string s = (string)ViewState["Text"];
             // Dev10 703061 If Text is set, we want to clear out any child controls, but not dirty viewstate
             if (s != null && HasControls())

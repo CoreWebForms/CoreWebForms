@@ -145,7 +145,7 @@ internal sealed class EventValidationStore
 
         private HashEqualityComparer() { }
 
-        public bool Equals(byte[]? x, byte[]? y)
+        public bool Equals(byte[] x, byte[] y)
         {
             Debug.Assert(x is not null);
             Debug.Assert(y is not null);

@@ -11,7 +11,8 @@ internal static class AssemblyRef
 internal static class SR
 {
     public static string GetString(string name, params object[] args) => name;
-
+    
+    public const string AutoPostBackControl_CausesValidation = nameof(AutoPostBackControl_CausesValidation);
     public const string Button_CausesValidation = nameof(Button_CausesValidation);
     public const string Button_OnClick = nameof(Button_OnClick);
     public const string Button_OnClientClick = nameof(Button_OnClientClick);
@@ -68,6 +69,18 @@ internal static class SR
     public const string Style_InvalidWidth = nameof(Style_InvalidWidth);
     public const string Style_RegisteredStylesAreReadOnly = nameof(Style_RegisteredStylesAreReadOnly);
     public const string Style_Width = nameof(Style_Width);
+    public const string TextBox_AutoCompleteType = nameof(TextBox_AutoCompleteType);
+    public const string TextBox_AutoPostBack = nameof(TextBox_AutoPostBack);
+    public const string TextBox_Columns = nameof(TextBox_Columns);
+    public const string TextBox_InvalidColumns = nameof(TextBox_InvalidColumns);
+    public const string TextBox_InvalidRows = nameof(TextBox_InvalidRows);
+    public const string TextBox_MaxLength = nameof(TextBox_MaxLength);
+    public const string TextBox_OnTextChanged = nameof(TextBox_OnTextChanged);
+    public const string TextBox_ReadOnly = nameof(TextBox_ReadOnly);
+    public const string TextBox_Rows = nameof(TextBox_Rows);
+    public const string TextBox_Text = nameof(TextBox_Text);
+    public const string TextBox_TextMode = nameof(TextBox_TextMode);
+    public const string TextBox_Wrap = nameof(TextBox_Wrap);
     public const string Type_not_creatable_from_string = nameof(Type_not_creatable_from_string);
     public const string UnitParseNoDigits = nameof(UnitParseNoDigits);
     public const string UnitParseNumericPart = nameof(UnitParseNumericPart);

@@ -269,4 +269,21 @@ public class Control : IDisposable
     }
 
     internal bool DesignMode => false;
+
+    protected virtual object? SaveViewState()
+    {
+#if FALSE
+        // Save values cached out of view state
+        if (flags[visibleDirty])
+        {
+            ViewState["Visible"] = !flags[invisible];
+        }
+        if (flags[validateRequestModeDirty])
+        {
+            ViewState["ValidateRequestMode"] = (int)ValidateRequestMode;
+        }
+#endif
+        return _viewState?.SaveViewState();
+    }
+
 }
