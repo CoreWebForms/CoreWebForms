@@ -34,6 +34,13 @@ public class Page : TemplateControl, IHttpAsyncHandler
     internal const string ViewStateEncryptionID = systemPostFieldPrefix + "VIEWSTATEENCRYPTED";
     internal const string EventValidationPrefixID = systemPostFieldPrefix + "EVENTVALIDATION";
 
+    internal static readonly object EventInitComplete = new();
+    internal static readonly object EventPreLoad = new();
+    internal static readonly object EventPreInit = new();
+    internal static readonly object EventLoadComplete = new();
+    internal static readonly object EventPreRenderComplete = new();
+    internal static readonly object EventSaveStateComplete = new();
+
     private ClientScriptManager? _clientScriptManager;
 
     public Page()

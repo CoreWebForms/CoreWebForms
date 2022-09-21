@@ -79,6 +79,9 @@ internal static class SR
     public const string Literal_Text = nameof(Literal_Text);
     public const string NoFocusSupport = nameof(NoFocusSupport);
     public const string Page_CallBackTargetInvalid = nameof(Page_CallBackTargetInvalid);
+    public const string Page_Error = nameof(Page_Error);
+    public const string Page_OnAbortTransaction = nameof(Page_OnAbortTransaction);
+    public const string Page_OnCommitTransaction = nameof(Page_OnCommitTransaction);
     public const string Parameter_NullOrEmpty = nameof(Parameter_NullOrEmpty);
     public const string Parent_collections_readonly = nameof(Parent_collections_readonly);
     public const string Path_must_be_rooted = nameof(Path_must_be_rooted);
@@ -106,6 +109,7 @@ internal static class SR
     public const string StyleSheetAreadyAppliedOnControl = nameof(StyleSheetAreadyAppliedOnControl);
     public const string Substitution_NotAllowed = nameof(Substitution_NotAllowed);
     public const string Substitution_SiteNotAllowed = nameof(Substitution_SiteNotAllowed);
+    public const string TemplateControl_DataBindingRequiresPage = nameof(TemplateControl_DataBindingRequiresPage);
     public const string TextBox_AutoCompleteType = nameof(TextBox_AutoCompleteType);
     public const string TextBox_AutoPostBack = nameof(TextBox_AutoPostBack);
     public const string TextBox_Columns = nameof(TextBox_Columns);
@@ -125,6 +129,4 @@ internal static class SR
     public const string VirtualPath_Length_Zero = nameof(VirtualPath_Length_Zero);
     public const string WebControl_CommandArgument = nameof(WebControl_CommandArgument);
     public const string WebControl_CommandName = nameof(WebControl_CommandName);
-    public const string Webevent_msg_OSF_Deserialization_String = nameof(Webevent_msg_OSF_Deserialization_String);
-    public const string Webevent_msg_OSF_Deserialization_Type = nameof(Webevent_msg_OSF_Deserialization_Type);
 }

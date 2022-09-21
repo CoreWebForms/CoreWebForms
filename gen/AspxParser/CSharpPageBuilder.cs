@@ -133,23 +133,11 @@ public class CSharpPageBuilder : DepthFirstAspxVisitor<object>
                 break;
             }
 
-            while (char.IsControl(line[idx]))
-            {
-                idx++;
-            }
-
-            n = idx;
+            n = idx + 1;
             count++;
         }
 
-        var column = n - p;
-
-        if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-        {
-            column--;
-        }
-
-        return (count, column);
+        return (count, column: n - p);
     }
 
     private readonly Stack<ComponentLevel> _componentsStack = new();
