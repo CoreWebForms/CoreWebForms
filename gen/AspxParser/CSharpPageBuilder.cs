@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
-using System.Xml.Linq;
+
 using Microsoft.AspNetCore.SystemWebAdapters.UI.PageParser.Syntax;
 
 using static Microsoft.AspNetCore.SystemWebAdapters.UI.PageParser.Syntax.AspxNode;
@@ -16,12 +16,15 @@ namespace Microsoft.AspNetCore.SystemWebAdapters.UI.PageParser;
 
 public class CSharpPageBuilder : DepthFirstAspxVisitor<object>
 {
+    private readonly Dictionary<string, ControlInfo> _controls;
     private readonly IndentedTextWriter _writer;
     private readonly IDisposable _blockClose;
     private readonly AspxParseResult _tree;
 
-    public CSharpPageBuilder(string path, IndentedTextWriter writer, string contents)
+    public CSharpPageBuilder(string path, IndentedTextWriter writer, string contents, IEnumerable<ControlInfo> controls)
     {
+        _controls = controls.ToDictionary(c => c.Name, c => c);
+
         Path = NormalizePath(path);
         ClassName = ConvertPathToClassName(Path);
 
@@ -201,9 +204,18 @@ public class CSharpPageBuilder : DepthFirstAspxVisitor<object>
             _writer.WriteLine("\";");
         }
 
+        if (!_controls.TryGetValue(tag.ControlName, out var info))
+        {
+            _writer.Write("// Couldn't find info for ");
+            _writer.Write(tag.Prefix);
+            _writer.Write(':');
+            _writer.WriteLine(tag.ControlName);
+            return;
+        }
+
         foreach (var attribute in tag.Attributes)
         {
-            var kind = _knownTypes.TryGetValue(attribute.Key, out var type) ? type : DataType.None;
+            var (kind, normalized) = info.GetDataType(attribute.Key);
 
             if (kind == DataType.None)
             {
@@ -219,9 +231,7 @@ public class CSharpPageBuilder : DepthFirstAspxVisitor<object>
                 _writer.Write(name);
                 _writer.Write(".");
 
-                var propertyName = attribute.Key == "OnClick" ? "Click" : attribute.Key;
-
-                _writer.Write(propertyName);
+                _writer.Write(normalized);
 
                 if (kind is DataType.Delegate)
                 {
@@ -247,8 +257,7 @@ public class CSharpPageBuilder : DepthFirstAspxVisitor<object>
             _writer.Write(value);
             _writer.Write('\"');
         }
-
-        if (kind == DataType.Delegate)
+        else
         {
             _writer.Write(value);
         }
@@ -260,12 +269,6 @@ public class CSharpPageBuilder : DepthFirstAspxVisitor<object>
         { "OnClick", DataType.Delegate},
     };
 
-    private enum DataType
-    {
-        None,
-        String,
-        Delegate,
-    }
 
     private readonly Dictionary<string, string> _htmlControls = new()
     {

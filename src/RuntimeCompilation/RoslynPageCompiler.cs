@@ -3,12 +3,15 @@
 
 using System.CodeDom.Compiler;
 using System.Collections.Immutable;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Reflection;
 using System.Runtime.Loader;
 using System.Text;
 using System.Text.Json;
+using System.Web.UI;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SystemWebAdapters.UI.PageParser;
 using Microsoft.AspNetCore.SystemWebAdapters.UI.PageParser.Syntax;
@@ -39,7 +42,9 @@ internal sealed class RoslynPageCompiler : IPageCompiler
     public async Task<ICompiledPage> CompilePageAsync(PageFile file, CancellationToken token)
     {
         using var sourceStream = new MemoryStream();
-        var writingResult = await WriteSourceAsync(file.Directory, file.File, sourceStream).ConfigureAwait(false);
+        var (references, components) = GetMetadataReferences();
+
+        var writingResult = await WriteSourceAsync(file.Directory, file.File, components, sourceStream).ConfigureAwait(false);
 
         if (writingResult.ErrorMessage is { } errorMessage)
         {
@@ -65,7 +70,7 @@ internal sealed class RoslynPageCompiler : IPageCompiler
                 outputKind: OutputKind.DynamicallyLinkedLibrary,
                 optimizationLevel: optimization),
             syntaxTrees: new[] { tree },
-            references: GetMetadataReferences());
+            references: references);
 
         using var peStream = new MemoryStream();
         using var pdbStream = new MemoryStream();
@@ -168,24 +173,85 @@ internal sealed class RoslynPageCompiler : IPageCompiler
         }
     }
 
-    private static IEnumerable<MetadataReference> GetMetadataReferences()
+    private static (IEnumerable<MetadataReference>, IEnumerable<ControlInfo>) GetMetadataReferences()
     {
+        var references = new List<MetadataReference>();
+        var components = new List<ControlInfo>();
+
         foreach (var assembly in AssemblyLoadContext.Default.Assemblies)
         {
             if (!assembly.IsDynamic)
             {
-                yield return MetadataReference.CreateFromFile(assembly.Location);
+                GatherComponents(components, assembly);
+                references.Add(MetadataReference.CreateFromFile(assembly.Location));
+            }
+        }
+
+        return (references, components);
+    }
+
+    private static void GatherComponents(List<ControlInfo> controls, Assembly assembly)
+    {
+        foreach (var type in assembly.GetTypes())
+        {
+            if (type.IsAssignableTo(typeof(Control)))
+            {
+                var info = new ControlInfo(type.Namespace, type.Name);
+
+                foreach (var attribute in type.GetCustomAttributes())
+                {
+                    if (attribute is DefaultPropertyAttribute defaultProperty)
+                    {
+                        info.DefaultProperty = defaultProperty.Name;
+                    }
+
+                    if (attribute is ValidationPropertyAttribute validationProperty)
+                    {
+                        info.ValidationProperty = validationProperty.Name;
+                    }
+
+                    if (attribute is DefaultEventAttribute defaultEvent)
+                    {
+                        info.DefaultEvent = defaultEvent.Name;
+                    }
+
+                    if (attribute is SupportsEventValidationAttribute)
+                    {
+                        info.SupportsEventValidation = true;
+                    }
+                }
+
+                foreach (var property in type.GetProperties())
+                {
+                    if (property.SetMethod is { IsPublic: true } && property.GetCustomAttribute<DefaultValueAttribute>() is { })
+                    {
+                        if (property.PropertyType.IsAssignableTo(typeof(Delegate)))
+                        {
+                            info.Events.Add(property.Name);
+                        }
+                        else if (property.PropertyType.IsAssignableTo(typeof(string)))
+                        {
+                            info.Strings.Add(property.Name);
+                        }
+                        else
+                        {
+                            info.Other.Add(property.Name);
+                        }
+                    }
+                }
+
+                controls.Add(info);
             }
         }
     }
 
-    private static async Task<WritingResult> WriteSourceAsync(string directory, IFileInfo file, Stream stream)
+    private static async Task<WritingResult> WriteSourceAsync(string directory, IFileInfo file, IEnumerable<ControlInfo> controls, Stream stream)
     {
         using var streamWriter = new StreamWriter(stream, leaveOpen: true);
         using var writer = new IndentedTextWriter(streamWriter);
 
         var contents = await GetContentsAsync(file).ConfigureAwait(false);
-        var generator = new CSharpPageBuilder(Path.Combine(directory, file.Name), writer, contents);
+        var generator = new CSharpPageBuilder(Path.Combine(directory, file.Name), writer, contents, controls);
 
         if (!generator.Errors.IsDefaultOrEmpty)
         {
