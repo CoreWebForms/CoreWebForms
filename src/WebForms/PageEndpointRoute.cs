@@ -24,7 +24,7 @@ internal class PageEndpointRoute
         var builder = new RouteEndpointBuilder(null!, pattern, 0);
 
         builder.AddHttpHandler(type);
-        builder.Metadata.Add(new PageEvents(type));
+        builder.Metadata.Add(new PageEventsFactory(type));
 
         return builder.Build();
     }

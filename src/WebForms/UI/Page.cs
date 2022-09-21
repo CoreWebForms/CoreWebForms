@@ -5,7 +5,6 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Web.UI.Features;
 using System.Web.UI.HtmlControls;
-using System.Web.UI.WebControls;
 
 // TODO: Remove once implemented
 #pragma warning disable CA1822 // Mark members as static
@@ -71,7 +70,7 @@ public class Page : TemplateControl, IHttpAsyncHandler
 
         var events = Features.Get<IPageEvents>()!;
 
-        events.OnPreInit(this);
+        events.OnPreInit();
 
         InitializeComponents();
 
@@ -82,7 +81,7 @@ public class Page : TemplateControl, IHttpAsyncHandler
 
         Features.Set(context);
 
-        events.OnPageLoad(this);
+        events.OnPageLoad();
 
         using var writer = new HtmlTextWriter(context.Response.Output);
 

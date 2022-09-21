@@ -5,16 +5,18 @@ using System.Reflection;
 
 namespace System.Web.UI.Features;
 
-internal sealed class PageEvents : IPageEvents
+internal sealed class PageEventsFactory : IPageEventsFactory
 {
     private readonly Action<object, EventArgs>? _onLoad;
     private readonly Action<object, EventArgs>? _onPreInit;
 
-    public PageEvents(Type type)
+    public PageEventsFactory(Type type)
     {
         _onLoad = CreateMethod(type, "Page_Load");
         _onPreInit = CreateMethod(type, "Page_PreInit");
     }
+
+    public IPageEvents Create(Page page) => new PageEvents(page, this);
 
     private static Action<object, EventArgs>? CreateMethod(Type type, string name)
     {
@@ -35,6 +37,22 @@ internal sealed class PageEvents : IPageEvents
         }
 
         return null;
+    }
+
+    private class PageEvents : IPageEvents
+    {
+        private readonly Page _page;
+        private readonly PageEventsFactory _factory;
+
+        public PageEvents(Page page, PageEventsFactory factory)
+        {
+            _page = page;
+            _factory = factory;
+        }
+
+        public void OnPageLoad() => _factory.OnPageLoad(_page);
+
+        public void OnPreInit() => _factory.OnPreInit(_page);
     }
 
     public void OnPageLoad(Page page) => _onLoad?.Invoke(page, EventArgs.Empty);
