@@ -1,6 +1,8 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+#nullable disable
+
 namespace System.Web.UI.WebControls;
 
 using System;
@@ -12,10 +14,9 @@ using System.Diagnostics.CodeAnalysis;
 /// </devdoc>
 public class DataKey : IStateManager, IEquatable<DataKey>
 {
-
-    private IOrderedDictionary _keyTable;
+    private readonly IOrderedDictionary _keyTable;
+    private readonly string[] _keyNames;
     private bool _isTracking;
-    private string[] _keyNames;
 
     public DataKey(IOrderedDictionary keyTable)
     {

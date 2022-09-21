@@ -54,10 +54,6 @@ public class Page : TemplateControl, IHttpAsyncHandler
 
     internal bool EnableEventValidation => false;
 
-    internal bool DesignMode => false;
-
-    internal ControlState ControlState { get; private set; }
-
     public bool IsCallback { get; private set; }
 
     internal bool IsInOnFormRender => Features.GetRequired<IFormWriterFeature>().IsRendering;
@@ -107,9 +103,12 @@ public class Page : TemplateControl, IHttpAsyncHandler
     {
     }
 
-    internal void RegisterEnabledControl(TextBox textBox)
-    {
-    }
+    private List<Control>? _enabledControls;
+
+    private List<Control> EnabledControls => _enabledControls ??= new();
+
+    internal void RegisterEnabledControl(Control control)
+        => EnabledControls.Add(control);
 
     internal void RegisterWebFormsScript()
     {

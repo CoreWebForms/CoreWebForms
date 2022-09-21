@@ -1,32 +1,31 @@
-//------------------------------------------------------------------------------
-// <copyright file="ViewStateModeByIdAttribute.cs" company="Microsoft">
-//     Copyright (c) Microsoft Corporation.  All rights reserved.
-// </copyright>
-//------------------------------------------------------------------------------
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
-/*
- */
-namespace System.Web.UI {
-    using System;
-    using System.Collections;
-    using System.Collections.Generic;
-    using System.ComponentModel;
+#nullable disable
 
-    [AttributeUsage(AttributeTargets.Class)]
-    public sealed class ViewStateModeByIdAttribute : Attribute {
-        static Hashtable _viewStateIdTypes = Hashtable.Synchronized(new Hashtable());
+using System.Collections;
+using System.ComponentModel;
 
-        public ViewStateModeByIdAttribute() {
+namespace System.Web.UI;
+
+[AttributeUsage(AttributeTargets.Class)]
+public sealed class ViewStateModeByIdAttribute : Attribute
+{
+    private static readonly Hashtable _viewStateIdTypes = Hashtable.Synchronized(new Hashtable());
+
+    public ViewStateModeByIdAttribute()
+    {
+    }
+
+    internal static bool IsEnabled(Type type)
+    {
+        if (!_viewStateIdTypes.ContainsKey(type))
+        {
+            System.ComponentModel.AttributeCollection attrs = TypeDescriptor.GetAttributes(type);
+            ViewStateModeByIdAttribute attr = (ViewStateModeByIdAttribute)attrs[typeof(ViewStateModeByIdAttribute)];
+            _viewStateIdTypes[type] = (attr != null);
         }
-
-        internal static bool IsEnabled(Type type) {
-            if (!_viewStateIdTypes.ContainsKey(type)) {
-                System.ComponentModel.AttributeCollection attrs = TypeDescriptor.GetAttributes(type);
-                ViewStateModeByIdAttribute attr = (ViewStateModeByIdAttribute)attrs[typeof(ViewStateModeByIdAttribute)];
-                _viewStateIdTypes[type] = (attr != null);
-            }
-            return (bool)_viewStateIdTypes[type];
-        }
+        return (bool)_viewStateIdTypes[type];
     }
 }
 

@@ -15,9 +15,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Runtime.CompilerServices;
-using System.Security.Permissions;
 using System.Threading.Tasks;
-using System.Web.Caching;
 using System.Web.UI.WebControls;
 using System.Web.Util;
 
@@ -2639,7 +2637,6 @@ public partial class Control : IComponent, IParserAccessor, IDataBindingsAccesso
             saveThisState = (inheritedMode == ViewStateMode.Enabled);
         }
 
-        object adapterState = null;
         object controlSavedState = null;
 
         if (saveThisState)
@@ -3389,10 +3386,6 @@ public partial class Control : IComponent, IParserAccessor, IDataBindingsAccesso
         DirtyNameTable();
     }
 
-    /// <internalonly/>
-    /// <devdoc>
-    /// </devdoc>
-    [SecurityPermission(SecurityAction.Demand, Unrestricted = true)]
     protected virtual IDictionary GetDesignModeState()
     {
         ControlRareFields rareFields = RareFieldsEnsured;

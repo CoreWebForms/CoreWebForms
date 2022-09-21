@@ -56,6 +56,7 @@ internal static class SR
     public const string Controls_Cant_Change_Between_Posts = nameof(Controls_Cant_Change_Between_Posts);
     public const string Duplicate_id_used = nameof(Duplicate_id_used);
     public const string Empty_path_has_no_directory = nameof(Empty_path_has_no_directory);
+    public const string ErrorSerializingValue = nameof(ErrorSerializingValue);
     public const string FontInfo_Bold = nameof(FontInfo_Bold);
     public const string FontInfo_Italic = nameof(FontInfo_Italic);
     public const string FontInfo_Name = nameof(FontInfo_Name);
@@ -68,7 +69,6 @@ internal static class SR
     public const string Invalid_app_VirtualPath = nameof(Invalid_app_VirtualPath);
     public const string Invalid_vpath = nameof(Invalid_vpath);
     public const string InvalidArgumentValue = nameof(InvalidArgumentValue);
-    public const string InvalidOffsetOrCount = nameof(InvalidOffsetOrCount);
     public const string InvalidSerializedData = nameof(InvalidSerializedData);
     public const string Label_AssociatedControlID = nameof(Label_AssociatedControlID);
     public const string Label_Text = nameof(Label_Text);
@@ -125,4 +125,6 @@ internal static class SR
     public const string VirtualPath_Length_Zero = nameof(VirtualPath_Length_Zero);
     public const string WebControl_CommandArgument = nameof(WebControl_CommandArgument);
     public const string WebControl_CommandName = nameof(WebControl_CommandName);
+    public const string Webevent_msg_OSF_Deserialization_String = nameof(Webevent_msg_OSF_Deserialization_String);
+    public const string Webevent_msg_OSF_Deserialization_Type = nameof(Webevent_msg_OSF_Deserialization_Type);
 }

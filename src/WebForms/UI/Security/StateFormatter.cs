@@ -11,7 +11,8 @@ internal class Purpose
     {
     }
 
-    public static readonly Purpose WebForms_Page_PreviousPageID = new();
+    internal static readonly Purpose WebForms_Page_PreviousPageID = new();
+    internal static readonly Purpose User_ObjectStateFormatter_Serialize = new();
 }
 
 internal interface IStateFormatter2 : IStateFormatter
@@ -24,7 +25,6 @@ internal interface IStateFormatter2 : IStateFormatter
 
 public interface IStateFormatter
 {
-
     object Deserialize(string serializedState);
 
     string Serialize(object state);

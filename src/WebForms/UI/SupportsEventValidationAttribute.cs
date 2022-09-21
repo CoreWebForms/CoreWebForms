@@ -12,13 +12,7 @@ namespace System.Web.UI;
 [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
 public sealed class SupportsEventValidationAttribute : Attribute
 {
-    private static Hashtable _typesSupportsEventValidation;
-
-    static SupportsEventValidationAttribute()
-    {
-        // Create a synchronized wrapper
-        _typesSupportsEventValidation = Hashtable.Synchronized(new Hashtable());
-    }
+    private static readonly Hashtable _typesSupportsEventValidation = Hashtable.Synchronized(new Hashtable());
 
     public SupportsEventValidationAttribute()
     {

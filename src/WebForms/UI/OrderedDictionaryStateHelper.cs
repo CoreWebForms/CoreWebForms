@@ -1,44 +1,49 @@
-// <copyright file="OrderedDictionaryStateHelper.cs" company="Microsoft">
-//     Copyright (c) Microsoft Corporation.  All rights reserved.
-// </copyright>                                                                
-//------------------------------------------------------------------------------
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
-namespace System.Web.UI {
-    
-    using System;
-    using System.Collections;
-    using System.Collections.Specialized;
-    using System.Runtime.Serialization;
-    using System.Web.Util;
+#nullable disable
 
-    internal static class OrderedDictionaryStateHelper {
-        public static void LoadViewState(IOrderedDictionary dictionary, ArrayList state) {
-            if (dictionary == null) {
-                throw new ArgumentNullException("dictionary");
-            }
-            if (state == null) {
-                throw new ArgumentNullException("state");
-            }
+using System.Collections;
+using System.Collections.Specialized;
 
-            if (state != null) {
-                for (int i = 0; i < state.Count; i++) {
-                    Pair pairEntry = (Pair)state[i];
-                    dictionary.Add(pairEntry.First, pairEntry.Second);
-                }
-            }
+namespace System.Web.UI;
+
+internal static class OrderedDictionaryStateHelper
+{
+    public static void LoadViewState(IOrderedDictionary dictionary, ArrayList state)
+    {
+        if (dictionary == null)
+        {
+            throw new ArgumentNullException(nameof(dictionary));
+        }
+        if (state == null)
+        {
+            throw new ArgumentNullException(nameof(state));
         }
 
-        public static ArrayList SaveViewState(IOrderedDictionary dictionary) {
-            if (dictionary == null) {
-                throw new ArgumentNullException("dictionary");
+        if (state != null)
+        {
+            for (int i = 0; i < state.Count; i++)
+            {
+                Pair pairEntry = (Pair)state[i];
+                dictionary.Add(pairEntry.First, pairEntry.Second);
             }
-
-            ArrayList list = new ArrayList(dictionary.Count);
-            foreach (DictionaryEntry entry in dictionary) {
-                list.Add(new Pair(entry.Key, entry.Value));
-            }
-            return list;
         }
+    }
+
+    public static ArrayList SaveViewState(IOrderedDictionary dictionary)
+    {
+        if (dictionary == null)
+        {
+            throw new ArgumentNullException(nameof(dictionary));
+        }
+
+        ArrayList list = new ArrayList(dictionary.Count);
+        foreach (DictionaryEntry entry in dictionary)
+        {
+            list.Add(new Pair(entry.Key, entry.Value));
+        }
+        return list;
     }
 }
 

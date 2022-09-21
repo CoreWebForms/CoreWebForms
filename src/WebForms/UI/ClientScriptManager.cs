@@ -3,6 +3,8 @@
 
 #nullable disable
 
+using System;
+
 namespace System.Web.UI;
 
 using System;
@@ -1025,7 +1027,7 @@ WebForm_InitCallback();", true);
 
         if ((index >= 0) && (script[index] != ';'))
         {
-            script = script.Substring(0, index + 1) + ";" + script.Substring(index + 1);
+            script = string.Concat(script.AsSpan(0, index + 1), ";", script.AsSpan(index + 1));
         }
 
         if (!_registeredOnSubmitStatements.Contains(key))
