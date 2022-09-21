@@ -61,11 +61,6 @@ public class HtmlForm : HtmlContainerControl
 
     private string GetActionAttribute()
     {
-        if (Action is { Length: > 0 } action)
-        {
-            return action;
-        }
-
-        return Context.Request.Path ?? "/";
+        return Action is { Length: > 0 } action ? action : Context.Request.Path ?? "/";
     }
 }

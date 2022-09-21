@@ -49,7 +49,7 @@ public class Button : WebControl, IButtonControl, IPostBackEventHandler
         get
         {
             object b = ViewState["CausesValidation"];
-            return ((b == null) ? true : (bool)b);
+            return (b == null) ? true : (bool)b;
         }
         set => ViewState["CausesValidation"] = value;
     }
@@ -69,7 +69,7 @@ public class Button : WebControl, IButtonControl, IPostBackEventHandler
         get
         {
             string s = (string)ViewState["CommandName"];
-            return ((s == null) ? String.Empty : s);
+            return s ?? string.Empty;
         }
         set => ViewState["CommandName"] = value;
     }
@@ -91,7 +91,7 @@ public class Button : WebControl, IButtonControl, IPostBackEventHandler
         get
         {
             string s = (string)ViewState["CommandArgument"];
-            return ((s == null) ? String.Empty : s);
+            return s ?? string.Empty;
         }
         set => ViewState["CommandArgument"] = value;
     }
@@ -110,11 +110,7 @@ public class Button : WebControl, IButtonControl, IPostBackEventHandler
         get
         {
             string s = (string)ViewState["OnClientClick"];
-            if (s == null)
-            {
-                return String.Empty;
-            }
-            return s;
+            return s ?? string.Empty;
         }
         set => ViewState["OnClientClick"] = value;
     }
@@ -131,7 +127,7 @@ public class Button : WebControl, IButtonControl, IPostBackEventHandler
         get
         {
             string s = (string)ViewState["PostBackUrl"];
-            return s == null ? String.Empty : s;
+            return s ?? string.Empty;
         }
         set => ViewState["PostBackUrl"] = value;
     }
@@ -151,7 +147,7 @@ public class Button : WebControl, IButtonControl, IPostBackEventHandler
         get
         {
             string s = (string)ViewState["Text"];
-            return ((s == null) ? String.Empty : s);
+            return s ?? string.Empty;
         }
         set => ViewState["Text"] = value;
     }
@@ -172,7 +168,7 @@ public class Button : WebControl, IButtonControl, IPostBackEventHandler
         get
         {
             object b = ViewState["UseSubmitBehavior"];
-            return ((b == null) ? true : (bool)b);
+            return (b == null) ? true : (bool)b;
         }
         set => ViewState["UseSubmitBehavior"] = value;
     }
@@ -188,7 +184,7 @@ public class Button : WebControl, IButtonControl, IPostBackEventHandler
         get
         {
             string s = (string)ViewState["ValidationGroup"];
-            return ((s == null) ? String.Empty : s);
+            return s ?? string.Empty;
         }
         set => ViewState["ValidationGroup"] = value;
     }
@@ -261,7 +257,7 @@ public class Button : WebControl, IButtonControl, IPostBackEventHandler
 
         bool effectiveEnabled = IsEnabled;
 
-        string onClick = String.Empty;
+        string onClick = string.Empty;
 
         if (effectiveEnabled)
         {
@@ -318,7 +314,7 @@ public class Button : WebControl, IButtonControl, IPostBackEventHandler
 
     protected virtual PostBackOptions GetPostBackOptions()
     {
-        PostBackOptions options = new PostBackOptions(this, String.Empty);
+        PostBackOptions options = new PostBackOptions(this, string.Empty);
         options.ClientSubmit = false;
 
         if (Page != null)
@@ -329,7 +325,7 @@ public class Button : WebControl, IButtonControl, IPostBackEventHandler
                 options.ValidationGroup = ValidationGroup;
             }
 
-            if (!String.IsNullOrEmpty(PostBackUrl))
+            if (!string.IsNullOrEmpty(PostBackUrl))
             {
                 options.ActionUrl = HttpUtility.UrlPathEncode(ResolveClientUrl(PostBackUrl));
             }
@@ -346,7 +342,10 @@ public class Button : WebControl, IButtonControl, IPostBackEventHandler
     protected virtual void OnClick(EventArgs e)
     {
         EventHandler handler = (EventHandler)Events[EventClick];
-        if (handler != null) handler(this, e);
+        if (handler != null)
+        {
+            handler(this, e);
+        }
     }
 
     /// <devdoc>
@@ -357,7 +356,9 @@ public class Button : WebControl, IButtonControl, IPostBackEventHandler
     {
         CommandEventHandler handler = (CommandEventHandler)Events[EventCommand];
         if (handler != null)
+        {
             handler(this, e);
+        }
 
         // Command events are bubbled up the control heirarchy
         RaiseBubbleEvent(this, e);
@@ -371,7 +372,7 @@ public class Button : WebControl, IButtonControl, IPostBackEventHandler
         if (Page != null && IsEnabled)
         {
             if ((CausesValidation && Page.GetValidators(ValidationGroup).Count > 0) ||
-                 !String.IsNullOrEmpty(PostBackUrl))
+                 !string.IsNullOrEmpty(PostBackUrl))
             {
                 Page.RegisterWebFormsScript();
             }

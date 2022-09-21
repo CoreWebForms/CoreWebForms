@@ -1,18 +1,13 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-namespace System.Web.UI.WebControls;
-
-using System;
 using System.Collections.Specialized;
 using System.Diagnostics.CodeAnalysis;
-using System.Drawing.Design;
 using System.Globalization;
-using System.Web;
-using System.Web.UI;
-using System.Web.Util;
-using Microsoft.Extensions.Logging;
 
+#nullable disable
+
+namespace System.Web.UI.WebControls;
 public class TextBox : WebControl, IPostBackDataHandler, IEditableTextControl
 {
     private static readonly object EventTextChanged = new object();
@@ -51,20 +46,20 @@ public class TextBox : WebControl, IPostBackDataHandler, IEditableTextControl
         get
         {
             object b = ViewState["AutoPostBack"];
-            return ((b == null) ? false : (bool)b);
+            return (b == null) ? false : (bool)b;
         }
         set
         {
             ViewState["AutoPostBack"] = value;
         }
-    } 
+    }
 
     public virtual bool CausesValidation
     {
         get
         {
             object b = ViewState["CausesValidation"];
-            return ((b == null) ? false : (bool)b);
+            return (b == null) ? false : (bool)b;
         }
         set
         {
@@ -77,7 +72,7 @@ public class TextBox : WebControl, IPostBackDataHandler, IEditableTextControl
         get
         {
             object o = ViewState["Columns"];
-            return ((o == null) ? 0 : (int)o);
+            return (o == null) ? 0 : (int)o;
         }
         set
         {
@@ -95,7 +90,7 @@ public class TextBox : WebControl, IPostBackDataHandler, IEditableTextControl
         get
         {
             object o = ViewState["MaxLength"];
-            return ((o == null) ? 0 : (int)o);
+            return (o == null) ? 0 : (int)o;
         }
         set
         {
@@ -112,7 +107,7 @@ public class TextBox : WebControl, IPostBackDataHandler, IEditableTextControl
         get
         {
             object mode = ViewState["Mode"];
-            return ((mode == null) ? TextBoxMode.SingleLine : (TextBoxMode)mode);
+            return (mode == null) ? TextBoxMode.SingleLine : (TextBoxMode)mode;
         }
         set
         {
@@ -129,7 +124,7 @@ public class TextBox : WebControl, IPostBackDataHandler, IEditableTextControl
         get
         {
             object o = ViewState["ReadOnly"];
-            return ((o == null) ? false : (bool)o);
+            return (o == null) ? false : (bool)o;
         }
         set
         {
@@ -142,7 +137,7 @@ public class TextBox : WebControl, IPostBackDataHandler, IEditableTextControl
         get
         {
             object o = ViewState["Rows"];
-            return ((o == null) ? 0 : (int)o);
+            return (o == null) ? 0 : (int)o;
         }
         set
         {
@@ -170,16 +165,11 @@ public class TextBox : WebControl, IPostBackDataHandler, IEditableTextControl
                 return false;
             }
 
-            if ((Events[EventTextChanged] != null) ||
+            return (Events[EventTextChanged] != null) ||
                 (IsEnabled == false) ||
                 (Visible == false) ||
-                (ReadOnly) ||
-                (this.GetType() != typeof(TextBox)))
-            {
-                return true;
-            }
-
-            return false;
+                ReadOnly ||
+                (this.GetType() != typeof(TextBox));
         }
     }
 
@@ -192,7 +182,7 @@ public class TextBox : WebControl, IPostBackDataHandler, IEditableTextControl
         get
         {
             string s = (string)ViewState["Text"];
-            return ((s == null) ? string.Empty : s);
+            return s ?? string.Empty;
         }
         set
         {
@@ -205,7 +195,7 @@ public class TextBox : WebControl, IPostBackDataHandler, IEditableTextControl
         get
         {
             string s = (string)ViewState["ValidationGroup"];
-            return ((s == null) ? string.Empty : s);
+            return s ?? string.Empty;
         }
         set
         {
@@ -218,7 +208,7 @@ public class TextBox : WebControl, IPostBackDataHandler, IEditableTextControl
         get
         {
             object b = ViewState["Wrap"];
-            return ((b == null) ? true : (bool)b);
+            return (b == null) ? true : (bool)b;
         }
         set
         {

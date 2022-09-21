@@ -15,12 +15,7 @@ internal class PageEndpointRoute
 {
     public static Endpoint? Create(Type type)
     {
-        if (type.GetCustomAttribute<AspxPageAttribute>() is { Path: { } path })
-        {
-            return Create(type, path);
-        }
-
-        return null;
+        return type.GetCustomAttribute<AspxPageAttribute>() is { Path: { } path } ? Create(type, path) : null;
     }
 
     public static Endpoint Create(Type type, PathString path)

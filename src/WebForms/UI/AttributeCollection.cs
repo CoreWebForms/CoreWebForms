@@ -20,14 +20,7 @@ public sealed class AttributeCollection
     {
         get
         {
-            if (_styleColl != null && StringUtil.EqualsIgnoreCase(key, "style"))
-            {
-                return _styleColl.Value;
-            }
-            else
-            {
-                return _bag[key] as string;
-            }
+            return _styleColl != null && StringUtil.EqualsIgnoreCase(key, "style") ? _styleColl.Value : _bag[key] as string;
         }
         set => Add(key, value);
     }

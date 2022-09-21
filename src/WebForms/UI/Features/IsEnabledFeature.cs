@@ -11,5 +11,5 @@ namespace System.Web.UI.Features;
 
 internal class IsEnabledFeature
 {
-  public  bool IsEnabled { get; set; }
+    public bool IsEnabled { get; set; }
 }

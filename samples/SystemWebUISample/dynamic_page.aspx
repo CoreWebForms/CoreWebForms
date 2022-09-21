@@ -16,6 +16,7 @@
 --%>
 
     <asp:Button id="button1" value="Go" runat="server" Text="Click Me" OnClick="Button1_Click" />
+    <asp:Button id="button2" value="Go" runat="server" Text="Click Me" OnClick="Button2_Click" />
 
 
 </form>

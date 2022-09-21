@@ -22,11 +22,7 @@ public class FontNamesConverter : TypeConverter
     /// </devdoc>
     public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
     {
-        if (sourceType == typeof(string))
-        {
-            return true;
-        }
-        return false;
+        return sourceType == typeof(string);
     }
 
     /// <devdoc>
@@ -61,11 +57,7 @@ public class FontNamesConverter : TypeConverter
         if (destinationType == typeof(string))
         {
 
-            if (value == null)
-            {
-                return String.Empty;
-            }
-            return string.Join(culture.TextInfo.ListSeparator, ((string[])value));
+            return value == null ? string.Empty : (object)string.Join(culture.TextInfo.ListSeparator, (string[])value);
         }
         throw GetConvertToException(value, destinationType);
     }

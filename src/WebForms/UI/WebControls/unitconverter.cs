@@ -22,14 +22,7 @@ public class UnitConverter : TypeConverter
     /// </devdoc>
     public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
     {
-        if (sourceType == typeof(string))
-        {
-            return true;
-        }
-        else
-        {
-            return base.CanConvertFrom(context, sourceType);
-        }
+        return sourceType == typeof(string) ? true : base.CanConvertFrom(context, sourceType);
     }
 
     /// <internalonly/>
@@ -39,15 +32,10 @@ public class UnitConverter : TypeConverter
     /// </devdoc>
     public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
     {
-        if ((destinationType == typeof(string)) ||
-            (destinationType == typeof(InstanceDescriptor)))
-        {
-            return true;
-        }
-        else
-        {
-            return base.CanConvertTo(context, destinationType);
-        }
+        return (destinationType == typeof(string)) ||
+            (destinationType == typeof(InstanceDescriptor))
+            ? true
+            : base.CanConvertTo(context, destinationType);
     }
 
     /// <internalonly/>
@@ -69,14 +57,7 @@ public class UnitConverter : TypeConverter
             {
                 return Unit.Empty;
             }
-            if (culture != null)
-            {
-                return Unit.Parse(textValue, culture);
-            }
-            else
-            {
-                return Unit.Parse(textValue, CultureInfo.CurrentCulture);
-            }
+            return culture != null ? Unit.Parse(textValue, culture) : (object)Unit.Parse(textValue, CultureInfo.CurrentCulture);
         }
         else
         {
@@ -92,14 +73,7 @@ public class UnitConverter : TypeConverter
     {
         if (destinationType == typeof(string))
         {
-            if ((value == null) || ((Unit)value).IsEmpty)
-            {
-                return String.Empty;
-            }
-            else
-            {
-                return ((Unit)value).ToString(culture);
-            }
+            return (value == null) || ((Unit)value).IsEmpty ? string.Empty : (object)((Unit)value).ToString(culture);
         }
         else if ((destinationType == typeof(InstanceDescriptor)) && (value != null))
         {
@@ -118,14 +92,7 @@ public class UnitConverter : TypeConverter
             }
 
             Debug.Assert(member != null, "Looks like we're missing Unit.Empty or Unit::ctor(double, UnitType)");
-            if (member != null)
-            {
-                return new InstanceDescriptor(member, args);
-            }
-            else
-            {
-                return null;
-            }
+            return member != null ? new InstanceDescriptor(member, args) : (object)null;
         }
         else
         {

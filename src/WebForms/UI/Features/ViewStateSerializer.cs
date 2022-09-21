@@ -46,12 +46,7 @@ internal class ViewStateSerializer : IViewStateSerializer
     {
         lock (_fromType)
         {
-            if (index < _list.Count)
-            {
-                return _list[index];
-            }
-
-            throw new InvalidOperationException("Unknown view state type");
+            return index < _list.Count ? _list[index] : throw new InvalidOperationException("Unknown view state type");
         }
     }
 }

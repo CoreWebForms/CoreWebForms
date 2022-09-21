@@ -4,7 +4,6 @@
 #pragma warning disable CA1822 // Mark members as static
 
 using System.ComponentModel;
-using System.Runtime.InteropServices;
 using System.Web.UI.Features;
 using Microsoft.AspNetCore.Http.Features;
 
@@ -31,11 +30,17 @@ public class Control : IDisposable
     public string? ClientID => default;
     internal IFeatureCollection Features => _features ??= new FeatureCollection();
 
+    protected virtual ControlCollection CreateControlCollection() => new(this);
+
     public Control? Parent { get; internal set; }
 
     public bool Visible { get; set; }
 
-    public ControlCollection Controls => _children ??= new(this);
+    public virtual void Focus()
+    {
+    }
+
+    public ControlCollection Controls => _children ??= CreateControlCollection();
 
     internal StateBag ViewState => _viewState ??= new();
 
@@ -55,6 +60,14 @@ public class Control : IDisposable
 
             _id = value;
         }
+    }
+
+    private protected void PreventAutoID()
+    {
+    }
+
+    private protected void SetEnableViewStateInternal(bool enabled)
+    {
     }
 
     internal IEnumerable<Control> AllChildren
@@ -133,13 +146,30 @@ public class Control : IDisposable
 
     internal bool HasRenderDelegate() => false;
 
-    protected virtual void AddParsedSubObject(object obj) { Control control = obj as Control; if (control != null) { Controls.Add(control); } }
+    protected virtual void AddParsedSubObject(object obj)
+    {
+        if (obj is Control control)
+        {
+            Controls.Add(control);
+        }
+    }
 
     internal bool EnableLegacyRendering => false;
 
     protected Page? Page => GetHierarchicalFeature<Page>();
 
-    protected HttpContext Context => GetHierarchicalFeature<HttpContext>() ?? throw new NotImplementedException();
+    protected HttpContext Context
+    {
+        get
+        {
+            if (GetHierarchicalFeature<HttpContext>() is { } context)
+            {
+                return context;
+            }
+
+            throw new NotImplementedException();
+        }
+    }
 
     public virtual void RenderControl(HtmlTextWriter writer)
         => Render(writer);
@@ -170,17 +200,12 @@ public class Control : IDisposable
             return t;
         }
 
-        if (Parent is { } p)
-        {
-            return p.GetHierarchicalFeature<T>();
-        }
-
-        return default;
+        return Parent is { } p ? p.GetHierarchicalFeature<T>() : default;
     }
 
     internal void ValidateEvent(string uniqueID)
     {
-        ValidateEvent(uniqueID, String.Empty);
+        ValidateEvent(uniqueID, string.Empty);
     }
 
     // Helper function to call validateEvent.
@@ -228,4 +253,20 @@ public class Control : IDisposable
 
     internal void LoadViewStateInternal(object savedState)
         => LoadViewState(savedState);
+
+    internal void RemovedControl(Control child)
+    {
+        child.Parent = null;
+    }
+
+    internal void AddedControl(Control child, int index)
+    {
+        child.Parent = this;
+    }
+
+    internal void ClearNamingContainer()
+    {
+    }
+
+    internal bool DesignMode => false;
 }

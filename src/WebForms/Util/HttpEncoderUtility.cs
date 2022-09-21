@@ -29,14 +29,7 @@ internal static class HttpEncoderUtility
     {
         Debug.Assert(n < 0x10);
 
-        if (n <= 9)
-        {
-            return (char)(n + (int)'0');
-        }
-        else
-        {
-            return (char)(n - 10 + (int)'a');
-        }
+        return n <= 9 ? (char)(n + (int)'0') : (char)(n - 10 + (int)'a');
     }
 
     // Set of safe chars, from RFC 1738.4 minus '+'
@@ -63,7 +56,7 @@ internal static class HttpEncoderUtility
     }
 
     //  Helper to encode spaces only
-    internal static String UrlEncodeSpaces(string str)
+    internal static string UrlEncodeSpaces(string str)
     {
         if (str != null && str.Contains(' '))
         {

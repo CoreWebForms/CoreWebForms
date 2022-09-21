@@ -30,13 +30,7 @@ internal sealed class WebCategoryAttribute : CategoryAttribute
     {
     }
 
-    public override object TypeId
-    {
-        get
-        {
-            return typeof(CategoryAttribute);
-        }
-    }
+    public override object TypeId => typeof(CategoryAttribute);
 
     /// <devdoc>
     ///     This method is called the first time the category property

@@ -31,7 +31,7 @@ internal class FormWriterFeature : IFormWriterFeature
     private bool _fRequirePostBackScript;
     private bool _fPostBackScriptRendered;
     private bool _containsCrossPagePost;
-    private Dictionary<String, String>? _hiddenFieldsToRender;
+    private Dictionary<string, string>? _hiddenFieldsToRender;
 
     public bool ClientSupportsJavaScript => true;
 
@@ -124,7 +124,7 @@ internal class FormWriterFeature : IFormWriterFeature
             writer.Write("\" id=\"");
             writer.Write(Page.ViewStateFieldPrefixID);
             writer.WriteLine("\" value=\"\" />");
-            _hiddenFieldsToRender[Page.ViewStateFieldPrefixID] = String.Empty;
+            _hiddenFieldsToRender[Page.ViewStateFieldPrefixID] = string.Empty;
         }
     }
 
@@ -178,7 +178,7 @@ internal class FormWriterFeature : IFormWriterFeature
     {
         if (RequiresViewStateEncryptionInternal)
         {
-            ClientScript.RegisterHiddenField(Page.ViewStateEncryptionID, String.Empty);
+            ClientScript.RegisterHiddenField(Page.ViewStateEncryptionID, string.Empty);
         }
 
 #if FALSE

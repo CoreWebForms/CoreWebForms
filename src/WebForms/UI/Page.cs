@@ -118,8 +118,8 @@ public class Page : TemplateControl, IHttpAsyncHandler
 
     internal void RegisterPostBackScript()
     {
-        ClientScript.RegisterHiddenField(postEventSourceID, String.Empty);
-        ClientScript.RegisterHiddenField(postEventArgumentID, String.Empty);
+        ClientScript.RegisterHiddenField(postEventSourceID, string.Empty);
+        ClientScript.RegisterHiddenField(postEventArgumentID, string.Empty);
     }
 
     internal void RegisterFocusScript()

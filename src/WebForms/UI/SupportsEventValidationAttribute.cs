@@ -1,49 +1,45 @@
-//------------------------------------------------------------------------------
-// <copyright file="SupportsEventValidation.cs" company="Microsoft">
-//     Copyright (c) Microsoft Corporation.  All rights reserved.
-// </copyright>                                                                
-//------------------------------------------------------------------------------
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
-/*
- */
-namespace System.Web.UI {
+#nullable disable
 
-    using System;
-    using System.Collections;
-    using System.ComponentModel;
-    using System.Diagnostics;
+using System.Collections;
 
-    /// <devdoc>
-    /// <para></para>
-    /// </devdoc>
-    [AttributeUsage(AttributeTargets.Class, AllowMultiple=false)]
-    public sealed class SupportsEventValidationAttribute : Attribute {
+namespace System.Web.UI;
+/// <devdoc>
+/// <para></para>
+/// </devdoc>
+[AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
+public sealed class SupportsEventValidationAttribute : Attribute
+{
+    private static Hashtable _typesSupportsEventValidation;
 
-        private static Hashtable _typesSupportsEventValidation;        
+    static SupportsEventValidationAttribute()
+    {
+        // Create a synchronized wrapper
+        _typesSupportsEventValidation = Hashtable.Synchronized(new Hashtable());
+    }
 
-        static SupportsEventValidationAttribute() {
-            // Create a synchronized wrapper
-            _typesSupportsEventValidation = Hashtable.Synchronized(new Hashtable());
+    public SupportsEventValidationAttribute()
+    {
+    }
+
+    internal static bool SupportsEventValidation(Type type)
+    {
+        object result = _typesSupportsEventValidation[type];
+        if (result != null)
+        {
+            return (bool)result;
         }
 
-        public SupportsEventValidationAttribute() {
-        }
+        // Check the attributes on the type to see if it supports SupportsEventValidationAttribute
+        // Note that this attribute does not inherit from the base class, since derived classes may 
+        // not be able to validate properly.
+        object[] attribs = type.GetCustomAttributes(typeof(SupportsEventValidationAttribute), false /* inherits */);
+        bool supportsEventValidation = (attribs != null) && (attribs.Length > 0);
+        _typesSupportsEventValidation[type] = supportsEventValidation;
 
-        internal static bool SupportsEventValidation(Type type) {
-            object result = _typesSupportsEventValidation[type];
-            if (result != null) {
-                return (bool)result;
-            }
-
-            // Check the attributes on the type to see if it supports SupportsEventValidationAttribute
-            // Note that this attribute does not inherit from the base class, since derived classes may 
-            // not be able to validate properly.
-            object[] attribs = type.GetCustomAttributes(typeof(SupportsEventValidationAttribute), false /* inherits */);
-            bool supportsEventValidation = ((attribs != null) && (attribs.Length > 0));
-            _typesSupportsEventValidation[type] = supportsEventValidation;
-
-            return supportsEventValidation;
-        }
+        return supportsEventValidation;
     }
 }
- 
+

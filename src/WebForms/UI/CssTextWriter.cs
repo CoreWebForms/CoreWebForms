@@ -83,13 +83,7 @@ internal sealed class CssTextWriter : TextWriter
     }
 
     /// <internalonly/>
-    public override Encoding Encoding
-    {
-        get
-        {
-            return _writer.Encoding;
-        }
-    }
+    public override Encoding Encoding => _writer.Encoding;
 
     /// <internalonly/>
     public override string NewLine
@@ -121,7 +115,7 @@ internal sealed class CssTextWriter : TextWriter
     /// </devdoc>
     public static HtmlTextWriterStyle GetStyleKey(string styleName)
     {
-        if (!String.IsNullOrEmpty(styleName))
+        if (!string.IsNullOrEmpty(styleName))
         {
             object key = attrKeyLookupTable[styleName.ToLower(CultureInfo.InvariantCulture)];
             if (key != null)
@@ -138,12 +132,7 @@ internal sealed class CssTextWriter : TextWriter
     /// </devdoc>
     public static string GetStyleName(HtmlTextWriterStyle styleKey)
     {
-        if ((int)styleKey >= 0 && (int)styleKey < attrNameLookupArray.Length)
-        {
-            return attrNameLookupArray[(int)styleKey].name;
-        }
-
-        return String.Empty;
+        return (int)styleKey >= 0 && (int)styleKey < attrNameLookupArray.Length ? attrNameLookupArray[(int)styleKey].name : string.Empty;
     }
 
     /// <devdoc>
@@ -152,12 +141,7 @@ internal sealed class CssTextWriter : TextWriter
     /// </devdoc>
     public static bool IsStyleEncoded(HtmlTextWriterStyle styleKey)
     {
-        if ((int)styleKey >= 0 && (int)styleKey < attrNameLookupArray.Length)
-        {
-            return attrNameLookupArray[(int)styleKey].encode;
-        }
-
-        return true;
+        return (int)styleKey >= 0 && (int)styleKey < attrNameLookupArray.Length ? attrNameLookupArray[(int)styleKey].encode : true;
     }
 
     /// <internalonly/>
@@ -434,7 +418,7 @@ internal sealed class CssTextWriter : TextWriter
     }
 
     /// <internalonly/>
-    public override void WriteLine(UInt32 value)
+    public override void WriteLine(uint value)
     {
         _writer.WriteLine(value);
     }

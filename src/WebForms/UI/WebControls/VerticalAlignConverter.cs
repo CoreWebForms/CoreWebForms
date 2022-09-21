@@ -14,7 +14,7 @@ using System.Globalization;
 internal sealed class VerticalAlignConverter : EnumConverter
 {
 
-    static readonly string[] stringValues = new String[(int)VerticalAlign.Bottom + 1];
+    static readonly string[] stringValues = new string[(int)VerticalAlign.Bottom + 1];
 
     static VerticalAlignConverter()
     {
@@ -30,14 +30,7 @@ internal sealed class VerticalAlignConverter : EnumConverter
 
     public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
     {
-        if (sourceType == typeof(string))
-        {
-            return true;
-        }
-        else
-        {
-            return base.CanConvertFrom(context, sourceType);
-        }
+        return sourceType == typeof(string) ? true : base.CanConvertFrom(context, sourceType);
     }
 
     public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
@@ -73,22 +66,14 @@ internal sealed class VerticalAlignConverter : EnumConverter
 
     public override bool CanConvertTo(ITypeDescriptorContext context, Type sourceType)
     {
-        if (sourceType == typeof(string))
-        {
-            return true;
-        }
-
-        return base.CanConvertTo(context, sourceType);
+        return sourceType == typeof(string) ? true : base.CanConvertTo(context, sourceType);
     }
 
     public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
     {
-        if (destinationType == typeof(string) && ((int)value <= (int)VerticalAlign.Bottom))
-        {
-            return stringValues[(int)value];
-        }
-
-        return base.ConvertTo(context, culture, value, destinationType);
+        return destinationType == typeof(string) && ((int)value <= (int)VerticalAlign.Bottom)
+            ? stringValues[(int)value]
+            : base.ConvertTo(context, culture, value, destinationType);
     }
 }
 

@@ -71,12 +71,7 @@ public sealed class StateBag : IStateManager, IDictionary
                 ArgumentNullException.ThrowIfNull("key");
             }
 
-            if (bag.TryGetValue(key, out var item))
-            {
-                return item.Value;
-            }
-
-            return null;
+            return bag.TryGetValue(key, out var item) ? item.Value : null;
         }
         set => Add(key, value);
     }
@@ -153,12 +148,7 @@ public sealed class StateBag : IStateManager, IDictionary
 
     public bool IsItemDirty(string key)
     {
-        if (bag.TryGetValue(key, out var item))
-        {
-            return item.IsDirty;
-        }
-
-        return false;
+        return bag.TryGetValue(key, out var item) ? item.IsDirty : false;
     }
 
     internal bool IsTrackingViewState { get; private set; }
@@ -201,12 +191,7 @@ public sealed class StateBag : IStateManager, IDictionary
             }
         }
 
-        if (list is null)
-        {
-            return Array.Empty<KeyValuePair<string, object>>();
-        }
-
-        return list;
+        return list is null ? Array.Empty<KeyValuePair<string, object>>() : list;
     }
 
     public void SetDirty(bool dirty)

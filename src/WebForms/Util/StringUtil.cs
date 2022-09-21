@@ -30,11 +30,7 @@ internal static class StringUtil
     {
         if (paramValue == null)
         {
-            if (throwIfNull)
-            {
-                throw new ArgumentNullException(paramName);
-            }
-            return null;
+            return throwIfNull ? throw new ArgumentNullException(paramName) : null;
         }
         string trimmedValue = paramValue.Trim();
         if (trimmedValue.Length == 0)
@@ -43,13 +39,11 @@ internal static class StringUtil
                 SR.GetString(SR.PersonalizationProviderHelper_TrimmedEmptyString,
                                                  paramName));
         }
-        if (lengthToCheck > -1 && trimmedValue.Length > lengthToCheck)
-        {
-            throw new ArgumentException(
+        return lengthToCheck > -1 && trimmedValue.Length > lengthToCheck
+            ? throw new ArgumentException(
                 SR.GetString(SR.StringUtil_Trimmed_String_Exceed_Maximum_Length,
-                                                 paramValue, paramName, lengthToCheck.ToString(CultureInfo.InvariantCulture)));
-        }
-        return trimmedValue;
+                                                 paramValue, paramName, lengthToCheck.ToString(CultureInfo.InvariantCulture)))
+            : trimmedValue;
     }
 
     internal static bool Equals(string s1, string s2)
@@ -59,12 +53,7 @@ internal static class StringUtil
             return true;
         }
 
-        if (String.IsNullOrEmpty(s1) && String.IsNullOrEmpty(s2))
-        {
-            return true;
-        }
-
-        return false;
+        return string.IsNullOrEmpty(s1) && string.IsNullOrEmpty(s2);
     }
 
     internal static unsafe bool Equals(string s1, int offset1, string s2, int offset2, int length)
@@ -94,7 +83,7 @@ internal static class StringUtil
             throw new ArgumentOutOfRangeException(SR.GetString(SR.InvalidOffsetOrCount, "offset2", "length"));
         }
 
-        if (String.IsNullOrEmpty(s1) || String.IsNullOrEmpty(s2))
+        if (string.IsNullOrEmpty(s1) || string.IsNullOrEmpty(s2))
         {
             return true;
         }
@@ -116,24 +105,20 @@ internal static class StringUtil
 
     internal static bool EqualsIgnoreCase(string s1, string s2)
     {
-        if (String.IsNullOrEmpty(s1) && String.IsNullOrEmpty(s2))
+        if (string.IsNullOrEmpty(s1) && string.IsNullOrEmpty(s2))
         {
             return true;
         }
-        if (String.IsNullOrEmpty(s1) || String.IsNullOrEmpty(s2))
+        if (string.IsNullOrEmpty(s1) || string.IsNullOrEmpty(s2))
         {
             return false;
         }
-        if (s2.Length != s1.Length)
-        {
-            return false;
-        }
-        return 0 == string.Compare(s1, 0, s2, 0, s2.Length, StringComparison.OrdinalIgnoreCase);
+        return s2.Length != s1.Length ? false : 0 == string.Compare(s1, 0, s2, 0, s2.Length, StringComparison.OrdinalIgnoreCase);
     }
 
     internal static bool EqualsIgnoreCase(string s1, int index1, string s2, int index2, int length)
     {
-        return String.Compare(s1, index1, s2, index2, length, StringComparison.OrdinalIgnoreCase) == 0;
+        return string.Compare(s1, index1, s2, index2, length, StringComparison.OrdinalIgnoreCase) == 0;
     }
 
     internal static string StringFromWCharPtr(IntPtr ip, int length)
@@ -194,12 +179,7 @@ internal static class StringUtil
     internal static bool StringEndsWithIgnoreCase(string s1, string s2)
     {
         int offset = s1.Length - s2.Length;
-        if (offset < 0)
-        {
-            return false;
-        }
-
-        return 0 == string.Compare(s1, offset, s2, 0, s2.Length, StringComparison.OrdinalIgnoreCase);
+        return offset < 0 ? false : 0 == string.Compare(s1, offset, s2, 0, s2.Length, StringComparison.OrdinalIgnoreCase);
     }
 
     /*
@@ -244,17 +224,12 @@ internal static class StringUtil
      */
     internal static bool StringStartsWithIgnoreCase(string s1, string s2)
     {
-        if (String.IsNullOrEmpty(s1) || String.IsNullOrEmpty(s2))
+        if (string.IsNullOrEmpty(s1) || string.IsNullOrEmpty(s2))
         {
             return false;
         }
 
-        if (s2.Length > s1.Length)
-        {
-            return false;
-        }
-
-        return 0 == string.Compare(s1, 0, s2, 0, s2.Length, StringComparison.OrdinalIgnoreCase);
+        return s2.Length > s1.Length ? false : 0 == string.Compare(s1, 0, s2, 0, s2.Length, StringComparison.OrdinalIgnoreCase);
     }
 
     internal static unsafe void UnsafeStringCopy(string src, int srcIndex, char[] dest, int destIndex, int len)
@@ -284,7 +259,7 @@ internal static class StringUtil
 
     internal static bool StringArrayEquals(string[] a, string[] b)
     {
-        if ((a == null) != (b == null))
+        if (a == null != (b == null))
         {
             return false;
         }
@@ -517,7 +492,7 @@ internal static class StringUtil
     }
     internal static string[] ObjectArrayToStringArray(object[] objectArray)
     {
-        String[] stringKeys = new String[objectArray.Length];
+        string[] stringKeys = new string[objectArray.Length];
         objectArray.CopyTo(stringKeys, 0);
         return stringKeys;
     }

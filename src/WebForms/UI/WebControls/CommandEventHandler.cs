@@ -1,16 +1,13 @@
-//------------------------------------------------------------------------------
-// <copyright file="CommandEventHandler.cs" company="Microsoft">
-//     Copyright (c) Microsoft Corporation.  All rights reserved.
-// </copyright>                                                                
-//------------------------------------------------------------------------------
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 /*
  */
 
-namespace System.Web.UI.WebControls {
+namespace System.Web.UI.WebControls
+{
 
     using System;
-
 
     /// <devdoc>
     ///    <para>Represents the method that will handle 

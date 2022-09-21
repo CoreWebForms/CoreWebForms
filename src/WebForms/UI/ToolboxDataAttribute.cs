@@ -1,79 +1,54 @@
-//------------------------------------------------------------------------------
-// <copyright file="ToolboxDataAttribute.cs" company="Microsoft">
-//     Copyright (c) Microsoft Corporation.  All rights reserved.
-// </copyright>                                                                
-//------------------------------------------------------------------------------
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
-/*
- */
-namespace System.Web.UI {
+using System.Web.Util;
 
-    using System;
-    using System.ComponentModel;
-    using System.Globalization;
-    using System.Web.Util;
-    
+#nullable disable
+
+namespace System.Web.UI;
+/// <devdoc>
+///     ToolboxDataAttribute 
+/// </devdoc>
+[AttributeUsage(AttributeTargets.Class)]
+public sealed class ToolboxDataAttribute : Attribute
+{
+    public static readonly ToolboxDataAttribute Default = new ToolboxDataAttribute(string.Empty);
 
     /// <devdoc>
-    ///     ToolboxDataAttribute 
     /// </devdoc>
-    [AttributeUsage(AttributeTargets.Class)]
-    public sealed class ToolboxDataAttribute : Attribute {
+    public string Data { get; } = string.Empty;
 
+    /// <devdoc>
+    /// </devdoc>
+    /// <internalonly/>
+    public ToolboxDataAttribute(string data)
+    {
+        Data = data;
+    }
 
-        /// <devdoc>
-        ///     
-        /// </devdoc>
-        public static readonly ToolboxDataAttribute Default = new ToolboxDataAttribute(String.Empty);
+    /// <devdoc>
+    ///    <para>[To be supplied.]</para>
+    /// </devdoc>
+    public override int GetHashCode() => Data?.GetHashCode() ?? 0;
 
-        private string data = String.Empty;
-
-
-        /// <devdoc>
-        /// </devdoc>
-        public string Data {
-            get {
-                return this.data;
-            }
+    /// <devdoc>
+    /// </devdoc>
+    /// <internalonly/>
+    public override bool Equals(object obj)
+    {
+        if (obj == this)
+        {
+            return true;
         }
 
+        return (obj != null) && (obj is ToolboxDataAttribute attribute) ? StringUtil.EqualsIgnoreCase(attribute.Data, Data) : false;
+    }
 
-        /// <devdoc>
-        /// </devdoc>
-        /// <internalonly/>
-        public ToolboxDataAttribute(string data) {
-            this.data = data;
-        }
-
-
-        /// <devdoc>
-        ///    <para>[To be supplied.]</para>
-        /// </devdoc>
-        public override int GetHashCode() {
-            return ((Data != null) ? Data.GetHashCode() : 0);
-        }
-
-
-        /// <devdoc>
-        /// </devdoc>
-        /// <internalonly/>
-        public override bool Equals(object obj) {
-            if (obj == this) {
-                return true;
-            }
-            if ((obj != null) && (obj is ToolboxDataAttribute)) {
-                return(StringUtil.EqualsIgnoreCase(((ToolboxDataAttribute)obj).Data, data));
-            }
-
-            return false;
-        }
-
-
-        /// <devdoc>
-        /// </devdoc>
-        /// <internalonly/>
-        public override bool IsDefaultAttribute() {
-            return this.Equals(Default);
-        }
+    /// <devdoc>
+    /// </devdoc>
+    /// <internalonly/>
+    public override bool IsDefaultAttribute()
+    {
+        return Equals(Default);
     }
 }
