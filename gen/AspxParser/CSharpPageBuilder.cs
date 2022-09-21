@@ -77,6 +77,26 @@ public class CSharpPageBuilder : DepthFirstAspxVisitor<object>
             _tree.RootNode.Accept(this);
 
             WriteScripts();
+            WriteVariables();
+        }
+    }
+
+    private void WriteVariables()
+    {
+        if (_variables.Count == 0)
+        {
+            return;
+        }
+
+        foreach (var variable in _variables)
+        {
+            _writer.Write("protected ");
+            _writer.Write(variable.Type.Namespace);
+            _writer.Write('.');
+            _writer.Write(variable.Type.Name);
+            _writer.Write(' ');
+            _writer.Write(variable.Name);
+            _writer.WriteLine(';');
         }
     }
 
@@ -267,21 +287,46 @@ public class CSharpPageBuilder : DepthFirstAspxVisitor<object>
         _writer.Write(tag.ControlName);
         _writer.WriteLine("();");
 
+        WriteId(tag.Attributes.Id, name, new("global::System.Web.UI.WebControls", tag.ControlName));
+
         WriteAttributes(tag, name);
 
         WriteControls(name);
     }
 
-    private void WriteAttributes(AspxTag tag, string name)
+    private readonly struct QName
     {
-        if (!string.IsNullOrEmpty(tag.Attributes.Id))
+        public QName(string ns, string name)
+        {
+            Namespace = ns;
+            Name = name;
+        }
+
+        public string Namespace { get; }
+
+        public string Name { get; }
+    }
+
+    private void WriteId(string id, string name, QName qname)
+    {
+        if (!string.IsNullOrEmpty(id))
         {
             _writer.Write(name);
             _writer.Write(".ID = \"");
-            _writer.Write(tag.Attributes.Id);
+            _writer.Write(id);
             _writer.WriteLine("\";");
-        }
 
+            _writer.Write(id);
+            _writer.Write(" = ");
+            _writer.Write(name);
+            _writer.WriteLine(";");
+
+            _variables.Add(new(id, qname));
+        }
+    }
+
+    private void WriteAttributes(AspxTag tag, string name)
+    {
         if (!_controls.TryGetValue(tag.ControlName, out var info))
         {
             _writer.Write("// Couldn't find info for ");
@@ -361,6 +406,21 @@ public class CSharpPageBuilder : DepthFirstAspxVisitor<object>
         return default;
     }
 
+    private readonly List<Variable> _variables = new();
+
+    private readonly struct Variable
+    {
+        public Variable(string name, QName qname)
+        {
+            Name = name;
+            Type = qname;
+        }
+
+        public string Name { get; }
+
+        public QName Type { get; }
+    }
+
     private readonly List<HtmlTag> _scripts = new();
 
     private bool VisitTag(HtmlTag tag, bool isClosing)
@@ -378,27 +438,25 @@ public class CSharpPageBuilder : DepthFirstAspxVisitor<object>
 
         if (tag.Attributes.IsRunAtServer)
         {
+            QName type;
+
             if (_htmlControls.TryGetValue(tag.Name, out var known))
             {
                 _writer.Write(" = new global::System.Web.UI.HtmlControls.");
                 _writer.Write(known);
                 _writer.WriteLine("();");
+
+                type = new("global::System.Web.UI.HtmlControls", known);
             }
             else
             {
+                type = new("global::System.Web.UI.HtmlControls", "HtmlGenericControl");
                 _writer.Write(" = new global::System.Web.UI.HtmlControls.HtmlGenericControl(\"");
                 _writer.Write(tag.Name);
                 _writer.WriteLine("\");");
             }
 
-            //todo - add attribute support for "Value" for label
-            if (!string.IsNullOrEmpty(tag.Attributes.Id))
-            {
-                _writer.Write(name);
-                _writer.Write(".ID = \"");
-                _writer.Write(tag.Attributes.Id);
-                _writer.WriteLine("\";");
-            }
+            WriteId(tag.Attributes.Id, name, type);
         }
         else
         {

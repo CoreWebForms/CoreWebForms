@@ -8,8 +8,4 @@ namespace SystemWebUISample.Pages;
 
 public class MyPage : Page
 {
-    protected void Button2_Click(object sender, EventArgs e)
-    {
-        Debugger.Break();
-    }
 }

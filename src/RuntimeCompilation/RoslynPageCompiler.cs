@@ -113,7 +113,11 @@ internal sealed class RoslynPageCompiler : IPageCompiler
             _logger.LogWarning("{ErrorCount} error(s) found compiling {Route}", result.Diagnostics.Length, writingResult.Path);
 
             var error = result.Diagnostics
-                .Select(d => new { d.Id, Message = d.GetMessage(CultureInfo.CurrentCulture) });
+                .Select(d => new
+                {
+                    d.Id,
+                    Message = d.GetMessage(CultureInfo.CurrentCulture),
+                });
 
             var message = JsonSerializer.SerializeToUtf8Bytes(error);
 
