@@ -66,6 +66,7 @@ internal static class SR
     public const string FontInfo_Strikeout = nameof(FontInfo_Strikeout);
     public const string FontInfo_Underline = nameof(FontInfo_Underline);
     public const string HTMLTextWriterUnbalancedPop = nameof(HTMLTextWriterUnbalancedPop);
+    public const string Inner_Content_not_literal = nameof(Inner_Content_not_literal);
     public const string Invalid_app_VirtualPath = nameof(Invalid_app_VirtualPath);
     public const string Invalid_vpath = nameof(Invalid_vpath);
     public const string InvalidArgumentValue = nameof(InvalidArgumentValue);
@@ -88,6 +89,7 @@ internal static class SR
     public const string PersonalizationProviderHelper_TrimmedEmptyString = nameof(PersonalizationProviderHelper_TrimmedEmptyString);
     public const string Physical_path_not_allowed = nameof(Physical_path_not_allowed);
     public const string PostBackControl_ValidationGroup = nameof(PostBackControl_ValidationGroup);
+    public const string Property_Had_Malformed_Url = nameof(Property_Had_Malformed_Url);
     public const string PropertySetBeforePreInitOrAddToControls = nameof(PropertySetBeforePreInitOrAddToControls);
     public const string PropertySetBeforeStyleSheetApplied = nameof(PropertySetBeforeStyleSheetApplied);
     public const string StateManagedCollection_InvalidIndex = nameof(StateManagedCollection_InvalidIndex);

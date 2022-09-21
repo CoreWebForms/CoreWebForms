@@ -283,27 +283,11 @@ public abstract class TemplateControl : Control, INamingContainer
         return false;
     }
 
-    /*
-     * This method is overriden by the generated classes (hence it cannot be internal)
-     */
-
-    /// <internalonly/>
-    /// <devdoc>
-    /// </devdoc>
-    [EditorBrowsable(EditorBrowsableState.Never)]
-    [Obsolete("Use of this property is not recommended because it is no longer useful. http://go.microsoft.com/fwlink/?linkid=14202")]
-    protected virtual int AutoHandlers
-    {
-        get { return 0; }
-        set { }
-    }
-
     internal override TemplateControl GetTemplateControl()
     {
         return this;
     }
 
-    [SuppressMessage("Microsoft.Security", "CA2122:DoNotIndirectlyExposeMethodsWithLinkDemands", Justification = "See comment on GetDelegateInformationWithAssert.")]
     internal void HookUpAutomaticHandlers()
     {
         // Do nothing if auto-events are not supported
