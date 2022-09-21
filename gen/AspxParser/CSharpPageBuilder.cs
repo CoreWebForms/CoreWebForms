@@ -132,7 +132,12 @@ public class CSharpPageBuilder : DepthFirstAspxVisitor<object>
                 break;
             }
 
-            n = idx + 1;
+            while (char.IsControl(line[idx]))
+            {
+                idx++;
+            }
+
+            n = idx;
             count++;
         }
 
