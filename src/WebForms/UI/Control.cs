@@ -858,10 +858,12 @@ public partial class Control : IComponent, IParserAccessor, IDataBindingsAccesso
     {
         get
         {
+#if FLASE
             if (Page != null)
             {
                 return Page.IdSeparator;
             }
+#endif
             return IdSeparatorFromConfig;
         }
     }
