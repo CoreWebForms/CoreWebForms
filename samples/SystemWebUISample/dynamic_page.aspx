@@ -8,6 +8,11 @@
     protected void Page_PreInit(object sender, EventArgs e) {
         System.Diagnostics.Debugger.Break();
     }
+
+    protected void Button1_Click(object sender, EventArgs e)
+    {
+        System.Diagnostics.Debugger.Break();
+    }
 </script>
   
 <form id="frm" runat="server">
