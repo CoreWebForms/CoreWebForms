@@ -3,7 +3,21 @@
 
 #nullable disable
 
+using System.ComponentModel;
+
 namespace System.Web.UI.WebControls;
+/// <devdoc>
+///    <para>Constructs a label for displaying text programmatcially on a
+///       page.</para>
+/// </devdoc>
+[
+ControlValueProperty("Text"),
+DataBindingHandler("System.Web.UI.Design.TextDataBindingHandler, " + AssemblyRef.SystemDesign),
+DefaultProperty("Text"),
+ParseChildren(false),
+Designer("System.Web.UI.Design.WebControls.LabelDesigner, " + AssemblyRef.SystemDesign),
+ToolboxData("<{0}:Label runat=\"server\" Text=\"Label\"></{0}:Label>")
+]
 public class Label : WebControl, ITextControl
 {
     private bool _textSetByAddParsedSubObject;
@@ -22,12 +36,23 @@ public class Label : WebControl, ITextControl
     {
     }
 
+    /// <devdoc>
+    /// <para>[To be supplied.]</para>
+    /// </devdoc>
+    [
+    DefaultValue(""),
+    IDReferenceProperty(),
+    TypeConverter(typeof(AssociatedControlConverter)),
+    WebCategory("Accessibility"),
+    WebSysDescription(SR.Label_AssociatedControlID),
+    Themeable(false)
+    ]
     public virtual string AssociatedControlID
     {
         get
         {
             string s = (string)ViewState["AssociatedControlID"];
-            return s ?? string.Empty;
+            return (s == null) ? String.Empty : s;
         }
         set
         {
@@ -48,20 +73,40 @@ public class Label : WebControl, ITextControl
         }
     }
 
-    public override bool SupportsDisabledAttribute =>
-            //return RenderingCompatibility < VersionUtil.Framework40;
-            true;
+    public override bool SupportsDisabledAttribute => RenderingCompatibility < VersionUtil.Framework40;
 
     internal override bool RequiresLegacyRendering => true;
 
-    protected override HtmlTextWriterTag TagKey => AssociatedControlID.Length != 0 ? HtmlTextWriterTag.Label : base.TagKey;
+    protected override HtmlTextWriterTag TagKey
+    {
+        get
+        {
+            if (AssociatedControlID.Length != 0)
+            {
+                return HtmlTextWriterTag.Label;
+            }
+            return base.TagKey;
+        }
+    }
 
+    /// <devdoc>
+    /// <para>Gets or sets the text content of the <see cref='System.Web.UI.WebControls.Label'/>
+    /// control.</para>
+    /// </devdoc>
+    [
+    Localizable(true),
+    Bindable(true),
+    WebCategory("Appearance"),
+    DefaultValue(""),
+    WebSysDescription(SR.Label_Text),
+    PersistenceMode(PersistenceMode.InnerDefaultProperty)
+    ]
     public virtual string Text
     {
         get
         {
             object o = ViewState["Text"];
-            return (o == null) ? string.Empty : (string)o;
+            return (o == null) ? String.Empty : (string)o;
         }
         set
         {
@@ -98,12 +143,14 @@ public class Label : WebControl, ITextControl
             {
                 writer.AddAttribute(HtmlTextWriterAttribute.For, associatedControlID);
             }
-
         }
 
         base.AddAttributesToRender(writer);
     }
 
+    /// <internalonly/>
+    /// <devdoc>
+    /// </devdoc>
     protected override void AddParsedSubObject(object obj)
     {
         if (HasControls())
@@ -112,15 +159,15 @@ public class Label : WebControl, ITextControl
         }
         else
         {
-            if (obj is LiteralControl)
+            if (obj is LiteralControl control)
             {
                 if (_textSetByAddParsedSubObject)
                 {
-                    Text += ((LiteralControl)obj).Text;
+                    Text += control.Text;
                 }
                 else
                 {
-                    Text = ((LiteralControl)obj).Text;
+                    Text = control.Text;
                 }
                 _textSetByAddParsedSubObject = true;
             }
@@ -129,7 +176,7 @@ public class Label : WebControl, ITextControl
                 string currentText = Text;
                 if (currentText.Length != 0)
                 {
-                    Text = string.Empty;
+                    Text = String.Empty;
                     base.AddParsedSubObject(new LiteralControl(currentText));
                 }
                 base.AddParsedSubObject(obj);
@@ -137,12 +184,16 @@ public class Label : WebControl, ITextControl
         }
     }
 
+    /// <internalonly/>
+    /// <devdoc>
+    ///    <para>Load previously saved state.
+    ///       Overridden to synchronize Text property with LiteralContent.</para>
+    /// </devdoc>
     protected override void LoadViewState(object savedState)
     {
         if (savedState != null)
         {
             base.LoadViewState(savedState);
-
             string s = (string)ViewState["Text"];
             // Dev10 703061 If Text is set, we want to clear out any child controls, but not dirty viewstate
             if (s != null && HasControls())
@@ -152,6 +203,10 @@ public class Label : WebControl, ITextControl
         }
     }
 
+    /// <internalonly/>
+    /// <devdoc>
+    /// <para>Renders the contents of the <see cref='System.Web.UI.WebControls.Label'/> into the specified writer.</para>
+    /// </devdoc>
     protected internal override void RenderContents(HtmlTextWriter writer)
     {
         if (HasRenderingData())
@@ -164,3 +219,4 @@ public class Label : WebControl, ITextControl
         }
     }
 }
+

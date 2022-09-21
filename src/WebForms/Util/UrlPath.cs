@@ -9,8 +9,6 @@
 
 #nullable disable
 
-using System;
-
 namespace System.Web.Util;
 
 using System.Diagnostics;

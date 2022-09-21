@@ -11,6 +11,8 @@ namespace System.Web.UI;
 
 public class Control : IDisposable
 {
+    private static readonly Version _renderingCompatibility = new(4, 8, 0);
+
     internal static readonly object EventDataBinding = new object();
     internal static readonly object EventInit = new object();
     internal static readonly object EventLoad = new object();
@@ -286,4 +288,5 @@ public class Control : IDisposable
         return _viewState?.SaveViewState();
     }
 
+    internal Version RenderingCompatibility => _renderingCompatibility;
 }

@@ -11,7 +11,7 @@ internal static class AssemblyRef
 internal static class SR
 {
     public static string GetString(string name, params object[] args) => name;
-    
+
     public const string AutoPostBackControl_CausesValidation = nameof(AutoPostBackControl_CausesValidation);
     public const string Button_CausesValidation = nameof(Button_CausesValidation);
     public const string Button_OnClick = nameof(Button_OnClick);
@@ -41,6 +41,8 @@ internal static class SR
     public const string InvalidArgumentValue = nameof(InvalidArgumentValue);
     public const string InvalidOffsetOrCount = nameof(InvalidOffsetOrCount);
     public const string InvalidSerializedData = nameof(InvalidSerializedData);
+    public const string Label_AssociatedControlID = nameof(Label_AssociatedControlID);
+    public const string Label_Text = nameof(Label_Text);
     public const string LabelForNotFound = nameof(LabelForNotFound);
     public const string ListEnumCurrentOutOfRange = nameof(ListEnumCurrentOutOfRange);
     public const string ListEnumVersionMismatch = nameof(ListEnumVersionMismatch);

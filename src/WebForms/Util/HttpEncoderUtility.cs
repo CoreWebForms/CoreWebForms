@@ -11,7 +11,6 @@
 
 namespace System.Web.Util;
 
-using System;
 using System.Diagnostics;
 
 internal static class HttpEncoderUtility

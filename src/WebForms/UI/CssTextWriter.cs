@@ -5,7 +5,6 @@
 
 namespace System.Web.UI;
 
-using System;
 using System.Collections;
 using System.Globalization;
 using System.IO;

@@ -4,15 +4,11 @@
 /*
  */
 
-namespace System.Web.UI.WebControls
-{
+namespace System.Web.UI.WebControls;
 
-    using System;
-
-    /// <devdoc>
-    ///    <para>Represents the method that will handle 
-    ///       the <see langword='Command'/> event.</para>
-    /// </devdoc>
-    public delegate void CommandEventHandler(object sender, CommandEventArgs e);
-}
+/// <devdoc>
+///    <para>Represents the method that will handle 
+///       the <see langword='Command'/> event.</para>
+/// </devdoc>
+public delegate void CommandEventHandler(object sender, CommandEventArgs e);
 
