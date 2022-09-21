@@ -206,6 +206,26 @@ public class Page : TemplateControl, IHttpAsyncHandler
         throw new NotImplementedException();
     }
 
+    internal void EndFormRender(HtmlTextWriter writer, string uniqueID)
+        => Features.GetRequired<IFormWriterFeature>().EndFormRender(writer, uniqueID);
+
+    internal void OnFormPostRender(HtmlTextWriter writer)
+        => Features.GetRequired<IFormWriterFeature>().OnFormPostRender(writer);
+
+    internal void OnFormRender()
+        => Features.GetRequired<IFormWriterFeature>().OnFormRender();
+
+    internal void BeginFormRender(HtmlTextWriter writer, string uniqueID)
+        => Features.GetRequired<IFormWriterFeature>().BeginFormRender(writer, uniqueID);
+
+    internal void SetForm(HtmlForm htmlForm)
+        => Features.GetRequired<IFormWriterFeature>().Form = htmlForm;
+
+    internal void RegisterViewStateHandler()
+    {
+        Features.GetRequired<IViewStateManager>().UpdateClientState();
+    }
+
     internal bool ClientSupportsJavaScript => true;
 
     internal bool SupportsCallback => true;

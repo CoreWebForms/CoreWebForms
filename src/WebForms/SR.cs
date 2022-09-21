@@ -65,6 +65,8 @@ internal static class SR
     public const string FontInfo_Size = nameof(FontInfo_Size);
     public const string FontInfo_Strikeout = nameof(FontInfo_Strikeout);
     public const string FontInfo_Underline = nameof(FontInfo_Underline);
+    public const string Form_Needs_Page = nameof(Form_Needs_Page);
+    public const string HtmlForm_OnlyIButtonControlCanBeDefaultButton = nameof(HtmlForm_OnlyIButtonControlCanBeDefaultButton);
     public const string HTMLTextWriterUnbalancedPop = nameof(HTMLTextWriterUnbalancedPop);
     public const string Inner_Content_not_literal = nameof(Inner_Content_not_literal);
     public const string Invalid_app_VirtualPath = nameof(Invalid_app_VirtualPath);
