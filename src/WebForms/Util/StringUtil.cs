@@ -56,53 +56,6 @@ internal static class StringUtil
         return string.IsNullOrEmpty(s1) && string.IsNullOrEmpty(s2);
     }
 
-    internal static unsafe bool Equals(string s1, int offset1, string s2, int offset2, int length)
-    {
-        if (offset1 < 0)
-        {
-            throw new ArgumentOutOfRangeException(nameof(offset1));
-        }
-
-        if (offset2 < 0)
-        {
-            throw new ArgumentOutOfRangeException(nameof(offset2));
-        }
-
-        if (length < 0)
-        {
-            throw new ArgumentOutOfRangeException(nameof(length));
-        }
-
-        if ((s1 == null ? 0 : s1.Length) - offset1 < length)
-        {
-            throw new ArgumentOutOfRangeException(SR.GetString(SR.InvalidOffsetOrCount, "offset1", "length"));
-        }
-
-        if ((s2 == null ? 0 : s2.Length) - offset2 < length)
-        {
-            throw new ArgumentOutOfRangeException(SR.GetString(SR.InvalidOffsetOrCount, "offset2", "length"));
-        }
-
-        if (string.IsNullOrEmpty(s1) || string.IsNullOrEmpty(s2))
-        {
-            return true;
-        }
-
-        fixed (char* pch1 = s1, pch2 = s2)
-        {
-            char* p1 = pch1 + offset1, p2 = pch2 + offset2;
-            int c = length;
-            while (c-- > 0)
-            {
-                if (*p1++ != *p2++)
-                {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
     internal static bool EqualsIgnoreCase(string s1, string s2)
     {
         if (string.IsNullOrEmpty(s1) && string.IsNullOrEmpty(s2))
@@ -121,14 +74,6 @@ internal static class StringUtil
         return string.Compare(s1, index1, s2, index2, length, StringComparison.OrdinalIgnoreCase) == 0;
     }
 
-    internal static string StringFromWCharPtr(IntPtr ip, int length)
-    {
-        unsafe
-        {
-            return new string((char*)ip, 0, length);
-        }
-    }
-
     internal static string StringFromCharPtr(IntPtr ip, int length)
     {
         return Marshal.PtrToStringAnsi(ip, length);
@@ -142,34 +87,6 @@ internal static class StringUtil
     {
         int len = s.Length;
         return len != 0 && s[len - 1] == c;
-    }
-
-    /*
-     * Determines if the first string ends with the second string.
-     * Fast, non-culture aware.  
-     */
-    internal static unsafe bool StringEndsWith(string s1, string s2)
-    {
-        int offset = s1.Length - s2.Length;
-        if (offset < 0)
-        {
-            return false;
-        }
-
-        fixed (char* pch1 = s1, pch2 = s2)
-        {
-            char* p1 = pch1 + offset, p2 = pch2;
-            int c = s2.Length;
-            while (c-- > 0)
-            {
-                if (*p1++ != *p2++)
-                {
-                    return false;
-                }
-            }
-        }
-
-        return true;
     }
 
     /*
@@ -195,27 +112,9 @@ internal static class StringUtil
      * Determines if the first string starts with the second string.
      * Fast, non-culture aware.  
      */
-    internal static unsafe bool StringStartsWith(string s1, string s2)
+    internal static bool StringStartsWith(string s1, string s2)
     {
-        if (s2.Length > s1.Length)
-        {
-            return false;
-        }
-
-        fixed (char* pch1 = s1, pch2 = s2)
-        {
-            char* p1 = pch1, p2 = pch2;
-            int c = s2.Length;
-            while (c-- > 0)
-            {
-                if (*p1++ != *p2++)
-                {
-                    return false;
-                }
-            }
-        }
-
-        return true;
+        return s1.StartsWith(s2);
     }
 
     /*
@@ -230,31 +129,6 @@ internal static class StringUtil
         }
 
         return s2.Length > s1.Length ? false : 0 == string.Compare(s1, 0, s2, 0, s2.Length, StringComparison.OrdinalIgnoreCase);
-    }
-
-    internal static unsafe void UnsafeStringCopy(string src, int srcIndex, char[] dest, int destIndex, int len)
-    {
-        // We do not verify the parameters in this function, as the callers are assumed
-        // to have done so. This is important for users such as HttpWriter that already
-        // do the argument checking, and are called several times per request.
-        Debug.Assert(len >= 0, "len >= 0");
-
-        Debug.Assert(src != null, "src != null");
-        Debug.Assert(srcIndex >= 0, "srcIndex >= 0");
-        Debug.Assert(srcIndex + len <= src.Length, "src");
-
-        Debug.Assert(dest != null, "dest != null");
-        Debug.Assert(destIndex >= 0, "destIndex >= 0");
-        Debug.Assert(destIndex + len <= dest.Length, "dest");
-
-        int cb = len * sizeof(char);
-        fixed (char* pchSrc = src, pchDest = dest)
-        {
-            byte* pbSrc = (byte*)(pchSrc + srcIndex);
-            byte* pbDest = (byte*)(pchDest + destIndex);
-
-            memcpyimpl(pbSrc, pbDest, cb);
-        }
     }
 
     internal static bool StringArrayEquals(string[] a, string[] b)
@@ -291,30 +165,26 @@ internal static class StringUtil
     // stable hash, since we persist things to disk (e.g. precomp scenario).  VSWhidbey 399279.
     internal static int GetStringHashCode(string s)
     {
-        unsafe
-        {
-            fixed (char* src = s)
-            {
-                int hash1 = (5381 << 16) + 5381;
-                int hash2 = hash1;
+        var src = s;
 
-                // 32bit machines.
-                int* pint = (int*)src;
-                int len = s.Length;
-                while (len > 0)
-                {
-                    hash1 = ((hash1 << 5) + hash1 + (hash1 >> 27)) ^ pint[0];
-                    if (len <= 2)
-                    {
-                        break;
-                    }
-                    hash2 = ((hash2 << 5) + hash2 + (hash2 >> 27)) ^ pint[1];
-                    pint += 2;
-                    len -= 4;
-                }
-                return hash1 + (hash2 * 1566083941);
+        int hash1 = (5381 << 16) + 5381;
+        int hash2 = hash1;
+
+        // 32bit machines.
+        var pint = src.AsSpan();
+        int len = s.Length;
+        while (len > 0)
+        {
+            hash1 = ((hash1 << 5) + hash1 + (hash1 >> 27)) ^ pint[0];
+            if (len <= 2)
+            {
+                break;
             }
+            hash2 = ((hash2 << 5) + hash2 + (hash2 >> 27)) ^ pint[1];
+            pint = pint[2..];
+            len -= 4;
         }
+        return hash1 + (hash2 * 1566083941);
     }
 
     internal static int GetNonRandomizedHashCode(string s, bool ignoreCase = false)
@@ -341,160 +211,4 @@ internal static class StringUtil
         bytes = new byte[enc.GetMaxByteCount(s.Length) + 1];
         return enc.GetBytes(s, 0, s.Length, bytes, 0);
     }
-
-    internal static unsafe void memcpyimpl(byte* src, byte* dest, int len)
-    {
-        Debug.Assert(len >= 0, "Negative length in memcpyimpl!");
-
-#if FEATURE_PAL
-    // Portable naive implementation
-    while (len-- > 0)
-        *dest++ = *src++;
-#else
-#if IA64
-    long dstAlign = (7 & (8 - (((long)dest) & 7))); // number of bytes to copy before dest is 8-byte aligned
-
-    while ((dstAlign > 0) && (len > 0))
-    {
-        // <
-        *dest++ = *src++;
-        
-        len--;
-        dstAlign--;
-    }
-
-    if (len > 0)
-    {
-        long srcAlign = 8 - (((long)src) & 7);
-        if (srcAlign != 8)
-        {
-            if (4 == srcAlign)
-            {
-                while (len >= 4)
-                {
-                    ((int*)dest)[0] = ((int*)src)[0];
-                    dest += 4;
-                    src  += 4;
-                    len  -= 4;
-                }
-                
-                srcAlign = 2;   // fall through to 2-byte copies
-            }
-            
-            if ((2 == srcAlign) || (6 == srcAlign))
-            {
-                while (len >= 2)
-                {
-                    ((short*)dest)[0] = ((short*)src)[0];
-                    dest += 2;
-                    src  += 2;
-                    len  -= 2;
-                }
-            }
-            
-            while (len-- > 0)
-            {
-                *dest++ = *src++;
-            }
-        }
-        else
-        {
-            if (len >= 16) 
-            {
-                do 
-                {
-                    ((long*)dest)[0] = ((long*)src)[0];
-                    ((long*)dest)[1] = ((long*)src)[1];
-                    dest += 16;
-                    src += 16;
-                } while ((len -= 16) >= 16);
-            }
-            
-            if(len > 0)  // protection against negative len and optimization for len==16*N
-            {
-                if ((len & 8) != 0) 
-                {
-                    ((long*)dest)[0] = ((long*)src)[0];
-                    dest += 8;
-                    src += 8;
-                }
-                if ((len & 4) != 0) 
-                {
-                    ((int*)dest)[0] = ((int*)src)[0];
-                    dest += 4;
-                    src += 4;
-                }
-                if ((len & 2) != 0) 
-                {
-                    ((short*)dest)[0] = ((short*)src)[0];
-                    dest += 2;
-                    src += 2;
-                }
-                if ((len & 1) != 0)
-                {
-                    *dest++ = *src++;
-                }
-            }
-        }
-    }
-#else
-        // <
-
-        if (len >= 16)
-        {
-            do
-            {
-#if AMD64
-            ((long*)dest)[0] = ((long*)src)[0];
-            ((long*)dest)[1] = ((long*)src)[1];
-#else
-                ((int*)dest)[0] = ((int*)src)[0];
-                ((int*)dest)[1] = ((int*)src)[1];
-                ((int*)dest)[2] = ((int*)src)[2];
-                ((int*)dest)[3] = ((int*)src)[3];
-#endif
-                dest += 16;
-                src += 16;
-            } while ((len -= 16) >= 16);
-        }
-        if (len > 0)  // protection against negative len and optimization for len==16*N
-        {
-            if ((len & 8) != 0)
-            {
-#if AMD64
-            ((long*)dest)[0] = ((long*)src)[0];
-#else
-                ((int*)dest)[0] = ((int*)src)[0];
-                ((int*)dest)[1] = ((int*)src)[1];
-#endif
-                dest += 8;
-                src += 8;
-            }
-            if ((len & 4) != 0)
-            {
-                ((int*)dest)[0] = ((int*)src)[0];
-                dest += 4;
-                src += 4;
-            }
-            if ((len & 2) != 0)
-            {
-                ((short*)dest)[0] = ((short*)src)[0];
-                dest += 2;
-                src += 2;
-            }
-            if ((len & 1) != 0)
-            {
-                *dest++ = *src++;
-            }
-        }
-#endif
-#endif // FEATURE_PAL
-    }
-    internal static string[] ObjectArrayToStringArray(object[] objectArray)
-    {
-        string[] stringKeys = new string[objectArray.Length];
-        objectArray.CopyTo(stringKeys, 0);
-        return stringKeys;
-    }
-
 }

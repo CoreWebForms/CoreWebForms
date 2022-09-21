@@ -64,7 +64,7 @@ internal class ViewStateManager : IViewStateManager
 
                 if (data is not null && data.TryGetValue(id, out var values))
                 {
-                    child.LoadViewStateInternal(values);
+                    child.LoadViewStateRecursive(values);
                 }
             }
         }

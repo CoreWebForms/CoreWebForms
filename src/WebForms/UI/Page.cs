@@ -15,7 +15,6 @@ namespace System.Web.UI;
 
 public class Page : TemplateControl, IHttpAsyncHandler
 {
-
     internal const string systemPostFieldPrefix = "__";
 
     /// <internalonly/>
@@ -147,6 +146,59 @@ public class Page : TemplateControl, IHttpAsyncHandler
     internal IReadOnlyCollection<object> GetValidators(string validationGroup)
         => Array.Empty<object>();
 
+    internal bool GetDesignModeInternal() => false;
+
+    internal void PushDataBindingContext(object dataItem)
+    {
+    }
+
+    internal void PopDataBindingContext()
+    {
+        throw new NotImplementedException();
+    }
+
+    internal void ApplyControlSkin(Control control)
+    {
+        throw new NotImplementedException();
+    }
+
+    internal bool ApplyControlStyleSheet(Control control)
+    {
+        throw new NotImplementedException();
+    }
+
+    internal Task GetWaitForPreviousStepCompletionAwaitable() => Task.CompletedTask;
+
+    internal void RegisterRequiresClearChildControlState(Control control)
+    {
+        throw new NotImplementedException();
+    }
+
+    internal void SetFocus(Control control)
+    {
+        throw new NotImplementedException();
+    }
+
+    internal bool ShouldLoadControlState(Control control)
+    {
+        throw new NotImplementedException();
+    }
+
+    internal bool RequiresControlState(Control control)
+    {
+        throw new NotImplementedException();
+    }
+
+    internal void UnregisterRequiresControlState(Control control)
+    {
+        throw new NotImplementedException();
+    }
+
+    internal void RegisterRequiresControlState(Control control)
+    {
+        throw new NotImplementedException();
+    }
+
     internal bool ClientSupportsJavaScript => true;
 
     internal bool SupportsCallback => true;
@@ -162,4 +214,6 @@ public class Page : TemplateControl, IHttpAsyncHandler
     public bool RenderDisabledControlsScript { get; internal set; }
 
     public int MaxPageStateFieldLength { get; internal set; } = 1000;
+    public bool ContainsTheme { get; internal set; }
+    public bool IsPostBack { get; internal set; }
 }

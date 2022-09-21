@@ -6,12 +6,13 @@ namespace System.Web;
 internal static class AssemblyRef
 {
     public const string SystemDesign = nameof(SystemDesign);
+    public const string MicrosoftVisualStudioWeb = nameof(MicrosoftVisualStudioWeb);
 }
 
 internal static class SR
 {
     public static string GetString(string name, params object[] args) => name;
-
+    
     public const string AutoPostBackControl_CausesValidation = nameof(AutoPostBackControl_CausesValidation);
     public const string Button_CausesValidation = nameof(Button_CausesValidation);
     public const string Button_OnClick = nameof(Button_OnClick);
@@ -25,7 +26,35 @@ internal static class SR
     public const string ClientScriptManager_InvalidPostBackArgument = nameof(ClientScriptManager_InvalidPostBackArgument);
     public const string ClientScriptManager_JqueryNotRegistered = nameof(ClientScriptManager_JqueryNotRegistered);
     public const string ClientScriptManager_RegisterForEventValidation_Too_Early = nameof(ClientScriptManager_RegisterForEventValidation_Too_Early);
+    public const string Collection_readonly_Codeblocks = nameof(Collection_readonly_Codeblocks);
+    public const string Control_ClientID = nameof(Control_ClientID);
+    public const string Control_ClientIDMode = nameof(Control_ClientIDMode);
+    public const string Control_Controls = nameof(Control_Controls);
     public const string Control_does_not_allow_children = nameof(Control_does_not_allow_children);
+    public const string Control_EnableTheming = nameof(Control_EnableTheming);
+    public const string Control_ID = nameof(Control_ID);
+    public const string Control_MaintainState = nameof(Control_MaintainState);
+    public const string Control_NamingContainer = nameof(Control_NamingContainer);
+    public const string Control_NotADescendentOfNamingContainer = nameof(Control_NotADescendentOfNamingContainer);
+    public const string Control_OnDataBind = nameof(Control_OnDataBind);
+    public const string Control_OnDisposed = nameof(Control_OnDisposed);
+    public const string Control_OnInit = nameof(Control_OnInit);
+    public const string Control_OnLoad = nameof(Control_OnLoad);
+    public const string Control_OnPreRender = nameof(Control_OnPreRender);
+    public const string Control_OnUnload = nameof(Control_OnUnload);
+    public const string Control_Page = nameof(Control_Page);
+    public const string Control_Parent = nameof(Control_Parent);
+    public const string Control_Site = nameof(Control_Site);
+    public const string Control_SkinId = nameof(Control_SkinId);
+    public const string Control_State = nameof(Control_State);
+    public const string Control_TemplateControl = nameof(Control_TemplateControl);
+    public const string Control_TemplateSourceDirectory = nameof(Control_TemplateSourceDirectory);
+    public const string Control_UniqueID = nameof(Control_UniqueID);
+    public const string Control_ValidateRequestMode = nameof(Control_ValidateRequestMode);
+    public const string Control_ViewStateMode = nameof(Control_ViewStateMode);
+    public const string Control_Visible = nameof(Control_Visible);
+    public const string Controls_Cant_Change_Between_Posts = nameof(Controls_Cant_Change_Between_Posts);
+    public const string Duplicate_id_used = nameof(Duplicate_id_used);
     public const string Empty_path_has_no_directory = nameof(Empty_path_has_no_directory);
     public const string FontInfo_Bold = nameof(FontInfo_Bold);
     public const string FontInfo_Italic = nameof(FontInfo_Italic);
@@ -51,10 +80,13 @@ internal static class SR
     public const string NoFocusSupport = nameof(NoFocusSupport);
     public const string Page_CallBackTargetInvalid = nameof(Page_CallBackTargetInvalid);
     public const string Parameter_NullOrEmpty = nameof(Parameter_NullOrEmpty);
+    public const string Parent_collections_readonly = nameof(Parent_collections_readonly);
     public const string Path_must_be_rooted = nameof(Path_must_be_rooted);
     public const string PersonalizationProviderHelper_TrimmedEmptyString = nameof(PersonalizationProviderHelper_TrimmedEmptyString);
     public const string Physical_path_not_allowed = nameof(Physical_path_not_allowed);
     public const string PostBackControl_ValidationGroup = nameof(PostBackControl_ValidationGroup);
+    public const string PropertySetBeforePreInitOrAddToControls = nameof(PropertySetBeforePreInitOrAddToControls);
+    public const string PropertySetBeforeStyleSheetApplied = nameof(PropertySetBeforeStyleSheetApplied);
     public const string StateManagedCollection_InvalidIndex = nameof(StateManagedCollection_InvalidIndex);
     public const string StateManagedCollection_NoKnownTypes = nameof(StateManagedCollection_NoKnownTypes);
     public const string StringUtil_Trimmed_String_Exceed_Maximum_Length = nameof(StringUtil_Trimmed_String_Exceed_Maximum_Length);
@@ -71,6 +103,9 @@ internal static class SR
     public const string Style_InvalidWidth = nameof(Style_InvalidWidth);
     public const string Style_RegisteredStylesAreReadOnly = nameof(Style_RegisteredStylesAreReadOnly);
     public const string Style_Width = nameof(Style_Width);
+    public const string StyleSheetAreadyAppliedOnControl = nameof(StyleSheetAreadyAppliedOnControl);
+    public const string Substitution_NotAllowed = nameof(Substitution_NotAllowed);
+    public const string Substitution_SiteNotAllowed = nameof(Substitution_SiteNotAllowed);
     public const string TextBox_AutoCompleteType = nameof(TextBox_AutoCompleteType);
     public const string TextBox_AutoPostBack = nameof(TextBox_AutoPostBack);
     public const string TextBox_Columns = nameof(TextBox_Columns);
@@ -86,6 +121,8 @@ internal static class SR
     public const string Type_not_creatable_from_string = nameof(Type_not_creatable_from_string);
     public const string UnitParseNoDigits = nameof(UnitParseNoDigits);
     public const string UnitParseNumericPart = nameof(UnitParseNumericPart);
+    public const string ViewState_InvalidViewState = nameof(ViewState_InvalidViewState);
+    public const string VirtualPath_Length_Zero = nameof(VirtualPath_Length_Zero);
     public const string WebControl_CommandArgument = nameof(WebControl_CommandArgument);
     public const string WebControl_CommandName = nameof(WebControl_CommandName);
 }
