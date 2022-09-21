@@ -353,13 +353,6 @@ public class CSharpPageBuilder : DepthFirstAspxVisitor<object>
         }
     }
 
-    private readonly Dictionary<string, DataType> _knownTypes = new()
-    {
-        { "Text", DataType.String },
-        { "OnClick", DataType.Delegate},
-    };
-
-
     private readonly Dictionary<string, string> _htmlControls = new()
     {
         { "form", "HtmlForm" },
