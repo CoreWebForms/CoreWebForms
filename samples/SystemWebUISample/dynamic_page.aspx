@@ -1,4 +1,4 @@
-<%@ Page Title="About" Language="C#" MasterPageFile="~/Site.Master" Inherits="SystemWebUISample.Pages.MyPage" AutoEventWireup="true" CodeBehind="About.aspx.cs"  %>
+<%@ Page Title="About" Language="C#" MasterPageFile="~/Site.Master" Inherits="SystemWebUISample.Pages.DynamicPage" AutoEventWireup="true" CodeBehind="dynamic_page.aspx.cs"  %>
 
 <h1>Edit3</h1>
 
