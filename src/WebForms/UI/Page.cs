@@ -226,6 +226,21 @@ public class Page : TemplateControl, IHttpAsyncHandler
         Features.GetRequired<IViewStateManager>().UpdateClientState();
     }
 
+    internal void SetHeader(HtmlHead htmlHead)
+    {
+        throw new NotImplementedException();
+    }
+
+    internal void PushCachingControl(BasePartialCachingControl basePartialCachingControl)
+    {
+        throw new NotImplementedException();
+    }
+
+    internal void PopCachingControl()
+    {
+        throw new NotImplementedException();
+    }
+
     internal bool ClientSupportsJavaScript => true;
 
     internal bool SupportsCallback => true;
@@ -248,4 +263,7 @@ public class Page : TemplateControl, IHttpAsyncHandler
     public bool ContainsTheme { get; internal set; }
     public bool IsPostBack { get; internal set; }
     public string? ViewStateUserKey { get; internal set; }
+    public HtmlHead Header { get; internal set; }
+    public IEnumerable<PartialCachingControl> PartialCachingControlStack { get; internal set; }
+    public object Request { get; internal set; }
 }
