@@ -1,13 +1,15 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+/*
+ */
 
 namespace System.Web.UI;
+
+/// <devdoc>
+///    <para>Identifies the validation property for a component.</para>
+/// </devdoc>
+[AttributeUsage(AttributeTargets.Class)]
 public sealed class ValidationPropertyAttribute : Attribute
 {
 
@@ -15,7 +17,6 @@ public sealed class ValidationPropertyAttribute : Attribute
     ///  This is the validation event name.
     /// </devdoc>
     private readonly string name;
-
 
     /// <devdoc>
     /// <para>Initializes a new instance of the <see cref='System.Web.UI.ValidationPropertyAttribute'/> class.</para>
@@ -25,16 +26,10 @@ public sealed class ValidationPropertyAttribute : Attribute
         this.name = name;
     }
 
-
     /// <devdoc>
     ///    <para>Indicates the name the specified validation attribute. This property is 
     ///       read-only.</para>
     /// </devdoc>
-    public string Name
-    {
-        get
-        {
-            return name;
-        }
-    }
+    public string Name => name;
 }
+

@@ -11,12 +11,19 @@
 
 namespace System.Web.UI;
 
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Reflection;
 using System.Text;
 
 internal static class Util
 {
+    internal static bool CanConvertToFrom(TypeConverter converter, Type type)
+    {
+        return (converter != null && converter.CanConvertTo(type) &&
+                converter.CanConvertFrom(type) && !(converter is ReferenceConverter));
+    }
+
     internal static string QuoteJScriptString(string value)
     {
         return QuoteJScriptString(value, false);
@@ -24,20 +31,18 @@ internal static class Util
 
     internal static string MergeScript(string firstScript, string secondScript)
     {
-        Debug.Assert(!String.IsNullOrEmpty(secondScript));
+        Debug.Assert(!string.IsNullOrEmpty(secondScript));
 
-        if (!String.IsNullOrEmpty(firstScript))
+        if (!string.IsNullOrEmpty(firstScript))
         {
             // 
             return firstScript + secondScript;
         }
         else
         {
-            if (secondScript.TrimStart().StartsWith(ClientScriptManager.JscriptPrefix, StringComparison.Ordinal))
-            {
-                return secondScript;
-            }
-            return ClientScriptManager.JscriptPrefix + secondScript;
+            return secondScript.TrimStart().StartsWith(ClientScriptManager.JscriptPrefix, StringComparison.Ordinal)
+                ? secondScript
+                : ClientScriptManager.JscriptPrefix + secondScript;
         }
     }
 
@@ -210,7 +215,7 @@ internal static class Util
             int length = value.Length;
             if (length > 0 && value[length - 1] != ';')
             {
-                return (value + ";");
+                return value + ";";
             }
         }
         return value;

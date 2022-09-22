@@ -15,12 +15,7 @@ internal class PageEndpointRoute
 {
     public static Endpoint? Create(Type type)
     {
-        if (type.GetCustomAttribute<AspxPageAttribute>() is { Path: { } path })
-        {
-            return Create(type, path);
-        }
-
-        return null;
+        return type.GetCustomAttribute<AspxPageAttribute>() is { Path: { } path } ? Create(type, path) : null;
     }
 
     public static Endpoint Create(Type type, PathString path)
@@ -29,7 +24,7 @@ internal class PageEndpointRoute
         var builder = new RouteEndpointBuilder(null!, pattern, 0);
 
         builder.AddHttpHandler(type);
-        builder.Metadata.Add(new PageEvents(type));
+        builder.Metadata.Add(new PageEventsFactory(type));
 
         return builder.Build();
     }

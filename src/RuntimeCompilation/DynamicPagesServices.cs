@@ -10,7 +10,7 @@ public static class DynamicPagesServices
 {
     public static void AddDynamicPages(this ISystemWebAdapterBuilder services)
     {
-        services.Services.AddTransient<IPageCompiler, RoslynPageCompiler>();
+        services.Services.AddSingleton<IPageCompiler, RoslynPageCompiler>();
         services.Services.AddSingleton<ICompilationRegistrar, CompilationRegistrar>();
         services.Services.AddSingleton<IQueue, ChannelQueue>();
         services.Services.AddHostedService<SerializedCompilation>();

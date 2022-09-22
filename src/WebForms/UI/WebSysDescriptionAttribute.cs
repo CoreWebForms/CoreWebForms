@@ -42,11 +42,5 @@ internal sealed class WebSysDescriptionAttribute : DescriptionAttribute
         }
     }
 
-    public override object TypeId
-    {
-        get
-        {
-            return typeof(DescriptionAttribute);
-        }
-    }
+    public override object TypeId => typeof(DescriptionAttribute);
 }

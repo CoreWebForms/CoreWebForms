@@ -3,6 +3,7 @@
 
 using System;
 using System.CodeDom.Compiler;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Microsoft.AspNetCore.SystemWebAdapters.UI.PageParser;
@@ -17,11 +18,25 @@ public class PageGenerator : IIncrementalGenerator
     {
         var aspxFiles = context.AdditionalTextsProvider
             .Where(text => text.Path.EndsWith(".aspx", StringComparison.OrdinalIgnoreCase));
+        var symbols = context.CompilationProvider
+            .Select((s, ctx) =>
+            {
+                var visitor = new ControlInfoVisitor(s);
 
-        context.RegisterSourceOutput(aspxFiles, GenerateSource);
+                if (!visitor.IsValid)
+                {
+                    return (IReadOnlyCollection<ControlInfo>)Array.Empty<ControlInfo>();
+                }
+
+                visitor.Visit(s.Assembly);
+
+                return visitor.List;
+            });
+
+        context.RegisterSourceOutput(aspxFiles.Combine(symbols), (context, arg) => GenerateSource(context, arg.Left, arg.Right));
     }
 
-    private void GenerateSource(SourceProductionContext context, AdditionalText text)
+    private void GenerateSource(SourceProductionContext context, AdditionalText text, IEnumerable<ControlInfo> controls)
     {
         // TODO: maybe want to use CopyTo to load into a pooled buffer instead of getting a string each time
         var contents = text.GetText(context.CancellationToken)?.ToString();
@@ -31,7 +46,7 @@ public class PageGenerator : IIncrementalGenerator
             return;
         }
 
-        var generated = GenerateFile(text, contents);
+        var generated = GenerateFile(text, contents, controls);
 
         if (generated is null)
         {
@@ -43,12 +58,12 @@ public class PageGenerator : IIncrementalGenerator
         context.AddSource(path, generated);
     }
 
-    private string? GenerateFile(AdditionalText text, string contents)
+    private string? GenerateFile(AdditionalText text, string contents, IEnumerable<ControlInfo> controls)
     {
         using var stringWriter = new StringWriter();
         using var writer = new IndentedTextWriter(stringWriter);
 
-        var builder = new CSharpPageBuilder(text.Path, writer, contents);
+        var builder = new CSharpPageBuilder(text.Path, writer, contents, controls);
 
         builder.WriteSource();
 

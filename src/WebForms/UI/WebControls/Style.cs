@@ -99,11 +99,7 @@ public class Style : Component, IStateManager
     {
         get
         {
-            if (IsSet(PROP_BACKCOLOR))
-            {
-                return (Color)(ViewState["BackColor"]);
-            }
-            return Color.Empty;
+            return IsSet(PROP_BACKCOLOR) ? (Color)ViewState["BackColor"] : Color.Empty;
         }
         set
         {
@@ -128,11 +124,7 @@ public class Style : Component, IStateManager
     {
         get
         {
-            if (IsSet(PROP_BORDERCOLOR))
-            {
-                return (Color)(ViewState["BorderColor"]);
-            }
-            return Color.Empty;
+            return IsSet(PROP_BORDERCOLOR) ? (Color)ViewState["BorderColor"] : Color.Empty;
         }
         set
         {
@@ -156,11 +148,7 @@ public class Style : Component, IStateManager
     {
         get
         {
-            if (IsSet(PROP_BORDERWIDTH))
-            {
-                return (Unit)(ViewState["BorderWidth"]);
-            }
-            return Unit.Empty;
+            return IsSet(PROP_BORDERWIDTH) ? (Unit)ViewState["BorderWidth"] : Unit.Empty;
         }
         set
         {
@@ -187,11 +175,7 @@ public class Style : Component, IStateManager
     {
         get
         {
-            if (IsSet(PROP_BORDERSTYLE))
-            {
-                return (BorderStyle)(ViewState["BorderStyle"]);
-            }
-            return BorderStyle.NotSet;
+            return IsSet(PROP_BORDERSTYLE) ? (BorderStyle)ViewState["BorderStyle"] : BorderStyle.NotSet;
         }
         set
         {
@@ -221,7 +205,7 @@ public class Style : Component, IStateManager
             if (IsSet(PROP_CSSCLASS))
             {
                 string s = (string)ViewState["CssClass"];
-                return (s == null) ? string.Empty : s;
+                return s ?? string.Empty;
             }
             return string.Empty;
         }
@@ -272,11 +256,7 @@ public class Style : Component, IStateManager
     {
         get
         {
-            if (IsSet(PROP_FORECOLOR))
-            {
-                return (Color)(ViewState["ForeColor"]);
-            }
-            return Color.Empty;
+            return IsSet(PROP_FORECOLOR) ? (Color)ViewState["ForeColor"] : Color.Empty;
         }
         set
         {
@@ -300,11 +280,7 @@ public class Style : Component, IStateManager
     {
         get
         {
-            if (IsSet(PROP_HEIGHT))
-            {
-                return (Unit)(ViewState["Height"]);
-            }
-            return Unit.Empty;
+            return IsSet(PROP_HEIGHT) ? (Unit)ViewState["Height"] : Unit.Empty;
         }
         set
         {
@@ -325,25 +301,13 @@ public class Style : Component, IStateManager
     Browsable(false),
     DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)
     ]
-    public virtual bool IsEmpty
-    {
-        get
-        {
-            return ((setBits == 0) && (RegisteredCssClass.Length == 0));
-        }
-    }
+    public virtual bool IsEmpty => (setBits == 0) && (RegisteredCssClass.Length == 0);
 
     /// <devdoc>
     /// Returns a value indicating whether
     /// any style elements have been defined in the state bag.
     /// </devdoc>
-    protected bool IsTrackingViewState
-    {
-        get
-        {
-            return marked;
-        }
-    }
+    protected bool IsTrackingViewState => marked;
 
     /// <devdoc>
     /// </devdoc>
@@ -352,17 +316,7 @@ public class Style : Component, IStateManager
     DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden),
     EditorBrowsable(EditorBrowsableState.Advanced)
     ]
-    public string RegisteredCssClass
-    {
-        get
-        {
-            if (registeredCssClass == null)
-            {
-                return string.Empty;
-            }
-            return registeredCssClass;
-        }
-    }
+    public string RegisteredCssClass => registeredCssClass ?? string.Empty;
 
     /// <internalonly/>
     /// <devdoc>
@@ -404,11 +358,7 @@ public class Style : Component, IStateManager
     {
         get
         {
-            if (IsSet(PROP_WIDTH))
-            {
-                return (Unit)(ViewState["Width"]);
-            }
-            return Unit.Empty;
+            return IsSet(PROP_WIDTH) ? (Unit)ViewState["Width"] : Unit.Empty;
         }
         set
         {
@@ -756,11 +706,7 @@ public class Style : Component, IStateManager
         {
             return array[0];
         }
-        if (n == 0)
-        {
-            return string.Empty;
-        }
-        return string.Join(delimiter.ToString(CultureInfo.InvariantCulture), array);
+        return n == 0 ? string.Empty : string.Join(delimiter.ToString(CultureInfo.InvariantCulture), array);
     }
 
     /// <devdoc>
@@ -1017,13 +963,7 @@ public class Style : Component, IStateManager
     #region Implementation of IStateManager
 
     /// <internalonly/>
-    bool IStateManager.IsTrackingViewState
-    {
-        get
-        {
-            return IsTrackingViewState;
-        }
-    }
+    bool IStateManager.IsTrackingViewState => IsTrackingViewState;
 
     /// <internalonly/>
     void IStateManager.LoadViewState(object state)

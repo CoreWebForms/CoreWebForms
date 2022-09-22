@@ -25,9 +25,13 @@ public static class PageExtensions
         {
             if (ctx.Features.Get<IHttpHandlerFeature>() is { Current: Page page })
             {
-                if (ctx.GetEndpoint()?.Metadata.GetMetadata<IPageEvents>() is { } events)
+                if (page is IPageEvents events)
                 {
                     page.Features.Set<IPageEvents>(events);
+                }
+                else if (ctx.GetEndpoint()?.Metadata.GetMetadata<IPageEventsFactory>() is { } factory)
+                {
+                    page.Features.Set<IPageEvents>(factory.Create(page));
                 }
 
                 page.Features.Set<Page>(page);

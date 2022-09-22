@@ -39,13 +39,7 @@ public abstract class StateManagedCollection : IList, IStateManager
     /// <devdoc>
     /// Returns the number of items in the collection.
     /// </devdoc>
-    public int Count
-    {
-        get
-        {
-            return _collectionItems.Count;
-        }
-    }
+    public int Count => _collectionItems.Count;
 
     /// <devdoc>
     /// Removes all the items from the collection.
@@ -100,12 +94,7 @@ public abstract class StateManagedCollection : IList, IStateManager
     {
         Type[] types = GetKnownTypes();
 
-        if (types == null)
-        {
-            return 0;
-        }
-
-        return types.Length;
+        return types == null ? 0 : types.Length;
     }
 
     /// <devdoc>
@@ -598,49 +587,19 @@ public abstract class StateManagedCollection : IList, IStateManager
     }
 
     /// <internalonly/>
-    int ICollection.Count
-    {
-        get
-        {
-            return Count;
-        }
-    }
+    int ICollection.Count => Count;
 
     /// <internalonly/>
-    bool ICollection.IsSynchronized
-    {
-        get
-        {
-            return false;
-        }
-    }
+    bool ICollection.IsSynchronized => false;
 
     /// <internalonly/>
-    object ICollection.SyncRoot
-    {
-        get
-        {
-            return null;
-        }
-    }
+    object ICollection.SyncRoot => null;
 
     /// <internalonly/>
-    bool IList.IsFixedSize
-    {
-        get
-        {
-            return false;
-        }
-    }
+    bool IList.IsFixedSize => false;
 
     /// <internalonly/>
-    bool IList.IsReadOnly
-    {
-        get
-        {
-            return _collectionItems.IsReadOnly;
-        }
-    }
+    bool IList.IsReadOnly => _collectionItems.IsReadOnly;
 
     /// <internalonly/>
     object IList.this[int index]
@@ -761,13 +720,7 @@ public abstract class StateManagedCollection : IList, IStateManager
     }
 
     /// <internalonly/>
-    bool IStateManager.IsTrackingViewState
-    {
-        get
-        {
-            return _tracking;
-        }
-    }
+    bool IStateManager.IsTrackingViewState => _tracking;
 
     /// <internalonly/>
     void IStateManager.LoadViewState(object savedState)
@@ -790,14 +743,7 @@ public abstract class StateManagedCollection : IList, IStateManager
     object IStateManager.SaveViewState()
     {
 
-        if (_saveAll)
-        {
-            return SaveAllItemsToViewState();
-        }
-        else
-        {
-            return SaveChangedItemsToViewState();
-        }
+        return _saveAll ? SaveAllItemsToViewState() : SaveChangedItemsToViewState();
     }
 
     /// <internalonly/>

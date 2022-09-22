@@ -5,7 +5,6 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Web.UI.Features;
 using System.Web.UI.HtmlControls;
-using System.Web.UI.WebControls;
 
 // TODO: Remove once implemented
 #pragma warning disable CA1822 // Mark members as static
@@ -15,7 +14,6 @@ namespace System.Web.UI;
 
 public class Page : TemplateControl, IHttpAsyncHandler
 {
-
     internal const string systemPostFieldPrefix = "__";
 
     /// <internalonly/>
@@ -36,6 +34,13 @@ public class Page : TemplateControl, IHttpAsyncHandler
     internal const string ViewStateEncryptionID = systemPostFieldPrefix + "VIEWSTATEENCRYPTED";
     internal const string EventValidationPrefixID = systemPostFieldPrefix + "EVENTVALIDATION";
 
+    internal static readonly object EventInitComplete = new();
+    internal static readonly object EventPreLoad = new();
+    internal static readonly object EventPreInit = new();
+    internal static readonly object EventLoadComplete = new();
+    internal static readonly object EventPreRenderComplete = new();
+    internal static readonly object EventSaveStateComplete = new();
+
     private ClientScriptManager? _clientScriptManager;
 
     public Page()
@@ -55,10 +60,6 @@ public class Page : TemplateControl, IHttpAsyncHandler
 
     internal bool EnableEventValidation => false;
 
-    internal bool DesignMode => false;
-
-    internal ControlState ControlState { get; private set; }
-
     public bool IsCallback { get; private set; }
 
     internal bool IsInOnFormRender => Features.GetRequired<IFormWriterFeature>().IsRendering;
@@ -74,6 +75,10 @@ public class Page : TemplateControl, IHttpAsyncHandler
             throw new InvalidOperationException("Page has already been processed.");
         }
 
+        var events = Features.Get<IPageEvents>()!;
+
+        events.OnPreInit();
+
         InitializeComponents();
 
         if (Features.Get<IViewStateManager>() is { } viewState)
@@ -81,11 +86,9 @@ public class Page : TemplateControl, IHttpAsyncHandler
             viewState.RefreshControls();
         }
 
-        var events = Features.Get<IPageEvents>()!;
-
         Features.Set(context);
 
-        events.OnPageLoad(this);
+        events.OnPageLoad();
 
         using var writer = new HtmlTextWriter(context.Response.Output);
 
@@ -108,9 +111,12 @@ public class Page : TemplateControl, IHttpAsyncHandler
     {
     }
 
-    internal void RegisterEnabledControl(TextBox textBox)
-    {
-    }
+    private List<Control>? _enabledControls;
+
+    private List<Control> EnabledControls => _enabledControls ??= new();
+
+    internal void RegisterEnabledControl(Control control)
+        => EnabledControls.Add(control);
 
     internal void RegisterWebFormsScript()
     {
@@ -118,8 +124,8 @@ public class Page : TemplateControl, IHttpAsyncHandler
 
     internal void RegisterPostBackScript()
     {
-        ClientScript.RegisterHiddenField(postEventSourceID, String.Empty);
-        ClientScript.RegisterHiddenField(postEventArgumentID, String.Empty);
+        ClientScript.RegisterHiddenField(postEventSourceID, string.Empty);
+        ClientScript.RegisterHiddenField(postEventArgumentID, string.Empty);
     }
 
     internal void RegisterFocusScript()
@@ -147,6 +153,79 @@ public class Page : TemplateControl, IHttpAsyncHandler
     internal IReadOnlyCollection<object> GetValidators(string validationGroup)
         => Array.Empty<object>();
 
+    internal bool GetDesignModeInternal() => false;
+
+    internal void PushDataBindingContext(object dataItem)
+    {
+    }
+
+    internal void PopDataBindingContext()
+    {
+        throw new NotImplementedException();
+    }
+
+    internal void ApplyControlSkin(Control control)
+    {
+        throw new NotImplementedException();
+    }
+
+    internal bool ApplyControlStyleSheet(Control control)
+    {
+        throw new NotImplementedException();
+    }
+
+    internal Task GetWaitForPreviousStepCompletionAwaitable() => Task.CompletedTask;
+
+    internal void RegisterRequiresClearChildControlState(Control control)
+    {
+        throw new NotImplementedException();
+    }
+
+    internal void SetFocus(Control control)
+    {
+        throw new NotImplementedException();
+    }
+
+    internal bool ShouldLoadControlState(Control control)
+    {
+        throw new NotImplementedException();
+    }
+
+    internal bool RequiresControlState(Control control)
+    {
+        throw new NotImplementedException();
+    }
+
+    internal void UnregisterRequiresControlState(Control control)
+    {
+        throw new NotImplementedException();
+    }
+
+    internal void RegisterRequiresControlState(Control control)
+    {
+        throw new NotImplementedException();
+    }
+
+    internal void EndFormRender(HtmlTextWriter writer, string uniqueID)
+        => Features.GetRequired<IFormWriterFeature>().EndFormRender(writer, uniqueID);
+
+    internal void OnFormPostRender(HtmlTextWriter writer)
+        => Features.GetRequired<IFormWriterFeature>().OnFormPostRender(writer);
+
+    internal void OnFormRender()
+        => Features.GetRequired<IFormWriterFeature>().OnFormRender();
+
+    internal void BeginFormRender(HtmlTextWriter writer, string uniqueID)
+        => Features.GetRequired<IFormWriterFeature>().BeginFormRender(writer, uniqueID);
+
+    internal void SetForm(HtmlForm htmlForm)
+        => Features.GetRequired<IFormWriterFeature>().Form = htmlForm;
+
+    internal void RegisterViewStateHandler()
+    {
+        Features.GetRequired<IViewStateManager>().UpdateClientState();
+    }
+
     internal bool ClientSupportsJavaScript => true;
 
     internal bool SupportsCallback => true;
@@ -162,23 +241,6 @@ public class Page : TemplateControl, IHttpAsyncHandler
     public bool RenderDisabledControlsScript { get; internal set; }
 
     public int MaxPageStateFieldLength { get; internal set; } = 1000;
-
-    private UnobtrusiveValidationMode? _unobtrusiveValidationMode;
-
-    public UnobtrusiveValidationMode UnobtrusiveValidationMode
-    {
-        get
-        {
-            return _unobtrusiveValidationMode ?? ValidationSettings.UnobtrusiveValidationMode;
-        }
-        set
-        {
-            if (value < UnobtrusiveValidationMode.None || value > UnobtrusiveValidationMode.WebForms)
-            {
-                throw new ArgumentOutOfRangeException("value");
-            }
-
-            _unobtrusiveValidationMode = value;
-        }
-    }
+    public bool ContainsTheme { get; internal set; }
+    public bool IsPostBack { get; internal set; }
 }

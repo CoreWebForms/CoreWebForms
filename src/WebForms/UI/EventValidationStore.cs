@@ -1,6 +1,8 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+#nullable disable
+
 namespace System.Web.UI;
 
 using System;
@@ -23,13 +25,7 @@ internal sealed class EventValidationStore
     // contains all cryptographic hashes which are known to this event validation instance
     private readonly HashSet<byte[]> _hashes = new HashSet<byte[]>(HashEqualityComparer.Instance);
 
-    public int Count
-    {
-        get
-        {
-            return _hashes.Count;
-        }
-    }
+    public int Count => _hashes.Count;
 
     public void Add(string target, string argument)
     {
@@ -60,7 +56,7 @@ internal sealed class EventValidationStore
         buffer[offset++] = (byte)(stringLength >> 24);
         buffer[offset++] = (byte)(stringLength >> 16);
         buffer[offset++] = (byte)(stringLength >> 8);
-        buffer[offset++] = (byte)(stringLength);
+        buffer[offset++] = (byte)stringLength;
 
         if (s != null)
         {
@@ -68,7 +64,7 @@ internal sealed class EventValidationStore
             {
                 char c = s[i];
                 buffer[offset++] = (byte)(c >> 8);
-                buffer[offset++] = (byte)(c);
+                buffer[offset++] = (byte)c;
             }
         }
     }
@@ -149,7 +145,7 @@ internal sealed class EventValidationStore
 
         private HashEqualityComparer() { }
 
-        public bool Equals(byte[]? x, byte[]? y)
+        public bool Equals(byte[] x, byte[] y)
         {
             Debug.Assert(x is not null);
             Debug.Assert(y is not null);

@@ -30,7 +30,8 @@ public partial class Program
 
     public static void Main()
     {
-        var regex = new Regex(@"SR\.\w*", RegexOptions.Compiled);
+        var srRegex = new Regex(@"SR\.\w*", RegexOptions.Compiled);
+        var assemblyRefRegex = new Regex(@"AssemblyRef\.\w*", RegexOptions.Compiled);
 
         var dir = Path.Combine(GetGitDir(), "src", "WebForms");
         var srFile = Path.Combine(dir, "SR.cs");
@@ -41,7 +42,8 @@ public partial class Program
         }
 
         var files = Directory.EnumerateFiles(dir, "*.cs", new EnumerationOptions { RecurseSubdirectories = true });
-        var set = new HashSet<string>();
+        var sr = new HashSet<string>();
+        var assemblyRefs = new HashSet<string>();
 
         foreach (var file in files)
         {
@@ -53,12 +55,19 @@ public partial class Program
             Console.WriteLine(file);
 
             var contents = File.ReadAllText(file);
-            var matches = regex.Matches(contents);
+            var srMatches = srRegex.Matches(contents);
 
-            foreach (var match in matches.Cast<Match>())
+            foreach (var match in srMatches.Cast<Match>())
             {
                 var name = match.Value.Replace("SR.", string.Empty);
-                set.Add(name);
+                sr.Add(name);
+            }
+
+            var assemblymatches = assemblyRefRegex.Matches(contents);
+            foreach (var match in assemblymatches.Cast<Match>())
+            {
+                var name = match.Value.Replace("AssemblyRef.", string.Empty);
+                assemblyRefs.Add(name);
             }
         }
 
@@ -71,6 +80,20 @@ public partial class Program
         indented.WriteLine();
         indented.WriteLine("namespace System.Web;");
         indented.WriteLine();
+
+        indented.WriteLine("internal static class AssemblyRef");
+        indented.WriteLine("{");
+        indented.Indent++;
+
+        foreach (var a in assemblyRefs)
+        {
+            indented.WriteLine($"public const string {a} = nameof({a});");
+        }
+
+        indented.Indent--;
+        indented.WriteLine("}");
+        indented.WriteLine();
+
         indented.WriteLine("internal static class SR");
         indented.WriteLine("{");
 
@@ -78,7 +101,7 @@ public partial class Program
         indented.WriteLine("public static string GetString(string name, params object[] args) => name;");
         indented.WriteLine();
 
-        foreach (var item in set.OrderBy(s => s))
+        foreach (var item in sr.OrderBy(s => s))
         {
             if (item == "GetString")
             {

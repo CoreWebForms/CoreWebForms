@@ -1,204 +1,222 @@
-//------------------------------------------------------------------------------
-// <copyright file="Label.cs" company="Microsoft">
-//     Copyright (c) Microsoft Corporation.  All rights reserved.
-// </copyright>
-//------------------------------------------------------------------------------
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
-namespace System.Web.UI.WebControls
+#nullable disable
+
+using System.ComponentModel;
+
+namespace System.Web.UI.WebControls;
+/// <devdoc>
+///    <para>Constructs a label for displaying text programmatcially on a
+///       page.</para>
+/// </devdoc>
+[
+ControlValueProperty("Text"),
+DataBindingHandler("System.Web.UI.Design.TextDataBindingHandler, " + AssemblyRef.SystemDesign),
+DefaultProperty("Text"),
+ParseChildren(false),
+Designer("System.Web.UI.Design.WebControls.LabelDesigner, " + AssemblyRef.SystemDesign),
+ToolboxData("<{0}:Label runat=\"server\" Text=\"Label\"></{0}:Label>")
+]
+public class Label : WebControl, ITextControl
 {
+    private bool _textSetByAddParsedSubObject;
 
-    using System;
-    using System.ComponentModel;
-    using System.Web;
-    using System.Web.UI;
-    using System.Web.Util;
-    using Microsoft.AspNetCore.Mvc.TagHelpers;
-
-    public class Label : WebControl, ITextControl
+    /// <devdoc>
+    /// <para>Initializes a new instance of the <see cref='System.Web.UI.WebControls.Label'/> class and renders
+    ///    it as a SPAN tag.</para>
+    /// </devdoc>
+    public Label()
     {
+    }
 
-        private bool _textSetByAddParsedSubObject = false;
+    /// <devdoc>
+    /// </devdoc>
+    internal Label(HtmlTextWriterTag tag) : base(tag)
+    {
+    }
 
-        /// <devdoc>
-        /// <para>Initializes a new instance of the <see cref='System.Web.UI.WebControls.Label'/> class and renders
-        ///    it as a SPAN tag.</para>
-        /// </devdoc>
-        public Label()
+    /// <devdoc>
+    /// <para>[To be supplied.]</para>
+    /// </devdoc>
+    [
+    DefaultValue(""),
+    IDReferenceProperty(),
+    TypeConverter(typeof(AssociatedControlConverter)),
+    WebCategory("Accessibility"),
+    WebSysDescription(SR.Label_AssociatedControlID),
+    Themeable(false)
+    ]
+    public virtual string AssociatedControlID
+    {
+        get
         {
+            string s = (string)ViewState["AssociatedControlID"];
+            return (s == null) ? String.Empty : s;
         }
-
-
-        /// <devdoc>
-        /// </devdoc>
-        internal Label(HtmlTextWriterTag tag) : base(tag)
+        set
         {
+            ViewState["AssociatedControlID"] = value;
         }
+    }
 
-        public virtual string AssociatedControlID
+    internal bool AssociatedControlInControlTree
+    {
+        get
         {
-            get
-            {
-                string s = (string)ViewState["AssociatedControlID"];
-                return (s == null) ? String.Empty : s;
-            }
-            set
-            {
-                ViewState["AssociatedControlID"] = value;
-            }
+            object o = ViewState["AssociatedControlNotInControlTree"];
+            return o == null ? true : (bool)o;
         }
-
-        internal bool AssociatedControlInControlTree
+        set
         {
-            get
-            {
-                object o = ViewState["AssociatedControlNotInControlTree"];
-                return (o == null ? true : (bool)o);
-            }
-            set
-            {
-                ViewState["AssociatedControlNotInControlTree"] = value;
-            }
+            ViewState["AssociatedControlNotInControlTree"] = value;
         }
+    }
 
-        public override bool SupportsDisabledAttribute
+    public override bool SupportsDisabledAttribute => RenderingCompatibility < VersionUtil.Framework40;
+
+    internal override bool RequiresLegacyRendering => true;
+
+    protected override HtmlTextWriterTag TagKey
+    {
+        get
         {
-            get
+            if (AssociatedControlID.Length != 0)
             {
-                //return RenderingCompatibility < VersionUtil.Framework40;
-                return true;
+                return HtmlTextWriterTag.Label;
             }
+            return base.TagKey;
         }
+    }
 
-        internal override bool RequiresLegacyRendering
+    /// <devdoc>
+    /// <para>Gets or sets the text content of the <see cref='System.Web.UI.WebControls.Label'/>
+    /// control.</para>
+    /// </devdoc>
+    [
+    Localizable(true),
+    Bindable(true),
+    WebCategory("Appearance"),
+    DefaultValue(""),
+    WebSysDescription(SR.Label_Text),
+    PersistenceMode(PersistenceMode.InnerDefaultProperty)
+    ]
+    public virtual string Text
+    {
+        get
         {
-            get
-            {
-                return true;
-            }
+            object o = ViewState["Text"];
+            return (o == null) ? String.Empty : (string)o;
         }
-
-
-        protected override HtmlTextWriterTag TagKey
-        {
-            get
-            {
-                if (AssociatedControlID.Length != 0)
-                {
-                    return HtmlTextWriterTag.Label;
-                }
-                return base.TagKey;
-            }
-        }
-
-
-        public virtual string Text
-        {
-            get
-            {
-                object o = ViewState["Text"];
-                return ((o == null) ? String.Empty : (string)o);
-            }
-            set
-            {
-                if (HasControls())
-                {
-                    Controls.Clear();
-                }
-                ViewState["Text"] = value;
-            }
-        }
-
-        protected override void AddAttributesToRender(HtmlTextWriter writer)
-        {
-            string associatedControlID = AssociatedControlID;
-            if (associatedControlID.Length != 0)
-            {
-                if (AssociatedControlInControlTree)
-                {
-#if false // todo
-                    Control wc = FindControl(associatedControlID);
-                    if (wc == null)
-                    {
-                        // Don't throw in the designer.
-                        if (!DesignMode)
-                            throw new HttpException(SR.GetString(SR.LabelForNotFound, associatedControlID, ID));
-                    }
-                    else
-                    {
-                        writer.AddAttribute(HtmlTextWriterAttribute.For, wc.ClientID);
-                    }
-#endif
-                }
-                else
-                {
-                    writer.AddAttribute(HtmlTextWriterAttribute.For, associatedControlID);
-                }
-
-                }
-
-                base.AddAttributesToRender(writer);
-        }
-
-        protected override void AddParsedSubObject(object obj)
+        set
         {
             if (HasControls())
             {
-                base.AddParsedSubObject(obj);
+                Controls.Clear();
             }
-            else
+            ViewState["Text"] = value;
+        }
+    }
+
+    protected override void AddAttributesToRender(HtmlTextWriter writer)
+    {
+        string associatedControlID = AssociatedControlID;
+        if (associatedControlID.Length != 0)
+        {
+            if (AssociatedControlInControlTree)
             {
-                if (obj is LiteralControl)
+                Control wc = FindControl(associatedControlID);
+                if (wc == null)
                 {
-                    if (_textSetByAddParsedSubObject)
+                    // Don't throw in the designer.
+                    if (!DesignMode)
                     {
-                        Text += ((LiteralControl)obj).Text;
+                        throw new HttpException(SR.GetString(SR.LabelForNotFound, associatedControlID, ID));
                     }
-                    else
-                    {
-                        Text = ((LiteralControl)obj).Text;
-                    }
-                    _textSetByAddParsedSubObject = true;
                 }
                 else
                 {
-                    string currentText = Text;
-                    if (currentText.Length != 0)
-                    {
-                        Text = String.Empty;
-                        base.AddParsedSubObject(new LiteralControl(currentText));
-                    }
-                    base.AddParsedSubObject(obj);
+                    writer.AddAttribute(HtmlTextWriterAttribute.For, wc.ClientID);
                 }
-            }
-        }
-
-#if false
-        protected override void LoadViewState(object savedState)
-        {
-            if (savedState != null)
-            {
-                base.LoadViewState(savedState);
-                
-                string s = (string)ViewState["Text"];
-                // Dev10 703061 If Text is set, we want to clear out any child controls, but not dirty viewstate
-                if (s != null && HasControls())
-                {
-                    Controls.Clear();
-                }
-            }
-        }
-#endif
-
-        protected internal override void RenderContents(HtmlTextWriter writer)
-        {
-            if (HasRenderingData())
-            {
-                base.RenderContents(writer);
             }
             else
             {
-                writer.Write(Text);
+                writer.AddAttribute(HtmlTextWriterAttribute.For, associatedControlID);
+            }
+        }
+
+        base.AddAttributesToRender(writer);
+    }
+
+    /// <internalonly/>
+    /// <devdoc>
+    /// </devdoc>
+    protected override void AddParsedSubObject(object obj)
+    {
+        if (HasControls())
+        {
+            base.AddParsedSubObject(obj);
+        }
+        else
+        {
+            if (obj is LiteralControl control)
+            {
+                if (_textSetByAddParsedSubObject)
+                {
+                    Text += control.Text;
+                }
+                else
+                {
+                    Text = control.Text;
+                }
+                _textSetByAddParsedSubObject = true;
+            }
+            else
+            {
+                string currentText = Text;
+                if (currentText.Length != 0)
+                {
+                    Text = String.Empty;
+                    base.AddParsedSubObject(new LiteralControl(currentText));
+                }
+                base.AddParsedSubObject(obj);
             }
         }
     }
+
+    /// <internalonly/>
+    /// <devdoc>
+    ///    <para>Load previously saved state.
+    ///       Overridden to synchronize Text property with LiteralContent.</para>
+    /// </devdoc>
+    protected override void LoadViewState(object savedState)
+    {
+        if (savedState != null)
+        {
+            base.LoadViewState(savedState);
+            string s = (string)ViewState["Text"];
+            // Dev10 703061 If Text is set, we want to clear out any child controls, but not dirty viewstate
+            if (s != null && HasControls())
+            {
+                Controls.Clear();
+            }
+        }
+    }
+
+    /// <internalonly/>
+    /// <devdoc>
+    /// <para>Renders the contents of the <see cref='System.Web.UI.WebControls.Label'/> into the specified writer.</para>
+    /// </devdoc>
+    protected internal override void RenderContents(HtmlTextWriter writer)
+    {
+        if (HasRenderingData())
+        {
+            base.RenderContents(writer);
+        }
+        else
+        {
+            writer.Write(Text);
+        }
+    }
 }
+

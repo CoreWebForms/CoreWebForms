@@ -42,11 +42,7 @@ public sealed class FontInfo
     {
         get
         {
-            if (owner.IsSet(Style.PROP_FONT_BOLD))
-            {
-                return (bool)(owner.ViewState["Font_Bold"]);
-            }
-            return false;
+            return owner.IsSet(Style.PROP_FONT_BOLD) ? (bool)owner.ViewState["Font_Bold"] : false;
         }
         set
         {
@@ -68,11 +64,7 @@ public sealed class FontInfo
     {
         get
         {
-            if (owner.IsSet(Style.PROP_FONT_ITALIC))
-            {
-                return (bool)(owner.ViewState["Font_Italic"]);
-            }
-            return false;
+            return owner.IsSet(Style.PROP_FONT_ITALIC) ? (bool)owner.ViewState["Font_Italic"] : false;
         }
         set
         {
@@ -98,12 +90,7 @@ public sealed class FontInfo
         get
         {
             string[] names = Names;
-            if (names.Length > 0)
-            {
-                return names[0];
-            }
-
-            return String.Empty;
+            return names.Length > 0 ? names[0] : string.Empty;
         }
         set
         {
@@ -166,11 +153,7 @@ public sealed class FontInfo
     {
         get
         {
-            if (owner.IsSet(Style.PROP_FONT_OVERLINE))
-            {
-                return (bool)(owner.ViewState["Font_Overline"]);
-            }
-            return false;
+            return owner.IsSet(Style.PROP_FONT_OVERLINE) ? (bool)owner.ViewState["Font_Overline"] : false;
         }
         set
         {
@@ -181,13 +164,7 @@ public sealed class FontInfo
 
     /// <devdoc>
     /// </devdoc>
-    internal Style Owner
-    {
-        get
-        {
-            return owner;
-        }
-    }
+    internal Style Owner => owner;
 
     /// <devdoc>
     ///    <para>Indicates the font size.</para>
@@ -203,11 +180,7 @@ public sealed class FontInfo
     {
         get
         {
-            if (owner.IsSet(Style.PROP_FONT_SIZE))
-            {
-                return (FontUnit)(owner.ViewState["Font_Size"]);
-            }
-            return FontUnit.Empty;
+            return owner.IsSet(Style.PROP_FONT_SIZE) ? (FontUnit)owner.ViewState["Font_Size"] : FontUnit.Empty;
         }
         set
         {
@@ -233,11 +206,7 @@ public sealed class FontInfo
     {
         get
         {
-            if (owner.IsSet(Style.PROP_FONT_STRIKEOUT))
-            {
-                return (bool)(owner.ViewState["Font_Strikeout"]);
-            }
-            return false;
+            return owner.IsSet(Style.PROP_FONT_STRIKEOUT) ? (bool)owner.ViewState["Font_Strikeout"] : false;
         }
         set
         {
@@ -259,11 +228,7 @@ public sealed class FontInfo
     {
         get
         {
-            if (owner.IsSet(Style.PROP_FONT_UNDERLINE))
-            {
-                return (bool)(owner.ViewState["Font_Underline"]);
-            }
-            return false;
+            return owner.IsSet(Style.PROP_FONT_UNDERLINE) ? (bool)owner.ViewState["Font_Underline"] : false;
         }
         set
         {

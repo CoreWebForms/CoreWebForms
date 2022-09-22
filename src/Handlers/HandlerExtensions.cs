@@ -2,15 +2,12 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections.Immutable;
-using System.Diagnostics.CodeAnalysis;
-using System.Runtime.CompilerServices;
 using System.Web.SessionState;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.SystemWebAdapters;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace System.Web;
 
@@ -26,16 +23,6 @@ public static class HandlerExtensions
 
     private static readonly ImmutableList<object> _metadataReadonlySession = _metadata.Add(new SessionAttribute { IsReadOnly = true });
     private static readonly ImmutableList<object> _metadataSession = _metadata.Add(new SessionAttribute { IsReadOnly = false });
-
-    public static void AddHttpHandlers(this ISystemWebAdapterBuilder services)
-    {
-        services.Services.TryAddSingleton<EndpointCache>();
-    }
-
-    public static void UseHttpHandlers(this IApplicationBuilder app)
-    {
-        app.UseMiddleware<SetHttpHandlerMiddleware>();
-    }
 
     public static void SetHandler(this HttpContext context, IHttpHandler handler)
     {
@@ -140,17 +127,6 @@ public static class HandlerExtensions
         }
     }
 
-    internal class EndpointCache
-    {
-        private readonly ConditionalWeakTable<IHttpHandler, Endpoint> _table = new();
-
-        public bool TryGetValue(IHttpHandler handler, [NotNullWhen(true)] out Endpoint? existing)
-            => _table.TryGetValue(handler, out existing);
-
-        public void Add(IHttpHandler handler, Endpoint newEndpoint)
-            => _table.Add(handler, newEndpoint);
-    }
-
     internal static Endpoint CreateEndpoint(this HttpContextCore core, IHttpHandler handler)
     {
         if (handler is Endpoint endpoint)
@@ -158,7 +134,7 @@ public static class HandlerExtensions
             return endpoint;
         }
 
-        var cache = core.RequestServices.GetRequiredService<EndpointCache>();
+        var cache = core.RequestServices.GetRequiredService<HttpHandlerEndpointCache>();
 
         if (cache.TryGetValue(handler, out var existing))
         {
@@ -215,3 +191,4 @@ public static class HandlerExtensions
         }
     }
 }
+

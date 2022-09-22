@@ -19,11 +19,7 @@ internal sealed class EmptyStringExpandableObjectConverter : ExpandableObjectCon
     /// </devdoc>
     public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
     {
-        if (destinationType == typeof(string))
-        {
-            return String.Empty;
-        }
-        throw GetConvertToException(value, destinationType);
+        return destinationType == typeof(string) ? (object)string.Empty : throw GetConvertToException(value, destinationType);
     }
 }
 

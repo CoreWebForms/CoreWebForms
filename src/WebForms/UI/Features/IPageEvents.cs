@@ -2,8 +2,9 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 namespace System.Web.UI.Features;
-
 internal interface IPageEvents
 {
-    void OnPageLoad(Page page);
+    void OnPageLoad();
+
+    void OnPreInit();
 }

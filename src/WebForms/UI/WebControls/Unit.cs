@@ -99,7 +99,7 @@ public struct Unit
 
     internal Unit(string value, CultureInfo culture, UnitType defaultType)
     {
-        if (String.IsNullOrEmpty(value))
+        if (string.IsNullOrEmpty(value))
         {
             this.value = 0;
             this.type = (UnitType)0;
@@ -145,7 +145,7 @@ public struct Unit
             try
             {
                 TypeConverter converter = new SingleConverter();
-                this.value = (Single)converter.ConvertFromString(null, culture, numericPart);
+                this.value = (float)converter.ConvertFromString(null, culture, numericPart);
 
                 if (type == UnitType.Pixel)
                 {
@@ -166,42 +166,17 @@ public struct Unit
     /// <devdoc>
     /// <para>Gets a value indicating whether the <see cref='System.Web.UI.WebControls.Unit'/> is empty.</para>
     /// </devdoc>
-    public bool IsEmpty
-    {
-        get
-        {
-            return type == (UnitType)0;
-        }
-    }
+    public bool IsEmpty => type == (UnitType)0;
 
     /// <devdoc>
     /// <para>Gets or sets the type of the <see cref='System.Web.UI.WebControls.Unit'/> .</para>
     /// </devdoc>
-    public UnitType Type
-    {
-        get
-        {
-            if (!IsEmpty)
-            {
-                return this.type;
-            }
-            else
-            {
-                return UnitType.Pixel;
-            }
-        }
-    }
+    public UnitType Type => !IsEmpty ? this.type : UnitType.Pixel;
 
     /// <devdoc>
     /// <para>Gets the value of the <see cref='System.Web.UI.WebControls.Unit'/> .</para>
     /// </devdoc>
-    public double Value
-    {
-        get
-        {
-            return this.value;
-        }
-    }
+    public double Value => this.value;
 
     /// <devdoc>
     ///    <para>[To be supplied.]</para>
@@ -224,12 +199,7 @@ public struct Unit
 
         // compare internal values to avoid "defaulting" in the case of "Empty"
         //
-        if (u.type == type && u.value == value)
-        {
-            return true;
-        }
-
-        return false;
+        return u.type == type && u.value == value;
     }
 
     /// <devdoc>
@@ -240,7 +210,7 @@ public struct Unit
 
         // compare internal values to avoid "defaulting" in the case of "Empty"
         //
-        return (left.type == right.type && left.value == right.value);
+        return left.type == right.type && left.value == right.value;
     }
 
     /// <devdoc>
@@ -252,7 +222,7 @@ public struct Unit
 
         // compare internal values to avoid "defaulting" in the case of "Empty"
         //
-        return (left.type != right.type || left.value != right.value);
+        return left.type != right.type || left.value != right.value;
     }
 
     /// <devdoc>
@@ -281,7 +251,7 @@ public struct Unit
             case UnitType.Ex:
                 return "ex";
         }
-        return String.Empty;
+        return string.Empty;
     }
 
     /// <devdoc>
@@ -289,7 +259,7 @@ public struct Unit
     /// </devdoc>
     private static UnitType GetTypeFromString(string value)
     {
-        if (!String.IsNullOrEmpty(value))
+        if (!string.IsNullOrEmpty(value))
         {
             if (value.Equals("px"))
             {
@@ -323,13 +293,9 @@ public struct Unit
             {
                 return UnitType.Em;
             }
-            else if (value.Equals("ex"))
-            {
-                return UnitType.Ex;
-            }
             else
             {
-                throw new ArgumentOutOfRangeException(nameof(value));
+                return value.Equals("ex") ? UnitType.Ex : throw new ArgumentOutOfRangeException(nameof(value));
             }
         }
         return UnitType.Pixel;
@@ -378,7 +344,7 @@ public struct Unit
 
     /// <internalonly/>
     /// <devdoc>
-    /// <para>Converts a <see cref='System.Web.UI.WebControls.Unit'/> to a <see cref='System.String' qualify='true'/> .</para>
+    /// <para>Converts a <see cref='System.Web.UI.WebControls.Unit'/> to a <see cref='string' qualify='true'/> .</para>
     /// </devdoc>
     public override string ToString()
     {
@@ -394,7 +360,7 @@ public struct Unit
     {
         if (IsEmpty)
         {
-            return String.Empty;
+            return string.Empty;
         }
 
         // Double.ToString does not do the right thing, we get extra bits at the end

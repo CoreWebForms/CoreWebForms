@@ -156,33 +156,33 @@ public struct FontUnit
         this.type = FontSize.NotSet;
         this.value = Unit.Empty;
 
-        if (!String.IsNullOrEmpty(value))
+        if (!string.IsNullOrEmpty(value))
         {
             // This is invariant because it acts like an enum with a number together. 
             // The enum part is invariant, but the number uses current culture. 
-            char firstChar = Char.ToLower(value[0], CultureInfo.InvariantCulture);
+            char firstChar = char.ToLower(value[0], CultureInfo.InvariantCulture);
             if (firstChar == 'x')
             {
-                if (String.Equals(value, "xx-small", StringComparison.OrdinalIgnoreCase) ||
-                    String.Equals(value, "xxsmall", StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(value, "xx-small", StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(value, "xxsmall", StringComparison.OrdinalIgnoreCase))
                 {
                     this.type = FontSize.XXSmall;
                     return;
                 }
-                else if (String.Equals(value, "x-small", StringComparison.OrdinalIgnoreCase) ||
-                    String.Equals(value, "xsmall", StringComparison.OrdinalIgnoreCase))
+                else if (string.Equals(value, "x-small", StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(value, "xsmall", StringComparison.OrdinalIgnoreCase))
                 {
                     this.type = FontSize.XSmall;
                     return;
                 }
-                else if (String.Equals(value, "x-large", StringComparison.OrdinalIgnoreCase) ||
-                    String.Equals(value, "xlarge", StringComparison.OrdinalIgnoreCase))
+                else if (string.Equals(value, "x-large", StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(value, "xlarge", StringComparison.OrdinalIgnoreCase))
                 {
                     this.type = FontSize.XLarge;
                     return;
                 }
-                else if (String.Equals(value, "xx-large", StringComparison.OrdinalIgnoreCase) ||
-                    String.Equals(value, "xxlarge", StringComparison.OrdinalIgnoreCase))
+                else if (string.Equals(value, "xx-large", StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(value, "xxlarge", StringComparison.OrdinalIgnoreCase))
                 {
                     this.type = FontSize.XXLarge;
                     return;
@@ -190,12 +190,12 @@ public struct FontUnit
             }
             else if (firstChar == 's')
             {
-                if (String.Equals(value, "small", StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(value, "small", StringComparison.OrdinalIgnoreCase))
                 {
                     this.type = FontSize.Small;
                     return;
                 }
-                else if (String.Equals(value, "smaller", StringComparison.OrdinalIgnoreCase))
+                else if (string.Equals(value, "smaller", StringComparison.OrdinalIgnoreCase))
                 {
                     this.type = FontSize.Smaller;
                     return;
@@ -203,18 +203,18 @@ public struct FontUnit
             }
             else if (firstChar == 'l')
             {
-                if (String.Equals(value, "large", StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(value, "large", StringComparison.OrdinalIgnoreCase))
                 {
                     this.type = FontSize.Large;
                     return;
                 }
-                if (String.Equals(value, "larger", StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(value, "larger", StringComparison.OrdinalIgnoreCase))
                 {
                     this.type = FontSize.Larger;
                     return;
                 }
             }
-            else if ((firstChar == 'm') && String.Equals(value, "medium", StringComparison.OrdinalIgnoreCase))
+            else if ((firstChar == 'm') && string.Equals(value, "medium", StringComparison.OrdinalIgnoreCase))
             {
                 this.type = FontSize.Medium;
                 return;
@@ -228,35 +228,17 @@ public struct FontUnit
     /// <devdoc>
     ///    <para>Indicates whether the font size has been set.</para>
     /// </devdoc>
-    public bool IsEmpty
-    {
-        get
-        {
-            return type == FontSize.NotSet;
-        }
-    }
+    public bool IsEmpty => type == FontSize.NotSet;
 
     /// <devdoc>
     ///    <para>Indicates the font size by type.</para>
     /// </devdoc>
-    public FontSize Type
-    {
-        get
-        {
-            return type;
-        }
-    }
+    public FontSize Type => type;
 
     /// <devdoc>
     /// <para>Indicates the font size by <see cref='System.Web.UI.WebControls.Unit'/>.</para>
     /// </devdoc>
-    public Unit Unit
-    {
-        get
-        {
-            return value;
-        }
-    }
+    public Unit Unit => value;
 
     /// <devdoc>
     ///    <para>[To be supplied.]</para>
@@ -267,7 +249,7 @@ public struct FontUnit
     }
 
     /// <devdoc>
-    /// <para>Determines if the specified <see cref='System.Object' qualify='true'/> is equivilent to the <see cref='System.Web.UI.WebControls.FontUnit'/> represented by this instance.</para>
+    /// <para>Determines if the specified <see cref='object' qualify='true'/> is equivilent to the <see cref='System.Web.UI.WebControls.FontUnit'/> represented by this instance.</para>
     /// </devdoc>
     public override bool Equals(object obj)
     {
@@ -278,11 +260,7 @@ public struct FontUnit
 
         FontUnit f = (FontUnit)obj;
 
-        if ((f.type == type) && (f.value == value))
-        {
-            return true;
-        }
-        return false;
+        return (f.type == type) && (f.value == value);
     }
 
     /// <devdoc>
@@ -290,7 +268,7 @@ public struct FontUnit
     /// </devdoc>
     public static bool operator ==(FontUnit left, FontUnit right)
     {
-        return ((left.type == right.type) && (left.value == right.value));
+        return (left.type == right.type) && (left.value == right.value);
     }
 
     /// <devdoc>
@@ -299,7 +277,7 @@ public struct FontUnit
     /// </devdoc>
     public static bool operator !=(FontUnit left, FontUnit right)
     {
-        return ((left.type != right.type) || (left.value != right.value));
+        return (left.type != right.type) || (left.value != right.value);
     }
 
     /// <devdoc>
@@ -341,7 +319,7 @@ public struct FontUnit
 
     public string ToString(IFormatProvider formatProvider)
     {
-        string s = String.Empty;
+        string s = string.Empty;
 
         if (IsEmpty)
         {

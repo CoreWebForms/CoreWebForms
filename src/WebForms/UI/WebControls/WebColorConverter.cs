@@ -31,7 +31,7 @@ public class WebColorConverter : ColorConverter
             Color c = Color.Empty;
 
             // empty color
-            if (String.IsNullOrEmpty(colorText))
+            if (string.IsNullOrEmpty(colorText))
             {
                 return c;
             }
@@ -82,7 +82,7 @@ public class WebColorConverter : ColorConverter
 
                 if (c == Color.Empty)
                 {
-                    return String.Empty;
+                    return string.Empty;
                 }
 
                 /*
@@ -131,9 +131,9 @@ public class WebColorConverter : ColorConverter
                 {
                     // in the Web scenario, colors should be formatted in #RRGGBB notation
                     StringBuilder sb = new StringBuilder("#", 7);
-                    sb.Append((c.R).ToString("X2", CultureInfo.InvariantCulture));
-                    sb.Append((c.G).ToString("X2", CultureInfo.InvariantCulture));
-                    sb.Append((c.B).ToString("X2", CultureInfo.InvariantCulture));
+                    sb.Append(c.R.ToString("X2", CultureInfo.InvariantCulture));
+                    sb.Append(c.G.ToString("X2", CultureInfo.InvariantCulture));
+                    sb.Append(c.B.ToString("X2", CultureInfo.InvariantCulture));
                     return sb.ToString();
                 }
             }

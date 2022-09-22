@@ -24,18 +24,11 @@ public class FontUnitConverter : TypeConverter
     /// </devdoc>
     public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
     {
-        if (sourceType == typeof(string))
-        {
-            return true;
-        }
-        else
-        {
-            return base.CanConvertFrom(context, sourceType);
-        }
+        return sourceType == typeof(string) ? true : base.CanConvertFrom(context, sourceType);
     }
 
     /// <devdoc>
-    /// <para>Converts the specified <see cref='System.Object' qualify='true'/> into a <see cref='System.Web.UI.WebControls.FontUnit'/>.</para>
+    /// <para>Converts the specified <see cref='object' qualify='true'/> into a <see cref='System.Web.UI.WebControls.FontUnit'/>.</para>
     /// </devdoc>
     public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
     {
@@ -48,11 +41,7 @@ public class FontUnitConverter : TypeConverter
         if (stringValue != null)
         {
             string textValue = stringValue.Trim();
-            if (textValue.Length == 0)
-            {
-                return FontUnit.Empty;
-            }
-            return FontUnit.Parse(textValue, culture);
+            return textValue.Length == 0 ? FontUnit.Empty : (object)FontUnit.Parse(textValue, culture);
         }
         else
         {
@@ -67,15 +56,10 @@ public class FontUnitConverter : TypeConverter
     /// </devdoc>
     public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
     {
-        if ((destinationType == typeof(string)) ||
-            (destinationType == typeof(InstanceDescriptor)))
-        {
-            return true;
-        }
-        else
-        {
-            return base.CanConvertTo(context, destinationType);
-        }
+        return (destinationType == typeof(string)) ||
+            (destinationType == typeof(InstanceDescriptor))
+            ? true
+            : base.CanConvertTo(context, destinationType);
     }
 
     /// <devdoc>
@@ -85,14 +69,7 @@ public class FontUnitConverter : TypeConverter
     {
         if (destinationType == typeof(string))
         {
-            if ((value == null) || (((FontUnit)value).Type == FontSize.NotSet))
-            {
-                return String.Empty;
-            }
-            else
-            {
-                return ((FontUnit)value).ToString(culture);
-            }
+            return (value == null) || (((FontUnit)value).Type == FontSize.NotSet) ? string.Empty : (object)((FontUnit)value).ToString(culture);
         }
         else if ((destinationType == typeof(InstanceDescriptor)) && (value != null))
         {
@@ -150,14 +127,7 @@ public class FontUnitConverter : TypeConverter
             }
 
             Debug.Assert(member != null, "Looks like we're missing FontUnit static fields or FontUnit::ctor(Unit)");
-            if (member != null)
-            {
-                return new InstanceDescriptor(member, args);
-            }
-            else
-            {
-                return null;
-            }
+            return member != null ? new InstanceDescriptor(member, args) : (object)null;
         }
         else
         {

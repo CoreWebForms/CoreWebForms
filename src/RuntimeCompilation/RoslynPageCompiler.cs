@@ -3,12 +3,14 @@
 
 using System.CodeDom.Compiler;
 using System.Collections.Immutable;
+using System.ComponentModel;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Reflection;
 using System.Runtime.Loader;
 using System.Text;
 using System.Text.Json;
+using System.Web.UI;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SystemWebAdapters.UI.PageParser;
 using Microsoft.AspNetCore.SystemWebAdapters.UI.PageParser.Syntax;
@@ -29,6 +31,8 @@ internal sealed class RoslynPageCompiler : IPageCompiler
     private readonly ILogger<RoslynPageCompiler> _logger;
     private readonly ILoggerFactory _factory;
 
+    private bool _isCompiling;
+
     public RoslynPageCompiler(ILoggerFactory factory, IHostEnvironment env)
     {
         _isDebug = env.IsDevelopment();
@@ -38,8 +42,29 @@ internal sealed class RoslynPageCompiler : IPageCompiler
 
     public async Task<ICompiledPage> CompilePageAsync(PageFile file, CancellationToken token)
     {
+        if (_isCompiling)
+        {
+            throw new InvalidOperationException("Compilation cannot be parallel");
+        }
+
+        _isCompiling = true;
+
+        try
+        {
+            return await CompilePageInternalAsync(file, token).ConfigureAwait(false);
+        }
+        finally
+        {
+            _isCompiling = false;
+        }
+    }
+
+    public async Task<ICompiledPage> CompilePageInternalAsync(PageFile file, CancellationToken token)
+    {
         using var sourceStream = new MemoryStream();
-        var writingResult = await WriteSourceAsync(file.Directory, file.File, sourceStream).ConfigureAwait(false);
+        var (references, components) = GetMetadataReferences();
+
+        var writingResult = await WriteSourceAsync(file.Directory, file.File, components, sourceStream, token).ConfigureAwait(false);
 
         if (writingResult.ErrorMessage is { } errorMessage)
         {
@@ -65,12 +90,17 @@ internal sealed class RoslynPageCompiler : IPageCompiler
                 outputKind: OutputKind.DynamicallyLinkedLibrary,
                 optimizationLevel: optimization),
             syntaxTrees: new[] { tree },
-            references: GetMetadataReferences());
+            references: references);
 
         using var peStream = new MemoryStream();
         using var pdbStream = new MemoryStream();
 
-        var embeddedTexts = _isDebug ? new[] { EmbeddedText.FromSource(tree.FilePath, sourceText) } : null;
+        var embeddedTexts = new List<EmbeddedText> { EmbeddedText.FromSource(tree.FilePath, sourceText) };
+
+        if (writingResult.AspxContents is { } aspx)
+        {
+            embeddedTexts.Add(EmbeddedText.FromSource(file.File.Name, SourceText.From(aspx)));
+        }
 
         var result = compilation.Emit(
             embeddedTexts: embeddedTexts,
@@ -83,7 +113,11 @@ internal sealed class RoslynPageCompiler : IPageCompiler
             _logger.LogWarning("{ErrorCount} error(s) found compiling {Route}", result.Diagnostics.Length, writingResult.Path);
 
             var error = result.Diagnostics
-                .Select(d => new { d.Id, Message = d.GetMessage(CultureInfo.CurrentCulture) });
+                .Select(d => new
+                {
+                    d.Id,
+                    Message = d.GetMessage(CultureInfo.CurrentCulture),
+                });
 
             var message = JsonSerializer.SerializeToUtf8Bytes(error);
 
@@ -168,24 +202,94 @@ internal sealed class RoslynPageCompiler : IPageCompiler
         }
     }
 
-    private static IEnumerable<MetadataReference> GetMetadataReferences()
+    private readonly Dictionary<Assembly, MetadataReference> _references = new();
+
+    private (IEnumerable<MetadataReference>, IEnumerable<ControlInfo>) GetMetadataReferences()
     {
+        var references = new List<MetadataReference>();
+        var components = new List<ControlInfo>();
+
         foreach (var assembly in AssemblyLoadContext.Default.Assemblies)
         {
             if (!assembly.IsDynamic)
             {
-                yield return MetadataReference.CreateFromFile(assembly.Location);
+                GatherComponents(components, assembly);
+
+                if (!_references.TryGetValue(assembly, out var metadata))
+                {
+                    metadata = MetadataReference.CreateFromFile(assembly.Location);
+                    _references.Add(assembly, metadata);
+                }
+
+                references.Add(metadata);
+            }
+        }
+
+        return (references, components);
+    }
+
+    private static void GatherComponents(List<ControlInfo> controls, Assembly assembly)
+    {
+        foreach (var type in assembly.GetTypes())
+        {
+            if (type.IsAssignableTo(typeof(Control)))
+            {
+                var info = new ControlInfo(type.Namespace, type.Name);
+
+                foreach (var attribute in type.GetCustomAttributes())
+                {
+                    if (attribute is DefaultPropertyAttribute defaultProperty)
+                    {
+                        info.DefaultProperty = defaultProperty.Name;
+                    }
+
+                    if (attribute is ValidationPropertyAttribute validationProperty)
+                    {
+                        info.ValidationProperty = validationProperty.Name;
+                    }
+
+                    if (attribute is DefaultEventAttribute defaultEvent)
+                    {
+                        info.DefaultEvent = defaultEvent.Name;
+                    }
+
+                    if (attribute is SupportsEventValidationAttribute)
+                    {
+                        info.SupportsEventValidation = true;
+                    }
+                }
+
+                foreach (var property in type.GetProperties())
+                {
+                    if (property.SetMethod is { IsPublic: true } && property.GetCustomAttribute<DefaultValueAttribute>() is { })
+                    {
+                        if (property.PropertyType.IsAssignableTo(typeof(Delegate)))
+                        {
+                            info.Events.Add(property.Name);
+                        }
+                        else if (property.PropertyType.IsAssignableTo(typeof(string)))
+                        {
+                            info.Strings.Add(property.Name);
+                        }
+                        else
+                        {
+                            info.Other.Add(property.Name);
+                        }
+                    }
+                }
+
+                controls.Add(info);
             }
         }
     }
 
-    private static async Task<WritingResult> WriteSourceAsync(string directory, IFileInfo file, Stream stream)
+    private async Task<WritingResult> WriteSourceAsync(string directory, IFileInfo file, IEnumerable<ControlInfo> controls, Stream stream, CancellationToken token)
     {
         using var streamWriter = new StreamWriter(stream, leaveOpen: true);
         using var writer = new IndentedTextWriter(streamWriter);
 
-        var contents = await GetContentsAsync(file).ConfigureAwait(false);
-        var generator = new CSharpPageBuilder(Path.Combine(directory, file.Name), writer, contents);
+        var contents = await RetryOpenFileAsync(file, token).ConfigureAwait(false);
+        var generator = new CSharpPageBuilder(Path.Combine(directory, file.Name), writer, contents, controls);
 
         if (!generator.Errors.IsDefaultOrEmpty)
         {
@@ -208,7 +312,32 @@ internal sealed class RoslynPageCompiler : IPageCompiler
 
         public string? ErrorMessage { get; init; }
 
+        public string? AspxContents { get; init; }
+
         public ImmutableArray<AspxParseError> Errors { get; init; }
+    }
+
+    private async Task<string> RetryOpenFileAsync(IFileInfo file, CancellationToken token, int retryCount = 5)
+    {
+        var count = 0;
+
+        while (count < retryCount)
+        {
+            token.ThrowIfCancellationRequested();
+            count++;
+
+            try
+            {
+                return await GetContentsAsync(file).ConfigureAwait(false);
+            }
+            catch (IOException) when (count < retryCount)
+            {
+                _logger.LogWarning("Error accessing {File}. Retrying in 100ms", file.PhysicalPath ?? file.Name);
+                await Task.Delay(TimeSpan.FromMilliseconds(100), token).ConfigureAwait(false);
+            }
+        }
+
+        throw new InvalidOperationException("Could not open file");
     }
 
     private static async Task<string> GetContentsAsync(IFileInfo file)

@@ -3,6 +3,8 @@
 
 #nullable disable
 
+using System;
+
 namespace System.Web.UI;
 
 using System;
@@ -58,21 +60,9 @@ public sealed class ClientScriptManager
         _owner = owner;
     }
 
-    internal bool HasRegisteredHiddenFields
-    {
-        get
-        {
-            return (_registeredHiddenFields != null && _registeredHiddenFields.Count > 0);
-        }
-    }
+    internal bool HasRegisteredHiddenFields => _registeredHiddenFields != null && _registeredHiddenFields.Count > 0;
 
-    internal bool HasSubmitStatements
-    {
-        get
-        {
-            return (_registeredOnSubmitStatements != null && _registeredOnSubmitStatements.Count > 0);
-        }
-    }
+    internal bool HasSubmitStatements => _registeredOnSubmitStatements != null && _registeredOnSubmitStatements.Count > 0;
 
     internal Dictionary<Assembly, Dictionary<string, object>> RegisteredResourcesToSuppress
     {
@@ -299,11 +289,9 @@ public sealed class ClientScriptManager
         {
             throw new ArgumentNullException(nameof(control));
         }
-        if (!(control is ICallbackEventHandler))
-        {
-            throw new InvalidOperationException(SR.GetString(SR.Page_CallBackTargetInvalid, control.UniqueID));
-        }
-        return GetCallbackEventReference("'" + control.UniqueID + "'", argument, clientCallback, context, clientErrorCallback, useAsync);
+        return !(control is ICallbackEventHandler)
+            ? throw new InvalidOperationException(SR.GetString(SR.Page_CallBackTargetInvalid, control.UniqueID))
+            : GetCallbackEventReference("'" + control.UniqueID + "'", argument, clientCallback, context, clientErrorCallback, useAsync);
     }
 
     /// <devdoc>
@@ -315,13 +303,13 @@ public sealed class ClientScriptManager
         _owner.RegisterWebFormsScript();
         if (_owner.ClientSupportsJavaScript && _owner.SupportsCallback)
         {
-            RegisterStartupScript(typeof(Page), PageCallbackScriptKey, (((_owner.RequestInternal != null) &&
-                    (string.Equals(_owner.RequestInternal.Url.Scheme, "https", StringComparison.OrdinalIgnoreCase))) ?
+            RegisterStartupScript(typeof(Page), PageCallbackScriptKey, ((_owner.RequestInternal != null) &&
+                    string.Equals(_owner.RequestInternal.Url.Scheme, "https", StringComparison.OrdinalIgnoreCase)) ?
                         @"
 var callBackFrameUrl='" + Util.QuoteJScriptString(GetWebResourceUrl(typeof(Page), "SmartNav.htm"), false) + @"';
 WebForm_InitCallback();" :
                         @"
-WebForm_InitCallback();"), true);
+WebForm_InitCallback();", true);
         }
         if (argument == null)
         {
@@ -349,7 +337,7 @@ WebForm_InitCallback();"), true);
                "," +
                context +
                "," +
-               ((clientErrorCallback == null) ? "null" : clientErrorCallback) +
+               (clientErrorCallback ?? "null") +
                "," +
                (useAsync ? "true" : "false") +
                ")";
@@ -582,7 +570,7 @@ WebForm_InitCallback();"), true);
     public string GetWebResourceUrl(Type type, string resourceName)
     {
         return GetWebResourceUrl(_owner, type, resourceName, false,
-            (_owner == null ? null : _owner.ScriptManager));
+            _owner == null ? null : _owner.ScriptManager);
     }
 
     internal static string GetWebResourceUrl(Page owner, Type type, string resourceName, bool htmlEncoded, IScriptManager scriptManager)
@@ -636,13 +624,10 @@ WebForm_InitCallback();"), true);
     /// </devdoc>
     public bool IsClientScriptBlockRegistered(Type type, string key)
     {
-        if (type == null)
-        {
-            throw new ArgumentNullException(nameof(type));
-        }
-
-        return (_registeredClientScriptBlocks != null
-               && (_registeredClientScriptBlocks.Contains(CreateScriptKey(type, key))));
+        return type == null
+            ? throw new ArgumentNullException(nameof(type))
+            : _registeredClientScriptBlocks != null
+               && _registeredClientScriptBlocks.Contains(CreateScriptKey(type, key));
     }
 
     /// <devdoc>
@@ -658,13 +643,10 @@ WebForm_InitCallback();"), true);
     /// </devdoc>
     public bool IsClientScriptIncludeRegistered(Type type, string key)
     {
-        if (type == null)
-        {
-            throw new ArgumentNullException(nameof(type));
-        }
-
-        return (_registeredClientScriptBlocks != null
-               && (_registeredClientScriptBlocks.Contains(CreateScriptIncludeKey(type, key, false))));
+        return type == null
+            ? throw new ArgumentNullException(nameof(type))
+            : _registeredClientScriptBlocks != null
+               && _registeredClientScriptBlocks.Contains(CreateScriptIncludeKey(type, key, false));
     }
 
     /// <devdoc>
@@ -682,13 +664,10 @@ WebForm_InitCallback();"), true);
     /// </devdoc>
     public bool IsStartupScriptRegistered(Type type, string key)
     {
-        if (type == null)
-        {
-            throw new ArgumentNullException(nameof(type));
-        }
-
-        return (_registeredClientStartupScripts != null
-               && (_registeredClientStartupScripts.Contains(CreateScriptKey(type, key))));
+        return type == null
+            ? throw new ArgumentNullException(nameof(type))
+            : _registeredClientStartupScripts != null
+               && _registeredClientStartupScripts.Contains(CreateScriptKey(type, key));
     }
 
     /// <devdoc>
@@ -704,13 +683,10 @@ WebForm_InitCallback();"), true);
     /// </devdoc>
     public bool IsOnSubmitStatementRegistered(Type type, string key)
     {
-        if (type == null)
-        {
-            throw new ArgumentNullException(nameof(type));
-        }
-
-        return (_registeredOnSubmitStatements != null
-               && (_registeredOnSubmitStatements.Contains(CreateScriptKey(type, key))));
+        return type == null
+            ? throw new ArgumentNullException(nameof(type))
+            : _registeredOnSubmitStatements != null
+               && _registeredOnSubmitStatements.Contains(CreateScriptKey(type, key));
     }
 
     /// <devdoc>
@@ -838,10 +814,14 @@ WebForm_InitCallback();"), true);
             throw new ArgumentNullException(nameof(hiddenFieldName));
         }
         if (_registeredHiddenFields == null)
+        {
             _registeredHiddenFields = new ListDictionary();
+        }
 
         if (!_registeredHiddenFields.Contains(hiddenFieldName))
+        {
             _registeredHiddenFields.Add(hiddenFieldName, hiddenFieldInitialValue);
+        }
 
         _owner.Features.GetRequired<IFormWriterFeature>().AddHiddenField(hiddenFieldName, hiddenFieldInitialValue);
 
@@ -1034,7 +1014,9 @@ WebForm_InitCallback();"), true);
             throw new ArgumentOutOfRangeException(nameof(script));
         }
         if (_registeredOnSubmitStatements == null)
+        {
             _registeredOnSubmitStatements = new ListDictionary();
+        }
 
         // Make sure the script block ends in a semicolon
         int index = script.Length - 1;
@@ -1045,11 +1027,13 @@ WebForm_InitCallback();"), true);
 
         if ((index >= 0) && (script[index] != ';'))
         {
-            script = script.Substring(0, index + 1) + ";" + script.Substring(index + 1);
+            script = string.Concat(script.AsSpan(0, index + 1), ";", script.AsSpan(index + 1));
         }
 
         if (!_registeredOnSubmitStatements.Contains(key))
+        {
             _registeredOnSubmitStatements.Add(key, script);
+        }
 
         // TODO
 #if FALSE
@@ -1334,7 +1318,7 @@ return true;
     {
         writer.WriteLine();
         bool inScriptBlock = false;
-        checkForScriptManagerRegistrations &= (_registeredResourcesToSuppress != null);
+        checkForScriptManagerRegistrations &= _registeredResourcesToSuppress != null;
         // Write out each registered script block
         foreach (Tuple<ScriptKey, string, bool> entry in scripts)
         {
@@ -1434,14 +1418,7 @@ return true;
         public object GetEventValidationStoreObject()
         {
             // We only produce the object to be serialized if there is data in the store
-            if (_outboundEvents != null && _outboundEvents.Count > 0)
-            {
-                return _outboundEvents;
-            }
-            else
-            {
-                return null;
-            }
+            return _outboundEvents != null && _outboundEvents.Count > 0 ? _outboundEvents : (object)null;
         }
 
         public bool IsValid(string uniqueId, string argument)
@@ -1517,25 +1494,15 @@ return true;
 
         private static int ComputeHashKey(string uniqueId, string argument)
         {
-            if (string.IsNullOrEmpty(argument))
-            {
-                return StringUtil.GetStringHashCode(uniqueId);
-            }
-
-            return StringUtil.GetStringHashCode(uniqueId) ^ StringUtil.GetStringHashCode(argument);
+            return string.IsNullOrEmpty(argument)
+                ? StringUtil.GetStringHashCode(uniqueId)
+                : StringUtil.GetStringHashCode(uniqueId) ^ StringUtil.GetStringHashCode(argument);
         }
 
         public object GetEventValidationStoreObject()
         {
             // We only produce the object to be serialized if there is data in the store
-            if (_validEventReferences != null && _validEventReferences.Count > 0)
-            {
-                return _validEventReferences;
-            }
-            else
-            {
-                return null;
-            }
+            return _validEventReferences != null && _validEventReferences.Count > 0 ? _validEventReferences : (object)null;
         }
 
         public bool IsValid(string uniqueId, string argument)
@@ -1662,29 +1629,11 @@ internal class ScriptKey
         _isResource = isResource;
     }
 
-    public Assembly Assembly
-    {
-        get
-        {
-            return _type == null ? null : AssemblyResourceLoader.GetAssemblyFromType(_type);
-        }
-    }
+    public Assembly Assembly => _type == null ? null : AssemblyResourceLoader.GetAssemblyFromType(_type);
 
-    public bool IsResource
-    {
-        get
-        {
-            return _isResource;
-        }
-    }
+    public bool IsResource => _isResource;
 
-    public string Key
-    {
-        get
-        {
-            return _key;
-        }
-    }
+    public string Key => _key;
 
     public override int GetHashCode()
     {

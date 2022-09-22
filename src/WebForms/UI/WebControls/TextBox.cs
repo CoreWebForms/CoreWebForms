@@ -1,20 +1,30 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+#nullable disable
+
+using System.Collections.Specialized;
+using System.ComponentModel;
+using System.Globalization;
+
 namespace System.Web.UI.WebControls;
 
-using System;
-using System.Collections.Specialized;
-using System.Diagnostics.CodeAnalysis;
-using System.Drawing.Design;
-using System.Globalization;
-using System.Web;
-using System.Web.UI;
-using System.Web.Util;
-using Microsoft.Extensions.Logging;
-
+/// <devdoc>
+///    <para>Constructs a text box and defines its properties.</para>
+/// </devdoc>
+[
+ControlValueProperty("Text"),
+DataBindingHandler("System.Web.UI.Design.TextDataBindingHandler, " + AssemblyRef.SystemDesign),
+DefaultProperty("Text"),
+ValidationProperty("Text"),
+DefaultEvent("TextChanged"),
+Designer("System.Web.UI.Design.WebControls.PreviewControlDesigner, " + AssemblyRef.SystemDesign),
+ParseChildren(true, "Text"),
+SupportsEventValidation,
+]
 public class TextBox : WebControl, IPostBackDataHandler, IEditableTextControl
 {
+
     private static readonly object EventTextChanged = new object();
 
     private const string _textBoxKeyHandlerCall = "if (WebForm_TextBoxKeyHandler(event) == false) return false;";
@@ -29,6 +39,12 @@ public class TextBox : WebControl, IPostBackDataHandler, IEditableTextControl
     {
     }
 
+    [
+    DefaultValue(AutoCompleteType.None),
+    Themeable(false),
+    WebCategory("Behavior"),
+    WebSysDescription(SR.TextBox_AutoCompleteType)
+    ]
     public virtual AutoCompleteType AutoCompleteType
     {
         get
@@ -46,25 +62,42 @@ public class TextBox : WebControl, IPostBackDataHandler, IEditableTextControl
         }
     }
 
+    /// <devdoc>
+    ///    <para>Gets or sets a value indicating whether an automatic
+    ///       postback to the server will occur whenever the user changes the
+    ///       content of the text box.</para>
+    /// </devdoc>
+    [
+    DefaultValue(false),
+    Themeable(false),
+    WebCategory("Behavior"),
+    WebSysDescription(SR.TextBox_AutoPostBack),
+    ]
     public virtual bool AutoPostBack
     {
         get
         {
             object b = ViewState["AutoPostBack"];
-            return ((b == null) ? false : (bool)b);
+            return (b == null) ? false : (bool)b;
         }
         set
         {
             ViewState["AutoPostBack"] = value;
         }
-    } 
+    }
 
+    [
+    DefaultValue(false),
+    Themeable(false),
+    WebCategory("Behavior"),
+    WebSysDescription(SR.AutoPostBackControl_CausesValidation)
+    ]
     public virtual bool CausesValidation
     {
         get
         {
             object b = ViewState["CausesValidation"];
-            return ((b == null) ? false : (bool)b);
+            return (b == null) ? false : (bool)b;
         }
         set
         {
@@ -72,30 +105,47 @@ public class TextBox : WebControl, IPostBackDataHandler, IEditableTextControl
         }
     }
 
+    /// <devdoc>
+    ///    <para>Gets or sets the display
+    ///       width of the text box in characters.</para>
+    /// </devdoc>
+    [
+    WebCategory("Appearance"),
+    DefaultValue(0),
+    WebSysDescription(SR.TextBox_Columns)
+    ]
     public virtual int Columns
     {
         get
         {
             object o = ViewState["Columns"];
-            return ((o == null) ? 0 : (int)o);
+            return (o == null) ? 0 : (int)o;
         }
         set
         {
             if (value < 0)
             {
-                throw new ArgumentOutOfRangeException("Columns", "Invalid columns");
+                throw new ArgumentOutOfRangeException("Columns", SR.GetString(SR.TextBox_InvalidColumns));
             }
-
             ViewState["Columns"] = value;
         }
     }
 
+    /// <devdoc>
+    ///    <para>Gets or sets the maximum number of characters allowed in the text box.</para>
+    /// </devdoc>
+    [
+    DefaultValue(0),
+    Themeable(false),
+    WebCategory("Behavior"),
+    WebSysDescription(SR.TextBox_MaxLength),
+    ]
     public virtual int MaxLength
     {
         get
         {
             object o = ViewState["MaxLength"];
-            return ((o == null) ? 0 : (int)o);
+            return (o == null) ? 0 : (int)o;
         }
         set
         {
@@ -107,12 +157,22 @@ public class TextBox : WebControl, IPostBackDataHandler, IEditableTextControl
         }
     }
 
+    /// <devdoc>
+    ///    <para>
+    ///       Gets or sets the behavior mode of the text box.</para>
+    /// </devdoc>
+    [
+    DefaultValue(TextBoxMode.SingleLine),
+    Themeable(false),
+    WebCategory("Behavior"),
+    WebSysDescription(SR.TextBox_TextMode)
+    ]
     public virtual TextBoxMode TextMode
     {
         get
         {
             object mode = ViewState["Mode"];
-            return ((mode == null) ? TextBoxMode.SingleLine : (TextBoxMode)mode);
+            return (mode == null) ? TextBoxMode.SingleLine : (TextBoxMode)mode;
         }
         set
         {
@@ -124,12 +184,22 @@ public class TextBox : WebControl, IPostBackDataHandler, IEditableTextControl
         }
     }
 
+    /// <devdoc>
+    ///    <para>Whether the textbox is in read-only mode.</para>
+    /// </devdoc>
+    [
+    Bindable(true),
+    DefaultValue(false),
+    Themeable(false),
+    WebCategory("Behavior"),
+    WebSysDescription(SR.TextBox_ReadOnly)
+    ]
     public virtual bool ReadOnly
     {
         get
         {
             object o = ViewState["ReadOnly"];
-            return ((o == null) ? false : (bool)o);
+            return (o == null) ? false : (bool)o;
         }
         set
         {
@@ -137,23 +207,36 @@ public class TextBox : WebControl, IPostBackDataHandler, IEditableTextControl
         }
     }
 
+    /// <devdoc>
+    ///    <para> Gets or sets the display height of a multiline text box.</para>
+    /// </devdoc>
+    [
+    DefaultValue(0),
+    Themeable(false),
+    WebCategory("Behavior"),
+    WebSysDescription(SR.TextBox_Rows)
+    ]
     public virtual int Rows
     {
         get
         {
             object o = ViewState["Rows"];
-            return ((o == null) ? 0 : (int)o);
+            return (o == null) ? 0 : (int)o;
         }
         set
         {
             if (value < 0)
             {
-                throw new ArgumentOutOfRangeException("Rows", "Invalid text rows");
+                throw new ArgumentOutOfRangeException("Rows", SR.GetString(SR.TextBox_InvalidRows));
             }
             ViewState["Rows"] = value;
         }
     }
 
+    /// <devdoc>
+    ///    Determines whether the Text must be stored in view state, to
+    ///    optimize the size of the saved state.
+    /// </devdoc>
     private bool SaveTextViewState
     {
         get
@@ -170,29 +253,38 @@ public class TextBox : WebControl, IPostBackDataHandler, IEditableTextControl
                 return false;
             }
 
-            if ((Events[EventTextChanged] != null) ||
+            return (Events[EventTextChanged] != null) ||
                 (IsEnabled == false) ||
                 (Visible == false) ||
-                (ReadOnly) ||
-                (this.GetType() != typeof(TextBox)))
-            {
-                return true;
-            }
-
-            return false;
+                ReadOnly ||
+                (this.GetType() != typeof(TextBox));
         }
     }
 
-    protected override HtmlTextWriterTag TagKey
-        => TextMode == TextBoxMode.MultiLine ? HtmlTextWriterTag.Textarea : HtmlTextWriterTag.Input;
+    /// <devdoc>
+    ///    <para>A protected property. Gets the HTML tag
+    ///       for the text box control.</para>
+    /// </devdoc>
+    protected override HtmlTextWriterTag TagKey => TextMode == TextBoxMode.MultiLine ? HtmlTextWriterTag.Textarea : HtmlTextWriterTag.Input;
 
-    [AllowNull]
+    /// <devdoc>
+    ///    <para> Gets
+    ///       or sets the text content of the text box.</para>
+    /// </devdoc>
+    [
+    Localizable(true),
+    Bindable(true, BindingDirection.TwoWay),
+    WebCategory("Appearance"),
+    DefaultValue(""),
+    WebSysDescription(SR.TextBox_Text),
+    PersistenceMode(PersistenceMode.EncodedInnerDefaultProperty),
+    ]
     public virtual string Text
     {
         get
         {
             string s = (string)ViewState["Text"];
-            return ((s == null) ? string.Empty : s);
+            return s ?? string.Empty;
         }
         set
         {
@@ -200,12 +292,18 @@ public class TextBox : WebControl, IPostBackDataHandler, IEditableTextControl
         }
     }
 
+    [
+    WebCategory("Behavior"),
+    Themeable(false),
+    DefaultValue(""),
+    WebSysDescription(SR.PostBackControl_ValidationGroup)
+    ]
     public virtual string ValidationGroup
     {
         get
         {
             string s = (string)ViewState["ValidationGroup"];
-            return ((s == null) ? string.Empty : s);
+            return s ?? string.Empty;
         }
         set
         {
@@ -213,12 +311,21 @@ public class TextBox : WebControl, IPostBackDataHandler, IEditableTextControl
         }
     }
 
+    /// <devdoc>
+    ///    Gets or sets a value indicating whether the
+    ///    text content wraps within the text box.
+    /// </devdoc>
+    [
+    WebCategory("Layout"),
+    DefaultValue(true),
+    WebSysDescription(SR.TextBox_Wrap)
+    ]
     public virtual bool Wrap
     {
         get
         {
             object b = ViewState["Wrap"];
-            return ((b == null) ? true : (bool)b);
+            return (b == null) ? true : (bool)b;
         }
         set
         {
@@ -226,6 +333,17 @@ public class TextBox : WebControl, IPostBackDataHandler, IEditableTextControl
         }
     }
 
+    // internal for unit testing
+    internal virtual bool SupportsVCard => true;
+
+    /// <devdoc>
+    ///    <para>Occurs when the content of the text box is
+    ///       changed upon server postback.</para>
+    /// </devdoc>
+    [
+    WebCategory("Action"),
+    WebSysDescription(SR.TextBox_OnTextChanged)
+    ]
     public event EventHandler TextChanged
     {
         add
@@ -243,15 +361,15 @@ public class TextBox : WebControl, IPostBackDataHandler, IEditableTextControl
     /// </devdoc>
     protected override void AddAttributesToRender(HtmlTextWriter writer)
     {
+
         // Make sure we are in a form tag with runat=server.
-        var page = Page;
+        Page page = Page;
         if (page != null)
         {
-            // TODO
-            //page.VerifyRenderingInServerForm(this);
+            page.VerifyRenderingInServerForm(this);
         }
 
-        var uniqueID = UniqueID;
+        string uniqueID = UniqueID;
         if (uniqueID != null)
         {
             writer.AddAttribute(HtmlTextWriterAttribute.Name, uniqueID);
@@ -267,14 +385,17 @@ public class TextBox : WebControl, IPostBackDataHandler, IEditableTextControl
             int columns = Columns;
             bool adapterRenderZeroRowCol = false;
 
-            // VSWhidbey 497755
-            if (rows == 0)
+            if (!EnableLegacyRendering)
             {
-                rows = DefaultMutliLineRows;
-            }
-            if (columns == 0)
-            {
-                columns = DefaultMutliLineColumns;
+                // VSWhidbey 497755
+                if (rows == 0)
+                {
+                    rows = DefaultMutliLineRows;
+                }
+                if (columns == 0)
+                {
+                    columns = DefaultMutliLineColumns;
+                }
             }
 
             if (rows > 0 || adapterRenderZeroRowCol)
@@ -293,7 +414,7 @@ public class TextBox : WebControl, IPostBackDataHandler, IEditableTextControl
             }
 
             //VSO449020 Add MaxLength Support for mutiple lines textbox, since in HTML5 this attribute is supported for textarea.
-            if (MaxLength > 0)
+            if (BinaryCompatibility.Current.TargetsAtLeastFramework472 && MaxLength > 0)
             {
                 writer.AddAttribute(HtmlTextWriterAttribute.Maxlength, MaxLength.ToString(NumberFormatInfo.InvariantInfo));
             }
@@ -301,6 +422,7 @@ public class TextBox : WebControl, IPostBackDataHandler, IEditableTextControl
         else
         {
             // Everything else renders as input
+
             if (mode != TextBoxMode.SingleLine || string.IsNullOrEmpty(Attributes["type"]))
             {
                 // If the developer specified a custom type (like an HTML 5 type), use that type instead of "text".
@@ -312,7 +434,8 @@ public class TextBox : WebControl, IPostBackDataHandler, IEditableTextControl
             if (mode == TextBoxMode.SingleLine &&
                 autoCompleteType != AutoCompleteType.None &&
                 autoCompleteType != AutoCompleteType.Enabled &&
-                autoCompleteType != AutoCompleteType.Disabled)
+                autoCompleteType != AutoCompleteType.Disabled &&
+                SupportsVCard)
             {
 
                 // Renders the vcard_name attribute so that client browsers can support autocomplete
@@ -320,13 +443,8 @@ public class TextBox : WebControl, IPostBackDataHandler, IEditableTextControl
                 writer.AddAttribute(HtmlTextWriterAttribute.VCardName, name);
             }
 
-            if (autoCompleteType == AutoCompleteType.Disabled &&
-                (mode >= TextBoxMode.Color || (mode == TextBoxMode.SingleLine)))
+            if (autoCompleteType == AutoCompleteType.Disabled)
             {
-                // Only render autocomplete="off" when one of the following is true
-                // - 4.5 or higher rendering compat is being used
-                // - any of the new HTML5 modes are being used
-                // - browser supports vCard AND mode is SingleLine (this is the legacy pre-4.5 behavior)
                 writer.AddAttribute(HtmlTextWriterAttribute.AutoComplete, "off");
             }
 
@@ -363,9 +481,9 @@ public class TextBox : WebControl, IPostBackDataHandler, IEditableTextControl
             writer.AddAttribute(HtmlTextWriterAttribute.ReadOnly, "readonly");
         }
 
-        if (AutoPostBack && (page != null))
+        if (AutoPostBack && (page != null) && page.ClientSupportsJavaScript)
         {
-            string? onChange = null;
+            string onChange = null;
             if (HasAttributes)
             {
                 onChange = Attributes["onchange"];
@@ -391,16 +509,17 @@ public class TextBox : WebControl, IPostBackDataHandler, IEditableTextControl
                 options.AutoPostBack = true;
             }
 
-            // TODO: Enable scripts
-            //onChange = Util.MergeScript(onChange, page.ClientScript.GetPostBackEventReference(options, true));
+            onChange = Util.MergeScript(onChange, page.ClientScript.GetPostBackEventReference(options, true));
             writer.AddAttribute(HtmlTextWriterAttribute.Onchange, onChange);
 
+            // VSWhidbey 482068: Enter key should be preserved in mult-line
+            // textbox so the textBoxKeyHandlerCall should not be hooked up
             if (mode != TextBoxMode.MultiLine)
             {
                 string onKeyPress = _textBoxKeyHandlerCall;
                 if (HasAttributes)
                 {
-                    var userOnKeyPress = Attributes["onkeypress"];
+                    string userOnKeyPress = Attributes["onkeypress"];
                     if (userOnKeyPress != null)
                     {
                         onKeyPress += userOnKeyPress;
@@ -409,11 +528,15 @@ public class TextBox : WebControl, IPostBackDataHandler, IEditableTextControl
                 }
                 writer.AddAttribute("onkeypress", onKeyPress);
             }
+
+            if (EnableLegacyRendering)
+            {
+                writer.AddAttribute("language", "javascript", false);
+            }
         }
         else if (page != null)
         {
-            // TODO: Enable scripts
-            //page.ClientScript.RegisterForEventValidation(this.UniqueID, string.Empty);
+            page.ClientScript.RegisterForEventValidation(this.UniqueID, string.Empty);
         }
 
         if (Enabled && !IsEnabled && SupportsDisabledAttribute)
@@ -424,6 +547,22 @@ public class TextBox : WebControl, IPostBackDataHandler, IEditableTextControl
         }
 
         base.AddAttributesToRender(writer);
+    }
+
+    /// <internalonly/>
+    /// <devdoc>
+    ///    Overridden to only allow literal controls to be added as Text property.
+    /// </devdoc>
+    protected override void AddParsedSubObject(object obj)
+    {
+        if (obj is LiteralControl)
+        {
+            Text = ((LiteralControl)obj).Text;
+        }
+        else
+        {
+            throw new HttpException(SR.GetString(SR.Cannot_Have_Children_Of_Type, "TextBox", obj.GetType().Name.ToString(CultureInfo.InvariantCulture)));
+        }
     }
 
     internal static string GetTypeAttributeValue(TextBoxMode mode)
@@ -490,7 +629,8 @@ public class TextBox : WebControl, IPostBackDataHandler, IEditableTextControl
     {
         base.OnPreRender(e);
 
-        if (Page is { } page && IsEnabled)
+        Page page = Page;
+        if ((page != null) && IsEnabled)
         {
             if (SaveTextViewState == false)
             {
@@ -528,8 +668,8 @@ public class TextBox : WebControl, IPostBackDataHandler, IEditableTextControl
     {
         ValidateEvent(postDataKey);
 
-        var current = Text;
-        var postData = postCollection[postDataKey];
+        string current = Text;
+        string postData = postCollection[postDataKey];
 
         // VSWhidbey 442850: Everett had current.Equals(postData), and it is
         // equivalent to the option StringComparison.Ordinal in Whidbey
@@ -546,10 +686,8 @@ public class TextBox : WebControl, IPostBackDataHandler, IEditableTextControl
     /// </devdoc>
     protected virtual void OnTextChanged(EventArgs e)
     {
-        if (Events[EventTextChanged] is EventHandler onChangeHandler)
-        {
-            onChangeHandler(this, e);
-        }
+        EventHandler onChangeHandler = (EventHandler)Events[EventTextChanged];
+        if (onChangeHandler != null) onChangeHandler(this, e);
     }
 
     /// <internalonly/>
@@ -569,16 +707,16 @@ public class TextBox : WebControl, IPostBackDataHandler, IEditableTextControl
     /// </devdoc>
     protected virtual void RaisePostDataChangedEvent()
     {
-        if (Page is { } page && AutoPostBack && !page.IsPostBackEventControlRegistered)
+        if (AutoPostBack && !Page.IsPostBackEventControlRegistered)
         {
-            page.AutoPostBackControl = this;
+            // VSWhidbey 204824
+            Page.AutoPostBackControl = this;
 
             if (CausesValidation)
             {
-                page.Validate(ValidationGroup);
+                Page.Validate(ValidationGroup);
             }
         }
-
         OnTextChanged(EventArgs.Empty);
     }
 
@@ -597,5 +735,15 @@ public class TextBox : WebControl, IPostBackDataHandler, IEditableTextControl
             HttpUtility.HtmlEncode(Text, writer);
         }
         RenderEndTag(writer);
+    }
+
+    protected override object SaveViewState()
+    {
+        if (SaveTextViewState == false)
+        {
+            ViewState.SetItemDirty("Text", false);
+        }
+
+        return base.SaveViewState();
     }
 }

@@ -93,11 +93,7 @@ public sealed class CssStyleCollection
     {
         get
         {
-            if (_intTable == null)
-            {
-                return null;
-            }
-            return (string)_intTable[(int)key];
+            return _intTable == null ? null : (string)_intTable[(int)key];
         }
         set
         {
@@ -203,7 +199,7 @@ public sealed class CssStyleCollection
     /// </devdoc>
     public void Add(string key, string value)
     {
-        if (String.IsNullOrEmpty(key))
+        if (string.IsNullOrEmpty(key))
         {
             throw new ArgumentNullException(nameof(key));
         }
@@ -360,8 +356,8 @@ public sealed class CssStyleCollection
 
                 for (int i = 0; i < stylenames.Count; i++)
                 {
-                    String styleName = stylenames[i].ToString();
-                    String styleValue = stylevalues[i].ToString();
+                    string styleName = stylenames[i].ToString();
+                    string styleValue = stylevalues[i].ToString();
 
                     _table[styleName] = styleValue;
                 }

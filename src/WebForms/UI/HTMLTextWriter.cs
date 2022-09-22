@@ -22,13 +22,7 @@ public class HtmlTextWriter : TextWriter
     private readonly Layout _currentLayout = new Layout(HorizontalAlign.NotSet, true /* wrap */);
     private Layout _currentWrittenLayout;
 
-    internal virtual bool RenderDivAroundHiddenInputs
-    {
-        get
-        {
-            return true;
-        }
-    }
+    internal virtual bool RenderDivAroundHiddenInputs => true;
 
     public virtual void EnterStyle(Style style, HtmlTextWriterTag tag)
     {
@@ -60,7 +54,7 @@ public class HtmlTextWriter : TextWriter
         WriteBeginTag("div");
         if (writeHorizontalAlign)
         {
-            String alignment;
+            string alignment;
             switch (layout.Align)
             {
                 case HorizontalAlign.Right:
@@ -87,7 +81,7 @@ public class HtmlTextWriter : TextWriter
         _currentWrittenLayout = layout;
     }
 
-    public virtual bool IsValidFormAttribute(String attribute)
+    public virtual bool IsValidFormAttribute(string attribute)
     {
         return true;
     }
@@ -140,7 +134,7 @@ public class HtmlTextWriter : TextWriter
         _tagKeyLookupTable = new Hashtable((int)HtmlTextWriterTag.Xml + 1);
         _tagNameLookupArray = new TagInformation[(int)HtmlTextWriterTag.Xml + 1];
 
-        RegisterTag(String.Empty, HtmlTextWriterTag.Unknown, TagType.Other);
+        RegisterTag(string.Empty, HtmlTextWriterTag.Unknown, TagType.Other);
         RegisterTag("a", HtmlTextWriterTag.A, TagType.Inline);
         RegisterTag("acronym", HtmlTextWriterTag.Acronym, TagType.Inline);
         RegisterTag("address", HtmlTextWriterTag.Address, TagType.Other);
@@ -298,13 +292,7 @@ public class HtmlTextWriter : TextWriter
         RegisterAttribute(DesignerRegionAttributeName, HtmlTextWriterAttribute.DesignerRegion, false);
     }
 
-    public override Encoding Encoding
-    {
-        get
-        {
-            return writer.Encoding;
-        }
-    }
+    public override Encoding Encoding => writer.Encoding;
 
     // Gets or sets the new line character to use.
     public override string NewLine
@@ -682,7 +670,7 @@ public class HtmlTextWriter : TextWriter
         tabsPending = true;
     }
 
-    public override void WriteLine(UInt32 value)
+    public override void WriteLine(uint value)
     {
         if (tabsPending)
         {
@@ -754,7 +742,7 @@ public class HtmlTextWriter : TextWriter
         indentLevel = 0;
         tabsPending = false;
 
-        _isDescendant = (GetType() != typeof(HtmlTextWriter));
+        _isDescendant = GetType() != typeof(HtmlTextWriter);
 
         _attrCount = 0;
         _styleCount = 0;
@@ -913,12 +901,7 @@ public class HtmlTextWriter : TextWriter
             return null;
         }
 
-        if (!fEncode)
-        {
-            return value;
-        }
-
-        return HttpUtility.HtmlAttributeEncode(value);
+        return !fEncode ? value : HttpUtility.HtmlAttributeEncode(value);
     }
 
     protected virtual string EncodeAttributeValue(HtmlTextWriterAttribute attrKey, string value)
@@ -938,16 +921,12 @@ public class HtmlTextWriter : TextWriter
     {
         // VSWhidbey 454348: escaped spaces in UNC share paths don't work in IE, so
         // we're not going to encode if it's a share.
-        if (!UrlPath.IsUncSharePath(url))
-        {
-            return HttpUtility.UrlPathEncode(url);
-        }
-        return url;
+        return !UrlPath.IsUncSharePath(url) ? HttpUtility.UrlPathEncode(url) : url;
     }
 
     protected HtmlTextWriterAttribute GetAttributeKey(string attrName)
     {
-        if (!String.IsNullOrEmpty(attrName))
+        if (!string.IsNullOrEmpty(attrName))
         {
             object key = _attrKeyLookupTable[attrName.ToLower(CultureInfo.InvariantCulture)];
             if (key != null)
@@ -961,12 +940,7 @@ public class HtmlTextWriter : TextWriter
 
     protected string GetAttributeName(HtmlTextWriterAttribute attrKey)
     {
-        if ((int)attrKey >= 0 && (int)attrKey < _attrNameLookupArray.Length)
-        {
-            return _attrNameLookupArray[(int)attrKey].name;
-        }
-
-        return string.Empty;
+        return (int)attrKey >= 0 && (int)attrKey < _attrNameLookupArray.Length ? _attrNameLookupArray[(int)attrKey].name : string.Empty;
     }
 
     protected HtmlTextWriterStyle GetStyleKey(string styleName)
@@ -981,7 +955,7 @@ public class HtmlTextWriter : TextWriter
 
     protected virtual HtmlTextWriterTag GetTagKey(string tagName)
     {
-        if (!String.IsNullOrEmpty(tagName))
+        if (!string.IsNullOrEmpty(tagName))
         {
             object key = _tagKeyLookupTable[tagName.ToLower(CultureInfo.InvariantCulture)];
             if (key != null)
@@ -996,12 +970,7 @@ public class HtmlTextWriter : TextWriter
     protected virtual string GetTagName(HtmlTextWriterTag tagKey)
     {
         int tagIndex = (int)tagKey;
-        if (tagIndex >= 0 && tagIndex < _tagNameLookupArray.Length)
-        {
-            return _tagNameLookupArray[tagIndex].name;
-        }
-
-        return string.Empty;
+        return tagIndex >= 0 && tagIndex < _tagNameLookupArray.Length ? _tagNameLookupArray[tagIndex].name : string.Empty;
     }
 
     protected bool IsAttributeDefined(HtmlTextWriterAttribute key)
@@ -1429,7 +1398,7 @@ public class HtmlTextWriter : TextWriter
         writer.Write(SemicolonChar);
     }
 
-    public virtual void WriteEncodedUrl(String url)
+    public virtual void WriteEncodedUrl(string url)
     {
         int i = url.IndexOf('?');
         if (i != -1)
@@ -1443,12 +1412,12 @@ public class HtmlTextWriter : TextWriter
         }
     }
 
-    public virtual void WriteEncodedUrlParameter(String urlText)
+    public virtual void WriteEncodedUrlParameter(string urlText)
     {
         WriteUrlEncodedString(urlText, true);
     }
 
-    public virtual void WriteEncodedText(String text)
+    public virtual void WriteEncodedText(string text)
     {
         if (text == null)
         {
@@ -1483,7 +1452,7 @@ public class HtmlTextWriter : TextWriter
         }
     }
 
-    protected void WriteUrlEncodedString(String text, bool argument)
+    protected void WriteUrlEncodedString(string text, bool argument)
     {
         int length = text.Length;
         for (int i = 0; i < length; i++)
@@ -1519,7 +1488,7 @@ public class HtmlTextWriter : TextWriter
             {
                 // VSWhidbey 448625: For DBCS characters, use UTF8 encoding
                 // which can be handled by IIS5 and above.
-                Write(HttpUtility.UrlEncode(Char.ToString(ch), Encoding.UTF8));
+                Write(HttpUtility.UrlEncode(char.ToString(ch), Encoding.UTF8));
             }
         }
     }
