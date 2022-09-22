@@ -134,7 +134,7 @@ public static class HandlerExtensions
             return endpoint;
         }
 
-        var cache = core.RequestServices.GetRequiredService<EndpointCache>();
+        var cache = core.RequestServices.GetRequiredService<HttpHandlerEndpointCache>();
 
         if (cache.TryGetValue(handler, out var existing))
         {

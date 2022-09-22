@@ -12,7 +12,7 @@ public static class HandlerServicesExtensions
 {
     public static void AddHttpHandlers(this ISystemWebAdapterBuilder services)
     {
-        services.Services.TryAddSingleton<EndpointCache>();
+        services.Services.TryAddSingleton<HttpHandlerEndpointCache>();
     }
 
     public static void UseHttpHandlers(this IApplicationBuilder app)
