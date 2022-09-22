@@ -140,7 +140,6 @@ internal static class SR
     public const string PropertySetBeforePageEvent = nameof(PropertySetBeforePageEvent);
     public const string PropertySetBeforePreInitOrAddToControls = nameof(PropertySetBeforePreInitOrAddToControls);
     public const string PropertySetBeforeStyleSheetApplied = nameof(PropertySetBeforeStyleSheetApplied);
-    public const string Registered_async_tasks_remain = nameof(Registered_async_tasks_remain);
     public const string Request_not_available = nameof(Request_not_available);
     public const string Response_not_available = nameof(Response_not_available);
     public const string Session_not_enabled = nameof(Session_not_enabled);
@@ -190,8 +189,26 @@ internal static class SR
     public const string ViewState_InvalidViewState = nameof(ViewState_InvalidViewState);
     public const string ViewState_MissingViewStateField = nameof(ViewState_MissingViewStateField);
     public const string VirtualPath_Length_Zero = nameof(VirtualPath_Length_Zero);
+    public const string WebControl_AccessKey = nameof(WebControl_AccessKey);
+    public const string WebControl_Attributes = nameof(WebControl_Attributes);
+    public const string WebControl_BackColor = nameof(WebControl_BackColor);
+    public const string WebControl_BorderColor = nameof(WebControl_BorderColor);
+    public const string WebControl_BorderStyle = nameof(WebControl_BorderStyle);
+    public const string WebControl_BorderWidth = nameof(WebControl_BorderWidth);
     public const string WebControl_CommandArgument = nameof(WebControl_CommandArgument);
     public const string WebControl_CommandName = nameof(WebControl_CommandName);
+    public const string WebControl_ControlStyle = nameof(WebControl_ControlStyle);
+    public const string WebControl_ControlStyleCreated = nameof(WebControl_ControlStyleCreated);
+    public const string WebControl_CSSClassName = nameof(WebControl_CSSClassName);
+    public const string WebControl_Enabled = nameof(WebControl_Enabled);
+    public const string WebControl_Font = nameof(WebControl_Font);
+    public const string WebControl_ForeColor = nameof(WebControl_ForeColor);
+    public const string WebControl_Height = nameof(WebControl_Height);
+    public const string WebControl_InvalidAccessKey = nameof(WebControl_InvalidAccessKey);
+    public const string WebControl_Style = nameof(WebControl_Style);
+    public const string WebControl_TabIndex = nameof(WebControl_TabIndex);
+    public const string WebControl_Tooltip = nameof(WebControl_Tooltip);
+    public const string WebControl_Width = nameof(WebControl_Width);
     public const string WebPartExportHandler_DisabledExportHandler = nameof(WebPartExportHandler_DisabledExportHandler);
     public const string WebPartExportHandler_InvalidArgument = nameof(WebPartExportHandler_InvalidArgument);
 }
