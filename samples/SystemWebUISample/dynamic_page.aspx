@@ -11,12 +11,12 @@
 
     protected void Button1_Click(object sender, EventArgs e)
     {
-        label2.Text = "Button1";
+        label2.Text = GetText("Button1");
     }
 
     protected void Button2_Click(object sender, EventArgs e)
     {
-        label2.Text = "Button2";
+        label2.Text = GetText("Button2");
     }
 </script>
   
