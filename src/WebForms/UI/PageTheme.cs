@@ -4,185 +4,184 @@
 // </copyright>                                                                
 //------------------------------------------------------------------------------
 
-namespace System.Web.UI
+using System.Collections;
+using System.ComponentModel;
+using System.Globalization;
+using System.Web.UI.HtmlControls;
+using System.Web.Util;
+using System.Diagnostics;
+
+namespace System.Web.UI;
+[EditorBrowsable(EditorBrowsableState.Advanced)]
+public abstract class PageTheme
 {
 
-    using System;
-    using System.Collections;
-    using System.Collections.Specialized;
-    using System.ComponentModel;
-    using System.Globalization;
-    using System.Web.UI.HtmlControls;
-    using System.Web.Util;
-    using System.Xml;
-    using System.Security.Permissions;
+    private Page _page;
+    private bool _styleSheetTheme;
 
-    [EditorBrowsable(EditorBrowsableState.Advanced)]
-    public abstract class PageTheme
+    protected abstract String[] LinkedStyleSheets { get; }
+
+    protected abstract IDictionary ControlSkins { get; }
+
+    protected abstract String AppRelativeTemplateSourceDirectory { get; }
+
+    protected Page Page
     {
-
-        private Page _page;
-        private bool _styleSheetTheme;
-
-        protected abstract String[] LinkedStyleSheets { get; }
-
-        protected abstract IDictionary ControlSkins { get; }
-
-        protected abstract String AppRelativeTemplateSourceDirectory { get; }
-
-        protected Page Page
+        get
         {
-            get
+            return _page;
+        }
+    }
+
+    internal void Initialize(Page page, bool styleSheetTheme)
+    {
+        Debug.Assert(page != null);
+        _page = page;
+        _styleSheetTheme = styleSheetTheme;
+    }
+
+#if PORT_EVAL
+    protected object Eval(string expression)
+    {
+        return Page.Eval(expression);
+    }
+
+    protected string Eval(string expression, string format)
+    {
+        return Page.Eval(expression, format);
+    }
+#endif
+
+    public static object CreateSkinKey(Type controlType, String skinID)
+    {
+        if (controlType == null)
+        {
+            throw new ArgumentNullException("controlType");
+        }
+
+        return new SkinKey(controlType.ToString(), skinID);
+    }
+
+    internal void ApplyControlSkin(Control control)
+    {
+        if (control == null)
+        {
+            throw new ArgumentNullException("control");
+        }
+
+        ControlSkin skin = null;
+        String skinId = control.SkinID;
+        skin = (ControlSkin)ControlSkins[CreateSkinKey(control.GetType(), skinId)];
+
+        // Don't throw if ControlSkin corresponds to the skinID does not exist.
+        Debug.Assert(skin == null || skin.ControlType == control.GetType());
+
+        if (skin != null)
+        {
+            skin.ApplySkin(control);
+        }
+    }
+
+    internal void SetStyleSheet()
+    {
+        if (LinkedStyleSheets != null && LinkedStyleSheets.Length > 0)
+        {
+            if (Page.Header == null)
+                throw new InvalidOperationException(SR.GetString(SR.Page_theme_requires_page_header));
+
+            int index = 0;
+            foreach (string styleSheetPath in LinkedStyleSheets)
             {
-                return _page;
-            }
-        }
+                HtmlLink link = new HtmlLink();
+                link.Href = styleSheetPath;
+                link.Attributes["type"] = "text/css";
+                link.Attributes["rel"] = "stylesheet";
 
-        internal void Initialize(Page page, bool styleSheetTheme)
-        {
-            Debug.Assert(page != null);
-            _page = page;
-            _styleSheetTheme = styleSheetTheme;
-        }
-
-        protected object Eval(string expression)
-        {
-            return Page.Eval(expression);
-        }
-
-        protected string Eval(string expression, string format)
-        {
-            return Page.Eval(expression, format);
-        }
-
-        public static object CreateSkinKey(Type controlType, String skinID)
-        {
-            if (controlType == null)
-            {
-                throw new ArgumentNullException("controlType");
-            }
-
-            return new SkinKey(controlType.ToString(), skinID);
-        }
-
-        internal void ApplyControlSkin(Control control)
-        {
-            if (control == null)
-            {
-                throw new ArgumentNullException("control");
-            }
-
-            ControlSkin skin = null;
-            String skinId = control.SkinID;
-            skin = (ControlSkin)ControlSkins[CreateSkinKey(control.GetType(), skinId)];
-
-            // Don't throw if ControlSkin corresponds to the skinID does not exist.
-            Debug.Assert(skin == null || skin.ControlType == control.GetType());
-
-            if (skin != null)
-            {
-                skin.ApplySkin(control);
-            }
-        }
-
-        internal void SetStyleSheet()
-        {
-            if (LinkedStyleSheets != null && LinkedStyleSheets.Length > 0)
-            {
-                if (Page.Header == null)
-                    throw new InvalidOperationException(SR.GetString(SR.Page_theme_requires_page_header));
-
-                int index = 0;
-                foreach (string styleSheetPath in LinkedStyleSheets)
+                if (_styleSheetTheme)
                 {
-                    HtmlLink link = new HtmlLink();
-                    link.Href = styleSheetPath;
-                    link.Attributes["type"] = "text/css";
-                    link.Attributes["rel"] = "stylesheet";
-
-                    if (_styleSheetTheme)
-                    {
-                        Page.Header.Controls.AddAt(index++, link);
-                    }
-                    else
-                    {
-                        Page.Header.Controls.Add(link);
-                    }
-                }
-            }
-        }
-
-        public bool TestDeviceFilter(string deviceFilterName)
-        {
-            return Page.TestDeviceFilter(deviceFilterName);
-        }
-
-        protected object XPath(string xPathExpression)
-        {
-            return Page.XPath(xPathExpression);
-        }
-
-        protected object XPath(string xPathExpression, IXmlNamespaceResolver resolver)
-        {
-            return Page.XPath(xPathExpression, resolver);
-        }
-
-        protected string XPath(string xPathExpression, string format)
-        {
-            return Page.XPath(xPathExpression, format);
-        }
-
-        protected string XPath(string xPathExpression, string format, IXmlNamespaceResolver resolver)
-        {
-            return Page.XPath(xPathExpression, format, resolver);
-        }
-
-        protected IEnumerable XPathSelect(string xPathExpression)
-        {
-            return Page.XPathSelect(xPathExpression);
-        }
-
-        protected IEnumerable XPathSelect(string xPathExpression, IXmlNamespaceResolver resolver)
-        {
-            return Page.XPathSelect(xPathExpression, resolver);
-        }
-
-        private class SkinKey
-        {
-            private string _skinID;
-            private string _typeName;
-
-            internal SkinKey(string typeName, string skinID)
-            {
-                _typeName = typeName;
-
-                if (String.IsNullOrEmpty(skinID))
-                {
-                    _skinID = null;
+                    Page.Header.Controls.AddAt(index++, link);
                 }
                 else
                 {
-                    _skinID = skinID.ToLower(CultureInfo.InvariantCulture);
+                    Page.Header.Controls.Add(link);
                 }
             }
+        }
+    }
 
-            public override int GetHashCode()
+    public bool TestDeviceFilter(string deviceFilterName)
+    {
+        return Page.TestDeviceFilter(deviceFilterName);
+    }
+
+#if PORT_XPATH
+
+    protected object XPath(string xPathExpression)
+    {
+        return Page.XPath(xPathExpression);
+    }
+
+    protected object XPath(string xPathExpression, IXmlNamespaceResolver resolver)
+    {
+        return Page.XPath(xPathExpression, resolver);
+    }
+
+    protected string XPath(string xPathExpression, string format)
+    {
+        return Page.XPath(xPathExpression, format);
+    }
+
+    protected string XPath(string xPathExpression, string format, IXmlNamespaceResolver resolver)
+    {
+        return Page.XPath(xPathExpression, format, resolver);
+    }
+
+    protected IEnumerable XPathSelect(string xPathExpression)
+    {
+        return Page.XPathSelect(xPathExpression);
+    }
+
+    protected IEnumerable XPathSelect(string xPathExpression, IXmlNamespaceResolver resolver)
+    {
+        return Page.XPathSelect(xPathExpression, resolver);
+    }
+#endif
+
+    private class SkinKey
+    {
+        private string _skinID;
+        private string _typeName;
+
+        internal SkinKey(string typeName, string skinID)
+        {
+            _typeName = typeName;
+
+            if (String.IsNullOrEmpty(skinID))
             {
-                if (_skinID == null)
-                {
-                    return _typeName.GetHashCode();
-                }
+                _skinID = null;
+            }
+            else
+            {
+                _skinID = skinID.ToLower(CultureInfo.InvariantCulture);
+            }
+        }
 
-                return HashCodeCombiner.CombineHashCodes(_typeName.GetHashCode(), _skinID.GetHashCode());
+        public override int GetHashCode()
+        {
+            if (_skinID == null)
+            {
+                return _typeName.GetHashCode();
             }
 
-            public override bool Equals(object o)
-            {
-                SkinKey key = (SkinKey)o;
+            return HashCodeCombiner.CombineHashCodes(_typeName.GetHashCode(), _skinID.GetHashCode());
+        }
 
-                return (_typeName == key._typeName) &&
-                    (_skinID == key._skinID);
-            }
+        public override bool Equals(object o)
+        {
+            SkinKey key = (SkinKey)o;
+
+            return (_typeName == key._typeName) &&
+                (_skinID == key._skinID);
         }
     }
 }
