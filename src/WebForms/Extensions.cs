@@ -10,4 +10,9 @@ internal static class Extensions
     public static void Dispose(this CacheDependency dep)
     {
     }
+
+    public static bool IsPost(this HttpRequest request) => string.Equals("POST", request.HttpMethod, StringComparison.OrdinalIgnoreCase);
+
+    public static void InvokeCancellableCallback(this HttpContext context, WaitCallback callback, object state)
+        => callback(state);
 }

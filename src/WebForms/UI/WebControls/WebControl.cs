@@ -8,7 +8,6 @@ using System.Collections;
 using System.Drawing;
 using System.Globalization;
 using System.Web.UI;
-using System.Web.UI.Features;
 
 public class WebControl : Control
 {
@@ -148,7 +147,7 @@ public class WebControl : Control
         set => ControlStyle.Height = value;
     }
 
-    protected internal bool IsEnabled => GetHierarchicalFeature<IsEnabledFeature>()?.IsEnabled ?? true;
+    protected internal bool IsEnabled { get; set; } = true;
 
     public virtual bool SupportsDisabledAttribute => true;
 

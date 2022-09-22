@@ -1842,7 +1842,7 @@ public partial class Control : IComponent, IParserAccessor, IDataBindingsAccesso
 #endif
             {
                 OnInit(EventArgs.Empty);
-                await page.GetWaitForPreviousStepCompletionAwaitable().ConfigureAwait(true);
+                await page.GetWaitForPreviousStepCompletionAwaitable();
             }
 
             ControlState = ControlState.Initialized;
@@ -2480,13 +2480,13 @@ public partial class Control : IComponent, IParserAccessor, IDataBindingsAccesso
             await using (SynchronizationContext.Current.EnableAsyncVoidOperations())
             {
                 EnsureChildControls();
-                await page.GetWaitForPreviousStepCompletionAwaitable().ConfigureAwait(true);
+                await page.GetWaitForPreviousStepCompletionAwaitable();
             }
 
             await using (SynchronizationContext.Current.EnableAsyncVoidOperations())
             {
                 OnPreRender(EventArgs.Empty);
-                await page.GetWaitForPreviousStepCompletionAwaitable().ConfigureAwait(true);
+                await page.GetWaitForPreviousStepCompletionAwaitable();
             }
 
             if (_controls != null)

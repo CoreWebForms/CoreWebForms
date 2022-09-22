@@ -211,9 +211,11 @@ public class CSharpPageBuilder : DepthFirstAspxVisitor<object>
             return base.VisitChildren(node);
         }
 
+        bool includeBaseCall = false;
         if (_componentsStack.Count == 0)
         {
-            _writer.WriteLine("protected override void InitializeComponents()");
+            _writer.WriteLine("protected override void FrameworkInitialize()");
+            includeBaseCall = true;
             _componentsStack.Push(new("Controls", "control"));
         }
         else
@@ -223,6 +225,11 @@ public class CSharpPageBuilder : DepthFirstAspxVisitor<object>
 
         _writer.WriteLine("{");
         _writer.Indent++;
+
+        if (includeBaseCall)
+        {
+            _writer.WriteLine("base.FrameworkInitialize();");
+        }
 
         base.VisitChildren(node);
 

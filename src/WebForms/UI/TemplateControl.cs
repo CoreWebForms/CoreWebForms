@@ -476,7 +476,7 @@ public abstract class TemplateControl : Control, INamingContainer
         }
 
         // If there isn't one, try the argless one
-        MethodInfo parameterlessMethod = GetInstanceMethodInfo(typeof(void), methodName);
+        MethodInfo parameterlessMethod = GetInstanceMethodInfo(typeof(Action), methodName);
         if (parameterlessMethod != null)
         {
             dictionary[methodName] = new SyncEventMethodInfo(parameterlessMethod, isArgless: true);

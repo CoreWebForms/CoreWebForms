@@ -126,6 +126,10 @@ public sealed class ObjectStateFormatter : IStateFormatter, IStateFormatter2, IF
     {
     }
 
+    public ObjectStateFormatter(Page page, bool b)
+    {
+    }
+
     /// <devdoc>
     /// Adds a string reference during the deserialization process
     /// to support deserialization of IndexedStrings.

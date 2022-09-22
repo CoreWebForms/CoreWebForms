@@ -15,7 +15,6 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Reflection;
 using System.Text;
-using System.Web.UI.Features;
 using System.Web.UI.WebControls;
 using System.Web.Util;
 using WebUtil = System.Web.Util;
@@ -98,7 +97,7 @@ public sealed class ClientScriptManager
             if (eventValidationStoreObject != null)
             {
                 // Make cryptographically secure.
-                IStateFormatter2 formatter = _owner.Features.GetRequired<IStateFormatter2>();
+                IStateFormatter2 formatter = new ObjectStateFormatter();
                 return formatter.Serialize(eventValidationStoreObject, Purpose.WebForms_ClientScriptManager_EventValidation);
             }
         }
@@ -301,7 +300,9 @@ public sealed class ClientScriptManager
     public string GetCallbackEventReference(string target, string argument, string clientCallback, string context, string clientErrorCallback, bool useAsync)
     {
         _owner.RegisterWebFormsScript();
+#if PORT_BROWSER
         if (_owner.ClientSupportsJavaScript && _owner.SupportsCallback)
+#endif
         {
             RegisterStartupScript(typeof(Page), PageCallbackScriptKey, ((_owner.RequestInternal != null) &&
                     string.Equals(_owner.RequestInternal.Url.Scheme, "https", StringComparison.OrdinalIgnoreCase)) ?
@@ -814,16 +815,16 @@ WebForm_InitCallback();", true);
             throw new ArgumentNullException(nameof(hiddenFieldName));
         }
         if (_registeredHiddenFields == null)
-        {
             _registeredHiddenFields = new ListDictionary();
-        }
 
         if (!_registeredHiddenFields.Contains(hiddenFieldName))
-        {
             _registeredHiddenFields.Add(hiddenFieldName, hiddenFieldInitialValue);
+        if (_owner._hiddenFieldsToRender == null)
+        {
+            _owner._hiddenFieldsToRender = new Dictionary<String, String>();
         }
 
-        _owner.Features.GetRequired<IFormWriterFeature>().AddHiddenField(hiddenFieldName, hiddenFieldInitialValue);
+        _owner._hiddenFieldsToRender[hiddenFieldName] = hiddenFieldInitialValue;
 
 #if FALSE
         // If there are any partial caching controls on the stack, forward the call to them
