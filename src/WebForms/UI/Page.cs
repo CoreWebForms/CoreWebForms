@@ -234,7 +234,11 @@ public class Page : TemplateControl, IHttpAsyncHandler
 
     public string? ClientOnSubmitEvent { get; internal set; }
 
-    internal string ClientState => Features.GetRequired<IViewStateManager>().ClientState;
+    internal string ClientState
+    {
+        get => Features.GetRequired<IViewStateManager>().ClientState;
+        set { }
+    }
 
     internal string RequestViewStateString => Features.GetRequired<IViewStateManager>().OriginalState;
 
@@ -243,4 +247,5 @@ public class Page : TemplateControl, IHttpAsyncHandler
     public int MaxPageStateFieldLength { get; internal set; } = 1000;
     public bool ContainsTheme { get; internal set; }
     public bool IsPostBack { get; internal set; }
+    public string? ViewStateUserKey { get; internal set; }
 }

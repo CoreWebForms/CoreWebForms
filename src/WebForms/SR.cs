@@ -86,6 +86,7 @@ internal static class SR
     public const string Page_OnAbortTransaction = nameof(Page_OnAbortTransaction);
     public const string Page_OnCommitTransaction = nameof(Page_OnCommitTransaction);
     public const string PageAsyncManager_CannotEnqueue = nameof(PageAsyncManager_CannotEnqueue);
+    public const string PageStatePersister_PageCannotBeNull = nameof(PageStatePersister_PageCannotBeNull);
     public const string Parameter_NullOrEmpty = nameof(Parameter_NullOrEmpty);
     public const string Parent_collections_readonly = nameof(Parent_collections_readonly);
     public const string Path_must_be_rooted = nameof(Path_must_be_rooted);
