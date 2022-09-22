@@ -82,7 +82,7 @@ public sealed class StateBag : IStateManager, IDictionary
         set => this[(string)key] = value;
     }
 
-    [return: NotNullIfNotNull(nameof(value))]
+    //[return: NotNullIfNotNull(nameof(value))]
     public StateItem? Add(string key, object? value)
     {
         if (string.IsNullOrEmpty(key))

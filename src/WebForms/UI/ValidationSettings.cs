@@ -24,12 +24,12 @@ public static class ValidationSettings
             if (_unobtrusiveValidationMode == null)
             {
 
-                string configValue = ConfigurationManager.AppSettings["ValidationSettings:UnobtrusiveValidationMode"];
+                string configValue = "WebForms"; //ConfigurationManager.AppSettings["ValidationSettings:UnobtrusiveValidationMode"];
                 object value = PropertyConverter.EnumFromString(typeof(UnobtrusiveValidationMode), configValue);
 
                 if (value == null)
                 {
-                    _unobtrusiveValidationMode = (BinaryCompatibility.Current.TargetsAtLeastFramework45) ? UnobtrusiveValidationMode.WebForms : UnobtrusiveValidationMode.None;
+                    _unobtrusiveValidationMode = UnobtrusiveValidationMode.WebForms;// (BinaryCompatibility.Current.TargetsAtLeastFramework45) ? UnobtrusiveValidationMode.WebForms : UnobtrusiveValidationMode.None;
                 }
                 else
                 {

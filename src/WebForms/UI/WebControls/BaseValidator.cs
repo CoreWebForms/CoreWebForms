@@ -417,9 +417,10 @@ function ValidatorOnSubmit() {
         }
 
         // Check the browser capabilities
-        return (EnableClientScript
-                    && page.Request.Browser.W3CDomVersion.Major >= 1
-                    && page.Request.Browser.EcmaScriptVersion.CompareTo(new Version(1, 2)) >= 0);
+        return (EnableClientScript);
+                    // todo - validate these assertions no longer apply
+                    //&& page.Request.Browser.W3CDomVersion.Major >= 1
+                    //&& page.Request.Browser.EcmaScriptVersion.CompareTo(new Version(1, 2)) >= 0);
     }
 
     protected abstract bool EvaluateIsValid();
@@ -727,7 +728,8 @@ document.getElementById('{0}').dispose = function() {{
             return;
         }
         IsValid = EvaluateIsValid();
-        Debug.Trace("BaseValidator.Validate", "id:" + ID + ", evaluateIsValid = " + IsValid.ToString());
+
+        Debug.Write("BaseValidator.Validate", "id:" + ID + ", evaluateIsValid = " + IsValid.ToString());
         if (!IsValid)
         {
             Page page = Page;

@@ -12,12 +12,18 @@ internal static class AssemblyRef
 internal static class SR
 {
     public static string GetString(string name, params object[] args) => name;
-    
+
+    public const string Ambiguous_type = nameof(Ambiguous_type);
     public const string Async_addhandler_too_late = nameof(Async_addhandler_too_late);
     public const string Async_null_asyncresult = nameof(Async_null_asyncresult);
     public const string Async_required = nameof(Async_required);
     public const string Async_task_timed_out = nameof(Async_task_timed_out);
     public const string AutoPostBackControl_CausesValidation = nameof(AutoPostBackControl_CausesValidation);
+    public const string BaseValidator_Display = nameof(BaseValidator_Display);
+    public const string BaseValidator_IsValid = nameof(BaseValidator_IsValid);
+    public const string BaseValidator_SetFocusOnError = nameof(BaseValidator_SetFocusOnError);
+    public const string BaseValidator_Text = nameof(BaseValidator_Text);
+    public const string BaseValidator_ValidationGroup = nameof(BaseValidator_ValidationGroup);
     public const string Button_CausesValidation = nameof(Button_CausesValidation);
     public const string Button_OnClick = nameof(Button_OnClick);
     public const string Button_OnClientClick = nameof(Button_OnClientClick);
@@ -33,6 +39,7 @@ internal static class SR
     public const string ClientScriptManager_JqueryNotRegistered = nameof(ClientScriptManager_JqueryNotRegistered);
     public const string ClientScriptManager_RegisterForEventValidation_Too_Early = nameof(ClientScriptManager_RegisterForEventValidation_Too_Early);
     public const string Collection_readonly_Codeblocks = nameof(Collection_readonly_Codeblocks);
+    public const string Control_Cannot_Databind = nameof(Control_Cannot_Databind);
     public const string Control_ClientID = nameof(Control_ClientID);
     public const string Control_ClientIDMode = nameof(Control_ClientIDMode);
     public const string Control_Controls = nameof(Control_Controls);
@@ -81,6 +88,7 @@ internal static class SR
     public const string Invalid_app_VirtualPath = nameof(Invalid_app_VirtualPath);
     public const string Invalid_cache_settings_location = nameof(Invalid_cache_settings_location);
     public const string Invalid_HtmlTextWriter = nameof(Invalid_HtmlTextWriter);
+    public const string Invalid_type = nameof(Invalid_type);
     public const string Invalid_vpath = nameof(Invalid_vpath);
     public const string InvalidArgumentValue = nameof(InvalidArgumentValue);
     public const string InvalidSerializedData = nameof(InvalidSerializedData);
@@ -131,6 +139,7 @@ internal static class SR
     public const string PostBackControl_ValidationGroup = nameof(PostBackControl_ValidationGroup);
     public const string Previous_Page_Not_Authorized = nameof(Previous_Page_Not_Authorized);
     public const string Property_Had_Malformed_Url = nameof(Property_Had_Malformed_Url);
+    public const string Property_Not_Supported = nameof(Property_Not_Supported);
     public const string PropertySetAfterFrameworkInitialize = nameof(PropertySetAfterFrameworkInitialize);
     public const string PropertySetBeforePageEvent = nameof(PropertySetBeforePageEvent);
     public const string PropertySetBeforePreInitOrAddToControls = nameof(PropertySetBeforePreInitOrAddToControls);
@@ -185,15 +194,12 @@ internal static class SR
     public const string VirtualPath_Length_Zero = nameof(VirtualPath_Length_Zero);
     public const string WebControl_CommandArgument = nameof(WebControl_CommandArgument);
     public const string WebControl_CommandName = nameof(WebControl_CommandName);
-    public const string Property_Not_Supported = nameof(Property_Not_Supported);
-    public const string BaseValidator_IsValid = nameof(BaseValidator_IsValid);
-    public const string BaseValidator_Display = nameof(BaseValidator_Display);
-    public const string BaseValidator_SetFocusOnError = nameof(BaseValidator_SetFocusOnError);
-    public const string BaseValidator_Text = nameof(BaseValidator_Text);
-    public const string BaseValidator_ValidationGroup = nameof(BaseValidator_ValidationGroup);
-    public const string Validator_control_not_found = nameof(Validator_control_not_found);
     public const string Validator_bad_control_type = nameof(Validator_bad_control_type);
+    public const string Validator_control_not_found = nameof(Validator_control_not_found);
     public const string Validator_control_blank = nameof(Validator_control_blank);
+    public const string VirtualPath_AllowAbsolutePath = nameof(VirtualPath_AllowAbsolutePath);
+    public const string VirtualPath_AllowRelativePath = nameof(VirtualPath_AllowRelativePath);
+    public const string VirtualPath_AllowAppRelativePath = nameof(VirtualPath_AllowAppRelativePath);
     public const string WebPartExportHandler_DisabledExportHandler = nameof(WebPartExportHandler_DisabledExportHandler);
     public const string WebPartExportHandler_InvalidArgument = nameof(WebPartExportHandler_InvalidArgument);
 }
