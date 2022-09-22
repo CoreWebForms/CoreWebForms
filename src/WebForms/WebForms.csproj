@@ -32,4 +32,8 @@
     <ProjectReference Include="..\Handlers\Handlers.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="ModelBinding\" />
+  </ItemGroup>
+
 </Project>

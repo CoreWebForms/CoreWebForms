@@ -77,7 +77,6 @@ internal class HttpAsyncResult : IAsyncResult
         Complete(synchronous, result, error, RequestNotificationStatus.Continue);
     }
 
-
     /*
      * Helper method to implement End call to async method
      */
