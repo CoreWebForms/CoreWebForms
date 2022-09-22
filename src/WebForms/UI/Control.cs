@@ -1842,7 +1842,7 @@ public partial class Control : IComponent, IParserAccessor, IDataBindingsAccesso
 #endif
             {
                 OnInit(EventArgs.Empty);
-                await page.GetWaitForPreviousStepCompletionAwaitable();
+                await page.GetWaitForPreviousStepCompletionAwaitable().ConfigureAwait(true);
             }
 
             ControlState = ControlState.Initialized;
@@ -2476,20 +2476,17 @@ public partial class Control : IComponent, IParserAccessor, IDataBindingsAccesso
         else
         {
             flags.Clear(invisible);
-#if PORT_SYNCCONTEXT
-                using (page.Context.SyncContext.AllowVoidAsyncOperationsBlock())
-#endif
+
+            await using (SynchronizationContext.Current.EnableAsyncVoidOperations())
             {
                 EnsureChildControls();
-                await page.GetWaitForPreviousStepCompletionAwaitable();
+                await page.GetWaitForPreviousStepCompletionAwaitable().ConfigureAwait(true);
             }
 
-#if PORT_SYNCCONTEXT
-            using (page.Context.SyncContext.AllowVoidAsyncOperationsBlock())
-#endif
+            await using (SynchronizationContext.Current.EnableAsyncVoidOperations())
             {
                 OnPreRender(EventArgs.Empty);
-                await page.GetWaitForPreviousStepCompletionAwaitable();
+                await page.GetWaitForPreviousStepCompletionAwaitable().ConfigureAwait(true);
             }
 
             if (_controls != null)
@@ -2502,7 +2499,7 @@ public partial class Control : IComponent, IParserAccessor, IDataBindingsAccesso
                     // To make sure every OnPreRender is awaited so that _controlState
                     // would not be set to ControlState.PreRendered until the control is
                     // really PreRendered
-                    await _controls[i].PreRenderRecursiveInternalAsync(page);
+                    await _controls[i].PreRenderRecursiveInternalAsync(page).ConfigureAwait(true);
                 }
 
                 _controls.SetCollectionReadOnly(oldmsg);

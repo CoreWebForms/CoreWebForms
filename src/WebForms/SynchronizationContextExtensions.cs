@@ -1,10 +1,28 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using System.Web.Util;
+
 namespace System.Web;
 
-internal static class SynchronizationContextExtensions
+
+/// <devdoc>
+///    <para>[To be supplied.]</para>
+/// </devdoc>
+public delegate IAsyncResult BeginEventHandler(object sender, EventArgs e, AsyncCallback cb, object extraData);
+
+/// <devdoc>
+///    <para>[To be supplied.]</para>
+/// </devdoc>
+public delegate void EndEventHandler(IAsyncResult ar);
+
+// Represents an event handler using TAP (Task Asynchronous Pattern).
+public delegate Task TaskEventHandler(object sender, EventArgs e);
+
+internal static class SynchronizationContextUtil
 {
+    internal const SynchronizationContextMode CurrentMode = SynchronizationContextMode.Normal;
+
     public static IAsyncDisposable EnableAsyncVoidOperations(this SynchronizationContext? context)
     {
         var newContext = new AsyncVoidSynchronizationContext(context);
@@ -12,6 +30,14 @@ internal static class SynchronizationContextExtensions
         SynchronizationContext.SetSynchronizationContext(context);
 
         return newContext;
+    }
+
+    internal static void ValidateMode(SynchronizationContextMode currentMode, SynchronizationContextMode requiredMode, string specificErrorMessage)
+    {
+        if (currentMode != requiredMode)
+        {
+            throw new InvalidOperationException(specificErrorMessage);
+        }
     }
 
     // Adapted from https://www.meziantou.net/awaiting-an-async-void-method-in-dotnet.htm
