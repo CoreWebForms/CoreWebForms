@@ -7,4 +7,5 @@ namespace SystemWebUISample.Pages;
 
 public class DynamicPage : Page
 {
+    protected string TestValue1 = "Hello there!";
 }

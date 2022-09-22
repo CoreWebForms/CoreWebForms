@@ -1,6 +1,6 @@
 <%@ Page Title="About" Language="C#" MasterPageFile="~/Site.Master" Inherits="SystemWebUISample.Pages.DynamicPage" AutoEventWireup="true" CodeBehind="dynamic_page.aspx.cs"  %>
 
-<h1>Edit3</h1>
+<h1><%: TestValue1 %></h1>
 
 <br />
 
