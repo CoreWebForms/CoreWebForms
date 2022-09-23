@@ -11,7 +11,6 @@ using System.ComponentModel.Design.Serialization;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using System.Security;
 using System.Security.Permissions;
 using System.Security.Principal;
 using System.Text;
@@ -65,7 +64,6 @@ public class Page : TemplateControl, IHttpAsyncHandler
     internal static readonly object EventPreInit = new object();
     internal static readonly object EventInitComplete = new object();
     internal static readonly object EventSaveStateComplete = new object();
-    private static readonly Version MSDomScrollMinimumVersion = new Version("4.0");
 
     // Review: this is consistent with MMIT legacy -do we prefer two underscores?
     private const string UniqueFilePathSuffixID = "__ufps";
@@ -3324,143 +3322,6 @@ window.onload = WebForm_RestoreScrollPosition;
         _partialCachingControlStack.Pop();
     }
 
-    /*
-     * This method will process the data posted back in the request header.
-     * The collection of posted data keys consists of three types :
-     * 1.  Fully qualified ids of controls.  The associated value is the data
-     *     posted back by the browser for an intrinsic html element.
-     * 2.  Fully qualified ids of controls that have explicitly registered that
-     *     they want to be notified on postback.  This is required for intrinsic
-     *     html elements that for some states do not postback data ( e.g. a select
-     *     when there is no selection, a checkbox or radiobutton that is not checked )
-     *     The associated value for these keys is not relevant.
-     * 3.  Framework generated hidden fields for event processing, whose values are
-     *     set by client-side script prior to postback.
-     *
-     * This method handles the process of notifying the relevant controls that a postback
-     * has occurred, via the IPostBackDataHandler interface.
-     *
-     * It can potentially be called twice: before and after LoadControl.  This is to
-     * handle the case where users programmatically add controls in Page_Load (ASURT 29045).
-     */
-    private void ProcessPostData(NameValueCollection postData, bool fBeforeLoad)
-    {
-        if (_changedPostDataConsumers == null)
-        {
-            _changedPostDataConsumers = new ArrayList();
-        }
-
-        // identify controls that have postback data
-        if (postData != null)
-        {
-            foreach (string postKey in postData)
-            {
-                if (postKey != null)
-                {
-                    // Ignore system post fields
-                    if (IsSystemPostField(postKey))
-                    {
-                        continue;
-                    }
-
-                    Control ctrl = FindControl(postKey);
-                    if (ctrl == null)
-                    {
-                        if (fBeforeLoad)
-                        {
-                            // It was not found, so keep track of it for the post load attempt
-                            if (_leftoverPostData == null)
-                            {
-                                _leftoverPostData = new NameValueCollection();
-                            }
-
-                            _leftoverPostData.Add(postKey, null);
-                        }
-                        continue;
-                    }
-
-                    IPostBackDataHandler consumer = ctrl.PostBackDataHandler;
-
-                    // Ignore controls that are not IPostBackDataHandler (see ASURT 13581)
-                    if (consumer == null)
-                    {
-
-                        // If it's a IPostBackEventHandler (which doesn't implement IPostBackDataHandler),
-                        // register it (ASURT 39040)
-                        if (ctrl.PostBackEventHandler != null)
-                        {
-                            RegisterRequiresRaiseEvent(ctrl.PostBackEventHandler);
-                        }
-
-                        continue;
-                    }
-
-                    bool changed;
-                    if (consumer != null)
-                    {
-                        NameValueCollection postCollection = ctrl.CalculateEffectiveValidateRequest() ? _requestValueCollection : _unvalidatedRequestValueCollection;
-                        changed = consumer.LoadPostData(postKey, postCollection);
-                        if (changed)
-                        {
-                            _changedPostDataConsumers.Add(ctrl);
-                        }
-                    }
-
-                    // ensure controls are only notified of postback once
-                    if (_controlsRequiringPostBack != null)
-                    {
-                        _controlsRequiringPostBack.Remove(postKey);
-                    }
-                }
-            }
-        }
-
-        // Keep track of the leftover for the post-load attempt
-        ArrayList leftOverControlsRequiringPostBack = null;
-
-        // process controls that explicitly registered to be notified of postback
-        if (_controlsRequiringPostBack != null)
-        {
-            foreach (string controlID in _controlsRequiringPostBack)
-            {
-                Control c = FindControl(controlID);
-
-                if (c != null)
-                {
-                    var consumer = c as IPostBackDataHandler;
-
-                    // Give a helpful error if the control is not a IPostBackDataHandler (ASURT 128532)
-                    if (consumer == null)
-                    {
-                        throw new HttpException(SR.GetString(SR.Postback_ctrl_not_found, controlID));
-                    }
-
-                    NameValueCollection postCollection = c.CalculateEffectiveValidateRequest() ? _requestValueCollection : _unvalidatedRequestValueCollection;
-                    bool changed = consumer.LoadPostData(controlID, postCollection);
-                    if (changed)
-                    {
-                        _changedPostDataConsumers.Add(c);
-                    }
-                }
-                else
-                {
-                    if (fBeforeLoad)
-                    {
-                        if (leftOverControlsRequiringPostBack == null)
-                        {
-                            leftOverControlsRequiringPostBack = new ArrayList();
-                        }
-
-                        leftOverControlsRequiringPostBack.Add(controlID);
-                    }
-                }
-            }
-
-            _controlsRequiringPostBack = leftOverControlsRequiringPostBack;
-        }
-
-    }
-
     // Operations like FindControl and LoadPostData call EnsureDataBound, which may fire up 
     // async model binding methods. Therefore we make ProcessPostData method to be async so that we can await 
     // async data bindings.
@@ -4748,27 +4609,6 @@ window.onload = WebForm_RestoreScrollPosition;
         }
     }
 
-    /// <devdoc>
-    /// Heres where all the 'early' page initialization happens.
-    /// Raise the PreInit event giving the user the first (and last)
-    /// chance to do certain things that affect page behavior, and
-    /// then perform the initialization steps.
-    ///
-    /// For now this early initialization includes
-    /// theme loading.
-    /// 
-
-    private void PerformPreInit()
-    {
-        OnPreInit(EventArgs.Empty);
-
-        InitializeThemes();
-
-        ApplyMasterPage();
-
-        _preInitWorkComplete = true;
-    }
-
     // TAP version of the PerformPreInit routine.
     // !! IMPORTANT !!
     // If you change this method, also change PerformPreInit.
@@ -4892,7 +4732,7 @@ window.onload = WebForm_RestoreScrollPosition;
 
     // assert SecurityPermission, for ASURT #112116
     [SecurityPermission(SecurityAction.Assert, ControlThread = true)]
-    void SetCultureWithAssert(Thread currentThread, CultureInfo currentCulture, CultureInfo currentUICulture)
+    static void SetCultureWithAssert(Thread currentThread, CultureInfo currentCulture, CultureInfo currentUICulture)
     {
         SetCulture(currentThread, currentCulture, currentUICulture);
     }
@@ -5014,7 +4854,7 @@ window.onload = WebForm_RestoreScrollPosition;
         }
     }
 
-    private void RestoreCultures(Thread currentThread, CultureInfo prevCulture, CultureInfo prevUICulture)
+    private static void RestoreCultures(Thread currentThread, CultureInfo prevCulture, CultureInfo prevUICulture)
     {
         if (prevCulture != currentThread.CurrentCulture || prevUICulture != currentThread.CurrentUICulture)
         {
@@ -5109,258 +4949,6 @@ window.onload = WebForm_RestoreScrollPosition;
     internal void SetPreviousPage(Page previousPage)
     {
         _previousPage = previousPage;
-    }
-
-    // !! IMPORTANT !!
-    // If you make changes to this method, also make changes to ProcessRequestMainAsync.
-    private void ProcessRequestMain(bool includeStagesBeforeAsyncPoint, bool includeStagesAfterAsyncPoint)
-    {
-        try
-        {
-            HttpContext con = Context;
-
-            string exportedWebPartID = null;
-            if (includeStagesBeforeAsyncPoint)
-            {
-                // Is it a GET, POST or initial request?
-                _requestValueCollection = DeterminePostBackMode();
-                // The contract for DeterminePostBackModeUnvalidated() is that it will only be called when
-                // DeterminePostBackMode() returns a non-null result. This was done so that the implementation
-                // of DeterminePostBackModeUnvalidated() can be kep simple, without having to duplicate the
-                // same logic as DeterminePostBackMode().
-                if (_requestValueCollection != null)
-                {
-                    _unvalidatedRequestValueCollection = DeterminePostBackModeUnvalidated();
-                }
-                // It's possible that someone incorrectly implements DeterminePostBackModeUnvalidated() such that it
-                // returns null when DeterminePostBackMode() a non-null value. This could cause NullRefExceptions later on.
-                // However since few customers would override these methods we assume that this won't happen very often.
-                // A customer overriding DeterminePostBackModeUnvalidated() should understand what they are doing.
-
-                string callbackControlId = String.Empty;
-
-#if PORT_WEBPARTS
-                // Special-case Web Part Export so it executes in the same security context as the page itself (VSWhidbey 426574)
-                if (DetermineIsExportingWebPart())
-                {
-                    if (!RuntimeConfig.GetAppConfig().WebParts.EnableExport)
-                    {
-                        throw new InvalidOperationException(SR.GetString(SR.WebPartExportHandler_DisabledExportHandler));
-                    }
-
-                    exportedWebPartID = Request.QueryString["webPart"];
-                    if (String.IsNullOrEmpty(exportedWebPartID))
-                    {
-                        throw new InvalidOperationException(SR.GetString(SR.WebPartExportHandler_InvalidArgument));
-                    }
-
-                    if (String.Equals(Request.QueryString["scope"], "shared", StringComparison.OrdinalIgnoreCase))
-                    {
-                        _pageFlags.Set(isExportingWebPartShared);
-                    }
-
-                    string queryString = Request.QueryString["query"];
-                    if (queryString == null)
-                    {
-                        queryString = String.Empty;
-                    }
-                    Request.QueryStringText = queryString;
-                    con.Trace.IsEnabled = false;
-                }
-#endif
-
-                if (_requestValueCollection != null)
-                {
-
-                    // Determine if viewstate was encrypted.
-                    if (_requestValueCollection[ViewStateEncryptionID] != null)
-                    {
-                        ContainsEncryptedViewState = true;
-                    }
-
-                    // Determine if this is a callback.
-                    callbackControlId = _requestValueCollection[callbackID];
-                    // Only accepting POST callbacks to reduce mail attack possibilities (VSWhidbey 417355)
-                    if ((callbackControlId != null) && (_request.IsPost()))
-                    {
-                        _isCallback = true;
-                    }
-                    else
-                    { // Otherwise, determine if this is cross-page posting(callsbacks can never be cross page posts)
-                        if (!IsCrossPagePostBack)
-                        {
-                            VirtualPath previousPagePath = null;
-
-                            if (_requestValueCollection[previousPageID] != null)
-                            {
-                                try
-                                {
-                                    previousPagePath = VirtualPath.CreateNonRelativeAllowNull(
-                                        DecryptString(_requestValueCollection[previousPageID], Purpose.WebForms_Page_PreviousPageID));
-                                }
-                                catch
-                                {
-                                    // VSWhidbey 493209 If we fails to decrypt the previouspageid, still
-                                    // treat this as a cross page post, not a regular postback. Otherwise
-                                    // the viewstate cannot be decrypted properly. This will happen during
-                                    // cross page post between different applications.
-                                    _pageFlags[isCrossPagePostRequest] = true;
-
-                                    // do nothing, ignore CryptographicException.
-                                }
-
-                                // Process if the page is posted from cross-page that still exists and the target page is not same as source page.
-                                if (previousPagePath != null &&
-                                    previousPagePath != Request.CurrentExecutionFilePathObject())
-                                {
-                                    _pageFlags[isCrossPagePostRequest] = true;
-                                    _previousPagePath = previousPagePath;
-                                    Debug.Assert(_previousPagePath != null);
-                                }
-                            }
-                        }
-                    }
-                }
-
-                // Load the scroll position data now that we have the request value collection
-                if (MaintainScrollPositionOnPostBack)
-                {
-                    LoadScrollPosition();
-                }
-
-                PerformPreInit();
-
-                InitRecursive(null);
-
-                OnInitComplete(EventArgs.Empty);
-
-                if (IsPostBack)
-                {
-                    LoadAllState();
-                    ProcessPostData(_requestValueCollection, true /* fBeforeLoad */);
-                }
-
-                OnPreLoad(EventArgs.Empty);
-
-                LoadRecursive();
-
-                if (IsPostBack)
-                {
-                    ProcessPostData(_leftoverPostData, false /* !fBeforeLoad */);
-                    RaiseChangedEvents();
-                    RaisePostBackEvent(_requestValueCollection);
-                }
-
-                OnLoadComplete(EventArgs.Empty);
-
-                if (IsPostBack && IsCallback)
-                {
-                    PrepareCallback(callbackControlId);
-                }
-                else if (!IsCrossPagePostBack)
-                {
-                    PreRenderRecursiveInternal();
-                }
-            }
-
-            /// Async Point here
-#if PORT_LEGACYASYNC
-            if (_legacyAsyncInfo == null || _legacyAsyncInfo.CallerIsBlocking)
-            {
-                // for non-async pages with registered async tasks - run the tasks here
-                // also when running async page via server.execute - run the tasks here
-                ExecuteRegisteredAsyncTasks();
-            }
-#endif
-
-            // Make sure RawUrl gets validated.
-            ValidateRawUrlIfRequired();
-
-            if (includeStagesAfterAsyncPoint)
-            {
-                if (IsCallback)
-                {
-                    RenderCallback();
-                    return;
-                }
-
-                if (IsCrossPagePostBack)
-                {
-                    return;
-                }
-
-                PerformPreRenderComplete();
-                SaveAllState();
-                OnSaveStateComplete(EventArgs.Empty);
-
-#if PORT_WEBPARTS
-                // Special-case Web Part Export so it executes in the same security context as the page itself (VSWhidbey 426574)
-                if (exportedWebPartID != null)
-                {
-                    ExportWebPart(exportedWebPartID);
-                }
-                else
-#endif
-                {
-                    RenderControl(CreateHtmlTextWriter(Response.Output));
-                }
-
-#if PORT_LEGACYASYNC
-                CheckRemainingAsyncTasks(false);
-#endif
-            }
-        }
-#if PORT_THREADABORT
-        catch (ThreadAbortException e)
-        {
-            // Don't go into HandleError logic for ThreadAbortExceptions, since they
-            // are expected (e.g. when Response.Redirect() is called).
-
-            // VSWhidbey 500309: perf improvement. We can safely cancel the thread abort here
-            // to avoid re-throwing the exception if this is a redirect and we're not being executed
-            // under the context of a Server.Execute call (i.e. _context.Handler == this).  Otherwise,
-            // re-throw so this can be handled lower in the stack (see HttpApplication.ExecuteStep).
-
-            // This perf optimization can only be applied if we are executing the entire page
-            // lifecycle within this method call (otherwise, in async pages) calling ResetAbort
-            // would only skip part of the lifecycle, not the entire page (as Response.End is supposed to)
-
-            HttpApplication.CancelModuleException cancelException = e.ExceptionState as HttpApplication.CancelModuleException;
-            if (includeStagesBeforeAsyncPoint && includeStagesAfterAsyncPoint &&    // executing entire page
-                _context.Handler == this &&                                         // not in server execute
-                _context.ApplicationInstance != null &&                             // application must be non-null so we can complete the request
-                cancelException != null && !cancelException.Timeout)
-            {              // this is Response.End
-                _context.ApplicationInstance.CompleteRequest();
-                ThreadResetAbortWithAssert();
-            }
-            else
-            {
-                CheckRemainingAsyncTasks(true);
-                throw;
-            }
-        }
-        catch (System.Configuration.ConfigurationException)
-        {
-            throw;
-        }
-        catch (Exception e)
-        {
-            // Increment all of the appropriate error counters
-            PerfCounters.IncrementCounter(AppPerfCounter.ERRORS_DURING_REQUEST);
-            PerfCounters.IncrementCounter(AppPerfCounter.ERRORS_TOTAL);
-
-            // If it hasn't been handled, rethrow it
-            if (!HandleError(e))
-            {
-                throw;
-            }
-        }
-#else
-        catch (Exception e) when (HandleError(e))
-        {
-        }
-#endif
     }
 
     // TAP version of ProcessRequestMain routine.
@@ -5716,49 +5304,6 @@ window.onload = WebForm_RestoreScrollPosition;
         InitializeWriter(writer);
 
         base.Render(writer);
-    }
-
-    // !! IMPORTANT !!
-    // If you change this method, also change PrepareCallbackAsync.
-    [SuppressMessage("Microsoft.Security.Xml", "CA3004 ReviewCodeForInformationDisclosureVulnerabilities", Justification = "Developer-controlled contents are implicitly trusted.")]
-    private void PrepareCallback(string callbackControlID)
-    {
-#if PORT_CACHE
-        Response.Cache.SetNoStore();
-#endif
-        try
-        {
-            string param = _requestValueCollection[callbackParameterID];
-            _callbackControl = FindControl(callbackControlID) as ICallbackEventHandler;
-
-            if (_callbackControl != null)
-            {
-                _callbackControl.RaiseCallbackEvent(param);
-            }
-            else
-            {
-                throw new InvalidOperationException(SR.GetString(SR.Page_CallBackTargetInvalid, callbackControlID));
-            }
-        }
-        catch (Exception e)
-        {
-            Response.Clear();
-            Response.Write('e');
-#if PORT_CUSTOMERROR
-            if (Context.IsCustomErrorEnabled)
-            {
-                Response.Write(SR.GetString(SR.Page_CallBackError));
-            }
-            else
-#endif
-            {
-                bool needsCallbackLoadScript = !String.IsNullOrEmpty(_requestValueCollection[callbackLoadScriptID]);
-                Response.Write(needsCallbackLoadScript ?
-                    Util.QuoteJScriptString(HttpUtility.HtmlEncode(e.Message)) :
-                    HttpUtility.HtmlEncode(e.Message));
-            }
-        }
-        return;
     }
 
     // TAP version of PrepareCallback.
@@ -6756,5 +6301,4 @@ internal enum SmartNavigationSupport
     Desired,        // The Page asks for SmartNavigation, but we have not checked browser support
     IE6OrNewer     // SmartNavigation supported by IE6 or newer browsers
 }
-
 

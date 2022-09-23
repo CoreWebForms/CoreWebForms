@@ -862,7 +862,7 @@ public partial class Control : IComponent, IParserAccessor, IDataBindingsAccesso
     }
 
     // VSWhidbey 475945: Use the old id separator if configured
-    internal char IdSeparatorFromConfig => ((EnableLegacyRendering) ? LEGACY_ID_SEPARATOR : ID_SEPARATOR);
+    internal static char IdSeparatorFromConfig => ((EnableLegacyRendering) ? LEGACY_ID_SEPARATOR : ID_SEPARATOR);
 
     // VSWhidbey 244374: Allow controls to opt into loading view state by ID instead of index (perf hit)
     protected bool LoadViewStateByID => ViewStateModeByIdAttribute.IsEnabled(GetType());
