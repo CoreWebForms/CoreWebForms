@@ -6,9 +6,7 @@ using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text;
-
 using Microsoft.AspNetCore.SystemWebAdapters.UI.PageParser.Syntax;
 
 using static Microsoft.AspNetCore.SystemWebAdapters.UI.PageParser.Syntax.AspxNode;
@@ -21,6 +19,8 @@ public class CSharpPageBuilder : DepthFirstAspxVisitor<object>
     private readonly IndentedTextWriter _writer;
     private readonly IDisposable _blockClose;
     private readonly AspxParseResult _tree;
+
+    private bool _hasCodeNuget;
 
     private readonly string[] DefaultUsings = new[]
     {
@@ -78,7 +78,36 @@ public class CSharpPageBuilder : DepthFirstAspxVisitor<object>
 
             WriteScripts();
             WriteVariables();
+            WriteCodeNugetControl();
         }
+    }
+
+    private void WriteCodeNugetControl()
+    {
+        if (!_hasCodeNuget)
+        {
+            return;
+        }
+
+        const string CodeRender = @"private sealed class CodeRender : global::System.Web.UI.Control
+    {
+        private readonly Func<object> _factory;
+
+        public CodeRender(Func<object> factory)
+        {
+            _factory = factory;
+        }
+
+        public override void RenderControl(global::System.Web.UI.HtmlTextWriter writer)
+        {
+            writer.Write(global::System.Web.HttpUtility.HtmlEncode((object?)_factory()));
+
+            base.RenderControl(writer);
+        }
+    }";
+
+        _writer.WriteLine(CodeRender);
+
     }
 
     private void WriteVariables()
@@ -211,9 +240,11 @@ public class CSharpPageBuilder : DepthFirstAspxVisitor<object>
             return base.VisitChildren(node);
         }
 
+        bool includeBaseCall = false;
         if (_componentsStack.Count == 0)
         {
-            _writer.WriteLine("protected override void InitializeComponents()");
+            _writer.WriteLine("protected override void FrameworkInitialize()");
+            includeBaseCall = true;
             _componentsStack.Push(new("Controls", "control"));
         }
         else
@@ -224,6 +255,11 @@ public class CSharpPageBuilder : DepthFirstAspxVisitor<object>
         _writer.WriteLine("{");
         _writer.Indent++;
 
+        if (includeBaseCall)
+        {
+            _writer.WriteLine("base.FrameworkInitialize();");
+        }
+
         base.VisitChildren(node);
 
         _componentsStack.Pop();
@@ -232,6 +268,38 @@ public class CSharpPageBuilder : DepthFirstAspxVisitor<object>
         _writer.WriteLine("}");
 
         return _tree;
+    }
+
+    public override object Visit(CodeRenderExpression node)
+    {
+        return base.Visit(node);
+    }
+
+    public override object Visit(CodeRender node)
+    {
+        return base.Visit(node);
+    }
+
+    public override object Visit(CodeRenderEncode node)
+    {
+        var name = Current.GetNextControlName();
+
+        _hasCodeNuget = true;
+
+        _writer.Write("var ");
+        _writer.Write(name);
+        _writer.Write(" = new CodeRender(() => ");
+        _writer.Write(node.Expression);
+        _writer.Write(");");
+
+        WriteControls(name);
+
+        return default;
+    }
+
+    public override object Visit(DataBinding node)
+    {
+        return base.Visit(node);
     }
 
     public override object Visit(Literal node)

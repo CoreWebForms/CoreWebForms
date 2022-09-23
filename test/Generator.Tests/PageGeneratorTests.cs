@@ -36,8 +36,9 @@ using System.Web;
 [Microsoft.AspNetCore.SystemWebAdapters.UI.AspxPageAttribute(""/page.aspx"")]
 internal partial class _page_aspx : WebApplication12.About
 {{
-    protected override void InitializeComponents()
+    protected override void FrameworkInitialize()
     {{
+        base.FrameworkInitialize();
     }}
 }}
 ";
@@ -80,8 +81,9 @@ using System.Web;
 [Microsoft.AspNetCore.SystemWebAdapters.UI.AspxPageAttribute(""/page.aspx"")]
 internal partial class _page_aspx : WebApplication12.About
 {{
-    protected override void InitializeComponents()
+    protected override void FrameworkInitialize()
     {{
+        base.FrameworkInitialize();
         var control_1 = new global::System.Web.UI.LiteralControl(""<div />"");
         Controls.Add(control_1);
         var control_2 = new global::System.Web.UI.LiteralControl(""{NewLine}"");
@@ -128,8 +130,9 @@ using System.Web;
 [Microsoft.AspNetCore.SystemWebAdapters.UI.AspxPageAttribute(""/page.aspx"")]
 internal partial class _page_aspx : WebApplication12.About
 {{
-    protected override void InitializeComponents()
+    protected override void FrameworkInitialize()
     {{
+        base.FrameworkInitialize();
         var control_1 = new global::System.Web.UI.HtmlControls.HtmlGenericControl(""div"");
         control_1.ID = ""hi"";
         hi = control_1;
@@ -181,8 +184,9 @@ using System.Web;
 [Microsoft.AspNetCore.SystemWebAdapters.UI.AspxPageAttribute(""/page.aspx"")]
 internal partial class _page_aspx : WebApplication12.About
 {{
-    protected override void InitializeComponents()
+    protected override void FrameworkInitialize()
     {{
+        base.FrameworkInitialize();
         var control_1 = new global::System.Web.UI.HtmlControls.HtmlForm();
         control_1.ID = ""frm"";
         frm = control_1;
@@ -243,8 +247,9 @@ using System.Web;
 [Microsoft.AspNetCore.SystemWebAdapters.UI.AspxPageAttribute(""/page.aspx"")]
 internal partial class _page_aspx : WebApplication12.About
 {{
-    protected override void InitializeComponents()
+    protected override void FrameworkInitialize()
     {{
+        base.FrameworkInitialize();
         var control_1 = new global::System.Web.UI.LiteralControl(""<h1>"");
         Controls.Add(control_1);
         var control_2 = new global::System.Web.UI.LiteralControl(""Hello"");
@@ -305,8 +310,9 @@ using System.Web;
 [Microsoft.AspNetCore.SystemWebAdapters.UI.AspxPageAttribute(""/page.aspx"")]
 internal partial class _page_aspx : WebApplication12.About
 {{
-    protected override void InitializeComponents()
+    protected override void FrameworkInitialize()
     {{
+        base.FrameworkInitialize();
         var control_1 = new global::System.Web.UI.LiteralControl(""<h1>"");
         Controls.Add(control_1);
         var control_2 = new global::System.Web.UI.LiteralControl(""Hello"");

@@ -1,11 +1,7 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
+// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
 namespace System.Web.UI.WebControls;
-
-using System;
-using System.Web.UI;
-
 public interface IEditableTextControl : ITextControl
 {
     /// <devdoc>

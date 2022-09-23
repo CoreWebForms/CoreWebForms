@@ -1,18 +1,21 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
+/*
+ */
 
 namespace System.Web.UI;
 
+/// <devdoc>
+///    <para> Exposes a 
+///       read-only array of <see cref='System.Web.UI.IValidator'/>
+///       references.</para>
+/// </devdoc>
 public sealed class ValidatorCollection : ICollection
 {
-    private ArrayList data;
+    private readonly ArrayList data;
 
     /// <devdoc>
     /// <para>Initializes a new instance of the <see cref='System.Web.UI.ValidatorCollection'/> class.</para>
@@ -34,7 +37,6 @@ public sealed class ValidatorCollection : ICollection
         }
     }
 
-
     /// <devdoc>
     ///    <para>Indicates the validator at the specified index. This 
     ///       property is read-only.</para>
@@ -47,7 +49,6 @@ public sealed class ValidatorCollection : ICollection
         }
     }
 
-
     /// <devdoc>
     ///    <para>Adds the specified validator to the collection.</para>
     /// </devdoc>
@@ -55,7 +56,6 @@ public sealed class ValidatorCollection : ICollection
     {
         data.Add(validator);
     }
-
 
     /// <devdoc>
     ///    <para>Returns whether the specified validator exists in the collection.</para>
@@ -65,7 +65,6 @@ public sealed class ValidatorCollection : ICollection
         return data.Contains(validator);
     }
 
-
     /// <devdoc>
     ///    <para>Removes the specified validator from the collection.</para>
     /// </devdoc>
@@ -73,7 +72,6 @@ public sealed class ValidatorCollection : ICollection
     {
         data.Remove(validator);
     }
-
 
     /// <devdoc>
     ///    <para>Gets an enumerator that iterates over the collection.</para>
@@ -83,17 +81,16 @@ public sealed class ValidatorCollection : ICollection
         return data.GetEnumerator();
     }
 
-
-
     /// <devdoc>
     ///    <para>Copies a validator to the specified collection and location.</para>
     /// </devdoc>
     public void CopyTo(Array array, int index)
     {
         for (IEnumerator e = this.GetEnumerator(); e.MoveNext();)
+        {
             array.SetValue(e.Current, index++);
+        }
     }
-
 
     /// <devdoc>
     ///    <para>Indicates an object that can be used to synchronize the 
@@ -105,7 +102,6 @@ public sealed class ValidatorCollection : ICollection
         get { return this; }
     }
 
-
     /// <devdoc>
     /// <para>Indicates whether the <see cref='System.Web.UI.ValidatorCollection'/> is read-only. This property is 
     ///    read-only.</para>
@@ -115,7 +111,6 @@ public sealed class ValidatorCollection : ICollection
         get { return false; }
     }
 
-
     /// <devdoc>
     /// <para>Indicates whether the <see cref='System.Web.UI.ValidatorCollection'/> is synchronized 
     ///    (thread-safe). This property is read-only.</para>
@@ -124,4 +119,5 @@ public sealed class ValidatorCollection : ICollection
     {
         get { return false; }
     }
+
 }

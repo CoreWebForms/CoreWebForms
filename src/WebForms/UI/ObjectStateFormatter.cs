@@ -1,23 +1,17 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
-namespace System.Web.UI;
-
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
-using System.IO;
 using System.Runtime.Serialization;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Security.Permissions;
 using System.Web.UI.WebControls;
 
+#nullable disable
+
+namespace System.Web.UI;
 /// <devdoc>
 /// ObjectStateFormatter is designed to efficiently serialize arbitrary object graphs
 /// that represent the state of an object (decomposed into simpler types) into
@@ -123,6 +117,10 @@ public sealed class ObjectStateFormatter : IStateFormatter, IStateFormatter2, IF
     /// Initializes a new instance of the ObjectStateFormatter.
     /// </devdoc>
     public ObjectStateFormatter()
+    {
+    }
+
+    public ObjectStateFormatter(Page page, bool b)
     {
     }
 
@@ -1071,13 +1069,13 @@ public sealed class ObjectStateFormatter : IStateFormatter, IStateFormatter2, IF
         }
     }
 
-#region Implementation of IStateFormatter
+    #region Implementation of IStateFormatter
     object IStateFormatter.Deserialize(string serializedState) => Deserialize(serializedState);
 
     string IStateFormatter.Serialize(object state) => Serialize(state);
-#endregion
+    #endregion
 
-#region Implementation of IFormatter
+    #region Implementation of IFormatter
 
     /// <internalonly/>
     SerializationBinder IFormatter.Binder
@@ -1120,12 +1118,12 @@ public sealed class ObjectStateFormatter : IStateFormatter, IStateFormatter2, IF
 
     /// <internalonly/>
     void IFormatter.Serialize(Stream serializationStream, object stateGraph) => Serialize(serializationStream, stateGraph);
-#endregion
+    #endregion
 
-#region IStateFormatter2 Members
+    #region IStateFormatter2 Members
     object IStateFormatter2.Deserialize(string serializedState, Purpose purpose) => Deserialize(serializedState, purpose);
 
     string IStateFormatter2.Serialize(object state, Purpose purpose) => Serialize(state, purpose);
-#endregion
+    #endregion
 }
 

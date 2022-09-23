@@ -1,15 +1,11 @@
-//------------------------------------------------------------------------------
-// <copyright file="IIS7WorkerRequest.cs" company="Microsoft">
-//     Copyright (c) Microsoft Corporation.  All rights reserved.
-// </copyright>                                                                
-//------------------------------------------------------------------------------
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
-namespace System.Web {
-    using System;
+namespace System.Web;
 
-    public enum RequestNotificationStatus {
-        Continue = 0,
-        Pending,
-        FinishRequest,
-    }
-}   
+public enum RequestNotificationStatus
+{
+    Continue = 0,
+    Pending,
+    FinishRequest,
+}

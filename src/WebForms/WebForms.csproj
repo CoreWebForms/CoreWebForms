@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
+    <Nullable>disable</Nullable>
     <AssemblyName>Microsoft.AspNetCore.SystemWebAdapters.UI</AssemblyName>
     <RootNamespace>System.Web</RootNamespace>
   </PropertyGroup>
@@ -30,6 +30,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Handlers\Handlers.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="ModelBinding\" />
   </ItemGroup>
 
 </Project>

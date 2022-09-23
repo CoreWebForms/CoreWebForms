@@ -1,11 +1,6 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
-namespace System.Web.UI;
-
-using System;
 using System.Collections;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -13,14 +8,13 @@ using System.ComponentModel.Design.Serialization;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using System.IO;
 using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
 using System.Web.UI.WebControls;
 using System.Web.Util;
 
-using HttpException = System.Web.HttpException;
+#nullable disable
 
+namespace System.Web.UI;
 // Delegate used for the compiled template
 public delegate void RenderMethod(HtmlTextWriter output, Control container);
 
@@ -39,7 +33,7 @@ ToolboxItemFilter("System.Web.UI", ToolboxItemFilterType.Require),
 ToolboxItemAttribute("System.Web.UI.Design.WebControlToolboxItem, " + AssemblyRef.SystemDesign)
 ]
 public partial class Control : IComponent, IParserAccessor, IDataBindingsAccessor
-    // IUrlResolutionService
+// IUrlResolutionService
 {
     internal static readonly object EventDataBinding = new object();
     internal static readonly object EventInit = new object();
@@ -87,7 +81,6 @@ public partial class Control : IComponent, IParserAccessor, IDataBindingsAccesso
     private const int disableTheming = 0x00001000;
     private const int enableThemingSet = 0x00002000;
     private const int styleSheetApplied = 0x00004000;
-    private const int controlAdapterResolved = 0x00008000;
     private const int designMode = 0x00010000;
     private const int designModeChecked = 0x00020000;
     private const int disableChildControlState = 0x00040000;
@@ -869,7 +862,7 @@ public partial class Control : IComponent, IParserAccessor, IDataBindingsAccesso
     }
 
     // VSWhidbey 475945: Use the old id separator if configured
-    internal char IdSeparatorFromConfig => ((EnableLegacyRendering) ? LEGACY_ID_SEPARATOR : ID_SEPARATOR);
+    internal static char IdSeparatorFromConfig => ((EnableLegacyRendering) ? LEGACY_ID_SEPARATOR : ID_SEPARATOR);
 
     // VSWhidbey 244374: Allow controls to opt into loading view state by ID instead of index (perf hit)
     protected bool LoadViewStateByID => ViewStateModeByIdAttribute.IsEnabled(GetType());
@@ -921,7 +914,7 @@ public partial class Control : IComponent, IParserAccessor, IDataBindingsAccesso
     // VSWhidbey 244999
     internal virtual bool IsReloadable => false;
 
-    internal bool EnableLegacyRendering => false;
+    internal static bool EnableLegacyRendering => false;
 
     [
     Bindable(false),
@@ -1090,7 +1083,6 @@ public partial class Control : IComponent, IParserAccessor, IDataBindingsAccesso
         }
     }
 
-#if PORT_VDIR
     /// <devdoc>
     ///    <para> Gets the virtual directory of the Page or UserControl that contains this control.</para>
     /// </devdoc>
@@ -1147,7 +1139,7 @@ public partial class Control : IComponent, IParserAccessor, IDataBindingsAccesso
                 HttpContext context = Context;
                 if (context != null)
                 {
-                    VirtualPath templateSourceVirtualDirectory = context.Request.CurrentExecutionFilePathObject.Parent;
+                    VirtualPath templateSourceVirtualDirectory = context.Request.CurrentExecutionFilePathObject().Parent;
                     if (templateSourceVirtualDirectory != null)
                     {
                         EnsureOccasionalFields();
@@ -1187,7 +1179,6 @@ public partial class Control : IComponent, IParserAccessor, IDataBindingsAccesso
             }
         }
     }
-#endif
 
     internal ControlState ControlState { get; set; }
 
@@ -1842,7 +1833,7 @@ public partial class Control : IComponent, IParserAccessor, IDataBindingsAccesso
 #endif
             {
                 OnInit(EventArgs.Empty);
-                await page.GetWaitForPreviousStepCompletionAwaitable().ConfigureAwait(true);
+                await Page.GetWaitForPreviousStepCompletionAwaitable();
             }
 
             ControlState = ControlState.Initialized;
@@ -2392,7 +2383,7 @@ public partial class Control : IComponent, IParserAccessor, IDataBindingsAccesso
 #endif
             {
                 OnLoad(EventArgs.Empty);
-                await page.GetWaitForPreviousStepCompletionAwaitable();
+                await Page.GetWaitForPreviousStepCompletionAwaitable();
             }
         }
 
@@ -2480,13 +2471,13 @@ public partial class Control : IComponent, IParserAccessor, IDataBindingsAccesso
             await using (SynchronizationContext.Current.EnableAsyncVoidOperations())
             {
                 EnsureChildControls();
-                await page.GetWaitForPreviousStepCompletionAwaitable().ConfigureAwait(true);
+                await Page.GetWaitForPreviousStepCompletionAwaitable();
             }
 
             await using (SynchronizationContext.Current.EnableAsyncVoidOperations())
             {
                 OnPreRender(EventArgs.Empty);
-                await page.GetWaitForPreviousStepCompletionAwaitable().ConfigureAwait(true);
+                await Page.GetWaitForPreviousStepCompletionAwaitable();
             }
 
             if (_controls != null)
@@ -3668,7 +3659,7 @@ public partial class Control : IComponent, IParserAccessor, IDataBindingsAccesso
 #endif
     }
 
-    private void TraceNonRenderingControlInternal(TextWriter writer)
+    private static void TraceNonRenderingControlInternal(TextWriter writer)
     {
 #if PORT_TRACE
         BeginRenderTracing(writer, this);
@@ -3759,9 +3750,7 @@ public partial class Control : IComponent, IParserAccessor, IDataBindingsAccesso
 
         public string SpacerImageUrl;
         public TemplateControl TemplateControl;
-#if PORT_VIRTUALPATH
         public VirtualPath TemplateSourceVirtualDirectory;
-#endif
 
         public void Dispose()
         {

@@ -1,11 +1,9 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
+// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-namespace System.Web.UI.WebControls;
-using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Security.Permissions;
 
+namespace System.Web.UI.WebControls;
 public interface IDataBoundListControl : IDataBoundControl
 {
     DataKeyArray DataKeys

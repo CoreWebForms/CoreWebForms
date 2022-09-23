@@ -3,23 +3,17 @@
 
 #nullable disable
 
-using System;
-
-namespace System.Web.UI;
-
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Reflection;
 using System.Text;
-using System.Web.UI.Features;
 using System.Web.UI.WebControls;
 using System.Web.Util;
 using WebUtil = System.Web.Util;
 
+namespace System.Web.UI;
 public sealed class ClientScriptManager
 {
     private const string IncludeScriptBegin = @"
@@ -98,7 +92,7 @@ public sealed class ClientScriptManager
             if (eventValidationStoreObject != null)
             {
                 // Make cryptographically secure.
-                IStateFormatter2 formatter = _owner.Features.GetRequired<IStateFormatter2>();
+                IStateFormatter2 formatter = new ObjectStateFormatter();
                 return formatter.Serialize(eventValidationStoreObject, Purpose.WebForms_ClientScriptManager_EventValidation);
             }
         }
@@ -208,7 +202,7 @@ public sealed class ClientScriptManager
             // DevDiv #461378: Ignore validation errors for cross-page postbacks. Since the ValidateEvent method
             // is most likely on the call stack right now, this will result in an event validation failure rather
             // than a MAC validation failure.
-            if (!_owner.ShouldSuppressMacValidationException(ex))
+            if (!Page.ShouldSuppressMacValidationException(ex))
             {
                 ViewStateException.ThrowViewStateError(ex, unsafeField);
             }
@@ -301,7 +295,9 @@ public sealed class ClientScriptManager
     public string GetCallbackEventReference(string target, string argument, string clientCallback, string context, string clientErrorCallback, bool useAsync)
     {
         _owner.RegisterWebFormsScript();
+#if PORT_BROWSER
         if (_owner.ClientSupportsJavaScript && _owner.SupportsCallback)
+#endif
         {
             RegisterStartupScript(typeof(Page), PageCallbackScriptKey, ((_owner.RequestInternal != null) &&
                     string.Equals(_owner.RequestInternal.Url.Scheme, "https", StringComparison.OrdinalIgnoreCase)) ?
@@ -823,7 +819,12 @@ WebForm_InitCallback();", true);
             _registeredHiddenFields.Add(hiddenFieldName, hiddenFieldInitialValue);
         }
 
-        _owner.Features.GetRequired<IFormWriterFeature>().AddHiddenField(hiddenFieldName, hiddenFieldInitialValue);
+        if (_owner._hiddenFieldsToRender == null)
+        {
+            _owner._hiddenFieldsToRender = new Dictionary<String, String>();
+        }
+
+        _owner._hiddenFieldsToRender[hiddenFieldName] = hiddenFieldInitialValue;
 
 #if FALSE
         // If there are any partial caching controls on the stack, forward the call to them
@@ -956,7 +957,7 @@ WebForm_InitCallback();", true);
     internal void RegisterDefaultButtonScript(Control button, HtmlTextWriter writer, bool useAddAttribute)
     {
         _owner.RegisterWebFormsScript();
-        if (_owner.EnableLegacyRendering)
+        if (Control.EnableLegacyRendering)
         {
             if (useAddAttribute)
             {
@@ -1083,7 +1084,7 @@ WebForm_InitCallback();", true);
 #endif
     }
 
-    private void RegisterScriptBlock(ScriptKey key, string script, ref ListDictionary scriptBlocks, ref ArrayList scriptList, bool needsScriptTags)
+    private static void RegisterScriptBlock(ScriptKey key, string script, ref ListDictionary scriptBlocks, ref ArrayList scriptList, bool needsScriptTags)
     {
         if (scriptBlocks == null)
         {
@@ -1156,7 +1157,7 @@ WebForm_InitCallback();", true);
             return;
         }
 
-        writer.Write(_owner.EnableLegacyRendering ? ClientScriptStartLegacy : ClientScriptStart);
+        writer.Write(Control.EnableLegacyRendering ? ClientScriptStartLegacy : ClientScriptStart);
 
         // Write out each array
         IDictionaryEnumerator arrays = _registeredArrayDeclares.GetEnumerator();
@@ -1187,7 +1188,7 @@ WebForm_InitCallback();", true);
             writer.WriteLine(");");
         }
 
-        writer.Write(_owner.EnableLegacyRendering ? ClientScriptEndLegacy : ClientScriptEnd);
+        writer.Write(Control.EnableLegacyRendering ? ClientScriptEndLegacy : ClientScriptEnd);
     }
 
     internal void RenderExpandoAttribute(HtmlTextWriter writer)
@@ -1198,7 +1199,7 @@ WebForm_InitCallback();", true);
             return;
         }
 
-        writer.Write(_owner.EnableLegacyRendering ? ClientScriptStartLegacy : ClientScriptStart);
+        writer.Write(Control.EnableLegacyRendering ? ClientScriptStartLegacy : ClientScriptStart);
 
         foreach (DictionaryEntry controlEntry in _registeredControlsWithExpandoAttributes)
         {
@@ -1232,7 +1233,7 @@ WebForm_InitCallback();", true);
             }
         }
 
-        writer.Write(_owner.EnableLegacyRendering ? ClientScriptEndLegacy : ClientScriptEnd);
+        writer.Write(Control.EnableLegacyRendering ? ClientScriptEndLegacy : ClientScriptEnd);
     }
 
     internal void RenderHiddenFields(HtmlTextWriter writer)
@@ -1271,12 +1272,12 @@ WebForm_InitCallback();", true);
         }
 
         // Emit the onSubmit function, in necessary
-        if (!string.IsNullOrEmpty(_owner.ClientOnSubmitEvent) && _owner.ClientSupportsJavaScript)
+        if (!string.IsNullOrEmpty(_owner.ClientOnSubmitEvent) && Page.ClientSupportsJavaScript)
         {
             // If we were already inside a script tag, don't emit a new open script tag
             if (!inScriptBlock)
             {
-                writer.Write(_owner.EnableLegacyRendering ? ClientScriptStartLegacy : ClientScriptStart);
+                writer.Write(Control.EnableLegacyRendering ? ClientScriptStartLegacy : ClientScriptStart);
             }
 
             writer.Write(@"function WebForm_OnSubmit() {
@@ -1292,12 +1293,12 @@ WebForm_InitCallback();", true);
 return true;
 }");
             // We always need to close the script tag
-            writer.Write(_owner.EnableLegacyRendering ? ClientScriptEndLegacy : ClientScriptEnd);
+            writer.Write(Control.EnableLegacyRendering ? ClientScriptEndLegacy : ClientScriptEnd);
         }
         // If there was no onSubmit function, close the script tag if needed
         else if (inScriptBlock)
         {
-            writer.Write(_owner.EnableLegacyRendering ? ClientScriptEndLegacy : ClientScriptEnd);
+            writer.Write(Control.EnableLegacyRendering ? ClientScriptEndLegacy : ClientScriptEnd);
         }
     }
 
@@ -1309,7 +1310,7 @@ return true;
             // Close the script tag if needed
             if (inScriptBlock)
             {
-                writer.Write(_owner.EnableLegacyRendering ? ClientScriptEndLegacy : ClientScriptEnd);
+                writer.Write(Control.EnableLegacyRendering ? ClientScriptEndLegacy : ClientScriptEnd);
             }
         }
     }
@@ -1341,14 +1342,14 @@ return true;
                 if (!inScriptBlock)
                 {
                     // If we need script tags and we're not in a script tag, emit a start script tag
-                    writer.Write(_owner.EnableLegacyRendering ? ClientScriptStartLegacy : ClientScriptStart);
+                    writer.Write(Control.EnableLegacyRendering ? ClientScriptStartLegacy : ClientScriptStart);
                     inScriptBlock = true;
                 }
             }
             else if (inScriptBlock)
             {
                 // If we don't need script tags, and we're in a script tag, emit an end script tag
-                writer.Write(_owner.EnableLegacyRendering ? ClientScriptEndLegacy : ClientScriptEnd);
+                writer.Write(Control.EnableLegacyRendering ? ClientScriptEndLegacy : ClientScriptEnd);
                 inScriptBlock = false;
             }
             writer.Write(entry.Item2);
@@ -1604,11 +1605,10 @@ return true;
 internal class ScriptKey
 {
     [NonSerialized]
-    private Type _type;
-    private string _typeNameForSerialization;
-    private string _key;
-    private bool _isInclude;
-    private bool _isResource;
+    private readonly Type _type;
+    private readonly string _key;
+    private readonly bool _isInclude;
+    private readonly bool _isResource;
 
     internal ScriptKey(Type type, string key) : this(type, key, false, false)
     {

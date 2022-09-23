@@ -1,6 +1,8 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using System.Diagnostics;
+
 /*
  * UrlPath class
  *
@@ -10,12 +12,6 @@
 #nullable disable
 
 namespace System.Web.Util;
-
-using System.Collections;
-using System.Diagnostics;
-using System.IO;
-using System.Text;
-
 /*
  * Code to perform Url path combining
  */
@@ -28,29 +24,6 @@ internal static class UrlPath
     internal static bool IsRooted(string basepath)
     {
         return string.IsNullOrEmpty(basepath) || basepath[0] == '/' || basepath[0] == '\\';
-    }
-
-    // Change backslashes to forward slashes, and remove duplicate slashes
-    internal static String FixVirtualPathSlashes(string virtualPath)
-    {
-
-        // Make sure we don't have any back slashes
-        virtualPath = virtualPath.Replace('\\', '/');
-
-        // Replace any double forward slashes
-        for (; ; )
-        {
-            string newPath = virtualPath.Replace("//", "/");
-
-            // If it didn't do anything, we're done
-            if ((object)newPath == (object)virtualPath)
-                break;
-
-            // We need to loop again to take care of triple (or more) slashes (VSWhidbey 288782)
-            virtualPath = newPath;
-        }
-
-        return virtualPath;
     }
 
     // Checks if virtual path contains a protocol, which is referred to as a scheme in the
@@ -84,95 +57,6 @@ internal static class UrlPath
     {
         // If it has a protocol, it's not relative
         return HasScheme(virtualPath) ? false : !IsRooted(virtualPath);
-    }
-
-    // Same as Reduce, but for a virtual path that is known to be well formed
-    internal static String ReduceVirtualPath(String path)
-    {
-
-        int length = path.Length;
-        int examine;
-
-        // quickly rule out situations in which there are no . or ..
-
-        for (examine = 0; ; examine++)
-        {
-            examine = path.IndexOf('.', examine);
-            if (examine < 0)
-                return path;
-
-            if ((examine == 0 || path[examine - 1] == '/')
-                && (examine + 1 == length || path[examine + 1] == '/' ||
-                    (path[examine + 1] == '.' && (examine + 2 == length || path[examine + 2] == '/'))))
-                break;
-        }
-
-        // OK, we found a . or .. so process it:
-
-        ArrayList list = new ArrayList();
-        StringBuilder sb = new StringBuilder();
-        int start;
-        examine = 0;
-
-        for (; ; )
-        {
-            start = examine;
-            examine = path.IndexOf('/', start + 1);
-
-            if (examine < 0)
-                examine = length;
-
-            if (examine - start <= 3 &&
-                (examine < 1 || path[examine - 1] == '.') &&
-                (start + 1 >= length || path[start + 1] == '.'))
-            {
-                if (examine - start == 3)
-                {
-                    if (list.Count == 0)
-                        throw new HttpException(SR.GetString(SR.Cannot_exit_up_top_directory));
-
-                    // We're about to backtrack onto a starting '~', which would yield
-                    // incorrect results.  Instead, make the path App Absolute, and call
-                    // Reduce on that.
-                    if (list.Count == 1 && IsAppRelativePath(path))
-                    {
-                        Debug.Assert(sb.Length == 1);
-                        return ReduceVirtualPath(MakeVirtualPathAppAbsolute(path));
-                    }
-
-                    sb.Length = (int)list[list.Count - 1];
-                    list.RemoveRange(list.Count - 1, 1);
-                }
-            }
-            else
-            {
-                list.Add(sb.Length);
-
-                sb.Append(path, start, examine - start);
-            }
-
-            if (examine == length)
-                break;
-        }
-
-        string result = sb.ToString();
-
-        // If we end up with en empty string, turn it into either "/" or "." (VSWhidbey 289175)
-        if (result.Length == 0)
-        {
-            if (length > 0 && path[0] == '/')
-                result = @"/";
-            else
-                result = ".";
-        }
-
-        return result;
-    }
-
-    internal static string MakeVirtualPathAppAbsolute(string virtualPath)
-    {
-        //Debug.Assert(HttpRuntime.AppDomainAppVirtualPathObject != null);
-        return MakeVirtualPathAppAbsolute(virtualPath, HttpRuntime.AppDomainAppVirtualPath);
     }
 
     internal static bool IsAppRelativePath(string path)

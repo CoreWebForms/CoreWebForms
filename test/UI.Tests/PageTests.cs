@@ -2,7 +2,6 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Diagnostics;
-using System.Web;
 using System.Web.UI;
 using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
@@ -114,7 +113,7 @@ public class PageTests
 
     private sealed class Page3 : Page
     {
-        private void Page_Load(object sender, EventArgs e)
+        protected override void FrameworkInitialize()
         {
             Controls.Add(new LiteralControl("hello"));
         }
@@ -122,8 +121,10 @@ public class PageTests
 
     private sealed class Page4 : Page
     {
-        protected override void InitializeComponents()
+        protected override void FrameworkInitialize()
         {
+            base.FrameworkInitialize();
+
             var form = new HtmlForm();
             form.Controls.Add(new TextBox());
 

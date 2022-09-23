@@ -10,6 +10,7 @@ using System.Reflection;
 using System.Runtime.Loader;
 using System.Text;
 using System.Text.Json;
+using System.Web;
 using System.Web.UI;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SystemWebAdapters.UI.PageParser;
@@ -208,6 +209,9 @@ internal sealed class RoslynPageCompiler : IPageCompiler
     {
         var references = new List<MetadataReference>();
         var components = new List<ControlInfo>();
+
+        // Enforce this type is loaded
+        var a = typeof(HttpUtility).Assembly;
 
         foreach (var assembly in AssemblyLoadContext.Default.Assemblies)
         {

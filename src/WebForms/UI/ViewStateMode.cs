@@ -1,13 +1,11 @@
-//------------------------------------------------------------------------------
-// <copyright file="ViewStateMode.cs" company="Microsoft">
-//     Copyright (c) Microsoft Corporation.  All rights reserved.
-// </copyright>                                                                
-//------------------------------------------------------------------------------
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
-namespace System.Web.UI {
-    public enum ViewStateMode {
-        Inherit = 0,
-        Enabled,
-        Disabled
-    }
+namespace System.Web.UI;
+
+public enum ViewStateMode
+{
+    Inherit = 0,
+    Enabled,
+    Disabled
 }

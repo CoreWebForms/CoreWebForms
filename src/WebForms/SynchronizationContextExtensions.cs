@@ -1,10 +1,12 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+#nullable enable
+
+using System.Diagnostics;
 using System.Web.Util;
 
 namespace System.Web;
-
 
 /// <devdoc>
 ///    <para>[To be supplied.]</para>
@@ -23,13 +25,38 @@ internal static class SynchronizationContextUtil
 {
     internal const SynchronizationContextMode CurrentMode = SynchronizationContextMode.Normal;
 
+    public static void ProhibitVoidAsyncOperations(this SynchronizationContext context)
+    {
+    }
+
+    // Throws the exception that faulted a Task, similar to what 'await' would have done.
+    // Useful for synchronous methods which have a Task instance they know to be already completed
+    // and where they want to let the exception propagate upward.
+    public static void ThrowIfFaulted(this Task task)
+    {
+        Debug.Assert(task.IsCompleted, "The Task passed to this method must be marked as completed so that this method doesn't block.");
+        task.GetAwaiter().GetResult();
+    }
+
+    // Gets a WithinCancellableCallbackTaskAwaiter from a Task.
+    public static WithinCancellableCallbackTaskAwaitable WithinCancellableCallback(this Task task, HttpContext context)
+    {
+        return new WithinCancellableCallbackTaskAwaitable(context, task.GetAwaiter());
+    }
+
     public static IAsyncDisposable EnableAsyncVoidOperations(this SynchronizationContext? context)
     {
+        return new Empty();
         var newContext = new AsyncVoidSynchronizationContext(context);
 
         SynchronizationContext.SetSynchronizationContext(context);
 
         return newContext;
+    }
+
+    private class Empty : IAsyncDisposable
+    {
+        public ValueTask DisposeAsync() => ValueTask.CompletedTask;
     }
 
     internal static void ValidateMode(SynchronizationContextMode currentMode, SynchronizationContextMode requiredMode, string specificErrorMessage)

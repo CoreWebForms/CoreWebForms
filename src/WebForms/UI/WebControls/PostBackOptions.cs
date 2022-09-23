@@ -1,12 +1,11 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-namespace System.Web.UI.WebControls;
+#nullable enable
 
-using System;
 using System.ComponentModel;
-using System.Web.UI;
 
+namespace System.Web.UI.WebControls;
 public sealed class PostBackOptions
 {
     public PostBackOptions(Control targetControl) :

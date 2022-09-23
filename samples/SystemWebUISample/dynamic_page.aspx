@@ -1,6 +1,6 @@
 <%@ Page Title="About" Language="C#" MasterPageFile="~/Site.Master" Inherits="SystemWebUISample.Pages.DynamicPage" AutoEventWireup="true" CodeBehind="dynamic_page.aspx.cs"  %>
 
-<h1>Edit3</h1>
+<h1><%: TestValue1 %></h1>
 
 <br />
 
@@ -11,12 +11,12 @@
 
     protected void Button1_Click(object sender, EventArgs e)
     {
-        label2.Text = "Button1";
+        label2.Text = GetText("Button1");
     }
 
     protected void Button2_Click(object sender, EventArgs e)
     {
-        label2.Text = "Button2";
+        label2.Text = GetText("Button2");
     }
 </script>
   

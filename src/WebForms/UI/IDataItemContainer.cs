@@ -2,10 +2,6 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 namespace System.Web.UI;
-
-using System;
-using System.ComponentModel;
-
 /// <devdoc>
 /// </devdoc>
 public interface IDataItemContainer : INamingContainer

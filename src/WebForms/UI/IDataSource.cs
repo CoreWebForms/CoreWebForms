@@ -1,19 +1,17 @@
-//------------------------------------------------------------------------------
-// <copyright file="IDataSource.cs" company="Microsoft">
-//     Copyright (c) Microsoft Corporation.  All rights reserved.
-// </copyright>                                                                
-//------------------------------------------------------------------------------
-namespace System.Web.UI {
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
-    using System.Collections;
+using System.Collections;
 
-    public interface IDataSource {
+namespace System.Web.UI;
 
-        event EventHandler DataSourceChanged;
+public interface IDataSource
+{
 
-        DataSourceView GetView(string viewName);
+    event EventHandler DataSourceChanged;
 
-        ICollection GetViewNames();
-    }
+    DataSourceView GetView(string viewName);
+
+    ICollection GetViewNames();
 }
 

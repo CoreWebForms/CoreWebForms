@@ -338,9 +338,9 @@ public class ControlCollection : ICollection
     // This is a copy of the ArrayListEnumeratorSimple in ArrayList.cs
     private class ControlCollectionEnumerator : IEnumerator
     {
-        private ControlCollection list;
+        private readonly ControlCollection list;
         private int index;
-        private int version;
+        private readonly int version;
         private Control currentElement;
 
         internal ControlCollectionEnumerator(ControlCollection list)

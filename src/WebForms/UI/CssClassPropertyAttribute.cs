@@ -2,9 +2,6 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 namespace System.Web.UI;
-
-using System;
-
 /// <devdoc>
 ///     CssClassPropertyAttribute 
 ///     The CssClassPropertyAttribute is applied to properties that contain CssClass names.

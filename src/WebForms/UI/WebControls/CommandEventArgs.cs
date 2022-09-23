@@ -5,17 +5,14 @@
  */
 
 namespace System.Web.UI.WebControls;
-
-using System;
-
 /// <devdoc>
 /// <para>Provides data for the <see langword='Command'/> event.</para>
 /// </devdoc>
 public class CommandEventArgs : EventArgs
 {
 
-    private string commandName;
-    private object argument;
+    private readonly string commandName;
+    private readonly object argument;
 
     /// <devdoc>
     /// <para>Initializes a new instance of the <see cref='System.Web.UI.WebControls.CommandEventArgs'/> class with another <see cref='System.Web.UI.WebControls.CommandEventArgs'/>.</para>
