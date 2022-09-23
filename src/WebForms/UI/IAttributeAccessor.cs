@@ -7,12 +7,13 @@
  *
  * Copyright (c) 1999 Microsoft Corporation
  */
-namespace System.Web.UI {
+namespace System.Web.UI;
 
 /// <devdoc>
 ///    <para>[To be supplied.]</para>
 /// </devdoc>
-public interface IAttributeAccessor {
+public interface IAttributeAccessor
+{
     /*
      * Get the string value of a named property
      */
@@ -33,4 +34,3 @@ public interface IAttributeAccessor {
 
 }
 
-}

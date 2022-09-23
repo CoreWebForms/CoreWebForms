@@ -1,11 +1,11 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System.ComponentModel;
 using System.Collections;
+using System.ComponentModel;
 using System.Globalization;
-using System.Web.Util;
 using System.Web.UI.WebControls;
+using System.Web.Util;
 
 #nullable disable
 
@@ -422,7 +422,7 @@ public class HtmlForm : HtmlContainerControl
                         {
                             formOnSubmit += ";";
                         }
-                        if (page.ClientSupportsJavaScript || !formOnSubmit.ToLower(CultureInfo.CurrentCulture).Contains("javascript"))
+                        if (Page.ClientSupportsJavaScript || !formOnSubmit.ToLower(CultureInfo.CurrentCulture).Contains("javascript"))
                         {
                             page.ClientScript.RegisterOnSubmitStatement(typeof(HtmlForm), "OnSubmitScript", formOnSubmit);
                         }
@@ -431,7 +431,7 @@ public class HtmlForm : HtmlContainerControl
                 }
 
                 // Don't render the on submit if it contains javascript and the page doesn't support it
-                if (page.ClientSupportsJavaScript || !onSubmit.ToLower(CultureInfo.CurrentCulture).Contains("javascript"))
+                if (Page.ClientSupportsJavaScript || !onSubmit.ToLower(CultureInfo.CurrentCulture).Contains("javascript"))
                 {
                     if (enableLegacyRendering)
                     {

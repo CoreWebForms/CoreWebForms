@@ -3,10 +3,10 @@
 
 using System.Collections;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Globalization;
 using System.Web.UI.HtmlControls;
 using System.Web.Util;
-using System.Diagnostics;
 
 namespace System.Web.UI;
 [EditorBrowsable(EditorBrowsableState.Advanced)]
@@ -53,7 +53,7 @@ public abstract class PageTheme
     {
         if (controlType == null)
         {
-            throw new ArgumentNullException("controlType");
+            throw new ArgumentNullException(nameof(controlType));
         }
 
         return new SkinKey(controlType.ToString(), skinID);
@@ -63,7 +63,7 @@ public abstract class PageTheme
     {
         if (control == null)
         {
-            throw new ArgumentNullException("control");
+            throw new ArgumentNullException(nameof(control));
         }
 
         ControlSkin skin = null;
@@ -84,7 +84,9 @@ public abstract class PageTheme
         if (LinkedStyleSheets != null && LinkedStyleSheets.Length > 0)
         {
             if (Page.Header == null)
+            {
                 throw new InvalidOperationException(SR.GetString(SR.Page_theme_requires_page_header));
+            }
 
             int index = 0;
             foreach (string styleSheetPath in LinkedStyleSheets)
@@ -146,8 +148,8 @@ public abstract class PageTheme
 
     private class SkinKey
     {
-        private string _skinID;
-        private string _typeName;
+        private readonly string _skinID;
+        private readonly string _typeName;
 
         internal SkinKey(string typeName, string skinID)
         {

@@ -33,7 +33,7 @@ ToolboxItemFilter("System.Web.UI", ToolboxItemFilterType.Require),
 ToolboxItemAttribute("System.Web.UI.Design.WebControlToolboxItem, " + AssemblyRef.SystemDesign)
 ]
 public partial class Control : IComponent, IParserAccessor, IDataBindingsAccessor
-    // IUrlResolutionService
+// IUrlResolutionService
 {
     internal static readonly object EventDataBinding = new object();
     internal static readonly object EventInit = new object();
@@ -81,7 +81,6 @@ public partial class Control : IComponent, IParserAccessor, IDataBindingsAccesso
     private const int disableTheming = 0x00001000;
     private const int enableThemingSet = 0x00002000;
     private const int styleSheetApplied = 0x00004000;
-    private const int controlAdapterResolved = 0x00008000;
     private const int designMode = 0x00010000;
     private const int designModeChecked = 0x00020000;
     private const int disableChildControlState = 0x00040000;
@@ -915,7 +914,7 @@ public partial class Control : IComponent, IParserAccessor, IDataBindingsAccesso
     // VSWhidbey 244999
     internal virtual bool IsReloadable => false;
 
-    internal bool EnableLegacyRendering => false;
+    internal static bool EnableLegacyRendering => false;
 
     [
     Bindable(false),
@@ -1834,7 +1833,7 @@ public partial class Control : IComponent, IParserAccessor, IDataBindingsAccesso
 #endif
             {
                 OnInit(EventArgs.Empty);
-                await page.GetWaitForPreviousStepCompletionAwaitable();
+                await Page.GetWaitForPreviousStepCompletionAwaitable();
             }
 
             ControlState = ControlState.Initialized;
@@ -2384,7 +2383,7 @@ public partial class Control : IComponent, IParserAccessor, IDataBindingsAccesso
 #endif
             {
                 OnLoad(EventArgs.Empty);
-                await page.GetWaitForPreviousStepCompletionAwaitable();
+                await Page.GetWaitForPreviousStepCompletionAwaitable();
             }
         }
 
@@ -2472,13 +2471,13 @@ public partial class Control : IComponent, IParserAccessor, IDataBindingsAccesso
             await using (SynchronizationContext.Current.EnableAsyncVoidOperations())
             {
                 EnsureChildControls();
-                await page.GetWaitForPreviousStepCompletionAwaitable();
+                await Page.GetWaitForPreviousStepCompletionAwaitable();
             }
 
             await using (SynchronizationContext.Current.EnableAsyncVoidOperations())
             {
                 OnPreRender(EventArgs.Empty);
-                await page.GetWaitForPreviousStepCompletionAwaitable();
+                await Page.GetWaitForPreviousStepCompletionAwaitable();
             }
 
             if (_controls != null)
@@ -3660,7 +3659,7 @@ public partial class Control : IComponent, IParserAccessor, IDataBindingsAccesso
 #endif
     }
 
-    private void TraceNonRenderingControlInternal(TextWriter writer)
+    private static void TraceNonRenderingControlInternal(TextWriter writer)
     {
 #if PORT_TRACE
         BeginRenderTracing(writer, this);

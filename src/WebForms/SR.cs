@@ -12,7 +12,7 @@ internal static class AssemblyRef
 internal static class SR
 {
     public static string GetString(string name, params object[] args) => name;
-    
+
     public const string Async_addhandler_too_late = nameof(Async_addhandler_too_late);
     public const string Async_null_asyncresult = nameof(Async_null_asyncresult);
     public const string Async_required = nameof(Async_required);

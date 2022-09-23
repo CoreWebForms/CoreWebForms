@@ -3,14 +3,15 @@
 
 using System.Collections;
 
-namespace System.Web.UI {
-    public interface IDataSource {
+namespace System.Web.UI;
 
-        event EventHandler DataSourceChanged;
+public interface IDataSource
+{
 
-        DataSourceView GetView(string viewName);
+    event EventHandler DataSourceChanged;
 
-        ICollection GetViewNames();
-    }
+    DataSourceView GetView(string viewName);
+
+    ICollection GetViewNames();
 }
 

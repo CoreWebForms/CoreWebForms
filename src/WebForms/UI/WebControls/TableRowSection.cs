@@ -4,13 +4,13 @@
 /*
  */
 
-namespace System.Web.UI.WebControls
-{
-    public enum TableRowSection {
+namespace System.Web.UI.WebControls;
 
-        TableHeader = 0,
-        TableBody = 1,
-        TableFooter = 2
-    }
+public enum TableRowSection
+{
+
+    TableHeader = 0,
+    TableBody = 1,
+    TableFooter = 2
 }
 

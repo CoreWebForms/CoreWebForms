@@ -1,8 +1,5 @@
-//------------------------------------------------------------------------------
-// <copyright file="UserControl.cs" company="Microsoft">
-//     Copyright (c) Microsoft Corporation.  All rights reserved.
-// </copyright>                                                                
-//------------------------------------------------------------------------------
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 /*
  * Page class definition
@@ -10,17 +7,15 @@
  * Copyright (c) 1998 Microsoft Corporation
  */
 
-namespace System.Web.UI {
+namespace System.Web.UI;
 
-    using System;
-    using System.ComponentModel;
-    using System.ComponentModel.Design;
-    using System.ComponentModel.Design.Serialization;
-    using System.Web.Caching;
-    using System.Web.ModelBinding;
-    using System.Web.SessionState;
-    using System.Web.Util;
-
+using System;
+using System.ComponentModel;
+using System.ComponentModel.Design;
+using System.ComponentModel.Design.Serialization;
+using System.Web.Caching;
+using System.Web.ModelBinding;
+using System.Web.SessionState;
 
 /// <devdoc>
 ///    <para>This class is not marked as abstract, because the VS designer
@@ -35,13 +30,13 @@ DesignerSerializer("Microsoft.VisualStudio.Web.WebForms.WebFormCodeDomSerializer
 ParseChildren(true),
 ToolboxItem(false)
 ]
-public class UserControl : TemplateControl, IAttributeAccessor, INonBindingContainer, IUserControlDesignerAccessor {
+public class UserControl : TemplateControl, IAttributeAccessor, INonBindingContainer, IUserControlDesignerAccessor
+{
 
     private StateBag attributeStorage;
     private AttributeCollection attributes;
 
     private bool _fUserControlInitialized;
-
 
     /// <devdoc>
     ///    <para>Gets the collection of attribute name/value pairs expressed on a UserControl but
@@ -51,12 +46,17 @@ public class UserControl : TemplateControl, IAttributeAccessor, INonBindingConta
     Browsable(false),
     DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)
     ]
-    public AttributeCollection Attributes {
-        get {
-            if (attributes == null) {
-                if (attributeStorage == null) {
+    public AttributeCollection Attributes
+    {
+        get
+        {
+            if (attributes == null)
+            {
+                if (attributeStorage == null)
+                {
                     attributeStorage = new StateBag(true);
-                    if (IsTrackingViewState) {
+                    if (IsTrackingViewState)
+                    {
                         attributeStorage.TrackViewState();
                     }
                 }
@@ -68,7 +68,6 @@ public class UserControl : TemplateControl, IAttributeAccessor, INonBindingConta
 
     // Delegate most things to the Page
 
-
     /// <devdoc>
     /// <para>Gets the <see langword='Application'/> object provided by 
     ///    the HTTP Runtime.</para>
@@ -77,7 +76,7 @@ public class UserControl : TemplateControl, IAttributeAccessor, INonBindingConta
     Browsable(false),
     DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)
     ]
-    public HttpApplicationState Application { get { return Page.Application;} }
+    public HttpApplicationState Application { get { return Page.Application; } }
 
     /*
      * Trace context for output of useful information to page during development
@@ -95,7 +94,6 @@ public class UserControl : TemplateControl, IAttributeAccessor, INonBindingConta
     ]
     public TraceContext Trace { get { return Page.Trace; } }
 
-
     /// <devdoc>
     ///    <para>
     ///       Gets the <see langword='Request'/> object provided by the HTTP Runtime, which
@@ -108,7 +106,6 @@ public class UserControl : TemplateControl, IAttributeAccessor, INonBindingConta
     ]
     public HttpRequest Request { get { return Page.Request; } }
 
-
     /// <devdoc>
     /// <para>Gets the <see langword='Response '/>object provided by the HTTP Runtime, which
     ///    allows developers to send HTTP response data to a client browser.</para>
@@ -118,7 +115,6 @@ public class UserControl : TemplateControl, IAttributeAccessor, INonBindingConta
     DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)
     ]
     public HttpResponse Response { get { return Page.Response; } }
-
 
     /// <devdoc>
     /// <para>Gets the ASP-compatible <see langword='Server'/> object.</para>
@@ -144,28 +140,26 @@ public class UserControl : TemplateControl, IAttributeAccessor, INonBindingConta
     ]
     public Cache Cache { get { return Page.Cache; } }
 
-
 #if PORT_CACHEPOLICY
-        [
-    Browsable(false),
-    DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)
-    ]
-    public ControlCachePolicy CachePolicy {
-        get {
-            // Check if we're inside a PartialCachingControl
-            BasePartialCachingControl pcc = Parent as BasePartialCachingControl;
+    [
+Browsable(false),
+DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)
+]
+public ControlCachePolicy CachePolicy {
+    get {
+        // Check if we're inside a PartialCachingControl
+        BasePartialCachingControl pcc = Parent as BasePartialCachingControl;
 
-            // If so, return its CachePolicy
-            if (pcc != null)
-                return pcc.CachePolicy;
+        // If so, return its CachePolicy
+        if (pcc != null)
+            return pcc.CachePolicy;
 
-            // Otherwise, return a stub, which returns SupportsCaching==false and throws
-            // on everything else.
-            return ControlCachePolicy.GetCachePolicyStub();
-        }
+        // Otherwise, return a stub, which returns SupportsCaching==false and throws
+        // on everything else.
+        return ControlCachePolicy.GetCachePolicyStub();
     }
+}
 #endif
-
 
     /// <devdoc>
     ///    <para>Gets a value indicating whether the user control is being loaded in response to a
@@ -176,7 +170,6 @@ public class UserControl : TemplateControl, IAttributeAccessor, INonBindingConta
     DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)
     ]
     public bool IsPostBack { get { return Page.IsPostBack; } }
-
 
     /// <devdoc>
     /// <para>Gets the <see langword='Session '/> object provided by the HTTP Runtime.</para>
@@ -195,28 +188,32 @@ public class UserControl : TemplateControl, IAttributeAccessor, INonBindingConta
     ///    <para>Performs any initialization of the control that is required by RAD designers.</para>
     /// </devdoc>
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public void DesignerInitialize() {
+    public void DesignerInitialize()
+    {
         InitRecursive(null);
     }
-
 
     /// <devdoc>
     ///    <para>[To be supplied.]</para>
     /// </devdoc>
-    protected internal override void OnInit(EventArgs e) {
+    protected internal override void OnInit(EventArgs e)
+    {
 
         // We want to avoid calling this when the user control is being used in the designer,
         // regardless of whether it is a top-level control (DesignMode == true),
         // or if its inside another control in design-mode (Page.Site.DesignMode == true)
 
         bool designTime = DesignMode;
-        if (designTime == false) {
-            if ((Page != null) && (Page.Site != null)) {
+        if (designTime == false)
+        {
+            if ((Page != null) && (Page.Site != null))
+            {
                 designTime = Page.Site.DesignMode;
             }
         }
 
-        if (designTime == false) {
+        if (designTime == false)
+        {
             InitializeAsUserControlInternal();
         }
 
@@ -233,18 +230,23 @@ public class UserControl : TemplateControl, IAttributeAccessor, INonBindingConta
     ///    user control is initialized properly.</para>
     /// </devdoc>
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public void InitializeAsUserControl(Page page) {
+    public void InitializeAsUserControl(Page page)
+    {
 
         _page = page;
 
         InitializeAsUserControlInternal();
     }
 
-    internal void InitializeAsUserControlInternal() {
+    internal void InitializeAsUserControlInternal()
+    {
 
         // Make sure we only do this once
         if (_fUserControlInitialized)
+        {
             return;
+        }
+
         _fUserControlInitialized = true;
 
         // Hook up any automatic handler we may find (e.g. Page_Load)
@@ -254,14 +256,17 @@ public class UserControl : TemplateControl, IAttributeAccessor, INonBindingConta
         FrameworkInitialize();
     }
 
-
-    protected override void LoadViewState(object savedState) {
-        if (savedState != null) {
+    protected override void LoadViewState(object savedState)
+    {
+        if (savedState != null)
+        {
             Pair myState = (Pair)savedState;
             base.LoadViewState(myState.First);
 
-            if (myState.Second != null) {
-                if (attributeStorage == null) {
+            if (myState.Second != null)
+            {
+                if (attributeStorage == null)
+                {
                     attributeStorage = new StateBag(true);
                     attributeStorage.TrackViewState();
                 }
@@ -270,40 +275,41 @@ public class UserControl : TemplateControl, IAttributeAccessor, INonBindingConta
         }
     }
 
-
-    protected override object SaveViewState() {
+    protected override object SaveViewState()
+    {
         Pair myState = null;
 
         object baseState = base.SaveViewState();
         object attrState = null;
-        if (attributeStorage != null) {
+        if (attributeStorage != null)
+        {
             attrState = attributeStorage.SaveViewState();
         }
 
-        if (baseState != null || attrState != null) {
+        if (baseState != null || attrState != null)
+        {
             myState = new Pair(baseState, attrState);
         }
         return myState;
     }
-
-
 
     /// <internalonly/>
     /// <devdoc>
     /// Returns the attribute value of the UserControl having
     /// the specified attribute name.
     /// </devdoc>
-    string IAttributeAccessor.GetAttribute(string name) {
+    string IAttributeAccessor.GetAttribute(string name)
+    {
         return ((attributeStorage != null) ? (string)attributeStorage[name] : null);
     }
-
 
     /// <internalonly/>
     /// <devdoc>
     /// <para>Sets an attribute of the UserControl with the specified
     /// name and value.</para>
     /// </devdoc>
-    void IAttributeAccessor.SetAttribute(string name, string value) {
+    void IAttributeAccessor.SetAttribute(string name, string value)
+    {
         Attributes[name] = value;
     }
 
@@ -314,37 +320,44 @@ public class UserControl : TemplateControl, IAttributeAccessor, INonBindingConta
     /// <devdoc>
     ///    <para>Assigns a virtual path, either absolute or relative, to a physical path.</para>
     /// </devdoc>
-    public string MapPath(string virtualPath) {
+    public string MapPath(string virtualPath)
+    {
         return Request.MapPath(VirtualPath.CreateAllowNull(virtualPath), TemplateControlVirtualDirectory,
             true/*allowCrossAppMapping*/);
     }
 
-
     /// <internalonly/>
-    string IUserControlDesignerAccessor.TagName {
-        get {
+    string IUserControlDesignerAccessor.TagName
+    {
+        get
+        {
             string text = (string)ViewState["!DesignTimeTagName"];
-            if (text == null) {
+            if (text == null)
+            {
                 return String.Empty;
             }
             return text;
         }
-        set {
+        set
+        {
             ViewState["!DesignTimeTagName"] = value;
         }
     }
 
-
     /// <internalonly/>
-    string IUserControlDesignerAccessor.InnerText {
-        get {
+    string IUserControlDesignerAccessor.InnerText
+    {
+        get
+        {
             string text = (string)ViewState["!DesignTimeInnerText"];
-            if (text == null) {
+            if (text == null)
+            {
                 return String.Empty;
             }
             return text;
         }
-        set {
+        set
+        {
             ViewState["!DesignTimeInnerText"] = value;
         }
     }
@@ -354,7 +367,8 @@ public class UserControl : TemplateControl, IAttributeAccessor, INonBindingConta
     /// within the Select/Update/Delete/InsertMethods used for data binding.
     /// Throws an exception if the update fails.
     /// </summary>
-    public virtual void UpdateModel<TModel>(TModel model) where TModel : class {
+    public virtual void UpdateModel<TModel>(TModel model) where TModel : class
+    {
         Page.UpdateModel<TModel>(model);
     }
 
@@ -362,7 +376,8 @@ public class UserControl : TemplateControl, IAttributeAccessor, INonBindingConta
     /// Updates the model object from the values provided by given valueProvider.
     /// Throws an exception if the update fails.
     /// </summary>
-    public virtual void UpdateModel<TModel>(TModel model, IValueProvider valueProvider) where TModel : class {
+    public virtual void UpdateModel<TModel>(TModel model, IValueProvider valueProvider) where TModel : class
+    {
         Page.UpdateModel<TModel>(model, valueProvider);
     }
 
@@ -370,7 +385,8 @@ public class UserControl : TemplateControl, IAttributeAccessor, INonBindingConta
     /// Attempts to update the model object from the values provided by given valueProvider.
     /// </summary>
     /// <returns>True if the model object is updated succesfully with valid values. False otherwise.</returns>
-    public virtual bool TryUpdateModel<TModel>(TModel model) where TModel : class {
+    public virtual bool TryUpdateModel<TModel>(TModel model) where TModel : class
+    {
         return Page.TryUpdateModel<TModel>(model);
     }
 
@@ -379,9 +395,9 @@ public class UserControl : TemplateControl, IAttributeAccessor, INonBindingConta
     /// must be invoked within the Select/Update/Delete/InsertMethods used for data binding. 
     /// </summary>
     /// <returns>True if the model object is updated succesfully with valid values. False otherwise.</returns>
-    public virtual bool TryUpdateModel<TModel>(TModel model, IValueProvider valueProvider) where TModel : class {
+    public virtual bool TryUpdateModel<TModel>(TModel model, IValueProvider valueProvider) where TModel : class
+    {
         return Page.TryUpdateModel<TModel>(model, valueProvider);
     }
 }
 
-}

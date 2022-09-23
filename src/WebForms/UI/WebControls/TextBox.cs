@@ -481,7 +481,7 @@ public class TextBox : WebControl, IPostBackDataHandler, IEditableTextControl
             writer.AddAttribute(HtmlTextWriterAttribute.ReadOnly, "readonly");
         }
 
-        if (AutoPostBack && (page != null) && page.ClientSupportsJavaScript)
+        if (AutoPostBack && (page != null) && Page.ClientSupportsJavaScript)
         {
             string onChange = null;
             if (HasAttributes)
@@ -687,7 +687,10 @@ public class TextBox : WebControl, IPostBackDataHandler, IEditableTextControl
     protected virtual void OnTextChanged(EventArgs e)
     {
         EventHandler onChangeHandler = (EventHandler)Events[EventTextChanged];
-        if (onChangeHandler != null) onChangeHandler(this, e);
+        if (onChangeHandler != null)
+        {
+            onChangeHandler(this, e);
+        }
     }
 
     /// <internalonly/>

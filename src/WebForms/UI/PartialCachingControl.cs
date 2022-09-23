@@ -3,10 +3,10 @@
 
 using System.Collections;
 using System.ComponentModel;
-using System.Web.Util;
-using System.Web.UI.HtmlControls;
-using System.Web.Caching;
 using System.Diagnostics;
+using System.Web.Caching;
+using System.Web.UI.HtmlControls;
+using System.Web.Util;
 
 #nullable disable
 
@@ -69,7 +69,7 @@ public abstract class BasePartialCachingControl : Control
     private ControlCachePolicy _cachePolicy;
 #endif
     private ArrayList _registeredCallDataForEventValidation;
-    private ArrayList _registeredStyleInfo = null;
+    private ArrayList _registeredStyleInfo;
 
     internal const char varySeparator = ';';
     internal const string varySeparatorString = ";";
@@ -293,7 +293,9 @@ internal HttpCacheVaryByParams VaryByParams {
         get
         {
             if (_varyByControlsCollection == null)
+            {
                 return String.Empty;
+            }
 
             return String.Join(varySeparatorString, _varyByControlsCollection);
         }
@@ -317,7 +319,9 @@ internal HttpCacheVaryByParams VaryByParams {
         {
             // Special case MaxValue
             if (_utcExpirationTime == DateTime.MaxValue)
+            {
                 return TimeSpan.MaxValue;
+            }
 
             return _utcExpirationTime - DateTime.UtcNow;
         }
@@ -669,7 +673,9 @@ internal HttpCacheVaryByParams VaryByParams {
         registerCallData.StringParam2 = stringParam2;
 
         if (_cacheEntry.RegisteredClientCalls == null)
+        {
             _cacheEntry.RegisteredClientCalls = new ArrayList();
+        }
 
         _cacheEntry.RegisteredClientCalls.Add(registerCallData);
     }
@@ -693,7 +699,9 @@ internal HttpCacheVaryByParams VaryByParams {
         registerCallData.StringParam3 = stringParam3;
 
         if (_cacheEntry.RegisteredClientCalls == null)
+        {
             _cacheEntry.RegisteredClientCalls = new ArrayList();
+        }
 
         _cacheEntry.RegisteredClientCalls.Add(registerCallData);
     }
@@ -737,7 +745,7 @@ internal HttpCacheVaryByParams VaryByParams {
 public class StaticPartialCachingControl : BasePartialCachingControl
 {
 
-    private BuildMethod _buildMethod;
+    private readonly BuildMethod _buildMethod;
 
     /// <internalonly/>
     /// <devdoc>
@@ -775,7 +783,10 @@ public class StaticPartialCachingControl : BasePartialCachingControl
 #endif
 
         if (varyByControls != null)
+        {
             _varyByControlsCollection = varyByControls.Split(varySeparator);
+        }
+
         _varyByCustom = varyByCustom;
         _guid = guid;
         _buildMethod = buildMethod;
@@ -797,7 +808,7 @@ public class StaticPartialCachingControl : BasePartialCachingControl
     /// <devdoc>
     ///    <para>[To be supplied.]</para>
     /// </devdoc>
-    static public void BuildCachedControl(Control parent, string ctrlID, string guid,
+    public static void BuildCachedControl(Control parent, string ctrlID, string guid,
         int duration, string varyByParams, string varyByControls, string varyByCustom,
         BuildMethod buildMethod)
     {
@@ -809,7 +820,7 @@ public class StaticPartialCachingControl : BasePartialCachingControl
     /// <devdoc>
     ///    <para>[To be supplied.]</para>
     /// </devdoc>
-    static public void BuildCachedControl(Control parent, string ctrlID, string guid,
+    public static void BuildCachedControl(Control parent, string ctrlID, string guid,
         int duration, string varyByParams, string varyByControls, string varyByCustom, string sqlDependency,
         BuildMethod buildMethod)
     {
@@ -817,7 +828,7 @@ public class StaticPartialCachingControl : BasePartialCachingControl
             varyByControls, varyByCustom, sqlDependency, buildMethod, null);
     }
 
-    static public void BuildCachedControl(Control parent, string ctrlID, string guid,
+    public static void BuildCachedControl(Control parent, string ctrlID, string guid,
         int duration, string varyByParams, string varyByControls, string varyByCustom, string sqlDependency,
         BuildMethod buildMethod, string providerName)
     {
@@ -836,9 +847,9 @@ public class StaticPartialCachingControl : BasePartialCachingControl
 public class PartialCachingControl : BasePartialCachingControl
 {
 
-    private IWebObjectFactory _objectFactory;
-    private Type _createCachedControlType;
-    private object[] _args;
+    private readonly IWebObjectFactory _objectFactory;
+    private readonly Type _createCachedControlType;
+    private readonly object[] _args;
 
     public Control CachedControl { get { return _cachedCtrl; } }
 
@@ -854,7 +865,10 @@ public class PartialCachingControl : BasePartialCachingControl
 #endif
 
         if (cacheAttrib.VaryByControls != null)
+        {
             _varyByControlsCollection = cacheAttrib.VaryByControls.Split(varySeparator);
+        }
+
         _varyByCustom = cacheAttrib.VaryByCustom;
         _sqlDependency = cacheAttrib.SqlDependency;
 #if PORT_CACHING
@@ -907,7 +921,7 @@ public class PartialCachingControl : BasePartialCachingControl
 [Serializable]
 internal class ControlCachedVary
 {
-    private Guid _cachedVaryId;
+    private readonly Guid _cachedVaryId;
     internal readonly string[] _varyByParams;
     internal readonly string _varyByCustom;
     internal readonly string[] _varyByControls;
@@ -927,7 +941,9 @@ internal class ControlCachedVary
     {
 
         if (!(obj is ControlCachedVary))
+        {
             return false;
+        }
 
         ControlCachedVary cv = (ControlCachedVary)obj;
 

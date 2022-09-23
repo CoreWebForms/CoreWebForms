@@ -11,8 +11,8 @@ namespace System.Web.UI.WebControls;
 public class CommandEventArgs : EventArgs
 {
 
-    private string commandName;
-    private object argument;
+    private readonly string commandName;
+    private readonly object argument;
 
     /// <devdoc>
     /// <para>Initializes a new instance of the <see cref='System.Web.UI.WebControls.CommandEventArgs'/> class with another <see cref='System.Web.UI.WebControls.CommandEventArgs'/>.</para>

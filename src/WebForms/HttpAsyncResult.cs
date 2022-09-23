@@ -40,7 +40,9 @@ internal class HttpAsyncResult : IAsyncResult
         Status = RequestNotificationStatus.Continue;
 
         if (IsCompleted && _callback != null)
+        {
             _callback(this);
+        }
     }
 
     internal void SetComplete()
@@ -69,7 +71,9 @@ internal class HttpAsyncResult : IAsyncResult
         Status = status;
 
         if (_callback != null)
+        {
             _callback(this);
+        }
     }
 
     internal void Complete(bool synchronous, object result, Exception error)
@@ -83,7 +87,9 @@ internal class HttpAsyncResult : IAsyncResult
     internal object End()
     {
         if (Error != null)
+        {
             throw new HttpException(null, Error);
+        }
 
         return _result;
     }

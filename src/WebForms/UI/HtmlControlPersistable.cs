@@ -1,41 +1,48 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-namespace System.Web.UI
+namespace System.Web.UI;
+
+[AttributeUsage(AttributeTargets.Property)]
+internal sealed class HtmlControlPersistableAttribute : Attribute
 {
-    [AttributeUsage(AttributeTargets.Property)]
-    internal sealed class HtmlControlPersistableAttribute : Attribute {
 
-        internal static readonly HtmlControlPersistableAttribute Yes = new HtmlControlPersistableAttribute(true);
-        internal static readonly HtmlControlPersistableAttribute No =  new HtmlControlPersistableAttribute(false);
-        internal static readonly HtmlControlPersistableAttribute Default = Yes;
-        private bool persistable = true;
+    internal static readonly HtmlControlPersistableAttribute Yes = new HtmlControlPersistableAttribute(true);
+    internal static readonly HtmlControlPersistableAttribute No = new HtmlControlPersistableAttribute(false);
+    internal static readonly HtmlControlPersistableAttribute Default = Yes;
+    private readonly bool persistable = true;
 
-        internal HtmlControlPersistableAttribute(bool persistable) {
-            this.persistable = persistable;
+    internal HtmlControlPersistableAttribute(bool persistable)
+    {
+        this.persistable = persistable;
+    }
+
+    internal bool HtmlControlPersistable
+    {
+        get
+        {
+            return persistable;
+        }
+    }
+
+    public override bool Equals(object obj)
+    {
+        if (obj == this)
+        {
+            return true;
         }
 
-        internal bool HtmlControlPersistable {
-            get {
-                return persistable;
-            }
-        }
+        HtmlControlPersistableAttribute other = obj as HtmlControlPersistableAttribute;
+        return (other != null) && other.HtmlControlPersistable == persistable;
+    }
 
-        public override bool Equals(object obj) {
-            if (obj == this) {
-                return true;
-            }
+    public override int GetHashCode()
+    {
+        return persistable.GetHashCode();
+    }
 
-            HtmlControlPersistableAttribute other = obj as HtmlControlPersistableAttribute;
-            return (other != null) && other.HtmlControlPersistable == persistable;
-        }
-
-        public override int GetHashCode() {
-            return persistable.GetHashCode();
-        }
-
-        public override bool IsDefaultAttribute() {
-            return (this.Equals(Default));
-        }
+    public override bool IsDefaultAttribute()
+    {
+        return (this.Equals(Default));
     }
 }

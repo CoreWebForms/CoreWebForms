@@ -2,8 +2,6 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.CodeDom.Compiler;
-using System.Diagnostics;
-using System.Text;
 using System.Text.RegularExpressions;
 
 public partial class Program

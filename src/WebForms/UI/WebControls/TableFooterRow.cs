@@ -4,12 +4,12 @@
 // TableHeaderCell.cs
 //
 
-namespace System.Web.UI.WebControls
+namespace System.Web.UI.WebControls;
+
+/// <devdoc>
+///    <para> Encapsulates
+///       a header row within a table.</para>
+/// </devdoc>
+public class TableFooterRow : TableRow
 {
-    /// <devdoc>
-    ///    <para> Encapsulates
-    ///       a header row within a table.</para>
-    /// </devdoc>
-    public class TableFooterRow : TableRow {
-    }
 }

@@ -4,7 +4,7 @@
 namespace System.Web.Util;
 internal static class FileUtil
 {
-    private static Char[] _invalidFileNameChars = Path.GetInvalidFileNameChars();
+    private static readonly Char[] _invalidFileNameChars = Path.GetInvalidFileNameChars();
     internal static bool IsValidDirectoryName(String name)
     {
         if (String.IsNullOrEmpty(name))

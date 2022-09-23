@@ -3,7 +3,6 @@
 
 using System.Collections.Specialized;
 using System.Diagnostics.CodeAnalysis;
-using System.Threading;
 
 namespace System.Web;
 
@@ -132,7 +131,6 @@ public sealed class HttpApplicationState : NameObjectCollectionBase
         }
     }
 
-
     /// <summary>
     /// Gets or sets a single application state object.</para>
     /// </summary>
@@ -174,7 +172,6 @@ public sealed class HttpApplicationState : NameObjectCollectionBase
             _lock.ReleaseRead();
         }
     }
-
 
     /// <summary>
     /// Gets an application state object by index.

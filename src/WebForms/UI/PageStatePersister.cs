@@ -14,7 +14,7 @@ public abstract class PageStatePersister
     {
         if (page == null)
         {
-            throw new ArgumentNullException("page", SR.GetString(SR.PageStatePersister_PageCannotBeNull));
+            throw new ArgumentNullException(nameof(page), SR.GetString(SR.PageStatePersister_PageCannotBeNull));
         }
         _page = page;
     }

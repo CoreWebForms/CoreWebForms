@@ -82,7 +82,7 @@ public class HttpHandlerEndpointFeature : IHttpHandlerFeature, IEndpointFeature
             {
                 if (_handler is null)
                 {
-                    if(_endpoint is null)
+                    if (_endpoint is null)
                     {
                         return null;
                     }

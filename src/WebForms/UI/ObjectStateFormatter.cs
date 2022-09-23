@@ -1069,13 +1069,13 @@ public sealed class ObjectStateFormatter : IStateFormatter, IStateFormatter2, IF
         }
     }
 
-#region Implementation of IStateFormatter
+    #region Implementation of IStateFormatter
     object IStateFormatter.Deserialize(string serializedState) => Deserialize(serializedState);
 
     string IStateFormatter.Serialize(object state) => Serialize(state);
-#endregion
+    #endregion
 
-#region Implementation of IFormatter
+    #region Implementation of IFormatter
 
     /// <internalonly/>
     SerializationBinder IFormatter.Binder
@@ -1118,12 +1118,12 @@ public sealed class ObjectStateFormatter : IStateFormatter, IStateFormatter2, IF
 
     /// <internalonly/>
     void IFormatter.Serialize(Stream serializationStream, object stateGraph) => Serialize(serializationStream, stateGraph);
-#endregion
+    #endregion
 
-#region IStateFormatter2 Members
+    #region IStateFormatter2 Members
     object IStateFormatter2.Deserialize(string serializedState, Purpose purpose) => Deserialize(serializedState, purpose);
 
     string IStateFormatter2.Serialize(object state, Purpose purpose) => Serialize(state, purpose);
-#endregion
+    #endregion
 }
 

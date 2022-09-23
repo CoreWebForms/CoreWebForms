@@ -128,7 +128,10 @@ public abstract class TemplateControl : Control, INamingContainer
     protected virtual void OnCommitTransaction(EventArgs e)
     {
         EventHandler handler = (EventHandler)Events[EventCommitTransaction];
-        if (handler != null) handler(this, e);
+        if (handler != null)
+        {
+            handler(this, e);
+        }
     }
 
     private static readonly object EventAbortTransaction = new object();
@@ -157,7 +160,10 @@ public abstract class TemplateControl : Control, INamingContainer
     protected virtual void OnAbortTransaction(EventArgs e)
     {
         EventHandler handler = (EventHandler)Events[EventAbortTransaction];
-        if (handler != null) handler(this, e);
+        if (handler != null)
+        {
+            handler(this, e);
+        }
     }
 
     // Page_Error related events/methods
@@ -189,7 +195,10 @@ public abstract class TemplateControl : Control, INamingContainer
     protected virtual void OnError(EventArgs e)
     {
         EventHandler handler = (EventHandler)Events[EventError];
-        if (handler != null) handler(this, e);
+        if (handler != null)
+        {
+            handler(this, e);
+        }
     }
 
     /*
@@ -497,113 +506,6 @@ public abstract class TemplateControl : Control, INamingContainer
         return (del != null) ? del.Method : null;
     }
 
-#if PORT_VIRTUALDIRECTORY
-    /// <devdoc>
-    /// <para>Obtains a <see cref='System.Web.UI.UserControl'/> object from a user control file.</para>
-    /// </devdoc>
-    public Control LoadControl(string virtualPath)
-    {
-
-        return LoadControl(VirtualPath.Create(virtualPath));
-    }
-
-    internal Control LoadControl(VirtualPath virtualPath)
-    {
-
-        // If it's relative, make it *app* relative.  Treat is as relative to this
-        // user control (ASURT 55513)
-        virtualPath = VirtualPath.Combine(this.TemplateControlVirtualDirectory, virtualPath);
-
-        // Process the user control and get its BuildResult
-        BuildResult result = BuildManager.GetVPathBuildResult(Context, virtualPath);
-
-        return LoadControl((IWebObjectFactory)result, virtualPath, null /*Type*/, null /*parameters*/);
-    }
-#endif
-
-    // Make sure we have reflection permission to use GetMethod below (ASURT 106196)
-    private static void AddStackContextToHashCode(HashCodeCombiner combinedHashCode)
-    {
-        StackTrace st = new StackTrace();
-
-        // First, skip all the stack frames that are in the TemplateControl class, as
-        // they are irrelevant to the hash.  Start the search at 2 since we know for sure
-        // that this method and its caller are in TemplateControl.
-        int startingUserFrame = 2;
-        for (; ; startingUserFrame++)
-        {
-            StackFrame f = st.GetFrame(startingUserFrame);
-            if (f.GetMethod().DeclaringType != typeof(TemplateControl))
-            {
-                break;
-            }
-        }
-
-        // Get a cache key based on the top two items of the caller's stack.
-        // It's not guaranteed unique, but for all common cases, it will be
-        for (int i = startingUserFrame; i < startingUserFrame + 2; i++)
-        {
-            StackFrame f = st.GetFrame(i);
-
-            MethodBase m = f.GetMethod();
-            combinedHashCode.AddObject(m.DeclaringType.AssemblyQualifiedName);
-            combinedHashCode.AddObject(m.Name);
-            combinedHashCode.AddObject(f.GetNativeOffset());
-        }
-    }
-
-#if PORT_VIRTUALDIRECTORY
-    /// <devdoc>
-    ///    <para>
-    ///       Obtains an instance of the <see langword='ITemplate'/> interface from an
-    ///       external file.
-    ///    </para>
-    /// </devdoc>
-    public ITemplate LoadTemplate(string virtualPath)
-    {
-        return LoadTemplate(VirtualPath.Create(virtualPath));
-    }
-
-    internal ITemplate LoadTemplate(VirtualPath virtualPath)
-    {
-
-        // If it's relative, make it *app* relative.  Treat is as relative to this
-        // user control (ASURT 55513)
-        virtualPath = VirtualPath.Combine(TemplateControlVirtualDirectory, virtualPath);
-
-        // Compile the declarative template and get its object factory
-        ITypedWebObjectFactory objectFactory = (ITypedWebObjectFactory)BuildManager.GetVPathBuildResult(
-            Context, virtualPath);
-
-        return new SimpleTemplate(objectFactory);
-    }
-
-    /// <devdoc>
-    ///    <para> Parse the input string into a Control.  Looks for the first control
-    ///    in the input.  Returns null if none is found.</para>
-    /// </devdoc>
-    public Control ParseControl(string content)
-    {
-        return ParseControl(content, true);
-    }
-
-    public Control ParseControl(string content, bool ignoreParserFilter)
-    {
-        return TemplateParser.ParseControl(content, VirtualPath.Create(AppRelativeVirtualPath), ignoreParserFilter);
-    }
-#endif
-
-    /// <devdoc>
-    /// Used by simplified databinding methods to ensure they can only be called when the control is on a page.
-    /// </devdoc>
-    private void CheckPageExists()
-    {
-        if (Page == null)
-        {
-            throw new InvalidOperationException(SR.GetString(SR.TemplateControl_DataBindingRequiresPage));
-        }
-    }
-
 #if PORT_EVAL
     /// <devdoc>
     /// Simplified databinding Eval() method. This method uses the current data item to evaluate an expression using DataBinder.Eval().
@@ -729,18 +631,6 @@ public abstract class TemplateControl : Control, INamingContainer
 
         internal bool IsArgless { get; private set; }
         internal MethodInfo MethodInfo { get; private set; }
-
-        private static bool IsAsyncVoidMethod(MethodInfo methodInfo)
-        {
-            // When the C# / VB compilers generate an 'async void' method, they'll put
-            // an [AsyncStateMachine] attribute on the entry point. This marker attribute
-            // can be used to detect these methods. It's not 100% reliable, since it's
-            // possible that a normal void method simply calls an async void method, and
-            // the 'outer' method won't contain this attribute. But the heuristic is
-            // good enough to help developers land in the pit of success re: async.
-
-            return methodInfo.IsDefined(typeof(AsyncStateMachineAttribute), inherit: false);
-        }
     }
 
     private class AsyncEventMethodInfo
