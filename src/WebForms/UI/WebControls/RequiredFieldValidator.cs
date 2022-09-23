@@ -5,9 +5,8 @@ using System.Diagnostics;
 
 namespace System.Web.UI.WebControls;
 
-class RequiredFieldValidator : BaseValidator
+public class RequiredFieldValidator : BaseValidator
 {
-
     public string InitialValue
     {
         get
