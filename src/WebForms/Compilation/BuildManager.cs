@@ -13,8 +13,6 @@ using System.Threading.Tasks;
 using System.Web.Caching;
 using System.Web.Configuration;
 using System.Web.UI;
-using Microsoft.Extensions.Hosting.Internal;
-using Microsoft.VisualBasic;
 
 namespace System.Web.Compilation;
 
@@ -41,7 +39,7 @@ public sealed class BuildManager
     private static bool _theBuildManagerInitialized;
     private static Exception _initializeException;
     private static BuildManager _theBuildManager = new BuildManager();  // single instance of the class
-    private StringSet _excludedTopLevelDirectories;
+    //private StringSet _excludedTopLevelDirectories;
     private IDictionary _assemblyResolveMapping;
 
     private BuildResultCache[] _caches;

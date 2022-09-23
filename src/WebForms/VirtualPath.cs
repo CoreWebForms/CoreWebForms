@@ -20,7 +20,7 @@ internal sealed class VirtualPath
     public static implicit operator string(VirtualPath vpath) => vpath.Path;
 
     public static VirtualPath CreateAllowNull(string path) => new(path);
-
+    internal static VirtualPath CreateNonRelative(string path) => new(path);
     internal static VirtualPath CreateNonRelativeAllowNull(string v) => v;
 
     internal static string GetAppRelativeVirtualPathStringOrEmpty(VirtualPath vpath)
@@ -30,11 +30,6 @@ internal sealed class VirtualPath
         => vpath.Path;
 
     internal string GetAppRelativeVirtualPathString(VirtualPath templateControlVirtualPath)
-    {
-        throw new NotImplementedException();
-    }
-
-    internal VirtualPath CreateNonRelative(string value)
     {
         throw new NotImplementedException();
     }

@@ -11,10 +11,12 @@ using System.ComponentModel.Design.Serialization;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Reflection;
 using System.Security.Permissions;
 using System.Security.Principal;
 using System.Text;
 using System.Web.Caching;
+using System.Web.Compilation;
 using System.Web.Configuration;
 using System.Web.ModelBinding;
 using System.Web.SessionState;
@@ -6177,6 +6179,61 @@ window.onload = WebForm_RestoreScrollPosition;
     }
 
     bool IHttpHandler.IsReusable => false;
+
+    // Needed to support Validators in AJAX 1.0 (Windows OS Bugs 2015831)
+    private static Type _scriptManagerType;
+
+    // Needed to support Validators in AJAX 1.0 (Windows OS Bugs 2015831)
+    private const int isPartialRenderingSupported = 0x00000010;
+    private const int isPartialRenderingSupportedSet = 0x00000020;
+
+    // Needed to support Validators in AJAX 1.0 (Windows OS Bugs 2015831)
+    #region Atlas ScriptManager Partial Rendering support
+    internal bool IsPartialRenderingSupported
+    {
+        get
+        {
+            if (!_pageFlags[isPartialRenderingSupportedSet])
+            {
+                Type scriptManagerType = ScriptManagerType;
+                if (scriptManagerType != null)
+                {
+                    object scriptManager = Page.Items[scriptManagerType];
+                    if (scriptManager != null)
+                    {
+                        PropertyInfo supportsPartialRenderingProperty = scriptManagerType.GetProperty("SupportsPartialRendering");
+                        if (supportsPartialRenderingProperty != null)
+                        {
+                            object supportsPartialRenderingValue = supportsPartialRenderingProperty.GetValue(scriptManager, null);
+                            _pageFlags[isPartialRenderingSupported] = (bool)supportsPartialRenderingValue;
+                        }
+                    }
+                }
+                _pageFlags[isPartialRenderingSupportedSet] = true;
+            }
+            return _pageFlags[isPartialRenderingSupported];
+        }
+    }
+
+
+    internal Type ScriptManagerType
+    {
+        get
+        {
+            if (_scriptManagerType == null)
+            {
+                _scriptManagerType = BuildManager.GetType("System.Web.UI.ScriptManager", false);
+            }
+            return _scriptManagerType;
+        }
+        set
+        {
+            // Meant for unit testing
+            _scriptManagerType = value;
+        }
+    }
+
+    #endregion
 
     IAsyncResult IHttpAsyncHandler.BeginProcessRequest(HttpContext context, AsyncCallback cb, object extraData)
         => TaskAsyncHelper.BeginTask(() => ProcessRequestAsync(context), cb, extraData);

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 // src - https://github.com/microsoft/referencesource/blob/master/System.Web/Cache/CacheInternal.cs
 
-namespace System.Web.Cache;
+namespace System.Web.Caching;
 
 class CacheCommon
 {

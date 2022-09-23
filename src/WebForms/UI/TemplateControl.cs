@@ -257,7 +257,7 @@ public abstract class TemplateControl : Control, INamingContainer
         set
         {
             // Set the TemplateSourceDirectory based on the VirtualPath
-            this.TemplateControlVirtualPath = VirtualPath.CreateNonRelative(value);
+            this.TemplateControlVirtualPath = Web.VirtualPath.CreateNonRelative(value);
         }
     }
 
