@@ -65,7 +65,6 @@ internal struct WithinCancellableCallbackTaskAwaitable
             _innerAwaiter.OnCompleted(wrappedContinuation);
         }
 
-        [SecurityPermission(SecurityAction.LinkDemand, Unrestricted = true)] // equivalent of [SecurityCritical]
         public void UnsafeOnCompleted(Action continuation)
         {
             Action wrappedContinuation = WrapContinuation(continuation);

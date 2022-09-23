@@ -26,9 +26,9 @@ public abstract class TemplateControl : Control, INamingContainer
 
     private static readonly object _emptyEventSingleton = new EventList();
 
-#if PORT_VIRTUALDIRECTORY
     private VirtualPath _virtualPath;
 
+#if PORT_RESOURCEPROVIDER
     private IResourceProvider _resourceProvider;
 #endif
 
@@ -236,7 +236,6 @@ public abstract class TemplateControl : Control, INamingContainer
     internal IntPtr StringResourcePointer { get; private set; }
     internal int MaxResourceOffset { get; private set; }
 
-#if PORT_VIRTUALDIRECTORY
     internal VirtualPath VirtualPath
     {
         get
@@ -277,7 +276,6 @@ public abstract class TemplateControl : Control, INamingContainer
         }
     }
 
-#endif
     /// <devdoc>
     ///    <para>Tests if a device filter applies to this request</para>
     /// </devdoc>

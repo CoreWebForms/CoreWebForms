@@ -794,7 +794,6 @@ public class Page : TemplateControl, IHttpAsyncHandler
     // We
     internal string LastFocusedControl
     {
-        [AspNetHostingPermission(SecurityAction.Assert, Level = AspNetHostingPermissionLevel.Low)]
         get
         {
             if (RequestInternal != null)
@@ -2800,13 +2799,6 @@ window.onload = WebForm_RestoreScrollPosition;
         }
     }
 
-    //Note: BCL should provide a way to abort threads without asserting ControlThread for platform internal code.
-    [SecurityPermission(SecurityAction.Assert, ControlThread = true)]
-    internal static void ThreadResetAbortWithAssert()
-    {
-        Thread.ResetAbort();
-    }
-
     /*
      * Enables controls to obtain client-side script function that will cause
      * (when invoked) a server post-back to the form.
@@ -4731,7 +4723,6 @@ window.onload = WebForm_RestoreScrollPosition;
     }
 
     // assert SecurityPermission, for ASURT #112116
-    [SecurityPermission(SecurityAction.Assert, ControlThread = true)]
     static void SetCultureWithAssert(Thread currentThread, CultureInfo currentCulture, CultureInfo currentUICulture)
     {
         SetCulture(currentThread, currentCulture, currentUICulture);

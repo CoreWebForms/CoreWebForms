@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Web.Caching;
+using System.Web.UI;
 
 namespace System.Web;
 
@@ -20,6 +21,12 @@ internal static class Extensions
     {
         return vpath.Path;
     }
+
+    public static TemplateControl TemplateControl(this HttpContext context)
+        => ((HttpContextCore)context).Features.Get<TemplateControl>();
+
+    public static void TemplateControl(this HttpContext context, TemplateControl control)
+        => ((HttpContextCore)context).Features.Set<TemplateControl>(control);
 
     public static VirtualPath CurrentExecutionFilePathObject(this HttpRequest request)
     {

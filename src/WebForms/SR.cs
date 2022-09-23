@@ -14,7 +14,6 @@ internal static class SR
     public static string GetString(string name, params object[] args) => name;
 
     public const string Async_addhandler_too_late = nameof(Async_addhandler_too_late);
-    public const string Async_null_asyncresult = nameof(Async_null_asyncresult);
     public const string Async_required = nameof(Async_required);
     public const string Async_task_timed_out = nameof(Async_task_timed_out);
     public const string AutoPostBackControl_CausesValidation = nameof(AutoPostBackControl_CausesValidation);
@@ -33,6 +32,8 @@ internal static class SR
     public const string ClientScriptManager_JqueryNotRegistered = nameof(ClientScriptManager_JqueryNotRegistered);
     public const string ClientScriptManager_RegisterForEventValidation_Too_Early = nameof(ClientScriptManager_RegisterForEventValidation_Too_Early);
     public const string Collection_readonly_Codeblocks = nameof(Collection_readonly_Codeblocks);
+    public const string Content_allowed_in_top_level_only = nameof(Content_allowed_in_top_level_only);
+    public const string Content_only_allowed_in_content_page = nameof(Content_only_allowed_in_content_page);
     public const string Control_ClientID = nameof(Control_ClientID);
     public const string Control_ClientIDMode = nameof(Control_ClientIDMode);
     public const string Control_Controls = nameof(Control_Controls);
@@ -85,6 +86,7 @@ internal static class SR
     public const string Invalid_app_VirtualPath = nameof(Invalid_app_VirtualPath);
     public const string Invalid_cache_settings_location = nameof(Invalid_cache_settings_location);
     public const string Invalid_HtmlTextWriter = nameof(Invalid_HtmlTextWriter);
+    public const string Invalid_master_base = nameof(Invalid_master_base);
     public const string Invalid_vpath = nameof(Invalid_vpath);
     public const string InvalidArgumentValue = nameof(InvalidArgumentValue);
     public const string InvalidSerializedData = nameof(InvalidSerializedData);
@@ -96,6 +98,9 @@ internal static class SR
     public const string ListEnumVersionMismatch = nameof(ListEnumVersionMismatch);
     public const string Literal_Mode = nameof(Literal_Mode);
     public const string Literal_Text = nameof(Literal_Text);
+    public const string MasterPage_Cannot_ApplyTo_ReadOnly_Collection = nameof(MasterPage_Cannot_ApplyTo_ReadOnly_Collection);
+    public const string MasterPage_Circular_Master_Not_Allowed = nameof(MasterPage_Circular_Master_Not_Allowed);
+    public const string MasterPage_doesnt_have_contentplaceholder = nameof(MasterPage_doesnt_have_contentplaceholder);
     public const string MasterPage_MasterPage = nameof(MasterPage_MasterPage);
     public const string MasterPage_MasterPageFile = nameof(MasterPage_MasterPageFile);
     public const string MasterPage_Multiple_content = nameof(MasterPage_Multiple_content);
@@ -195,7 +200,6 @@ internal static class SR
     public const string TableStyle_HorizontalAlign = nameof(TableStyle_HorizontalAlign);
     public const string TableStyle_InvalidCellPadding = nameof(TableStyle_InvalidCellPadding);
     public const string TableStyle_InvalidCellSpacing = nameof(TableStyle_InvalidCellSpacing);
-    public const string TemplateControl_DataBindingRequiresPage = nameof(TemplateControl_DataBindingRequiresPage);
     public const string TextBox_AutoCompleteType = nameof(TextBox_AutoCompleteType);
     public const string TextBox_AutoPostBack = nameof(TextBox_AutoPostBack);
     public const string TextBox_Columns = nameof(TextBox_Columns);

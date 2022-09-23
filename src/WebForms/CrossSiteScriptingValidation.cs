@@ -115,12 +115,7 @@ internal static class CrossSiteScriptingValidation
             }
         }
 
-        int colonPosition = s.IndexOf(':');
-        if (colonPosition == -1)
-        {
-            return false;
-        }
-        return true;
+        return s.Contains(':');
     }
 
     internal static bool IsValidJavascriptId(string id)
