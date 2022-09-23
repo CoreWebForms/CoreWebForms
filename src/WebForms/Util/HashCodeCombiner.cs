@@ -1,18 +1,15 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
-namespace System.Web.Util;
-
 using System.Text;
-using System.IO;
 using System.Globalization;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Runtime.Intrinsics.Arm;
 using System.Security.Cryptography;
 
+#nullable disable
+
+namespace System.Web.Util;
 /*
  * Class used to combine several hashcodes into a single hashcode
  */

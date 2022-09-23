@@ -4,15 +4,11 @@
 // </copyright>                                                                
 //------------------------------------------------------------------------------
 
+using System.Collections;
+using System.Collections.Specialized;
+
 namespace System.Web.UI
 {
-    using System.Text;
-    using System.IO;
-    using System.Collections;
-    using System.Collections.Specialized;
-    using System.Reflection;
-    using System.Web.Util;
-
     /*
      * The StateBag class is a helper class used to manage state of properties.
      * The class stores name/value pairs as string/object and tracks modifications of
@@ -62,7 +58,6 @@ namespace System.Web.UI
             this.ignoreCase = ignoreCase;
             bag = CreateBag();
         }
-
 
         /*
          * Return count of number of StateItems in the bag.
@@ -336,7 +331,6 @@ namespace System.Web.UI
             Remove((string)key);
         }
 
-
         /*
          * Return object containing state that has been modified since "mark".
          * Returns null if there is no modified state.
@@ -377,7 +371,6 @@ namespace System.Web.UI
             return data;
         }
 
-
         /// <devdoc>
         /// Sets the dirty state of all item values currently in the StateBag.
         /// </devdoc>
@@ -415,13 +408,11 @@ namespace System.Web.UI
             get { return false; }
         }
 
-
         /// <internalonly/>
         bool IDictionary.IsReadOnly
         {
             get { return false; }
         }
-
 
         /// <internalonly/>
         bool ICollection.IsSynchronized
@@ -429,13 +420,11 @@ namespace System.Web.UI
             get { return false; }
         }
 
-
         /// <internalonly/>
         object ICollection.SyncRoot
         {
             get { return this; }
         }
-
 
         /// <internalonly/>
         bool IDictionary.Contains(object key)
@@ -443,20 +432,17 @@ namespace System.Web.UI
             return bag.Contains((string)key);
         }
 
-
         /// <internalonly/>
         IEnumerator IEnumerable.GetEnumerator()
         {
             return ((IDictionary)this).GetEnumerator();
         }
 
-
         /// <internalonly/>
         void ICollection.CopyTo(Array array, int index)
         {
             Values.CopyTo(array, index);
         }
-
 
         /*
          * Return true if tracking state changes.

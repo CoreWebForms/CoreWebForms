@@ -4,9 +4,6 @@
 #nullable disable
 
 namespace System.Web.UI;
-
-using System;
-
 internal class ViewStateException
 {
     internal static void ThrowViewStateError(Exception ex, string unsafeField)

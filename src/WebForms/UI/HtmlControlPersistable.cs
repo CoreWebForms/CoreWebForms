@@ -4,10 +4,8 @@
 // </copyright>                                                                
 //------------------------------------------------------------------------------
 
-namespace System.Web.UI {
-    using System.ComponentModel;
-    using System;
-
+namespace System.Web.UI
+{
     [AttributeUsage(AttributeTargets.Property)]
     internal sealed class HtmlControlPersistableAttribute : Attribute {
 

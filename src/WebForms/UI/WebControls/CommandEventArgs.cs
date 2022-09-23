@@ -5,9 +5,6 @@
  */
 
 namespace System.Web.UI.WebControls;
-
-using System;
-
 /// <devdoc>
 /// <para>Provides data for the <see langword='Command'/> event.</para>
 /// </devdoc>

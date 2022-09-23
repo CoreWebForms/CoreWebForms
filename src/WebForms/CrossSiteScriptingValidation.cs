@@ -9,10 +9,8 @@
  * 
  */
 
-namespace System.Web {
-    using System;
-    using System.Globalization;
-
+namespace System.Web
+{
     internal static class CrossSiteScriptingValidation {
 
         private static bool IsAtoZ(char c) {

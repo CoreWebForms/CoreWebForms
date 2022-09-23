@@ -14,7 +14,6 @@ using System.ComponentModel.Design.Serialization;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using System.Reflection;
 using System.Security;
 using System.Security.Permissions;
 using System.Security.Principal;
@@ -4352,7 +4351,6 @@ window.onload = WebForm_RestoreScrollPosition;
             Response.AddVirtualPathDependencies((string[])virtualFileDependencies);
         }
 #endif
-
 
 #if PORT_BUFFEROUTPUT
         internal const bool BufferDefault = true;

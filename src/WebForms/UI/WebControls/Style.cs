@@ -1,17 +1,13 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
-namespace System.Web.UI.WebControls;
-
-using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Globalization;
-using System.Web;
-using System.Web.UI;
 
+#nullable disable
+
+namespace System.Web.UI.WebControls;
 /// <devdoc>
 /// <para> Defines the properties and methods of the <see cref='System.Web.UI.WebControls.Style'/> class.</para>
 /// </devdoc>

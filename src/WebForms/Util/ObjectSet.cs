@@ -4,6 +4,8 @@
 // </copyright>                                                                
 //------------------------------------------------------------------------------
 
+using System.Collections;
+
 /*
  * ObjectSet class
  * 
@@ -16,11 +18,6 @@
 
 namespace System.Web.Util
 {
-
-    using System.Reflection;
-    using System.Collections;
-    using System.Collections.Generic;
-
 #if USEGENERICSET
 /*
  * Holds a set of unique objects of a specific type

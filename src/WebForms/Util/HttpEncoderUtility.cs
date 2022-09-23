@@ -1,6 +1,8 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using System.Diagnostics;
+
 /*
  * Helper class for common encoding routines
  *
@@ -10,9 +12,6 @@
 #nullable disable
 
 namespace System.Web.Util;
-
-using System.Diagnostics;
-
 internal static class HttpEncoderUtility
 {
 

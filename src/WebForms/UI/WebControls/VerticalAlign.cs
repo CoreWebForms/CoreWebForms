@@ -1,13 +1,12 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using System.ComponentModel;
+
 /*
  */
 
 namespace System.Web.UI.WebControls;
-
-using System.ComponentModel;
-
 /// <devdoc>
 ///    <para>
 ///       Specifies the vertical alignment of an object or text within a control.

@@ -242,7 +242,6 @@ public abstract class BasePartialCachingControl : Control
         Page.PopCachingControl();
     }
 
-
     /// <internalonly/>
     public override void Dispose()
     {
@@ -256,7 +255,6 @@ public abstract class BasePartialCachingControl : Control
     }
 
     internal abstract Control CreateCachedControl();
-
 
     /// <devdoc>
     ///    <para> Gets or sets the CacheDependency used to cache the control output.</para>
@@ -733,7 +731,6 @@ internal HttpCacheVaryByParams VaryByParams {
     }
 }
 
-
 /// <devdoc>
 ///    <para>[To be supplied.]</para>
 /// </devdoc>
@@ -741,7 +738,6 @@ public class StaticPartialCachingControl : BasePartialCachingControl
 {
 
     private BuildMethod _buildMethod;
-
 
     /// <internalonly/>
     /// <devdoc>
@@ -754,7 +750,6 @@ public class StaticPartialCachingControl : BasePartialCachingControl
             varyByCustom, null, buildMethod, null)
     {
     }
-
 
     /// <internalonly/>
     /// <devdoc>
@@ -810,7 +805,6 @@ public class StaticPartialCachingControl : BasePartialCachingControl
             varyByControls, varyByCustom, null, buildMethod, null);
     }
 
-
     /// <internalonly/>
     /// <devdoc>
     ///    <para>[To be supplied.]</para>
@@ -836,7 +830,6 @@ public class StaticPartialCachingControl : BasePartialCachingControl
     }
 }
 
-
 /// <devdoc>
 ///    <para>[To be supplied.]</para>
 /// </devdoc>
@@ -846,7 +839,6 @@ public class PartialCachingControl : BasePartialCachingControl
     private IWebObjectFactory _objectFactory;
     private Type _createCachedControlType;
     private object[] _args;
-
 
     public Control CachedControl { get { return _cachedCtrl; } }
 

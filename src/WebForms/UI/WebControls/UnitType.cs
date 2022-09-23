@@ -1,13 +1,12 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using System.Diagnostics.CodeAnalysis;
+
 /*
  */
 
 namespace System.Web.UI.WebControls;
-
-using System.Diagnostics.CodeAnalysis;
-
 /// <devdoc>
 ///    <para> Specifies the unit types.</para>
 /// </devdoc>

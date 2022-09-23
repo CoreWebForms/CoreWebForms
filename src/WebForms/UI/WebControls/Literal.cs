@@ -1,16 +1,12 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using System.ComponentModel;
+using System.Globalization;
+
 #nullable disable
 
 namespace System.Web.UI.WebControls;
-
-using System;
-using System.ComponentModel;
-using System.Globalization;
-using System.Web;
-using System.Web.UI;
-
 // The reason we define this empty override in the WebControls namespace is
 // to expose it as a control that can be used on a page (ASURT 54683)
 // E.g. <asp:literal runat=server id=lit1/>

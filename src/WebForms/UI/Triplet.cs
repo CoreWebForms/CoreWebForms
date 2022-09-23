@@ -4,9 +4,6 @@
 #nullable disable
 
 namespace System.Web.UI;
-
-using System;
-
 [Serializable]
 public sealed class Triplet
 {

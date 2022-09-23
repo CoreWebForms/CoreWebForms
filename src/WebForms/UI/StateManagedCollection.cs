@@ -1,15 +1,13 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
-namespace System.Web.UI;
-
-using System;
 using System.Collections;
 using System.Collections.Specialized;
 using System.Diagnostics;
 
+#nullable disable
+
+namespace System.Web.UI;
 /// <devdoc>
 /// Manages state for an arbitrary collection of items that implement IStateManager.
 /// The collection differentiates between known types and unknown types.

@@ -4,9 +4,8 @@
 // </copyright>                                                                
 //------------------------------------------------------------------------------
 
-namespace System.Web {
-    using System;
-
+namespace System.Web
+{
     public enum RequestNotificationStatus {
         Continue = 0,
         Pending,

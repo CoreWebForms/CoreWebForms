@@ -10,10 +10,8 @@
  * 
  * Copyright (c) 2000 Microsoft Corporation
  */
-namespace System.Web.UI {
-    using System;
-    using System.ComponentModel;
-
+namespace System.Web.UI
+{
     /// <devdoc>
     ///    <para>Identifies 
     ///       a container control that scopes a new ID namespace within a page's control

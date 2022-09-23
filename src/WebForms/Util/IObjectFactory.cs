@@ -4,10 +4,8 @@
 // </copyright>                                                                
 //------------------------------------------------------------------------------
 
-namespace System.Web.Util {
-
-    using System;
-
+namespace System.Web.Util
+{
     public interface IWebObjectFactory {
         object CreateInstance();
     }
@@ -18,5 +16,4 @@ namespace System.Web.Util {
         Type InstantiatedType { get; }
     }
 }
-
 

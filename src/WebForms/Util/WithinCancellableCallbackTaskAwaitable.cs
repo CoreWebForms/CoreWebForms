@@ -4,14 +4,11 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
+using System.Runtime.CompilerServices;
+using System.Security.Permissions;
+
 namespace System.Web.Util
 {
-    using System;
-    using System.Runtime.CompilerServices;
-    using System.Security.Permissions;
-    using System.Threading;
-    using System.Threading.Tasks;
-
     // An awaitable type that invokes a continuation callback under a call to HttpContext.InvokeCancellableCallback.
     // This type is for compiler use; the ASP.NET runtime is not expected to call into these APIs directly.
     internal struct WithinCancellableCallbackTaskAwaitable

@@ -4,9 +4,6 @@
 #nullable disable
 
 namespace System.Web.UI;
-
-using System;
-
 internal interface IScriptManager
 {
     bool SupportsPartialRendering { get; }

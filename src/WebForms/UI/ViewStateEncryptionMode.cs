@@ -4,10 +4,8 @@
 // </copyright>                                                                
 //------------------------------------------------------------------------------
 
-namespace System.Web.UI {
-
-    using System;
-
+namespace System.Web.UI
+{
     /// <devdoc>
     ///    <para>Specifies whether viewstate is encrypted.</para>
     /// </devdoc>

@@ -4,9 +4,8 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-namespace System.Web.Util {
-    using System;
-
+namespace System.Web.Util
+{
     internal enum SynchronizationContextMode {
 
         Normal,

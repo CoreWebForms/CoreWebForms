@@ -3,10 +3,10 @@
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>                                                                
 //------------------------------------------------------------------------------
+
+using System.Collections;
+
 namespace System.Web.UI {
-
-    using System.Collections;
-
     public interface IDataSource {
 
         event EventHandler DataSourceChanged;

@@ -4,10 +4,6 @@
 #nullable disable
 
 namespace System.Web.UI;
-
-using System;
-using System.Diagnostics.CodeAnalysis;
-
 /// <devdoc>
 /// An IDReferencePropertyAttribute metadata attribute can be applied to string properties
 /// that contain ID references.

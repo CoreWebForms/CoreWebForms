@@ -4,11 +4,8 @@
 // </copyright>                                                                
 //------------------------------------------------------------------------------
 
-namespace System.Web.UI {
-
-    using System;
-    using System.ComponentModel;
-
+namespace System.Web.UI
+{
     /// <devdoc>
     ///    <para> 
     ///       Indicates whether
@@ -21,19 +18,16 @@ namespace System.Web.UI {
     [AttributeUsage(AttributeTargets.Class)]
     public sealed class PersistChildrenAttribute : Attribute {
 
-
         /// <devdoc>
         ///    <para>Indicates that the children of a control should be persisted at design-time.
         ///       </para>
         /// </devdoc>
         public static readonly PersistChildrenAttribute Yes = new PersistChildrenAttribute(true);
 
-
         /// <devdoc>
         ///    <para>Indicates that the children of a control should not be persisted at design-time.</para>
         /// </devdoc>
         public static readonly PersistChildrenAttribute No = new PersistChildrenAttribute(false);
-
 
         /// <devdoc>
         ///     This marks the default child persistence behavior for a control at design time. (equal to Yes.)
@@ -42,7 +36,6 @@ namespace System.Web.UI {
 
         private bool _persist;
         private bool _usesCustomPersistence;
-
 
         /// <devdoc>
         /// </devdoc>
@@ -54,7 +47,6 @@ namespace System.Web.UI {
             _usesCustomPersistence = usesCustomPersistence;
         }
 
-
         /// <devdoc>
         ///    <para>Indicates whether the children of a control should be persisted at design-time.
         ///       This property is read-only.</para>
@@ -64,7 +56,6 @@ namespace System.Web.UI {
                 return _persist;
             }
         }
-
 
         /// <devdoc>
         ///    <para>Indicates whether the control does custom persistence.
@@ -77,14 +68,12 @@ namespace System.Web.UI {
             }
         }
 
-
         /// <devdoc>
         /// </devdoc>
         /// <internalonly/>
         public override int GetHashCode() {
             return Persist.GetHashCode();
         }
-
 
         /// <devdoc>
         /// </devdoc>
@@ -100,7 +89,6 @@ namespace System.Web.UI {
 
             return false;
         }
-
 
         /// <devdoc>
         /// </devdoc>

@@ -4,14 +4,13 @@
 // </copyright>                                                                
 //------------------------------------------------------------------------------
 
+using System.Collections;
+
 /*
  */
 
 namespace System.Web.UI
 {
-    using System.Runtime.InteropServices;
-    using System.Collections;
-
     /// <devdoc>
     ///    <para> Exposes a 
     ///       read-only array of <see cref='System.Web.UI.IValidator'/>

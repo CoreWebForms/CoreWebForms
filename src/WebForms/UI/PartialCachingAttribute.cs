@@ -4,6 +4,8 @@
 // </copyright>                                                                
 //------------------------------------------------------------------------------
 
+using System.Diagnostics.CodeAnalysis;
+
 /*
  * Fragment caching attribute
  *
@@ -12,14 +14,6 @@
 
 namespace System.Web.UI
 {
-
-    using System;
-    using System.Collections;
-    using System.ComponentModel;
-    using System.Diagnostics.CodeAnalysis;
-    using System.Security.Permissions;
-    using System.Web.Caching;
-
     /*
      * This class defines the PartialCachingAttribute attribute that can be placed on
      * user controls classes to enable the fragmant caching feature.
@@ -166,7 +160,6 @@ namespace System.Web.UI
             }
         }
 
-
         /// <devdoc>
         ///    <para>[To be supplied.]</para>
         /// </devdoc>
@@ -174,7 +167,6 @@ namespace System.Web.UI
         {
             _duration = duration;
         }
-
 
         /// <devdoc>
         ///    <para>[To be supplied.]</para>
@@ -185,7 +177,6 @@ namespace System.Web.UI
         {
         }
 
-
         /// <devdoc>
         ///    <para>[To be supplied.]</para>
         /// </devdoc>
@@ -194,7 +185,6 @@ namespace System.Web.UI
             : this(duration, varyByParams, varyByControls, varyByCustom, null, shared)
         {
         }
-
 
         /// <devdoc>
         ///    <para>[To be supplied.]</para>

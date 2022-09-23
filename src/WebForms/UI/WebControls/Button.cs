@@ -1,15 +1,11 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using System.ComponentModel;
+
 #nullable disable
 
 namespace System.Web.UI.WebControls;
-
-using System;
-using System.ComponentModel;
-using System.Web;
-using System.Web.UI;
-
 /// <devdoc>
 ///    <para>Represents a Windows button control.</para>
 /// </devdoc>

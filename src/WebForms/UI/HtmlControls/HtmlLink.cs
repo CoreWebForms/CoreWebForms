@@ -35,7 +35,6 @@ public class HtmlLink : HtmlControl
         }
     }
 
-
     protected override void RenderAttributes(HtmlTextWriter writer)
     {
         // Resolve the client href based before rendering the attribute.

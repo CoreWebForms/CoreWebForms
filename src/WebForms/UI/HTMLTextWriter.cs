@@ -1,22 +1,19 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using System.Collections;
+using System.Diagnostics;
+using System.Globalization;
+using System.Text;
+using System.Web.UI.WebControls;
+using System.Web.Util;
+
 // HtmlTextWriter.cs
 //
 
 #nullable disable
 
 namespace System.Web.UI;
-
-using System;
-using System.Collections;
-using System.Diagnostics;
-using System.Globalization;
-using System.IO;
-using System.Text;
-using System.Web.UI.WebControls;
-using System.Web.Util;
-
 public class HtmlTextWriter : TextWriter
 {
     private readonly Layout _currentLayout = new Layout(HorizontalAlign.NotSet, true /* wrap */);

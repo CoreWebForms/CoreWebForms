@@ -4,19 +4,14 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-namespace System.Web.UI.WebControls {
+using System.Collections;
+using System.ComponentModel;
+using System.Drawing;
+using System.Globalization;
+using System.Web.Util;
 
-    using System;
-    using System.Collections;
-    using System.Collections.Specialized;
-    using System.ComponentModel;
-    using System.Drawing;
-    using System.Globalization;
-    using System.Web;
-    using System.Web.UI;
-    using System.Web.Util;
-    using AttributeCollection = System.Web.UI.AttributeCollection;
-    
+namespace System.Web.UI.WebControls
+{
     /// <devdoc>
     ///    <para> The base class for all Web controls. Defines the
     ///       methods, properties and events common to all controls within the
@@ -47,7 +42,6 @@ namespace System.Web.UI.WebControls {
         private const int toolTipSet              = 0x00000008;
         private const int tabIndexSet             = 0x00000010;
 
-
         /// <devdoc>
         ///    <para>
         ///       Initializes a new instance of the <see cref='System.Web.UI.WebControls.WebControl'/> class and renders
@@ -57,14 +51,12 @@ namespace System.Web.UI.WebControls {
         protected WebControl() : this(HtmlTextWriterTag.Span) {
         }
 
-
         /// <devdoc>
         ///    <para>[To be supplied.]</para>
         /// </devdoc>
         public WebControl(HtmlTextWriterTag tag) {
             tagKey = tag;
         }
-
 
         /// <devdoc>
         ///    <para>
@@ -76,8 +68,6 @@ namespace System.Web.UI.WebControls {
             tagKey = HtmlTextWriterTag.Unknown;
             tagName = tag;
         }
-
-
 
         /// <devdoc>
         ///    <para>Gets or sets the keyboard shortcut key (AccessKey) for setting focus to the
@@ -107,7 +97,6 @@ namespace System.Web.UI.WebControls {
             }
         }
 
-
         /// <devdoc>
         ///    <para>Gets the collection of attribute name/value pairs expressed on a Web control but
         ///       not supported by the control's strongly typed properties.</para>
@@ -133,7 +122,6 @@ namespace System.Web.UI.WebControls {
             }
         }
 
-
         /// <devdoc>
         ///    <para>Gets or sets the background color of the Web control.</para>
         /// </devdoc>
@@ -154,7 +142,6 @@ namespace System.Web.UI.WebControls {
                 ControlStyle.BackColor = value;
             }
         }
-
 
         /// <devdoc>
         ///    <para>Gets or sets the border color of the Web control.</para>
@@ -177,7 +164,6 @@ namespace System.Web.UI.WebControls {
             }
         }
 
-
         /// <devdoc>
         ///    <para>Gets or sets the border width of the Web control.</para>
         /// </devdoc>
@@ -198,7 +184,6 @@ namespace System.Web.UI.WebControls {
             }
         }
 
-
         /// <devdoc>
         ///    <para>Gets or sets the border style of the Web control.</para>
         /// </devdoc>
@@ -218,7 +203,6 @@ namespace System.Web.UI.WebControls {
                 ControlStyle.BorderStyle = value;
             }
         }
-
 
         /// <devdoc>
         ///    <para>Gets the style of the Web control.</para>
@@ -244,7 +228,6 @@ namespace System.Web.UI.WebControls {
             }
         }
 
-
         /// <devdoc>
         /// </devdoc>
         [
@@ -258,7 +241,6 @@ namespace System.Web.UI.WebControls {
                 return (controlStyle != null);
             }
         }
-
 
         /// <devdoc>
         ///    <para>Gets or sets the CSS class rendered by the Web control.</para>
@@ -305,7 +287,6 @@ namespace System.Web.UI.WebControls {
             }
         }
 
-
         /// <devdoc>
         ///    <para>Gets or sets a value indicating whether the Web control is enabled.</para>
         /// </devdoc>
@@ -337,7 +318,6 @@ namespace System.Web.UI.WebControls {
             }
         }
 
-
         /// <devdoc>
         ///    <para>Gets and sets a value indicating whether theme is enabled.</para>
         /// </devdoc>
@@ -353,7 +333,6 @@ namespace System.Web.UI.WebControls {
             }
         }
 
-
         /// <devdoc>
         ///    <para>Gets font information of the Web control.</para>
         /// </devdoc>
@@ -368,7 +347,6 @@ namespace System.Web.UI.WebControls {
                 return ControlStyle.Font;
             }
         }
-
 
         /// <devdoc>
         ///    <para>Gets or sets the foreground color (typically the color of the text) of the
@@ -392,7 +370,6 @@ namespace System.Web.UI.WebControls {
             }
         }
 
-
         /// <devdoc>
         /// </devdoc>
         [
@@ -404,7 +381,6 @@ namespace System.Web.UI.WebControls {
                 return (((attrColl != null) && (attrColl.Count > 0)) || ((attrState != null) && (attrState.Count > 0)));
             }
         }
-
 
         /// <devdoc>
         ///    <para>Gets or sets the height of the Web control.</para>
@@ -425,7 +401,6 @@ namespace System.Web.UI.WebControls {
                 ControlStyle.Height = value;
             }
         }
-
 
         /// <devdoc>
         /// The effective enabled property value taking into account that a parent control maybe
@@ -461,7 +436,6 @@ namespace System.Web.UI.WebControls {
             }
         }
 
-
         /// <devdoc>
         ///    <para>Gets and sets the skinID of the control.</para>
         /// </devdoc>
@@ -476,7 +450,6 @@ namespace System.Web.UI.WebControls {
                 base.SkinID = value;
             }
         }
-
 
         /// <devdoc>
         ///    <para>
@@ -502,7 +475,6 @@ namespace System.Web.UI.WebControls {
             }
         }
 
-
         /// <devdoc>
         /// </devdoc>
         [
@@ -514,7 +486,6 @@ namespace System.Web.UI.WebControls {
                 return tagKey;
             }
         }
-
 
         /// <devdoc>
         ///    <para> A protected property. Gets the name of the control tag.</para>
@@ -532,7 +503,6 @@ namespace System.Web.UI.WebControls {
                 return tagName;
             }
         }
-
 
         /// <devdoc>
         ///    <para>Gets or sets the tool tip for the Web control to be displayed when the mouse
@@ -558,7 +528,6 @@ namespace System.Web.UI.WebControls {
             }
         }
 
-
         /// <devdoc>
         ///    <para>Gets or sets the width of the Web control.</para>
         /// </devdoc>
@@ -578,7 +547,6 @@ namespace System.Web.UI.WebControls {
                 ControlStyle.Width = value;
             }
         }
-
 
         /// <devdoc>
         ///    <para>
@@ -652,7 +620,6 @@ namespace System.Web.UI.WebControls {
             }
         }
 
-
         /// <devdoc>
         ///    <para>
         ///       Copies any non-blank elements of the specified style to the Web control,
@@ -664,7 +631,6 @@ namespace System.Web.UI.WebControls {
                 ControlStyle.CopyFrom(s);
             }
         }
-
 
         /// <devdoc>
         /// <para>Copies the <see cref='System.Web.UI.WebControls.WebControl.AccessKey'/>, <see cref='System.Web.UI.WebControls.WebControl.Enabled'/>, ToolTip, <see cref='System.Web.UI.WebControls.WebControl.TabIndex'/>, and <see cref='System.Web.UI.WebControls.WebControl.Attributes'/> properties onto the
@@ -694,7 +660,6 @@ namespace System.Web.UI.WebControls {
                 }
             }
         }
-
 
         /// <devdoc>
         ///    <para> A protected method. Creates the style object that is used internally
@@ -759,7 +724,6 @@ namespace System.Web.UI.WebControls {
 
         }
 
-
         /// <internalonly/>
         /// <devdoc>
         ///    <para>Marks the beginning for tracking state changes on the control.
@@ -779,7 +743,6 @@ namespace System.Web.UI.WebControls {
                 attrState.TrackViewState();
             }
         }
-
 
         /// <devdoc>
         ///    <para>
@@ -817,11 +780,9 @@ namespace System.Web.UI.WebControls {
             writer.RenderEndTag();
         }
 
-
         protected internal virtual void RenderContents(HtmlTextWriter writer) {
             base.Render(writer);
         }
-
 
         /// <internalonly/>
         /// <devdoc>

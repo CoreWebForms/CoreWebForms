@@ -2,10 +2,6 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 namespace System.Web;
-
-using System;
-using System.Threading.Tasks;
-
 internal static class TaskAsyncHelper
 {
     internal static IAsyncResult BeginTask(Func<Task> taskFunc, AsyncCallback callback, object? state)

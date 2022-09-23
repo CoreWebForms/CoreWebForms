@@ -4,11 +4,8 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-namespace System.Web.UI {
-    using System;
-    using System.Threading;
-    using System.Threading.Tasks;
-
+namespace System.Web.UI
+{
     // Represents an IPageAsyncTask that follows APM (Begin / End)
 
     internal sealed class PageAsyncTaskApm : IPageAsyncTask {

@@ -1,15 +1,14 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using System.Collections.Specialized;
+
 /*
  * Controls that can accept postback data should implement this interface.
  *
  * Copyright (c) 1999 Microsoft Corporation
  */
 namespace System.Web.UI;
-
-using System.Collections.Specialized;
-
 /// <devdoc>
 ///    <para>Defines the contract that controls must implement in order to
 ///       automatically load post back data.</para>

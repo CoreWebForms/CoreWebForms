@@ -3,13 +3,7 @@
 
 #nullable disable
 
-using System;
-
-namespace System.Web.UI;
-
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -19,6 +13,7 @@ using System.Web.UI.WebControls;
 using System.Web.Util;
 using WebUtil = System.Web.Util;
 
+namespace System.Web.UI;
 public sealed class ClientScriptManager
 {
     private const string IncludeScriptBegin = @"

@@ -1,15 +1,14 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-#nullable disable
-
-namespace System.Web.UI.WebControls;
-
 using System.Collections;
 using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Diagnostics;
 
+#nullable disable
+
+namespace System.Web.UI.WebControls;
 /// <devdoc>
 /// TypeConverter for ControlParameter's ControlID property.
 /// </devdoc>

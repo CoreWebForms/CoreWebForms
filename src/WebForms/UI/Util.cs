@@ -1,6 +1,11 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Reflection;
+using System.Text;
+
 /*
  * Implements various utility functions used by the template code
  *
@@ -10,12 +15,6 @@
 #nullable disable
 
 namespace System.Web.UI;
-
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Reflection;
-using System.Text;
-
 internal static class Util
 {
     internal static bool CanConvertToFrom(TypeConverter converter, Type type)
