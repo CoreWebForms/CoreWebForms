@@ -1,8 +1,5 @@
-//------------------------------------------------------------------------------
-// <copyright file="CrossSiteScriptingValidation.cs" company="Microsoft">
-//     Copyright (c) Microsoft Corporation.  All rights reserved.
-// </copyright>                                                                
-//------------------------------------------------------------------------------
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 /*
  * Detection of unsafe strings from the client (aee ASURT 122278 for details)
