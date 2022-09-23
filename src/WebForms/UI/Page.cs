@@ -212,9 +212,7 @@ namespace System.Web.UI
         private string _styleSheetName;
         private PageTheme _styleSheet;
 
-#if PORT_VIRTUALPATH
         private VirtualPath _masterPageFile;
-#endif
 #if PORT_MASTERPAGE
         private MasterPage _master;
 #endif
@@ -239,9 +237,7 @@ namespace System.Web.UI
         private int _scrollPositionY;
 
         private Page _previousPage;
-#if PORT_VIRTUALPATH
         private VirtualPath _previousPagePath;
-#endif
 
         private bool _preInitWorkComplete;
 
@@ -2398,13 +2394,11 @@ namespace System.Web.UI
 
         internal void LoadScrollPosition()
         {
-#if PORT_PREVIOUSPATH
             // Don't load scroll position if the previous page was a crosspage postback
             if (_previousPagePath != null)
             {
                 return;
             }
-#endif
 
             // Load the scroll positions from the request if they exist
             if (_requestValueCollection != null)
@@ -3904,7 +3898,6 @@ window.onload = WebForm_RestoreScrollPosition;
             }
         }
 
-#if PORT_PREVIOUSPAGE
         /// <devdoc>
         ///    <para>Gets the PreviousPage of current Page, it could be either the original Page from
         ///    Server.Transfer or cross page posting.
@@ -3929,6 +3922,8 @@ window.onload = WebForm_RestoreScrollPosition;
                             throw new InvalidOperationException(SR.GetString(SR.Previous_Page_Not_Authorized));
                         }
 
+#if PORT_GETPREVIOUSPAGE
+
                         ITypedWebObjectFactory result =
                             (ITypedWebObjectFactory)BuildManager.GetVPathBuildResult(Context, _previousPagePath);
 
@@ -3941,6 +3936,7 @@ window.onload = WebForm_RestoreScrollPosition;
                             Server.Execute(_previousPage, TextWriter.Null,
                                 true /*preserveForm*/, false /*setPreviousPage*/);
                         }
+#endif
                     }
                 }
 
@@ -3960,7 +3956,6 @@ window.onload = WebForm_RestoreScrollPosition;
             return _request.MapPath(VirtualPath.CreateAllowNull(virtualPath), TemplateControlVirtualDirectory,
                 true/*allowCrossAppMapping*/);
         }
-#endif
 
         /*
          * The following members should only be set by derived class through codegen.
@@ -5297,7 +5292,6 @@ window.onload = WebForm_RestoreScrollPosition;
                         { // Otherwise, determine if this is cross-page posting(callsbacks can never be cross page posts)
                             if (!IsCrossPagePostBack)
                             {
-#if PORT_VIRTUALPATH
                                 VirtualPath previousPagePath = null;
 
                                 if (_requestValueCollection[previousPageID] != null)
@@ -5320,14 +5314,13 @@ window.onload = WebForm_RestoreScrollPosition;
 
                                     // Process if the page is posted from cross-page that still exists and the target page is not same as source page.
                                     if (previousPagePath != null &&
-                                        previousPagePath != Request.CurrentExecutionFilePathObject)
+                                        previousPagePath != Request.CurrentExecutionFilePathObject())
                                     {
                                         _pageFlags[isCrossPagePostRequest] = true;
                                         _previousPagePath = previousPagePath;
                                         Debug.Assert(_previousPagePath != null);
                                     }
                                 }
-#endif
                             }
                         }
                     }
@@ -5553,7 +5546,6 @@ window.onload = WebForm_RestoreScrollPosition;
                         { // Otherwise, determine if this is cross-page posting(callsbacks can never be cross page posts)
                             if (!IsCrossPagePostBack)
                             {
-#if PORT_VIRTUALPATH
                                 VirtualPath previousPagePath = null;
 
                                 if (_requestValueCollection[previousPageID] != null)
@@ -5576,14 +5568,13 @@ window.onload = WebForm_RestoreScrollPosition;
 
                                     // Process if the page is posted from cross-page that still exists and the target page is not same as source page.
                                     if (previousPagePath != null &&
-                                        previousPagePath != Request.CurrentExecutionFilePathObject)
+                                        previousPagePath != Request.CurrentExecutionFilePathObject())
                                     {
                                         _pageFlags[isCrossPagePostRequest] = true;
                                         _previousPagePath = previousPagePath;
                                         Debug.Assert(_previousPagePath != null);
                                     }
                                 }
-#endif
                             }
                         }
                     }

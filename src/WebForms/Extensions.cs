@@ -15,4 +15,14 @@ internal static class Extensions
 
     public static void InvokeCancellableCallback(this HttpContext context, WaitCallback callback, object state)
         => callback(state);
+
+    public static string MapPath(this HttpRequest request, string path, VirtualPath vpath, bool crossApp)
+    {
+        return vpath.Path;
+    }
+
+    public static VirtualPath CurrentExecutionFilePathObject(this HttpRequest request)
+    {
+        return request.Path;
+    }
 }

@@ -1084,7 +1084,6 @@ public partial class Control : IComponent, IParserAccessor, IDataBindingsAccesso
         }
     }
 
-#if PORT_VDIR
     /// <devdoc>
     ///    <para> Gets the virtual directory of the Page or UserControl that contains this control.</para>
     /// </devdoc>
@@ -1141,7 +1140,7 @@ public partial class Control : IComponent, IParserAccessor, IDataBindingsAccesso
                 HttpContext context = Context;
                 if (context != null)
                 {
-                    VirtualPath templateSourceVirtualDirectory = context.Request.CurrentExecutionFilePathObject.Parent;
+                    VirtualPath templateSourceVirtualDirectory = context.Request.CurrentExecutionFilePathObject().Parent;
                     if (templateSourceVirtualDirectory != null)
                     {
                         EnsureOccasionalFields();
@@ -1181,7 +1180,6 @@ public partial class Control : IComponent, IParserAccessor, IDataBindingsAccesso
             }
         }
     }
-#endif
 
     internal ControlState ControlState { get; set; }
 
@@ -3753,9 +3751,7 @@ public partial class Control : IComponent, IParserAccessor, IDataBindingsAccesso
 
         public string SpacerImageUrl;
         public TemplateControl TemplateControl;
-#if PORT_VIRTUALPATH
         public VirtualPath TemplateSourceVirtualDirectory;
-#endif
 
         public void Dispose()
         {

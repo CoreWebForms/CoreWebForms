@@ -219,4 +219,9 @@ internal static class Util
         }
         return value;
     }
+
+    internal static bool IsUserAllowedToPath(HttpContext context, VirtualPath previousPagePath)
+    {
+        return true;
+    }
 }
