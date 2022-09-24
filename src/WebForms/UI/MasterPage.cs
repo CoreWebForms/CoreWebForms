@@ -149,12 +149,6 @@ public class MasterPage : UserControl
         }
     }
 
-    internal static MasterPage CreateMaster(TemplateControl owner, HttpContext context,
-        VirtualPath masterPageFile, IDictionary contentTemplateCollection)
-    {
-        throw new NotImplementedException();
-    }
-
     internal static MasterPage CreateMaster(TemplateControl owner, HttpContext context, MasterPage master, IDictionary contentTemplateCollection)
     {
         Debug.Assert(owner is MasterPage || owner is Page);
@@ -163,7 +157,6 @@ public class MasterPage : UserControl
 
         if (owner.HasControls())
         {
-#if PORT_MASTERPAGE
             foreach (Control control in owner.Controls)
             {
                 LiteralControl literal = control as LiteralControl;
@@ -172,7 +165,6 @@ public class MasterPage : UserControl
                     throw new HttpException(SR.GetString(SR.Content_allowed_in_top_level_only));
                 }
             }
-#endif
 
             // Remove existing controls.
             owner.Controls.Clear();

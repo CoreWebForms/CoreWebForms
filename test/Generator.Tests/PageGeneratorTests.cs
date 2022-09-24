@@ -29,16 +29,28 @@ public class PageGeneratorTests
     {
     }
 }";
-        var aspx = "<%@ Page Title=\"About\" Language=\"C#\" MasterPageFile=\"~/Site.Master\" AutoEventWireup=\"true\" CodeBehind=\"About.aspx.cs\" Inherits=\"WebApplication12.About\" %>\r\n";
+        var aspx = "<%@ Page Title=\"About\" Language=\"C#\" AutoEventWireup=\"true\" CodeBehind=\"About.aspx.cs\" Inherits=\"WebApplication12.About\" %>\r\n";
         var generated = @$"using System;
 using System.Web;
+using System.Web.UI;
 
 [Microsoft.AspNetCore.SystemWebAdapters.UI.AspxPageAttribute(""/page.aspx"")]
 internal partial class _page_aspx : WebApplication12.About
 {{
+    public _page_aspx()
+    {{
+        Initialize();
+    }}
     protected override void FrameworkInitialize()
     {{
         base.FrameworkInitialize();
+        BuildControlTree(this);
+    }}
+    private void BuildControlTree(Control control)
+    {{
+    }}
+    private void Initialize()
+    {{
     }}
 }}
 ";
@@ -72,22 +84,34 @@ internal partial class _page_aspx : WebApplication12.About
     {
     }
 }";
-        var aspx = @"<%@ Page Title=""About"" Language=""C#"" MasterPageFile=""~/Site.Master"" AutoEventWireup=""true"" CodeBehind=""About.aspx.cs"" Inherits=""WebApplication12.About"" %>
+        var aspx = @"<%@ Page Title=""About"" Language=""C#"" AutoEventWireup=""true"" CodeBehind=""About.aspx.cs"" Inherits=""WebApplication12.About"" %>
 <div />
 ";
         var generated = @$"using System;
 using System.Web;
+using System.Web.UI;
 
 [Microsoft.AspNetCore.SystemWebAdapters.UI.AspxPageAttribute(""/page.aspx"")]
 internal partial class _page_aspx : WebApplication12.About
 {{
+    public _page_aspx()
+    {{
+        Initialize();
+    }}
     protected override void FrameworkInitialize()
     {{
         base.FrameworkInitialize();
+        BuildControlTree(this);
+    }}
+    private void BuildControlTree(Control control)
+    {{
         var control_1 = new global::System.Web.UI.LiteralControl(""<div />"");
-        Controls.Add(control_1);
-        var control_2 = new global::System.Web.UI.LiteralControl(""{NewLine}"");
-        Controls.Add(control_2);
+        control.Controls.Add(control_1);
+        var control_2 = new global::System.Web.UI.LiteralControl(""\r\n"");
+        control.Controls.Add(control_2);
+    }}
+    private void Initialize()
+    {{
     }}
 }}
 ";
@@ -121,24 +145,36 @@ internal partial class _page_aspx : WebApplication12.About
     {
     }
 }";
-        var aspx = @"<%@ Page Title=""About"" Language=""C#"" MasterPageFile=""~/Site.Master"" AutoEventWireup=""true"" CodeBehind=""About.aspx.cs"" Inherits=""WebApplication12.About"" %>
+        var aspx = @"<%@ Page Title=""About"" Language=""C#"" AutoEventWireup=""true"" CodeBehind=""About.aspx.cs"" Inherits=""WebApplication12.About"" %>
 <div runat=""server"" id=""hi"" />
 ";
         var generated = @$"using System;
 using System.Web;
+using System.Web.UI;
 
 [Microsoft.AspNetCore.SystemWebAdapters.UI.AspxPageAttribute(""/page.aspx"")]
 internal partial class _page_aspx : WebApplication12.About
 {{
+    public _page_aspx()
+    {{
+        Initialize();
+    }}
     protected override void FrameworkInitialize()
     {{
         base.FrameworkInitialize();
+        BuildControlTree(this);
+    }}
+    private void BuildControlTree(Control control)
+    {{
         var control_1 = new global::System.Web.UI.HtmlControls.HtmlGenericControl(""div"");
         control_1.ID = ""hi"";
         hi = control_1;
-        Controls.Add(control_1);
-        var control_2 = new global::System.Web.UI.LiteralControl(""{NewLine}"");
-        Controls.Add(control_2);
+        control.Controls.Add(control_1);
+        var control_2 = new global::System.Web.UI.LiteralControl(""\r\n"");
+        control.Controls.Add(control_2);
+    }}
+    private void Initialize()
+    {{
     }}
     protected global::System.Web.UI.HtmlControls.HtmlGenericControl hi;
 }}
@@ -173,36 +209,48 @@ internal partial class _page_aspx : WebApplication12.About
     {
     }
 }";
-        var aspx = @"<%@ Page Title=""About"" Language=""C#"" MasterPageFile=""~/Site.Master"" AutoEventWireup=""true"" CodeBehind=""About.aspx.cs"" Inherits=""WebApplication12.About"" %>
+        var aspx = @"<%@ Page Title=""About"" Language=""C#"" AutoEventWireup=""true"" CodeBehind=""About.aspx.cs"" Inherits=""WebApplication12.About"" %>
 <form id=""frm"" runat=""server"">
     <asp:TextBox id=""txt"" runat=""server"" />
 </form>
 ";
         var generated = @$"using System;
 using System.Web;
+using System.Web.UI;
 
 [Microsoft.AspNetCore.SystemWebAdapters.UI.AspxPageAttribute(""/page.aspx"")]
 internal partial class _page_aspx : WebApplication12.About
 {{
+    public _page_aspx()
+    {{
+        Initialize();
+    }}
     protected override void FrameworkInitialize()
     {{
         base.FrameworkInitialize();
+        BuildControlTree(this);
+    }}
+    private void BuildControlTree(Control control)
+    {{
         var control_1 = new global::System.Web.UI.HtmlControls.HtmlForm();
         control_1.ID = ""frm"";
         frm = control_1;
-        Controls.Add(control_1);
+        control.Controls.Add(control_1);
         {{
-            var control_1_1 = new global::System.Web.UI.LiteralControl(""{NewLine}    "");
+            var control_1_1 = new global::System.Web.UI.LiteralControl(""\r\n    "");
             control_1.Controls.Add(control_1_1);
             var control_1_2 = new global::System.Web.UI.WebControls.TextBox();
             control_1_2.ID = ""txt"";
             txt = control_1_2;
             control_1.Controls.Add(control_1_2);
-            var control_1_3 = new global::System.Web.UI.LiteralControl(""{NewLine}"");
+            var control_1_3 = new global::System.Web.UI.LiteralControl(""\r\n"");
             control_1.Controls.Add(control_1_3);
         }}
-        var control_2 = new global::System.Web.UI.LiteralControl(""{NewLine}"");
-        Controls.Add(control_2);
+        var control_2 = new global::System.Web.UI.LiteralControl(""\r\n"");
+        control.Controls.Add(control_2);
+    }}
+    private void Initialize()
+    {{
     }}
     protected global::System.Web.UI.HtmlControls.HtmlForm frm;
     protected global::System.Web.UI.WebControls.TextBox txt;
@@ -238,26 +286,38 @@ internal partial class _page_aspx : WebApplication12.About
     {
     }
 }";
-        var aspx = @"<%@ Page Title=""About"" Language=""C#"" MasterPageFile=""~/Site.Master"" AutoEventWireup=""true"" CodeBehind=""About.aspx.cs"" Inherits=""WebApplication12.About"" %>
+        var aspx = @"<%@ Page Title=""About"" Language=""C#"" AutoEventWireup=""true"" CodeBehind=""About.aspx.cs"" Inherits=""WebApplication12.About"" %>
 <h1>Hello</h1>
 ";
         var generated = @$"using System;
 using System.Web;
+using System.Web.UI;
 
 [Microsoft.AspNetCore.SystemWebAdapters.UI.AspxPageAttribute(""/page.aspx"")]
 internal partial class _page_aspx : WebApplication12.About
 {{
+    public _page_aspx()
+    {{
+        Initialize();
+    }}
     protected override void FrameworkInitialize()
     {{
         base.FrameworkInitialize();
+        BuildControlTree(this);
+    }}
+    private void BuildControlTree(Control control)
+    {{
         var control_1 = new global::System.Web.UI.LiteralControl(""<h1>"");
-        Controls.Add(control_1);
+        control.Controls.Add(control_1);
         var control_2 = new global::System.Web.UI.LiteralControl(""Hello"");
-        Controls.Add(control_2);
+        control.Controls.Add(control_2);
         var control_3 = new global::System.Web.UI.LiteralControl(""</h1>"");
-        Controls.Add(control_3);
-        var control_4 = new global::System.Web.UI.LiteralControl(""{NewLine}"");
-        Controls.Add(control_4);
+        control.Controls.Add(control_3);
+        var control_4 = new global::System.Web.UI.LiteralControl(""\r\n"");
+        control.Controls.Add(control_4);
+    }}
+    private void Initialize()
+    {{
     }}
 }}
 ";
@@ -297,7 +357,7 @@ internal partial class _page_aspx : WebApplication12.About
     {
     }
 }";
-        var aspx = @"<%@ Page Title=""About"" Language=""C#"" MasterPageFile=""~/Site.Master"" AutoEventWireup=""true"" CodeBehind=""About.aspx.cs"" Inherits=""WebApplication12.About"" %>
+        var aspx = @"<%@ Page Title=""About"" Language=""C#"" AutoEventWireup=""true"" CodeBehind=""About.aspx.cs"" Inherits=""WebApplication12.About"" %>
 <h1>Hello</h1>
 <script runat=""server"">
     protected void Page_PreInit(object sender, EventArgs e)
@@ -306,21 +366,33 @@ internal partial class _page_aspx : WebApplication12.About
 </script>";
         var generated = @$"using System;
 using System.Web;
+using System.Web.UI;
 
 [Microsoft.AspNetCore.SystemWebAdapters.UI.AspxPageAttribute(""/page.aspx"")]
 internal partial class _page_aspx : WebApplication12.About
 {{
+    public _page_aspx()
+    {{
+        Initialize();
+    }}
     protected override void FrameworkInitialize()
     {{
         base.FrameworkInitialize();
+        BuildControlTree(this);
+    }}
+    private void BuildControlTree(Control control)
+    {{
         var control_1 = new global::System.Web.UI.LiteralControl(""<h1>"");
-        Controls.Add(control_1);
+        control.Controls.Add(control_1);
         var control_2 = new global::System.Web.UI.LiteralControl(""Hello"");
-        Controls.Add(control_2);
+        control.Controls.Add(control_2);
         var control_3 = new global::System.Web.UI.LiteralControl(""</h1>"");
-        Controls.Add(control_3);
-        var control_4 = new global::System.Web.UI.LiteralControl(""{NewLine}"");
-        Controls.Add(control_4);
+        control.Controls.Add(control_3);
+        var control_4 = new global::System.Web.UI.LiteralControl(""\r\n"");
+        control.Controls.Add(control_4);
+    }}
+    private void Initialize()
+    {{
     }}
     #line (4, 25) - (7, 7) ""page.aspx""
     protected void Page_PreInit(object sender, EventArgs e)

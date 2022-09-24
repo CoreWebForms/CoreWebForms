@@ -5,6 +5,7 @@ using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using Microsoft.AspNetCore.SystemWebAdapters.UI.PageParser.Syntax;
@@ -20,12 +21,16 @@ public class CSharpPageBuilder : DepthFirstAspxVisitor<object>
     private readonly IDisposable _blockClose;
     private readonly AspxParseResult _tree;
 
-    private bool _hasCodeNuget;
+    private string? _masterPage;
 
+    private bool _hasCodeNuget;
+    private bool _hasContentTemplate;
+    private bool _flatten;
     private readonly string[] DefaultUsings = new[]
     {
         "System",
         "System.Web",
+        "System.Web.UI",
     };
 
     public CSharpPageBuilder(string path, IndentedTextWriter writer, string contents, IEnumerable<ControlInfo> controls)
@@ -74,15 +79,73 @@ public class CSharpPageBuilder : DepthFirstAspxVisitor<object>
 
         using (Block())
         {
+            WriteConstructor();
+
             _tree.RootNode.Accept(this);
 
+            WriteInitializer();
+            WriteCreateMasterPage();
             WriteScripts();
             WriteVariables();
-            WriteCodeNugetControl();
+            WriteCodeRenderControl();
+        }
+
+        WriteTemplate();
+    }
+
+    private void WriteConstructor()
+    {
+        _writer.Write("public ");
+        _writer.Write(ClassName);
+        _writer.WriteLine("()");
+
+        using (Block())
+        {
+            _writer.WriteLine("Initialize();");
+        }
+
+        _writer.WriteLine("protected override void FrameworkInitialize()");
+
+        using (Block())
+        {
+            _writer.WriteLine("base.FrameworkInitialize();");
+            _writer.WriteLine("BuildControlTree(this);");
         }
     }
 
-    private void WriteCodeNugetControl()
+    private void WriteCreateMasterPage()
+    {
+        if (_masterPage is null)
+        {
+            return;
+        }
+
+        _writer.Write("protected override global::System.Web.UI.MasterPage CreateMasterPage() => new ");
+        _writer.Write(ConvertPathToClassName(_masterPage));
+        _writer.WriteLine("();");
+    }
+
+    private void WriteInitializer()
+    {
+        _writer.WriteLine("private void Initialize()");
+
+        using (Block())
+        {
+            foreach (var initializer in _initializers)
+            {
+                initializer();
+            }
+        }
+    }
+
+    private void WriteString(string str)
+    {
+        _writer.Write('\"');
+        _writer.Write(str);
+        _writer.Write('\"');
+    }
+
+    private void WriteCodeRenderControl()
     {
         if (!_hasCodeNuget)
         {
@@ -208,7 +271,7 @@ public class CSharpPageBuilder : DepthFirstAspxVisitor<object>
 
         public string GetNextControlName() => CurrentLevel = $"{Prefix}_{++_count}";
 
-        public ComponentLevel GetNextLevel() => new($"{CurrentLevel}.Controls", CurrentLevel);
+        public ComponentLevel GetNextLevel() => new(CurrentLevel is null ? Controls : $"{CurrentLevel}.Controls", CurrentLevel);
 
         public string Controls { get; }
 
@@ -223,7 +286,8 @@ public class CSharpPageBuilder : DepthFirstAspxVisitor<object>
 
         if (info.IsPage && info.MasterPageFile is { } file)
         {
-            AdditionalFiles.Add(file.Trim('~'));
+            _masterPage = file.Trim('~');
+            AdditionalFiles.Add(_masterPage);
         }
 
         _writer.Write("[Microsoft.AspNetCore.SystemWebAdapters.UI.AspxPageAttribute(\"");
@@ -233,6 +297,25 @@ public class CSharpPageBuilder : DepthFirstAspxVisitor<object>
         _writer.Write(ClassName);
         _writer.Write(" : ");
         _writer.WriteLine(info.Inherits);
+    }
+
+    private void WriteTemplate()
+    {
+        if (_hasContentTemplate)
+        {
+            _writer.WriteLine();
+            _writer.Write("internal partial class ");
+            _writer.Write(ClassName);
+            _writer.WriteLine(": global::System.Web.UI.ITemplate");
+            using (Block())
+            {
+                _writer.WriteLine("void global::System.Web.UI.ITemplate.InstantiateIn(Control container)");
+                using (Block())
+                {
+                    _writer.WriteLine("BuildControlBodyContent(container);");
+                }
+            }
+        }
     }
 
     protected override object VisitChildren(AspxNode node)
@@ -247,32 +330,48 @@ public class CSharpPageBuilder : DepthFirstAspxVisitor<object>
             return base.VisitChildren(node);
         }
 
-        bool includeBaseCall = false;
         if (_componentsStack.Count == 0)
         {
-            _writer.WriteLine("protected override void FrameworkInitialize()");
-            includeBaseCall = true;
-            _componentsStack.Push(new("Controls", "control"));
+            _writer.WriteLine("private void BuildControlTree(Control control)");
+
+            using (Block())
+            {
+                if (node is Root root && root.Children.Where(t => t is not AspxDirective).FirstOrDefault() is AspxTag tag && string.Equals(tag.ControlName, "Content", StringComparison.OrdinalIgnoreCase) && tag.Attributes.TryGetValue("ContentPlaceHolderID", out var placeHolderId))
+                {
+                    _hasContentTemplate = true;
+                    _writer.Write("AddContentTemplate(");
+                    WriteString(placeHolderId);
+                    _writer.WriteLine(", this);");
+                    _writer.Indent--;
+                    _writer.WriteLine("}");
+
+
+                    _writer.WriteLine("private void BuildControlBodyContent(Control control)");
+                    _writer.WriteLine("{");
+                    _writer.Indent++;
+                }
+
+                _componentsStack.Push(new("control.Controls", "control"));
+
+                base.VisitChildren(node);
+
+                _componentsStack.Pop();
+            }
+        }
+        else if (_flatten)
+        {
+            _flatten = false;
+            base.VisitChildren(node);
         }
         else
         {
-            _componentsStack.Push(Current.GetNextLevel());
+            using (Block())
+            {
+                _componentsStack.Push(Current.GetNextLevel());
+                base.VisitChildren(node);
+                _componentsStack.Pop();
+            }
         }
-
-        _writer.WriteLine("{");
-        _writer.Indent++;
-
-        if (includeBaseCall)
-        {
-            _writer.WriteLine("base.FrameworkInitialize();");
-        }
-
-        base.VisitChildren(node);
-
-        _componentsStack.Pop();
-
-        _writer.Indent--;
-        _writer.WriteLine("}");
 
         return _tree;
     }
@@ -352,6 +451,12 @@ public class CSharpPageBuilder : DepthFirstAspxVisitor<object>
 
     private void VisitTag(AspxTag tag)
     {
+        if (string.Equals(tag.ControlName, "Content", StringComparison.OrdinalIgnoreCase))
+        {
+            _flatten = true;
+            return;
+        }
+
         // TODO: Handle prefix
         // node.Prefix
         var name = Current.GetNextControlName();
@@ -367,8 +472,20 @@ public class CSharpPageBuilder : DepthFirstAspxVisitor<object>
 
         WriteAttributes(tag, name);
 
+        if (string.Equals(tag.ControlName, "ContentPlaceHolder", StringComparison.OrdinalIgnoreCase) && tag.Attributes.Id is { } id)
+        {
+            _initializers.Add(() =>
+            {
+                _writer.Write("ContentPlaceHolders.Add(");
+                WriteString(id.ToLower(CultureInfo.InvariantCulture));
+                _writer.WriteLine(");");
+            });
+        }
+
         WriteControls(name);
     }
+
+    private readonly List<Action> _initializers = new();
 
     private readonly struct QName
     {
@@ -586,6 +703,7 @@ public class CSharpPageBuilder : DepthFirstAspxVisitor<object>
     {
         var sb = new StringBuilder(input);
 
+        sb.Replace("~", string.Empty);
         sb.Replace(".", "_");
         sb.Replace("/", "_");
         sb.Replace("\\", "_");

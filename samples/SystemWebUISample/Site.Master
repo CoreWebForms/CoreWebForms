@@ -1,15 +1,16 @@
-<%@ Master Language="C#" AutoEventWireup="true" %>
+<%@ Master Language="C#" AutoEventWireup="true"  %>
 
 <!DOCTYPE html>
 
 <html lang="en">
     <head runat="server">
-        <title><%: Page.Title %></title>
+        <title>FROM MASTER PAGE!</title>
     </head>
 
     <body>
         <form runat="server">
         
+            <h1>HELLO FROM MASTER PAGE!</h1>
             <div>
                 <asp:ContentPlaceHolder ID="MainContent" runat="server">
                 </asp:ContentPlaceHolder>

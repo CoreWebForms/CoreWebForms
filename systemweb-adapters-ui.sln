@@ -31,7 +31,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "sr-extractor", "tools\sr-extractor\sr-extractor.csproj", "{80A01426-CA8A-45AF-8A95-B17B3763CB91}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "sr-extractor", "tools\sr-extractor\sr-extractor.csproj", "{80A01426-CA8A-45AF-8A95-B17B3763CB91}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{23A5C92F-7ED5-43A1-AF04-082FBB0F8AB8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -88,6 +90,7 @@ Global
 		{A6057678-BE15-4627-ACD4-7BD7DB72E8FA} = {97FC5E53-F4F6-40BE-9927-2D2EB1DC01D9}
 		{85310CFA-06FB-4EBA-B7A0-F5A48F213CEE} = {3C6A0B2B-E091-4352-8F49-0336903254A2}
 		{D73C8FBC-B669-4130-83EB-B01A6F49D2BC} = {D3D2945C-76BA-4DE3-90D2-259E2B1406C5}
+		{80A01426-CA8A-45AF-8A95-B17B3763CB91} = {23A5C92F-7ED5-43A1-AF04-082FBB0F8AB8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B89024DA-2E51-49B1-8D52-651372AB5C83}

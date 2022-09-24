@@ -83,7 +83,7 @@ internal sealed class RoslynPageCompiler : IPageCompiler
         var trees = writingResult.SourceFiles.Select(result =>
         {
             return CSharpSyntaxTree.ParseText(result.Text, cancellationToken: token)
-                .WithFilePath($"{result.Path}.cs");
+                .WithFilePath(result.Path);
         });
 
         var optimization = _isDebug ? OptimizationLevel.Debug : OptimizationLevel.Release;
@@ -305,6 +305,8 @@ internal sealed class RoslynPageCompiler : IPageCompiler
                 var file = files.GetFileInfo(path);
                 var contents = await RetryOpenFileAsync(file, token).ConfigureAwait(false);
 
+                contents = contents.Trim();
+
                 using (var streamWriter = new StreamWriter(stream, leaveOpen: true))
                 {
                     using var writer = new IndentedTextWriter(streamWriter);
@@ -332,7 +334,7 @@ internal sealed class RoslynPageCompiler : IPageCompiler
                 aspxFiles.Add((SourceText.From(contents, Encoding.UTF8), path));
 
                 var bytes = stream.ToArray();
-                sourceFiles.Add((SourceText.From(bytes, bytes.Length, Encoding.UTF8, canBeEmbedded: true), path));
+                sourceFiles.Add((SourceText.From(bytes, bytes.Length, Encoding.UTF8, canBeEmbedded: true), $"{path}.cs"));
             }
         }
 
