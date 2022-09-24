@@ -10,7 +10,7 @@
     <PackageReference Include="Microsoft.CodeAnalysis" Version="4.3.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\gen\AspxParser\AspxParser.csproj" />
+    <ProjectReference Include="..\..\gen\Transpiler\Transpiler.csproj" />
     <ProjectReference Include="..\WebForms\WebForms.csproj" />
   </ItemGroup>
 </Project>

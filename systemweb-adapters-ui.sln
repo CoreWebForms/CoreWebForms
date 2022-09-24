@@ -22,7 +22,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{97FC
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SystemWebUISample", "samples\SystemWebUISample\SystemWebUISample.csproj", "{A6057678-BE15-4627-ACD4-7BD7DB72E8FA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspxParser", "gen\AspxParser\AspxParser.csproj", "{85310CFA-06FB-4EBA-B7A0-F5A48F213CEE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Transpiler", "gen\Transpiler\Transpiler.csproj", "{85310CFA-06FB-4EBA-B7A0-F5A48F213CEE}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RuntimeCompilation", "src\RuntimeCompilation\RuntimeCompilation.csproj", "{D73C8FBC-B669-4130-83EB-B01A6F49D2BC}"
 EndProject
