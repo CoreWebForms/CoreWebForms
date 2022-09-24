@@ -5,7 +5,7 @@ using System;
 using System.Text.RegularExpressions;
 using static System.Text.RegularExpressions.RegexOptions;
 
-namespace Microsoft.AspNetCore.SystemWebAdapters.UI.PageParser;
+namespace Microsoft.AspNetCore.SystemWebAdapters.Transpiler;
 
 partial class Parser
 {

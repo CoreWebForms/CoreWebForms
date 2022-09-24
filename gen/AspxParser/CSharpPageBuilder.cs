@@ -8,11 +8,11 @@ using System.Collections.Immutable;
 using System.Globalization;
 using System.Linq;
 using System.Text;
-using Microsoft.AspNetCore.SystemWebAdapters.UI.PageParser.Syntax;
+using Microsoft.AspNetCore.SystemWebAdapters.Transpiler.Syntax;
 
-using static Microsoft.AspNetCore.SystemWebAdapters.UI.PageParser.Syntax.AspxNode;
+using static Microsoft.AspNetCore.SystemWebAdapters.Transpiler.Syntax.AspxNode;
 
-namespace Microsoft.AspNetCore.SystemWebAdapters.UI.PageParser;
+namespace Microsoft.AspNetCore.SystemWebAdapters.Transpiler;
 
 public class CSharpPageBuilder : DepthFirstAspxVisitor<object>
 {

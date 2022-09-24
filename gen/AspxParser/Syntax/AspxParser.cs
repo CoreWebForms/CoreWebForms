@@ -4,9 +4,9 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using Microsoft.AspNetCore.SystemWebAdapters.UI.PageParser.ParserImpl;
+using Microsoft.AspNetCore.SystemWebAdapters.Transpiler.ParserImpl;
 
-namespace Microsoft.AspNetCore.SystemWebAdapters.UI.PageParser.Syntax;
+namespace Microsoft.AspNetCore.SystemWebAdapters.Transpiler.Syntax;
 
 public sealed class AspxParser : IParserEventListener
 {

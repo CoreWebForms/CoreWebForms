@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Microsoft.AspNetCore.SystemWebAdapters.UI.PageParser.Syntax;
+namespace Microsoft.AspNetCore.SystemWebAdapters.Transpiler.Syntax;
 
 /// <summary>
 /// LINQ to tree extensions

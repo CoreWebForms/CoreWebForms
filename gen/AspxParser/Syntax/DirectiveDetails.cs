@@ -4,7 +4,7 @@
 using System;
 using System.Runtime.CompilerServices;
 
-namespace Microsoft.AspNetCore.SystemWebAdapters.UI.PageParser.Syntax;
+namespace Microsoft.AspNetCore.SystemWebAdapters.Transpiler.Syntax;
 
 internal readonly struct DirectiveDetails
 {

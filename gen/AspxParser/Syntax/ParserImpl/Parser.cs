@@ -3,10 +3,10 @@
 
 using System.Text;
 using System.Text.RegularExpressions;
-using Microsoft.AspNetCore.SystemWebAdapters.UI.PageParser.ParserImpl;
-using Microsoft.AspNetCore.SystemWebAdapters.UI.PageParser.Syntax;
+using Microsoft.AspNetCore.SystemWebAdapters.Transpiler.ParserImpl;
+using Microsoft.AspNetCore.SystemWebAdapters.Transpiler.Syntax;
 
-namespace Microsoft.AspNetCore.SystemWebAdapters.UI.PageParser;
+namespace Microsoft.AspNetCore.SystemWebAdapters.Transpiler;
 
 internal partial class Parser
 {

@@ -4,7 +4,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Microsoft.AspNetCore.SystemWebAdapters.UI.PageParser;
+namespace Microsoft.AspNetCore.SystemWebAdapters.Transpiler;
 
 public class ControlInfo
 {

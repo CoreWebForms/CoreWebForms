@@ -1,9 +1,9 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using Microsoft.AspNetCore.SystemWebAdapters.UI.PageParser.Syntax;
+using Microsoft.AspNetCore.SystemWebAdapters.Transpiler.Syntax;
 
-namespace Microsoft.AspNetCore.SystemWebAdapters.UI.PageParser.ParserImpl;
+namespace Microsoft.AspNetCore.SystemWebAdapters.Transpiler.ParserImpl;
 
 internal interface IParserEventListener
 {
