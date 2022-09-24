@@ -22,7 +22,7 @@
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.SourceGenerators.Testing.XUnit" Version="1.1.1" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\gen\UI.Generator\UI.Generator.csproj" />
+    <ProjectReference Include="..\..\gen\SourceGenerator\SourceGenerator.csproj" />
     <ProjectReference Include="..\..\src\Handlers\Handlers.csproj" />
     <ProjectReference Include="..\..\src\WebForms\WebForms.csproj" />
   </ItemGroup>

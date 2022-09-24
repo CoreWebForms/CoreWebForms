@@ -4,9 +4,9 @@ VisualStudioVersion = 17.3.32819.101
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "gen", "gen", "{3C6A0B2B-E091-4352-8F49-0336903254A2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UI.Generator", "gen\UI.Generator\UI.Generator.csproj", "{4F4404E0-0AC6-4534-8166-D50A49038557}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SourceGenerator", "gen\SourceGenerator\SourceGenerator.csproj", "{4F4404E0-0AC6-4534-8166-D50A49038557}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Generator.Tests", "test\Generator.Tests\Generator.Tests.csproj", "{4D334DD2-C9FF-4D04-A09E-D128C47D373A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SourceGenerator.Tests", "test\SourceGenerator.Tests\SourceGenerator.Tests.csproj", "{4D334DD2-C9FF-4D04-A09E-D128C47D373A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{0E3C5885-15E6-4F5F-8D2C-088A0E255666}"
 EndProject
@@ -16,7 +16,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{D3D2945C-76B
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Handlers", "src\Handlers\Handlers.csproj", "{A8FC25D7-17C3-4822-955B-C2E5426C87BB}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UI.Tests", "test\UI.Tests\UI.Tests.csproj", "{A8186D39-0E3D-4CA5-BF64-0414CACC18A6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Webforms.Tests", "test\Webforms.Tests\Webforms.Tests.csproj", "{A8186D39-0E3D-4CA5-BF64-0414CACC18A6}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{97FC5E53-F4F6-40BE-9927-2D2EB1DC01D9}"
 EndProject
