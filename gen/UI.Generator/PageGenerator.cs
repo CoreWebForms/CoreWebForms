@@ -6,7 +6,7 @@ using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Microsoft.AspNetCore.SystemWebAdapters.Transpiler;
+using Microsoft.AspNetCore.SystemWebAdapters.Compiler;
 using Microsoft.CodeAnalysis;
 
 namespace Microsoft.AspNetCore.SystemWebAdapters.UI.Generator;
