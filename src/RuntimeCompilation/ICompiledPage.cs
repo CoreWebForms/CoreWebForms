@@ -12,4 +12,6 @@ internal interface ICompiledPage : IDisposable
     Type? Type { get; }
 
     Memory<byte> Error { get; }
+
+    IReadOnlyCollection<string> FileDependencies { get; }
 }

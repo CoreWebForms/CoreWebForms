@@ -1,6 +1,10 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
+using System.Collections;
+using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
+using System.Web.Util;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
@@ -13,28 +17,31 @@ internal sealed class CompilationCollection : ICompiledPagesCollection
     private readonly IFileProvider _files;
     private readonly IPageCompiler _compiler;
 
-    private Dictionary<string, TypeInfo> _types;
-    private List<ICompiledPage> _endpointTypes;
+    private ImmutableList<Timed<ICompiledPage>> _compiledPages;
+    private IReadOnlyList<ICompiledPage> _wrapped;
 
     private CancellationTokenSource _cts;
     private CancellationChangeToken _token;
+
+    private readonly IDisposable _aspxFilter;
+    private readonly IDisposable _siteFilter;
 
     public CompilationCollection(IFileProvider files, IPageCompiler compiler, IQueue queue, ILoggerFactory logger)
     {
         _queue = queue;
         _files = files;
         _compiler = compiler;
-        _types = new();
-        _endpointTypes = new();
+        _compiledPages = ImmutableList<Timed<ICompiledPage>>.Empty;
         _cts = new CancellationTokenSource();
         _token = new CancellationChangeToken(_cts.Token);
 
-        ChangeToken.OnChange(() => _files.Watch("**/*.aspx"), OnFileChange);
+        _aspxFilter = ChangeToken.OnChange(() => _files.Watch("**/*.aspx"), OnFileChange);
+        _siteFilter = ChangeToken.OnChange(() => _files.Watch("**/*.site"), OnFileChange);
 
         OnFileChange();
     }
 
-    IReadOnlyList<ICompiledPage> ICompiledPagesCollection.Pages => _endpointTypes;
+    IReadOnlyList<ICompiledPage> ICompiledPagesCollection.Pages => _wrapped;
 
     IChangeToken ICompiledPagesCollection.ChangeToken => _token;
 
@@ -43,50 +50,33 @@ internal sealed class CompilationCollection : ICompiledPagesCollection
 
     private async Task UpdateTypesAsync(CancellationToken token)
     {
-        var tracker = new UpdateTracker(_types);
-        DirectorySearch("/", tracker);
+        var changedFiles = GetFileChanges();
+        var finalPages = _compiledPages.ToBuilder();
 
-        var updatedCollection = new Dictionary<string, TypeInfo>();
-        var items = new List<Type>();
-
-        foreach (var unchanged in tracker.Unchanged)
+        foreach (var file in changedFiles.Deletions)
         {
-            updatedCollection.Add(unchanged, _types[unchanged]);
+            finalPages.Remove(file);
+            file.Item.Dispose();
         }
 
-        foreach (var removed in tracker.Removed)
+        foreach (var file in changedFiles.Changes)
         {
-            if (_types.TryGetValue(removed, out var existing))
+            if (file.Item.CompiledPage is { } existing)
             {
-                existing.Page.Dispose();
+                finalPages.Remove(existing);
+                existing.Item.Dispose();
+            }
+
+            var compilation = await _compiler.CompilePageAsync(_files, file.Item.FullPath, token).ConfigureAwait(false);
+
+            if (compilation is not null)
+            {
+                finalPages.Add(new(compilation, file.LastModified));
             }
         }
 
-        foreach (var added in tracker.Added)
-        {
-            var type = await _compiler.CompilePageAsync(added, token).ConfigureAwait(false);
-
-            if (type is not null)
-            {
-                updatedCollection.Add(added.Id, new(added.File.LastModified, type));
-            }
-        }
-
-        foreach (var changed in tracker.Changed)
-        {
-            _types.Remove(changed.Id, out var existing);
-            existing.Page.Dispose();
-
-            var type = await _compiler.CompilePageAsync(changed, token).ConfigureAwait(false);
-
-            if (type is not null)
-            {
-                updatedCollection.Add(changed.Id, new(changed.File.LastModified, type));
-            }
-        }
-
-        _types = updatedCollection;
-        _endpointTypes = updatedCollection.Select(u => u.Value.Page).ToList();
+        Interlocked.Exchange(ref _compiledPages, finalPages.ToImmutable());
+        Interlocked.Exchange(ref _wrapped, new Wrapper<ICompiledPage>(_compiledPages));
 
         var current = _cts;
 
@@ -97,70 +87,95 @@ internal sealed class CompilationCollection : ICompiledPagesCollection
         current.Dispose();
     }
 
-    private void DirectorySearch(string directory, UpdateTracker tracker)
+    private TrackedFiles GetFileChanges()
     {
-        foreach (var contents in _files.GetDirectoryContents(directory))
+        var dependencies = _compiledPages.SelectMany(t => t.Item.FileDependencies.Select(d => (d, t)))
+            .ToLookup(d => d.d, d => d.t)
+            .ToDictionary(d => d.Key, d => d.ToList());
+        var changes = new HashSet<Timed<ChangedPage>>();
+
+        var result = _compiledPages;
+
+        foreach (var (file, fullpath) in GetFiles())
         {
-            if (contents.IsDirectory)
+            if (dependencies.Remove(fullpath, out var existing))
             {
-                DirectorySearch(Path.Combine(directory, contents.Name), tracker);
+                foreach (var page in existing)
+                {
+                    if (file.LastModified > page.LastModified)
+                    {
+                        changes.Add(new(new(fullpath, page), file.LastModified));
+                    }
+                }
             }
-            else
+            else if (file.Name.EndsWith(".aspx"))
             {
-                tracker.Visit(new(directory, contents));
+                changes.Add(new(new(fullpath), file.LastModified));
             }
         }
+
+        var deletions = dependencies.SelectMany(s => s.Value).Distinct();
+
+        return new TrackedFiles(changes, deletions);
     }
 
-    private sealed class UpdateTracker
+    private readonly record struct TrackedFiles(IEnumerable<Timed<ChangedPage>> Changes, IEnumerable<Timed<ICompiledPage>> Deletions);
+
+    private readonly record struct Timed<T>(T Item, DateTimeOffset LastModified);
+
+    private readonly record struct ChangedPage(string FullPath, Timed<ICompiledPage>? CompiledPage = null);
+
+    IEnumerable<(IFileInfo File, string FullPath)> GetFiles()
     {
-        private readonly Dictionary<string, TypeInfo> _items;
-        private readonly HashSet<string> _existing;
-        private List<PageFile>? _added;
-        private List<PageFile>? _changed;
-        private List<string>? _unchanged;
+        Queue<string> paths = new Queue<string>();
+        paths.Enqueue(string.Empty);
 
-        public UpdateTracker(Dictionary<string, TypeInfo> items)
+        while (paths.Count > 0)
         {
-            _items = items;
-            _existing = new HashSet<string>(items.Keys);
-        }
+            var subpath = paths.Dequeue();
+            var directory = _files.GetDirectoryContents(subpath);
 
-        public void Visit(PageFile file)
-        {
-            if (!file.File.Name.EndsWith(".aspx"))
+            foreach (var item in directory)
             {
-                return;
-            }
-
-            var id = file.Id;
-            _existing.Remove(id);
-
-            if (_items.TryGetValue(id, out var existing))
-            {
-                if (file.File.LastModified > existing.LastModified)
+                if (item.IsDirectory)
                 {
-                    (_changed ??= new()).Add(file);
+                    paths.Enqueue(Path.Combine(subpath, item.Name));
                 }
                 else
                 {
-                    (_unchanged ??= new()).Add(id);
+                    yield return (item, Path.Combine(subpath, item.Name));
                 }
             }
-            else
+        }
+    }
+
+    public void Dispose()
+    {
+        _aspxFilter.Dispose();
+        _siteFilter.Dispose();
+    }
+
+    private sealed class Wrapper<T> : IReadOnlyList<T>
+    {
+        private readonly ImmutableList<Timed<T>> _list;
+
+        public Wrapper(ImmutableList<Timed<T>> list)
+        {
+            _list = list;
+        }
+
+        public T this[int index] => _list[index].Item;
+
+        public int Count => _list.Count;
+
+        public IEnumerator<T> GetEnumerator()
+        {
+            foreach (var item in _list)
             {
-                (_added ??= new()).Add(file);
+                yield return item.Item;
             }
         }
 
-        public IEnumerable<PageFile> Changed => _changed ?? Enumerable.Empty<PageFile>();
-
-        public IEnumerable<PageFile> Added => _added ?? Enumerable.Empty<PageFile>();
-
-        public IEnumerable<string> Unchanged => _unchanged ?? Enumerable.Empty<string>();
-
-        public IEnumerable<string> Removed => _existing;
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
-
-    private readonly record struct TypeInfo(DateTimeOffset LastModified, ICompiledPage Page);
 }

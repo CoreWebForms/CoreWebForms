@@ -21,7 +21,7 @@ public static class DynamicPageEndpointBuilder
         endpoints.DataSources.Add(new DynamicPageEndpointDataSource(collection));
     }
 
-    private sealed class DynamicPageEndpointDataSource : EndpointDataSource
+    private sealed class DynamicPageEndpointDataSource : EndpointDataSource, IDisposable
     {
         private readonly ICompiledPagesCollection _collection;
         private CompiledEndpoint _endpoints;
@@ -63,6 +63,8 @@ public static class DynamicPageEndpointBuilder
                 return newList;
             }
         }
+
+        void IDisposable.Dispose() => _collection.Dispose();
 
         public override IChangeToken GetChangeToken() => _collection.ChangeToken;
 

@@ -41,7 +41,7 @@ internal sealed class RoslynPageCompiler : IPageCompiler
         _factory = factory;
     }
 
-    public async Task<ICompiledPage> CompilePageAsync(PageFile file, CancellationToken token)
+    public async Task<ICompiledPage> CompilePageAsync(IFileProvider files, string path, CancellationToken token)
     {
         if (_isCompiling)
         {
@@ -52,7 +52,7 @@ internal sealed class RoslynPageCompiler : IPageCompiler
 
         try
         {
-            return await CompilePageInternalAsync(file, token).ConfigureAwait(false);
+            return await CompilePageInternalAsync(files, path, token).ConfigureAwait(false);
         }
         finally
         {
@@ -60,21 +60,24 @@ internal sealed class RoslynPageCompiler : IPageCompiler
         }
     }
 
-    public async Task<ICompiledPage> CompilePageInternalAsync(PageFile file, CancellationToken token)
+    public async Task<ICompiledPage> CompilePageInternalAsync(IFileProvider files, string path, CancellationToken token)
     {
         using var sourceStream = new MemoryStream();
         var (references, components) = GetMetadataReferences();
 
-        var writingResult = await WriteSourceAsync(file.Directory, file.File, components, sourceStream, token).ConfigureAwait(false);
+        var directory = Path.GetDirectoryName(path)!;
+        var file = files.GetFileInfo(path);
+
+        var writingResult = await WriteSourceAsync(directory, file, components, sourceStream, token).ConfigureAwait(false);
 
         if (writingResult.ErrorMessage is { } errorMessage)
         {
-            return new CompiledPage(writingResult.Path) { Error = Encoding.UTF8.GetBytes(errorMessage) };
+            return new CompiledPage(writingResult.Path, path) { Error = Encoding.UTF8.GetBytes(errorMessage) };
         }
 
         if (writingResult is { Errors.IsDefault: false, Errors.IsEmpty: false })
         {
-            return new CompiledPage(writingResult.Path) { Error = JsonSerializer.SerializeToUtf8Bytes(writingResult.Errors) };
+            return new CompiledPage(writingResult.Path, path) { Error = JsonSerializer.SerializeToUtf8Bytes(writingResult.Errors) };
         }
 
         Debug.Assert(writingResult.ClassName is not null);
@@ -100,7 +103,7 @@ internal sealed class RoslynPageCompiler : IPageCompiler
 
         if (writingResult.AspxContents is { } aspx)
         {
-            embeddedTexts.Add(EmbeddedText.FromSource(file.File.Name, SourceText.From(aspx)));
+            embeddedTexts.Add(EmbeddedText.FromSource(file.Name, SourceText.From(aspx)));
         }
 
         var result = compilation.Emit(
@@ -122,7 +125,7 @@ internal sealed class RoslynPageCompiler : IPageCompiler
 
             var message = JsonSerializer.SerializeToUtf8Bytes(error);
 
-            return new CompiledPage(writingResult.Path) { Error = message };
+            return new CompiledPage(writingResult.Path, path) { Error = message };
         }
 
         pdbStream.Position = 0;
@@ -132,17 +135,18 @@ internal sealed class RoslynPageCompiler : IPageCompiler
         var assembly = context.LoadFromStream(peStream, pdbStream);
         if (assembly.GetType(writingResult.ClassName) is Type type)
         {
-            return new CompiledPage(writingResult.Path) { Type = type };
+            return new CompiledPage(writingResult.Path, path) { Type = type };
         }
 
-        return new CompiledPage(writingResult.Path) { Error = NotTypeFoundMessage };
+        return new CompiledPage(writingResult.Path, path) { Error = NotTypeFoundMessage };
     }
 
     private sealed class CompiledPage : ICompiledPage
     {
-        public CompiledPage(PathString path)
+        public CompiledPage(PathString path, string filePath)
         {
             Path = path;
+            FileDependencies = new[] { filePath};
         }
 
         public Type? Type { get; set; }
@@ -150,6 +154,8 @@ internal sealed class RoslynPageCompiler : IPageCompiler
         public Memory<byte> Error { get; set; }
 
         public PathString Path { get; }
+
+        public IReadOnlyCollection<string> FileDependencies { get; }
 
         public void Dispose()
         {
