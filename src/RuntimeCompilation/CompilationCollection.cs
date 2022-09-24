@@ -32,6 +32,7 @@ internal sealed class CompilationCollection : ICompiledPagesCollection
         _files = files;
         _compiler = compiler;
         _compiledPages = ImmutableList<Timed<ICompiledPage>>.Empty;
+        _wrapped = Array.Empty<ICompiledPage>();
         _cts = new CancellationTokenSource();
         _token = new CancellationChangeToken(_cts.Token);
 

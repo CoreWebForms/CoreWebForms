@@ -31,7 +31,7 @@ public class MasterPage : UserControl
     private MasterPage _master;
 
     // The collection used to store the templates created on the content page.
-    private readonly IDictionary _contentTemplates;
+    private IDictionary _contentTemplates;
 
     // The collection used to store the content templates defined in MasterPage.
     private IDictionary _contentTemplateCollection;
@@ -150,31 +150,14 @@ public class MasterPage : UserControl
     internal static MasterPage CreateMaster(TemplateControl owner, HttpContext context,
         VirtualPath masterPageFile, IDictionary contentTemplateCollection)
     {
+        throw new NotImplementedException();
+    }
 
+    internal static MasterPage CreateMaster(TemplateControl owner, HttpContext context, MasterPage master, IDictionary contentTemplateCollection)
+    {
         Debug.Assert(owner is MasterPage || owner is Page);
 
-        MasterPage master = null;
-
-        if (masterPageFile == null)
-        {
-            if (contentTemplateCollection != null && contentTemplateCollection.Count > 0)
-            {
-                throw new HttpException(SR.GetString(SR.Content_only_allowed_in_content_page));
-            }
-
-            return null;
-        }
-
-        // If it's relative, make it *app* relative.  Treat is as relative to this
-        // user control (ASURT 55513)
-        VirtualPath virtualPath = VirtualPathProvider.CombineVirtualPathsInternal(
-            owner.TemplateControlVirtualPath, masterPageFile);
-
-        throw new NotImplementedException("Template creation is not supported yet");
-#if PORT_CREATE_MASTERPAGE
-        master = (MasterPage)result.CreateInstance();
-
-        master.TemplateControlVirtualPath = virtualPath;
+        master.TemplateControlVirtualPath = "site.master";
 
         if (owner.HasControls())
         {
@@ -203,7 +186,7 @@ public class MasterPage : UserControl
             {
                 if (!master.ContentPlaceHolders.Contains(contentName.ToLower(CultureInfo.InvariantCulture)))
                 {
-                    throw new HttpException(SR.GetString(SR.MasterPage_doesnt_have_contentplaceholder, contentName, masterPageFile));
+                    throw new HttpException(SR.GetString(SR.MasterPage_doesnt_have_contentplaceholder, contentName));
                 }
             }
             master._contentTemplates = contentTemplateCollection;
@@ -213,7 +196,6 @@ public class MasterPage : UserControl
         master.InitializeAsUserControl(owner.Page);
         owner.Controls.Add(master);
         return master;
-#endif
     }
 
     internal static void ApplyMasterRecursive(MasterPage master, IList appliedMasterFilePaths)

@@ -188,9 +188,7 @@ public class Page : TemplateControl, IHttpAsyncHandler
     private readonly PageTheme _theme;
     private string _styleSheetName;
     private readonly PageTheme _styleSheet;
-#if PORT_MASTERPAGE
     private MasterPage _master;
-#endif
     private IDictionary _contentTemplateCollection;
     internal HttpContext _context;
 
@@ -832,7 +830,6 @@ public class Page : TemplateControl, IHttpAsyncHandler
         }
     }
 
-#if PORT_MASTER_PAGE
     /// <devdoc>
     ///    <para>The MasterPage used by the Page.</para>
     /// </devdoc>
@@ -845,15 +842,19 @@ public class Page : TemplateControl, IHttpAsyncHandler
     {
         get
         {
-            if (_master == null && !_preInitWorkComplete)
+            if (_master == null && !_preInitWorkComplete && CreateMasterPage() is { } master)
             {
-                _master = MasterPage.CreateMaster(this, Context, _masterPageFile, _contentTemplateCollection);
+                _master = MasterPage.CreateMaster(this, Context, master, _contentTemplateCollection);
+                _master = CreateMasterPage();
             }
 
             return _master;
         }
     }
 
+    protected virtual MasterPage CreateMasterPage() => null;
+
+#if PORT_MASTERPAGE_PATH
     /// <devdoc>
     ///    <para>Gets and sets the masterPageFile of this Page.</para>
     /// </devdoc>
@@ -2925,16 +2926,14 @@ window.onload = WebForm_RestoreScrollPosition;
         }
     }
 
-    private static void ApplyMasterPage()
+    private void ApplyMasterPage()
     {
-#if PORT_MASTERPAGE
         if (Master != null)
         {
             ArrayList appliedMasterPages = new ArrayList();
-            appliedMasterPages.Add(_masterPageFile.VirtualPathString.ToLower(CultureInfo.InvariantCulture));
+            appliedMasterPages.Add(Master.VirtualPath);//_masterPageFile.VirtualPathString.ToLower(CultureInfo.InvariantCulture));
             MasterPage.ApplyMasterRecursive(Master, appliedMasterPages);
         }
-#endif
     }
 
     internal void ApplyControlSkin(Control ctrl)

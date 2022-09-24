@@ -224,4 +224,15 @@ internal static class Util
     {
         return true;
     }
+
+    internal static int FirstNonWhiteSpaceIndex(string s)
+    {
+        for (int i = 0; i < s.Length; i++)
+        {
+            if (!Char.IsWhiteSpace(s[i]))
+                return i;
+        }
+
+        return -1;
+    }
 }
