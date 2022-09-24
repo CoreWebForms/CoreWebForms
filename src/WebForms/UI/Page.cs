@@ -845,7 +845,6 @@ public class Page : TemplateControl, IHttpAsyncHandler
             if (_master == null && !_preInitWorkComplete && CreateMasterPage() is { } master)
             {
                 _master = MasterPage.CreateMaster(this, Context, master, _contentTemplateCollection);
-                _master = CreateMasterPage();
             }
 
             return _master;

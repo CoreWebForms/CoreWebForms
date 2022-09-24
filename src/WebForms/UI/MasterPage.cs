@@ -88,12 +88,14 @@ public class MasterPage : UserControl
         {
             if (_master == null && !_masterPageApplied)
             {
-                _master = MasterPage.CreateMaster(this, Context, _masterPageFile, _contentTemplateCollection);
+                _master = CreateMasterPage();
             }
 
             return _master;
         }
     }
+
+    protected virtual MasterPage CreateMasterPage() => null;
 
     /// <devdoc>
     ///    <para>Gets and sets the masterPageFile of this control.</para>
@@ -157,10 +159,11 @@ public class MasterPage : UserControl
     {
         Debug.Assert(owner is MasterPage || owner is Page);
 
-        master.TemplateControlVirtualPath = "site.master";
+        master.TemplateControlVirtualPath = "~/Site.Master";
 
         if (owner.HasControls())
         {
+#if PORT_MASTERPAGE
             foreach (Control control in owner.Controls)
             {
                 LiteralControl literal = control as LiteralControl;
@@ -169,6 +172,7 @@ public class MasterPage : UserControl
                     throw new HttpException(SR.GetString(SR.Content_allowed_in_top_level_only));
                 }
             }
+#endif
 
             // Remove existing controls.
             owner.Controls.Clear();

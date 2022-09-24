@@ -33,7 +33,7 @@ public class CSharpPageBuilder : DepthFirstAspxVisitor<object>
         _controls = controls.ToDictionary(c => c.Name, c => c);
 
         Path = NormalizePath(path);
-        ClassName = ConvertPathToClassName(Path);
+        ClassName = ConvertPathToClassName(path);
 
         _writer = writer;
         _blockClose = new IndentClose(writer, includeBrace: true);
@@ -297,7 +297,7 @@ public class CSharpPageBuilder : DepthFirstAspxVisitor<object>
         _writer.Write(name);
         _writer.Write(" = new CodeRender(() => ");
         _writer.Write(node.Expression);
-        _writer.Write(");");
+        _writer.WriteLine(");");
 
         WriteControls(name);
 
@@ -561,7 +561,7 @@ public class CSharpPageBuilder : DepthFirstAspxVisitor<object>
             .Replace("\n", "\\n")
             .Replace("\r", "\\r");
 
-    private static string NormalizePath(string path)
+    public static string NormalizePath(string path)
     {
         var sb = new StringBuilder(path);
 
@@ -582,7 +582,7 @@ public class CSharpPageBuilder : DepthFirstAspxVisitor<object>
         return _blockClose;
     }
 
-    private string ConvertPathToClassName(string input)
+    public static string ConvertPathToClassName(string input)
     {
         var sb = new StringBuilder(input);
 

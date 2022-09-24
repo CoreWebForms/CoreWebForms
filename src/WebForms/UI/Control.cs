@@ -11,6 +11,7 @@ using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Web.UI.WebControls;
 using System.Web.Util;
+using Microsoft.AspNetCore.SystemWebAdapters;
 
 #nullable disable
 
@@ -373,6 +374,8 @@ public partial class Control : IComponent, IParserAccessor, IDataBindingsAccesso
     {
         get
         {
+            return false;
+#if PORT_DESIGNMODE
             if (!flags[designModeChecked])
             {
                 Page page = Page;
@@ -420,7 +423,7 @@ public partial class Control : IComponent, IParserAccessor, IDataBindingsAccesso
                 flags.Set(designModeChecked);
             }
             return flags[designMode];
-
+#endif
         }
     }
 
@@ -877,7 +880,7 @@ public partial class Control : IComponent, IParserAccessor, IDataBindingsAccesso
     DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden),
     WebSysDescription(SR.Control_Page)
     ]
-    public Page Page => GetHierarchicalFeature<Page>() ?? throw new InvalidOperationException();
+    public Page Page => GetHierarchicalFeature<Page>() ?? HttpContext.Current.GetFeature<IHttpHandlerFeature>()?.Current as Page ?? throw new InvalidOperationException();
 
 #if PORT_ROUTE_TABLE
     internal RouteCollection RouteCollection

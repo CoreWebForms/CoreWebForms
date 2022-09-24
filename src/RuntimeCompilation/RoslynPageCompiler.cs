@@ -62,12 +62,11 @@ internal sealed class RoslynPageCompiler : IPageCompiler
 
     public async Task<ICompiledPage> CompilePageInternalAsync(IFileProvider files, string path, CancellationToken token)
     {
-        using var sourceStream = new MemoryStream();
         var (references, components) = GetMetadataReferences();
 
         var directory = Path.GetDirectoryName(path)!;
 
-        var writingResult = await WriteSourceAsync(files, path, components, sourceStream, token).ConfigureAwait(false);
+        var writingResult = await GetSourceAsync(files, path, components, token).ConfigureAwait(false);
 
         if (writingResult.ErrorMessage is { } errorMessage)
         {
@@ -81,29 +80,26 @@ internal sealed class RoslynPageCompiler : IPageCompiler
 
         Debug.Assert(writingResult.ClassName is not null);
 
-        sourceStream.Position = 0;
+        var trees = writingResult.SourceFiles.Select(result =>
+        {
+            return CSharpSyntaxTree.ParseText(result.Text, cancellationToken: token)
+                .WithFilePath($"{result.Path}.cs");
+        });
 
-        var sourceText = SourceText.From(sourceStream, Encoding.UTF8, canBeEmbedded: true);
-        var tree = CSharpSyntaxTree.ParseText(sourceText, cancellationToken: token)
-            .WithFilePath($"{writingResult.ClassName}.cs");
         var optimization = _isDebug ? OptimizationLevel.Debug : OptimizationLevel.Release;
 
         var compilation = CSharpCompilation.Create($"WebForms.{writingResult.ClassName}",
             options: new CSharpCompilationOptions(
                 outputKind: OutputKind.DynamicallyLinkedLibrary,
                 optimizationLevel: optimization),
-            syntaxTrees: new[] { tree },
+            syntaxTrees: trees,
             references: references);
 
         using var peStream = new MemoryStream();
         using var pdbStream = new MemoryStream();
 
-        var embeddedTexts = new List<EmbeddedText> { EmbeddedText.FromSource(tree.FilePath, sourceText) };
-
-        if (writingResult.AspxContents is { } aspx)
-        {
-            embeddedTexts.Add(EmbeddedText.FromSource(path, SourceText.From(aspx)));
-        }
+        var embeddedTexts = writingResult.AllFiles
+            .Select(result => EmbeddedText.FromSource(result.Path, result.Text));
 
         var result = compilation.Emit(
             embeddedTexts: embeddedTexts,
@@ -292,33 +288,60 @@ internal sealed class RoslynPageCompiler : IPageCompiler
         }
     }
 
-    private async Task<WritingResult> WriteSourceAsync(IFileProvider files, string path, IEnumerable<ControlInfo> controls, Stream stream, CancellationToken token)
+    private async Task<WritingResult> GetSourceAsync(IFileProvider files, string filePath, IEnumerable<ControlInfo> controls, CancellationToken token)
     {
-        using var streamWriter = new StreamWriter(stream, leaveOpen: true);
-        using var writer = new IndentedTextWriter(streamWriter);
+        var paths = new Queue<string>();
+        paths.Enqueue(filePath);
 
-        var file = files.GetFileInfo(path);
-        var contents = await RetryOpenFileAsync(file, token).ConfigureAwait(false);
-        var generator = new CSharpPageBuilder(path, writer, contents, controls);
+        var sourceFiles = new List<(SourceText, string)>();
+        var aspxFiles = new List<(SourceText, string)>();
 
-        if (!generator.Errors.IsDefaultOrEmpty)
+        while (paths.Count > 0)
         {
-            return new WritingResult(generator.Path) { Errors = generator.Errors };
+            var path = paths.Dequeue();
+
+            using (var stream = new MemoryStream())
+            {
+                var file = files.GetFileInfo(path);
+                var contents = await RetryOpenFileAsync(file, token).ConfigureAwait(false);
+
+                using (var streamWriter = new StreamWriter(stream, leaveOpen: true))
+                {
+                    using var writer = new IndentedTextWriter(streamWriter);
+
+                    var generator = new CSharpPageBuilder(path, writer, contents, controls);
+
+                    if (!generator.Errors.IsDefaultOrEmpty)
+                    {
+                        return new WritingResult(generator.Path) { Errors = generator.Errors };
+                    }
+
+                    generator.WriteSource();
+
+                    if (!generator.HasDirective)
+                    {
+                        return new WritingResult(generator.Path) { ErrorMessage = "File does not have a directive" };
+                    }
+
+                    foreach (var additional in generator.AdditionalFiles)
+                    {
+                        paths.Enqueue(additional);
+                    }
+                }
+
+                aspxFiles.Add((SourceText.From(contents, Encoding.UTF8), path));
+
+                var bytes = stream.ToArray();
+                sourceFiles.Add((SourceText.From(bytes, bytes.Length, Encoding.UTF8, canBeEmbedded: true), path));
+            }
         }
 
-        generator.WriteSource();
-
-        if (!generator.HasDirective)
+        return new WritingResult(CSharpPageBuilder.NormalizePath(filePath))
         {
-            return new WritingResult(generator.Path) { ErrorMessage = "File does not have a directive" };
-        }
-
-        //if (generator.AdditionalFiles.FirstOrDefault() is { } additional)
-        //{
-        //    var ms = new MemoryStream();
-        //}
-
-        return new WritingResult(generator.Path) { ClassName = generator.ClassName };
+            ClassName = CSharpPageBuilder.ConvertPathToClassName(filePath),
+            AspxFiles = aspxFiles,
+            SourceFiles = sourceFiles,
+        };
     }
 
     private sealed record WritingResult(string Path)
@@ -327,9 +350,13 @@ internal sealed class RoslynPageCompiler : IPageCompiler
 
         public string? ErrorMessage { get; init; }
 
-        public string? AspxContents { get; init; }
+        public IReadOnlyCollection<(SourceText Text, string Path)> AspxFiles { get; init; } = Array.Empty<(SourceText Text, string Path)>();
+
+        public IReadOnlyCollection<(SourceText Text, string Path)> SourceFiles { get; init; } = Array.Empty<(SourceText, string)>();
 
         public ImmutableArray<AspxParseError> Errors { get; init; }
+
+        public IEnumerable<(SourceText Text, string Path)> AllFiles => SourceFiles.Concat(AspxFiles);
     }
 
     private async Task<string> RetryOpenFileAsync(IFileInfo file, CancellationToken token, int retryCount = 5)
