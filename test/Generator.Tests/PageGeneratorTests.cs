@@ -29,7 +29,7 @@ public class PageGeneratorTests
     {
     }
 }";
-        var aspx = "<%@ Page Title=\"About\" Language=\"C#\" AutoEventWireup=\"true\" CodeBehind=\"About.aspx.cs\" Inherits=\"WebApplication12.About\" %>\r\n";
+        var aspx = "<%@ Page Title=\"About\" Language=\"C#\" AutoEventWireup=\"true\" CodeBehind=\"About.aspx.cs\" Inherits=\"WebApplication12.About\" %>";
         var generated = @$"using System;
 using System.Web;
 using System.Web.UI;
@@ -107,7 +107,7 @@ internal partial class _page_aspx : WebApplication12.About
     {{
         var control_1 = new global::System.Web.UI.LiteralControl(""<div />"");
         control.Controls.Add(control_1);
-        var control_2 = new global::System.Web.UI.LiteralControl(""\r\n"");
+        var control_2 = new global::System.Web.UI.LiteralControl(""{NewLine}"");
         control.Controls.Add(control_2);
     }}
     private void Initialize()
@@ -170,7 +170,7 @@ internal partial class _page_aspx : WebApplication12.About
         control_1.ID = ""hi"";
         hi = control_1;
         control.Controls.Add(control_1);
-        var control_2 = new global::System.Web.UI.LiteralControl(""\r\n"");
+        var control_2 = new global::System.Web.UI.LiteralControl(""{NewLine}"");
         control.Controls.Add(control_2);
     }}
     private void Initialize()
@@ -237,16 +237,16 @@ internal partial class _page_aspx : WebApplication12.About
         frm = control_1;
         control.Controls.Add(control_1);
         {{
-            var control_1_1 = new global::System.Web.UI.LiteralControl(""\r\n    "");
+            var control_1_1 = new global::System.Web.UI.LiteralControl(""{NewLine}    "");
             control_1.Controls.Add(control_1_1);
             var control_1_2 = new global::System.Web.UI.WebControls.TextBox();
             control_1_2.ID = ""txt"";
             txt = control_1_2;
             control_1.Controls.Add(control_1_2);
-            var control_1_3 = new global::System.Web.UI.LiteralControl(""\r\n"");
+            var control_1_3 = new global::System.Web.UI.LiteralControl(""{NewLine}"");
             control_1.Controls.Add(control_1_3);
         }}
-        var control_2 = new global::System.Web.UI.LiteralControl(""\r\n"");
+        var control_2 = new global::System.Web.UI.LiteralControl(""{NewLine}"");
         control.Controls.Add(control_2);
     }}
     private void Initialize()
@@ -313,7 +313,7 @@ internal partial class _page_aspx : WebApplication12.About
         control.Controls.Add(control_2);
         var control_3 = new global::System.Web.UI.LiteralControl(""</h1>"");
         control.Controls.Add(control_3);
-        var control_4 = new global::System.Web.UI.LiteralControl(""\r\n"");
+        var control_4 = new global::System.Web.UI.LiteralControl(""{NewLine}"");
         control.Controls.Add(control_4);
     }}
     private void Initialize()
@@ -388,7 +388,7 @@ internal partial class _page_aspx : WebApplication12.About
         control.Controls.Add(control_2);
         var control_3 = new global::System.Web.UI.LiteralControl(""</h1>"");
         control.Controls.Add(control_3);
-        var control_4 = new global::System.Web.UI.LiteralControl(""\r\n"");
+        var control_4 = new global::System.Web.UI.LiteralControl(""{NewLine}"");
         control.Controls.Add(control_4);
     }}
     private void Initialize()
