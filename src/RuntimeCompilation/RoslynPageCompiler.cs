@@ -66,9 +66,8 @@ internal sealed class RoslynPageCompiler : IPageCompiler
         var (references, components) = GetMetadataReferences();
 
         var directory = Path.GetDirectoryName(path)!;
-        var file = files.GetFileInfo(path);
 
-        var writingResult = await WriteSourceAsync(directory, file, components, sourceStream, token).ConfigureAwait(false);
+        var writingResult = await WriteSourceAsync(files, path, components, sourceStream, token).ConfigureAwait(false);
 
         if (writingResult.ErrorMessage is { } errorMessage)
         {
@@ -103,7 +102,7 @@ internal sealed class RoslynPageCompiler : IPageCompiler
 
         if (writingResult.AspxContents is { } aspx)
         {
-            embeddedTexts.Add(EmbeddedText.FromSource(file.Name, SourceText.From(aspx)));
+            embeddedTexts.Add(EmbeddedText.FromSource(path, SourceText.From(aspx)));
         }
 
         var result = compilation.Emit(
@@ -146,7 +145,7 @@ internal sealed class RoslynPageCompiler : IPageCompiler
         public CompiledPage(PathString path, string filePath)
         {
             Path = path;
-            FileDependencies = new[] { filePath};
+            FileDependencies = new[] { filePath };
         }
 
         public Type? Type { get; set; }
@@ -293,13 +292,14 @@ internal sealed class RoslynPageCompiler : IPageCompiler
         }
     }
 
-    private async Task<WritingResult> WriteSourceAsync(string directory, IFileInfo file, IEnumerable<ControlInfo> controls, Stream stream, CancellationToken token)
+    private async Task<WritingResult> WriteSourceAsync(IFileProvider files, string path, IEnumerable<ControlInfo> controls, Stream stream, CancellationToken token)
     {
         using var streamWriter = new StreamWriter(stream, leaveOpen: true);
         using var writer = new IndentedTextWriter(streamWriter);
 
+        var file = files.GetFileInfo(path);
         var contents = await RetryOpenFileAsync(file, token).ConfigureAwait(false);
-        var generator = new CSharpPageBuilder(Path.Combine(directory, file.Name), writer, contents, controls);
+        var generator = new CSharpPageBuilder(path, writer, contents, controls);
 
         if (!generator.Errors.IsDefaultOrEmpty)
         {
@@ -312,6 +312,11 @@ internal sealed class RoslynPageCompiler : IPageCompiler
         {
             return new WritingResult(generator.Path) { ErrorMessage = "File does not have a directive" };
         }
+
+        //if (generator.AdditionalFiles.FirstOrDefault() is { } additional)
+        //{
+        //    var ms = new MemoryStream();
+        //}
 
         return new WritingResult(generator.Path) { ClassName = generator.ClassName };
     }

@@ -215,9 +215,16 @@ public class CSharpPageBuilder : DepthFirstAspxVisitor<object>
         private string Prefix { get; }
     }
 
+    public List<string> AdditionalFiles { get; } = new();
+
     private void WriteDirectiveDetails(AspxDirective node)
     {
         var info = new DirectiveDetails(node);
+
+        if (info.IsPage && info.MasterPageFile is { } file)
+        {
+            AdditionalFiles.Add(file.Trim('~'));
+        }
 
         _writer.Write("[Microsoft.AspNetCore.SystemWebAdapters.UI.AspxPageAttribute(\"");
         _writer.Write(Path);
