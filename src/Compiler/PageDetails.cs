@@ -103,11 +103,47 @@ public class PageDetails
         T VisitChildren<T>(T node)
             where T : AspxNode
         {
-            var children = new List<AspxNode>();
+            if (node.Children.Count == 0)
+            {
+                return node;
+            }
 
+            var children = new List<AspxNode>();
+            Literal previous = null;
+
+            // Combine any Literal nodes that are in succession to each other
             foreach (var child in node.Children)
             {
-                children.AddRange(Visit(child));
+                foreach (var visited in Visit(child))
+                {
+                    if (visited is Literal literal)
+                    {
+                        if (previous is null)
+                        {
+                            previous = literal;
+                        }
+                        else
+                        {
+                            var newLocation = new Location(previous.Location.Source, previous.Location.Start, previous.Location.End + literal.Location.Length);
+                            previous = new Literal(previous.Text + literal.Text, newLocation);
+                        }
+                    }
+                    else
+                    {
+                        if (previous is not null)
+                        {
+                            children.Add(previous);
+                            previous = null;
+                        }
+
+                        children.Add(visited);
+                    }
+                }
+            }
+
+            if (previous is not null)
+            {
+                children.Add(previous);
             }
 
             node.Children = children;
@@ -137,9 +173,15 @@ public class PageDetails
             {
                 yield return literal;
             }
-            else if (node is CloseAspxTag || node is CloseHtmlTag)
+            else if (node is CloseAspxTag closeAspx)
             {
                 yield break;
+            }
+            else if (node is CloseHtmlTag closeHtml)
+            {
+                yield break;
+                // Can't tell if it is runat=server
+                //yield return new Literal($"</{closeHtml.Name}>", closeHtml.Location);
             }
             else if (node is AspxTag aspx)
             {
@@ -174,7 +216,7 @@ public class PageDetails
                             yield return visited;
                         }
 
-                        yield return new Literal($"</{html.Name}>", html.Location);
+                        yield return new Literal($"</{html.Name}>", new Location());
                     }
                 }
                 else if (html.Attributes.IsRunAtServer && string.Equals(html.Name, "script", StringComparison.OrdinalIgnoreCase))
