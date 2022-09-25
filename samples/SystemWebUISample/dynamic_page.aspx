@@ -18,7 +18,7 @@
 
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
-  <asp:Label id="label" Text="First Nam2e" runat="server" />
+  <asp:Label id="label" Text="First Name" runat="server" />
   <asp:TextBox id="txt" runat="server" Value="Leave it alone" />
 
   <hr />
