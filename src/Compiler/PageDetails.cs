@@ -37,6 +37,8 @@ public class PageDetails
 
     public IReadOnlyCollection<AspxNode> Nodes { get; private set; }
 
+    public IEnumerable<CodeRenderEncode> CodeSnippets => _encodes;
+
     public string Path { get; private set; }
 
     public string ClassName { get; private set; }
@@ -129,7 +131,7 @@ public class PageDetails
             else if (node is CodeRenderEncode encode)
             {
                 details._encodes.Add(encode);
-                yield break;
+                yield return node;
             }
             else if (node is Literal literal)
             {
@@ -213,6 +215,7 @@ public class PageDetails
         {
             sb.Insert(0, '/');
         }
+
 
         sb.Replace("~", string.Empty);
         sb.Replace("\\", "/");

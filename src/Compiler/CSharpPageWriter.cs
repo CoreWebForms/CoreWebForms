@@ -4,6 +4,7 @@
 using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -62,6 +63,7 @@ public class CSharpPageWriter
             WriteCreateMasterPage();
             WriteInitializer();
             WriteScripts();
+            WriteCodeSnippets();
 
             // Must be last for now as we populate the list while writing - this should be moved to PageDetails
             WriteVariables();
@@ -133,6 +135,10 @@ public class CSharpPageWriter
         {
             Write(string.Empty, html.Name, "System.Web.UI.HtmlControls", html.Attributes, level);
         }
+        else if (tag is AspxNode.CodeRenderEncode encode)
+        {
+            WriteCodeSnippets(encode, level);
+        }
 
         if (tag.Children.Count > 0)
         {
@@ -147,6 +153,19 @@ public class CSharpPageWriter
         }
     }
 
+    private void WriteCodeSnippets(AspxNode.CodeRenderEncode encode, ComponentLevel level)
+    {
+        var name = level.GetNextControlName();
+
+        _writer.Write("var ");
+        _writer.Write(name);
+        _writer.Write(" = new CodeRender(() => ");
+        _writer.Write(encode.Expression);
+        _writer.WriteLine(");");
+
+        WriteControls(name, level);
+    }
+
     private void Write(string prefix, string tagName, string ns, TagAttributes attributes, ComponentLevel level)
     {
         var name = level.GetNextControlName();
@@ -154,34 +173,25 @@ public class CSharpPageWriter
         _writer.Write("var ");
         _writer.Write(name);
 
-        if (attributes.IsRunAtServer)
+        Debug.Assert(attributes.IsRunAtServer);
+
+        QName type;
+
+        if (_htmlControls.TryGetValue(tagName, out var known))
         {
-            QName type;
-
-            if (_htmlControls.TryGetValue(tagName, out var known))
-            {
-                tagName = known;
-            }
-
-            _writer.Write(" = new ");
-            _writer.Write(ns);
-            _writer.Write('.');
-            _writer.Write(tagName);
-            _writer.WriteLine("();");
-
-            type = new(ns, tagName);
-
-            WriteId(attributes.Id, name, type);
-            WriteAttributes(prefix, tagName, attributes, name);
+            tagName = known;
         }
-        else
-        {
-            _writer.Write(" = new global::System.Web.UI.LiteralControl(\"");
-            _writer.Write("<");
-            _writer.Write(tagName);
-            //_writer.Write(isClosing ? " />" : ">");
-            _writer.WriteLine("\");");
-        }
+
+        _writer.Write(" = new ");
+        _writer.Write(ns);
+        _writer.Write('.');
+        _writer.Write(tagName);
+        _writer.WriteLine("();");
+
+        type = new(ns, tagName);
+
+        WriteId(attributes.Id, name, type);
+        WriteAttributes(prefix, tagName, attributes, name);
 
         WriteControls(name, level);
     }
@@ -329,8 +339,13 @@ public class CSharpPageWriter
                 }
             }
         }
+    }
 
-        const string CodeRender = @"private sealed class CodeRender : global::System.Web.UI.Control
+    private void WriteCodeSnippets()
+    {
+        if (_details.CodeSnippets.Any())
+        {
+            const string CodeRender = @"private sealed class CodeRender : global::System.Web.UI.Control
     {
         private readonly Func<object> _factory;
 
@@ -347,8 +362,8 @@ public class CSharpPageWriter
         }
     }";
 
-        _writer.WriteLine(CodeRender);
-
+            _writer.WriteLine(CodeRender);
+        }
     }
 
     private void WriteTemplate()
