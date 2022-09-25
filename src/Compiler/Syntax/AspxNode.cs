@@ -12,7 +12,7 @@ public abstract class AspxNode
 {
     public AspxNode Parent { get; private set; }
 
-    public List<AspxNode> Children { get; private set; }
+    public List<AspxNode> Children { get; set; }
 
     protected AspxNode()
     {

@@ -1,20 +1,4 @@
 <%@ Page Title="About" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" Inherits="SystemWebUISample.Pages.DynamicPage"  %>
-<asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
-  <asp:Label id="label" Text="First Nam2e" runat="server" />
-  <asp:TextBox id="txt" runat="server" Value="Leave it alone" />
-
-  <hr />
-
-  <asp:Button id="button1" value="Go" runat="server" Text="Click Me" OnClick="Button1_Click" />
-  <asp:Button id="button2" value="Go" runat="server" Text="Click Me" OnClick="Button2_Click" />
-
-  Button clicked: <b><asp:Label id="label2" Text="None" runat="server" /></b>
-   
-<%--
-     <asp:RequiredFieldValidator runat="server" ControlToValidate="Name" Display="Dynamic"
-            CssClass="field-validation-valid text-danger" ErrorMessage="The Name field is required." />
---%>
-</asp:Content>
 
 <script runat="server">
     protected void Page_PreInit(object sender, EventArgs e)
@@ -31,4 +15,22 @@
         label2.Text = GetText("Button2");
     }
 </script>
+
+
+<asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
+  <asp:Label id="label" Text="First Nam2e" runat="server" />
+  <asp:TextBox id="txt" runat="server" Value="Leave it alone" />
+
+  <hr />
+
+  <asp:Button id="button1" value="Go" runat="server" Text="Click Me" OnClick="Button1_Click" />
+  <asp:Button id="button2" value="Go" runat="server" Text="Click Me" OnClick="Button2_Click" />
+
+  Button clicked: <b><asp:Label id="label2" Text="None" runat="server" /></b>
+   
+<%--
+     <asp:RequiredFieldValidator runat="server" ControlToValidate="Name" Display="Dynamic"
+            CssClass="field-validation-valid text-danger" ErrorMessage="The Name field is required." />
+--%>
+</asp:Content>
 

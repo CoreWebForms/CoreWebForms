@@ -296,6 +296,9 @@ internal sealed class RoslynPageCompiler : IPageCompiler
         var sourceFiles = new List<(SourceText, string)>();
         var aspxFiles = new List<(SourceText, string)>();
 
+        string? finalPath = null;
+        string? className = null;
+
         while (paths.Count > 0)
         {
             var path = paths.Dequeue();
@@ -311,21 +314,24 @@ internal sealed class RoslynPageCompiler : IPageCompiler
                 {
                     using var writer = new IndentedTextWriter(streamWriter);
 
-                    var generator = new CSharpPageBuilder(path, writer, contents, controls);
+                    var details = PageDetails.Build(path, contents, controls);
 
-                    if (!generator.Errors.IsDefaultOrEmpty)
+                    if (finalPath is null)
                     {
-                        return new WritingResult(generator.Path) { Errors = generator.Errors };
+                        finalPath = details.Path;
+                        className = details.ClassName;
                     }
 
-                    generator.WriteSource();
+                    var cs = new CSharpPageWriter(writer, details);
 
-                    if (!generator.HasDirective)
+                    cs.Write();
+
+                    if (!details.Errors.IsDefaultOrEmpty)
                     {
-                        return new WritingResult(generator.Path) { ErrorMessage = "File does not have a directive" };
+                        return new WritingResult(details.Path) { Errors = details.Errors };
                     }
 
-                    foreach (var additional in generator.AdditionalFiles)
+                    foreach (var additional in details.AdditionalFiles)
                     {
                         paths.Enqueue(additional);
                     }
@@ -338,9 +344,9 @@ internal sealed class RoslynPageCompiler : IPageCompiler
             }
         }
 
-        return new WritingResult(CSharpPageBuilder.NormalizePath(filePath))
+        return new WritingResult(finalPath!)
         {
-            ClassName = CSharpPageBuilder.ConvertPathToClassName(filePath),
+            ClassName = className,
             AspxFiles = aspxFiles,
             SourceFiles = sourceFiles,
         };

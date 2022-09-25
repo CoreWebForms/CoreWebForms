@@ -63,9 +63,10 @@ public class PageGenerator : IIncrementalGenerator
         using var stringWriter = new StringWriter();
         using var writer = new IndentedTextWriter(stringWriter);
 
-        var builder = new CSharpPageBuilder(text.Path, writer, contents, controls);
+        var details = PageDetails.Build(text.Path, contents, controls);
+        var builder = new CSharpPageWriter(writer, details);
 
-        builder.WriteSource();
+        builder.Write();
 
         return stringWriter.ToString();
     }
