@@ -14,13 +14,13 @@ public class PageGeneratorTests
 {
     private static readonly string NewLine = Environment.NewLine.Replace("\r", "\\r").Replace("\n", "\\n");
 
-    [Fact(Skip = "Broken")]
+    [Fact]
     public async Task Empty()
     {
         await new VerifyCS.Test().RunAsync().ConfigureAwait(false);
     }
 
-    [Fact(Skip = "Broken")]
+    [Fact]
     public async Task EmptyAspx()
     {
         const string BaseClass = @"namespace WebApplication12
@@ -33,23 +33,15 @@ public class PageGeneratorTests
         var generated = @$"using System;
 using System.Web;
 using System.Web.UI;
-
 [Microsoft.AspNetCore.SystemWebAdapters.UI.AspxPageAttribute(""/page.aspx"")]
-internal partial class _page_aspx : WebApplication12.About
+internal partial class page_aspx : WebApplication12.About
 {{
-    public _page_aspx()
-    {{
-        Initialize();
-    }}
     protected override void FrameworkInitialize()
     {{
         base.FrameworkInitialize();
         BuildControlTree(this);
     }}
     private void BuildControlTree(Control control)
-    {{
-    }}
-    private void Initialize()
     {{
     }}
 }}
@@ -75,7 +67,7 @@ internal partial class _page_aspx : WebApplication12.About
         }.RunAsync().ConfigureAwait(false);
     }
 
-    [Fact(Skip = "Broken")]
+    [Fact]
     public async Task JustHtml()
     {
         const string BaseClass = @"namespace WebApplication12
@@ -87,17 +79,12 @@ internal partial class _page_aspx : WebApplication12.About
         var aspx = @"<%@ Page Title=""About"" Language=""C#"" AutoEventWireup=""true"" CodeBehind=""About.aspx.cs"" Inherits=""WebApplication12.About"" %>
 <div />
 ";
-        var generated = @$"using System;
+        var generated = $@"using System;
 using System.Web;
 using System.Web.UI;
-
 [Microsoft.AspNetCore.SystemWebAdapters.UI.AspxPageAttribute(""/page.aspx"")]
-internal partial class _page_aspx : WebApplication12.About
+internal partial class page_aspx : WebApplication12.About
 {{
-    public _page_aspx()
-    {{
-        Initialize();
-    }}
     protected override void FrameworkInitialize()
     {{
         base.FrameworkInitialize();
@@ -105,13 +92,8 @@ internal partial class _page_aspx : WebApplication12.About
     }}
     private void BuildControlTree(Control control)
     {{
-        var control_1 = new global::System.Web.UI.LiteralControl(""<div />"");
+        var control_1 = new global::System.Web.UI.LiteralControl(""<div />{NewLine}"");
         control.Controls.Add(control_1);
-        var control_2 = new global::System.Web.UI.LiteralControl(""{NewLine}"");
-        control.Controls.Add(control_2);
-    }}
-    private void Initialize()
-    {{
     }}
 }}
 ";
@@ -136,8 +118,8 @@ internal partial class _page_aspx : WebApplication12.About
         }.RunAsync().ConfigureAwait(false);
     }
 
-    [Fact(Skip = "Broken")]
-    public async Task DivWithRunatId()
+    [Fact]
+    public async Task HeadWithRunatId()
     {
         const string BaseClass = @"namespace WebApplication12
 {
@@ -146,19 +128,14 @@ internal partial class _page_aspx : WebApplication12.About
     }
 }";
         var aspx = @"<%@ Page Title=""About"" Language=""C#"" AutoEventWireup=""true"" CodeBehind=""About.aspx.cs"" Inherits=""WebApplication12.About"" %>
-<div runat=""server"" id=""hi"" />
+<HtmlHead runat=""server"" id=""hi"" />
 ";
         var generated = @$"using System;
 using System.Web;
 using System.Web.UI;
-
 [Microsoft.AspNetCore.SystemWebAdapters.UI.AspxPageAttribute(""/page.aspx"")]
-internal partial class _page_aspx : WebApplication12.About
+internal partial class page_aspx : WebApplication12.About
 {{
-    public _page_aspx()
-    {{
-        Initialize();
-    }}
     protected override void FrameworkInitialize()
     {{
         base.FrameworkInitialize();
@@ -166,17 +143,14 @@ internal partial class _page_aspx : WebApplication12.About
     }}
     private void BuildControlTree(Control control)
     {{
-        var control_1 = new global::System.Web.UI.HtmlControls.HtmlGenericControl(""div"");
+        var control_1 = new System.Web.UI.HtmlControls.HtmlHead();
         control_1.ID = ""hi"";
         hi = control_1;
         control.Controls.Add(control_1);
         var control_2 = new global::System.Web.UI.LiteralControl(""{NewLine}"");
         control.Controls.Add(control_2);
     }}
-    private void Initialize()
-    {{
-    }}
-    protected global::System.Web.UI.HtmlControls.HtmlGenericControl hi;
+    protected System.Web.UI.HtmlControls.HtmlHead hi;
 }}
 ";
 
@@ -200,7 +174,7 @@ internal partial class _page_aspx : WebApplication12.About
         }.RunAsync().ConfigureAwait(false);
     }
 
-    [Fact(Skip = "Broken")]
+    [Fact]
     public async Task NestedTextBox()
     {
         const string BaseClass = @"namespace WebApplication12
@@ -217,14 +191,9 @@ internal partial class _page_aspx : WebApplication12.About
         var generated = @$"using System;
 using System.Web;
 using System.Web.UI;
-
 [Microsoft.AspNetCore.SystemWebAdapters.UI.AspxPageAttribute(""/page.aspx"")]
-internal partial class _page_aspx : WebApplication12.About
+internal partial class page_aspx : WebApplication12.About
 {{
-    public _page_aspx()
-    {{
-        Initialize();
-    }}
     protected override void FrameworkInitialize()
     {{
         base.FrameworkInitialize();
@@ -232,7 +201,7 @@ internal partial class _page_aspx : WebApplication12.About
     }}
     private void BuildControlTree(Control control)
     {{
-        var control_1 = new global::System.Web.UI.HtmlControls.HtmlForm();
+        var control_1 = new System.Web.UI.HtmlControls.HtmlForm();
         control_1.ID = ""frm"";
         frm = control_1;
         control.Controls.Add(control_1);
@@ -249,10 +218,7 @@ internal partial class _page_aspx : WebApplication12.About
         var control_2 = new global::System.Web.UI.LiteralControl(""{NewLine}"");
         control.Controls.Add(control_2);
     }}
-    private void Initialize()
-    {{
-    }}
-    protected global::System.Web.UI.HtmlControls.HtmlForm frm;
+    protected System.Web.UI.HtmlControls.HtmlForm frm;
     protected global::System.Web.UI.WebControls.TextBox txt;
 }}
 ";
@@ -277,7 +243,7 @@ internal partial class _page_aspx : WebApplication12.About
         }.RunAsync().ConfigureAwait(false);
     }
 
-    [Fact(Skip = "Broken")]
+    [Fact]
     public async Task NestedLiterals()
     {
         const string BaseClass = @"namespace WebApplication12
@@ -292,14 +258,9 @@ internal partial class _page_aspx : WebApplication12.About
         var generated = @$"using System;
 using System.Web;
 using System.Web.UI;
-
 [Microsoft.AspNetCore.SystemWebAdapters.UI.AspxPageAttribute(""/page.aspx"")]
-internal partial class _page_aspx : WebApplication12.About
+internal partial class page_aspx : WebApplication12.About
 {{
-    public _page_aspx()
-    {{
-        Initialize();
-    }}
     protected override void FrameworkInitialize()
     {{
         base.FrameworkInitialize();
@@ -307,17 +268,8 @@ internal partial class _page_aspx : WebApplication12.About
     }}
     private void BuildControlTree(Control control)
     {{
-        var control_1 = new global::System.Web.UI.LiteralControl(""<h1>"");
+        var control_1 = new global::System.Web.UI.LiteralControl(""<h1>Hello</h1>{NewLine}"");
         control.Controls.Add(control_1);
-        var control_2 = new global::System.Web.UI.LiteralControl(""Hello"");
-        control.Controls.Add(control_2);
-        var control_3 = new global::System.Web.UI.LiteralControl(""</h1>"");
-        control.Controls.Add(control_3);
-        var control_4 = new global::System.Web.UI.LiteralControl(""{NewLine}"");
-        control.Controls.Add(control_4);
-    }}
-    private void Initialize()
-    {{
     }}
 }}
 ";
@@ -342,7 +294,7 @@ internal partial class _page_aspx : WebApplication12.About
         }.RunAsync().ConfigureAwait(false);
     }
 
-    [Fact(Skip = "Broken")]
+    [Fact]
     public async Task ScriptRunAtServer()
     {
         // Not working on non-Windows - probably due to some newline issues
@@ -367,14 +319,9 @@ internal partial class _page_aspx : WebApplication12.About
         var generated = @$"using System;
 using System.Web;
 using System.Web.UI;
-
 [Microsoft.AspNetCore.SystemWebAdapters.UI.AspxPageAttribute(""/page.aspx"")]
-internal partial class _page_aspx : WebApplication12.About
+internal partial class page_aspx : WebApplication12.About
 {{
-    public _page_aspx()
-    {{
-        Initialize();
-    }}
     protected override void FrameworkInitialize()
     {{
         base.FrameworkInitialize();
@@ -382,17 +329,8 @@ internal partial class _page_aspx : WebApplication12.About
     }}
     private void BuildControlTree(Control control)
     {{
-        var control_1 = new global::System.Web.UI.LiteralControl(""<h1>"");
+        var control_1 = new global::System.Web.UI.LiteralControl(""<h1>Hello</h1>{NewLine}"");
         control.Controls.Add(control_1);
-        var control_2 = new global::System.Web.UI.LiteralControl(""Hello"");
-        control.Controls.Add(control_2);
-        var control_3 = new global::System.Web.UI.LiteralControl(""</h1>"");
-        control.Controls.Add(control_3);
-        var control_4 = new global::System.Web.UI.LiteralControl(""{NewLine}"");
-        control.Controls.Add(control_4);
-    }}
-    private void Initialize()
-    {{
     }}
     #line (4, 25) - (7, 7) ""page.aspx""
     protected void Page_PreInit(object sender, EventArgs e)
