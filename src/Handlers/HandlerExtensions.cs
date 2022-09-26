@@ -34,12 +34,6 @@ public static class HandlerExtensions
         where THandler : IHttpHandler
         => builder.AddHttpHandler(typeof(THandler));
 
-    public static EndpointBuilder AddHttpHandler(this EndpointBuilder builder, IHttpHandler handler)
-    {
-        builder.Metadata.Add((HttpContextCore context) => handler);
-        return builder;
-    }
-
     public static EndpointBuilder AddHttpHandler(this EndpointBuilder builder, Type type)
     {
         if (!type.IsAssignableTo(typeof(IHttpHandler)))
@@ -48,7 +42,8 @@ public static class HandlerExtensions
         }
 
         var factory = ActivatorUtilities.CreateFactory(type, Array.Empty<Type>());
-        builder.Metadata.Add(CreateActivator(factory));
+
+        return builder.AddHttpHandler(type, CreateActivator(factory));
 
         static Func<HttpContextCore, IHttpHandler> CreateActivator(ObjectFactory factory)
         {
@@ -71,6 +66,14 @@ public static class HandlerExtensions
                 return newHandler;
             };
         }
+    }
+
+    public static EndpointBuilder AddHttpHandler(this EndpointBuilder builder, IHttpHandler handler)
+        => builder.AddHttpHandler(handler.GetType(), (HttpContextCore context) => handler);
+
+    private static EndpointBuilder AddHttpHandler(this EndpointBuilder builder, Type type, Func<HttpContextCore, IHttpHandler> factory)
+    {
+        builder.Metadata.Add(factory);
 
         builder.RequestDelegate = (HttpContextCore context) =>
         {
