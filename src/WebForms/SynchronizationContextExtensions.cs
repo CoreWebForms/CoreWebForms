@@ -4,6 +4,7 @@
 #nullable enable
 
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Web.Util;
 
 namespace System.Web;
@@ -43,6 +44,9 @@ internal static class SynchronizationContextUtil
     {
         return new WithinCancellableCallbackTaskAwaitable(context, task.GetAwaiter());
     }
+
+    public static void PostAsync(this SynchronizationContext context, Func<object, Task> func, object state)
+        => throw new NotImplementedException();
 
     public static IAsyncDisposable EnableAsyncVoidOperations(this SynchronizationContext? context)
     {

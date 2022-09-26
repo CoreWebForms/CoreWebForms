@@ -7,6 +7,7 @@ internal static class BinaryCompatibility
 {
     public static class Current
     {
+        public const bool TargetsAtLeastFramework46 = true;
         public const bool TargetsAtLeastFramework472 = true;
     }
 }

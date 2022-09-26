@@ -240,10 +240,8 @@ public class Page : TemplateControl, IHttpAsyncHandler
     // The unvalidated version of _requestValueCollection
     private NameValueCollection _unvalidatedRequestValueCollection;
 
-#if PORT_MODEL_BINDING
     private ModelStateDictionary _modelState;
     private ModelBindingExecutionContext _modelBindingExecutionContext;
-#endif
 
     private UnobtrusiveValidationMode? _unobtrusiveValidationMode;
 
@@ -292,7 +290,6 @@ public class Page : TemplateControl, IHttpAsyncHandler
         SetValidateRequestModeInternal(ValidateRequestMode.Enabled, setDirty: false);
     }
 
-#if PORT_MODEL_BINDING
     public ModelStateDictionary ModelState
     {
         get
@@ -304,7 +301,6 @@ public class Page : TemplateControl, IHttpAsyncHandler
             return _modelState;
         }
     }
-#endif
 
     private IValueProvider ActiveValueProvider
     {
@@ -324,7 +320,6 @@ public class Page : TemplateControl, IHttpAsyncHandler
         }
     }
 
-#if PORT_MODEL_BINDING
     public ModelBindingExecutionContext ModelBindingExecutionContext
     {
         get
@@ -336,13 +331,14 @@ public class Page : TemplateControl, IHttpAsyncHandler
                 //This is used to query the ViewState in ViewStateValueProvider later.
                 _modelBindingExecutionContext.PublishService<StateBag>(ViewState);
 
+#if PORT_ROUTINGDATA
                 //This is used to query RouteData in RouteDataValueProvider later.
                 _modelBindingExecutionContext.PublishService<RouteData>(RouteData);
+#endif
             }
             return _modelBindingExecutionContext;
         }
     }
-#endif
 
     /// <summary>
     /// We support calling TryUpdateModel only within a Data Method of DataBoundControl.
@@ -390,8 +386,6 @@ public class Page : TemplateControl, IHttpAsyncHandler
             throw new ArgumentNullException(nameof(valueProvider));
         }
 
-#if PORT_MODEL_BINDING
-
         IModelBinder binder = ModelBinders.Binders.DefaultBinder;
 
         ModelBindingContext bindingContext = new ModelBindingContext()
@@ -408,7 +402,6 @@ public class Page : TemplateControl, IHttpAsyncHandler
         }
 
         //ModelBinding failed!!!
-#endif
         return false;
     }
 

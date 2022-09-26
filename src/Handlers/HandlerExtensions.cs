@@ -27,6 +27,9 @@ public static class HandlerExtensions
     public static void SetHandler(this HttpContext context, IHttpHandler handler)
         => ((HttpContextCore)context).Features.GetRequired<IHttpHandlerFeature>().Current = handler;
 
+    public static IHttpHandler? GetHandler(this HttpContext context)
+        => ((HttpContextCore)context).Features.GetRequired<IHttpHandlerFeature>().Current; 
+
     internal static T GetRequired<T>(this IFeatureCollection features)
         => features.Get<T>() ?? throw new InvalidOperationException();
 
