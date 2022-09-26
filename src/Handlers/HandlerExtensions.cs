@@ -25,10 +25,7 @@ public static class HandlerExtensions
     private static readonly ImmutableList<object> _metadataSession = _metadata.Add(new SessionAttribute { IsReadOnly = false });
 
     public static void SetHandler(this HttpContext context, IHttpHandler handler)
-    {
-        var coreContext = (Microsoft.AspNetCore.Http.HttpContext)context;
-        coreContext.Features.GetRequired<IHttpHandlerFeature>().Current = handler;
-    }
+        => ((HttpContextCore)context).Features.GetRequired<IHttpHandlerFeature>().Current = handler;
 
     internal static T GetRequired<T>(this IFeatureCollection features)
         => features.Get<T>() ?? throw new InvalidOperationException();
@@ -68,7 +65,7 @@ public static class HandlerExtensions
 
                 if (newHandler.IsReusable)
                 {
-                    Interlocked.Exchange(ref handler, newHandler);
+                    Interlocked.CompareExchange(ref handler, newHandler, null);
                 }
 
                 return newHandler;
@@ -111,15 +108,15 @@ public static class HandlerExtensions
         }
     }
 
-    private static async Task RunHandlerAsync(this IHttpHandler handler, HttpContextCore context)
+    private static async Task RunHandlerAsync(this IHttpHandler handler, HttpContext context)
     {
         if (handler is HttpTaskAsyncHandler task)
         {
-            await task.ProcessRequestAsync(context).ConfigureAwait(false);
+            await task.ProcessRequestAsync(context).ConfigureAwait(true);
         }
         else if (handler is IHttpAsyncHandler asyncHandler)
         {
-            await Task.Factory.FromAsync((cb, state) => asyncHandler.BeginProcessRequest(context, cb, state), asyncHandler.EndProcessRequest, null).ConfigureAwait(false);
+            await Task.Factory.FromAsync((cb, state) => asyncHandler.BeginProcessRequest(context, cb, state), asyncHandler.EndProcessRequest, null).ConfigureAwait(true);
         }
         else
         {
@@ -180,7 +177,7 @@ public static class HandlerExtensions
 
         public Endpoint Endpoint { get; }
 
-        public override Task ProcessRequestAsync(System.Web.HttpContext context)
+        public override Task ProcessRequestAsync(HttpContext context)
         {
             if (Endpoint.RequestDelegate is { } request)
             {
