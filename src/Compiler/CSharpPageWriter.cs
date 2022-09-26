@@ -75,10 +75,10 @@ public class CSharpPageWriter
         var info = new DirectiveDetails(_details.Directive);
 
         _writer.Write("[Microsoft.AspNetCore.SystemWebAdapters.UI.AspxPageAttribute(\"");
-        _writer.Write(_details.Path);
+        _writer.Write(_details.File.Path);
         _writer.WriteLine("\")]");
         _writer.Write("internal partial class ");
-        _writer.Write(_details.ClassName);
+        _writer.Write(_details.File.ClassName);
         _writer.Write(" : ");
         _writer.Write(info.Inherits);
 
@@ -385,7 +385,7 @@ public class CSharpPageWriter
         if (HasInitializer)
         {
             _writer.Write("public ");
-            _writer.Write(_details.ClassName);
+            _writer.Write(_details.File.ClassName);
             _writer.WriteLine("()");
 
             using (Block())
@@ -475,7 +475,7 @@ public class CSharpPageWriter
         _writer.Write(", ");
         _writer.Write(end.column);
         _writer.Write(") \"");
-        _writer.Write(_details.Path.Trim('/'));
+        _writer.Write(_details.File.Path.Trim('/'));
         _writer.WriteLine('\"');
     }
 

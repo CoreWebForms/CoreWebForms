@@ -3,8 +3,6 @@
 
 using System.Collections;
 using System.Collections.Immutable;
-using System.Diagnostics.CodeAnalysis;
-using System.Web.Util;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
@@ -26,7 +24,7 @@ internal sealed class CompilationCollection : ICompiledPagesCollection
     private readonly IDisposable _aspxFilter;
     private readonly IDisposable _siteFilter;
 
-    public CompilationCollection(IFileProvider files, IPageCompiler compiler, IQueue queue, ILoggerFactory logger)
+    public CompilationCollection(IFileProvider files, IPageCompiler compiler, IQueue queue)
     {
         _queue = queue;
         _files = files;
@@ -37,7 +35,7 @@ internal sealed class CompilationCollection : ICompiledPagesCollection
         _token = new CancellationChangeToken(_cts.Token);
 
         _aspxFilter = ChangeToken.OnChange(() => _files.Watch("**/*.aspx"), OnFileChange);
-        _siteFilter = ChangeToken.OnChange(() => _files.Watch("**/*.site"), OnFileChange);
+        _siteFilter = ChangeToken.OnChange(() => _files.Watch("**/*.Master"), OnFileChange);
 
         OnFileChange();
     }
@@ -68,7 +66,9 @@ internal sealed class CompilationCollection : ICompiledPagesCollection
                 existing.Item.Dispose();
             }
 
-            var compilation = await _compiler.CompilePageAsync(_files, file.Item.FullPath, token).ConfigureAwait(false);
+            var aspx = file.Item.CompiledPage is { } compiled ? compiled.Item.AspxFile : file.Item.FullPath;
+
+            var compilation = await _compiler.CompilePageAsync(_files, aspx, token).ConfigureAwait(false);
 
             if (compilation is not null)
             {
@@ -92,7 +92,7 @@ internal sealed class CompilationCollection : ICompiledPagesCollection
     {
         var dependencies = _compiledPages.SelectMany(t => t.Item.FileDependencies.Select(d => (d, t)))
             .ToLookup(d => d.d, d => d.t)
-            .ToDictionary(d => d.Key, d => d.ToList());
+            .ToDictionary(d => d.Key, d => d.ToList(), StringComparer.OrdinalIgnoreCase);
         var changes = new HashSet<Timed<ChangedPage>>();
 
         var result = _compiledPages;
@@ -105,7 +105,7 @@ internal sealed class CompilationCollection : ICompiledPagesCollection
                 {
                     if (file.LastModified > page.LastModified)
                     {
-                        changes.Add(new(new(fullpath, page), file.LastModified));
+                        changes.Add(new(new(page.Item.AspxFile, page), file.LastModified));
                     }
                 }
             }

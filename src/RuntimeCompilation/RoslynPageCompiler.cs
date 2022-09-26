@@ -67,20 +67,19 @@ internal sealed class RoslynPageCompiler : IPageCompiler
         var directory = Path.GetDirectoryName(path)!;
 
         var writingResult = await GetSourceAsync(files, path, components, token).ConfigureAwait(false);
+        var dependentFiles = writingResult.UserFiles.Select(f => f.Path.Trim('/')).ToArray();
 
         if (writingResult.ErrorMessage is { } errorMessage)
         {
-            return new CompiledPage(writingResult.Path, path) { Error = Encoding.UTF8.GetBytes(errorMessage) };
+            return new CompiledPage(writingResult.File, dependentFiles) { Error = Encoding.UTF8.GetBytes(errorMessage) };
         }
 
         if (writingResult is { Errors.IsDefault: false, Errors.IsEmpty: false })
         {
-            return new CompiledPage(writingResult.Path, path) { Error = JsonSerializer.SerializeToUtf8Bytes(writingResult.Errors) };
+            return new CompiledPage(writingResult.File, dependentFiles) { Error = JsonSerializer.SerializeToUtf8Bytes(writingResult.Errors) };
         }
 
-        Debug.Assert(writingResult.ClassName is not null);
-
-        var trees = writingResult.SourceFiles.Select(result =>
+        var trees = writingResult.GeneratedFiles.Select(result =>
         {
             return CSharpSyntaxTree.ParseText(result.Text, cancellationToken: token)
                 .WithFilePath(result.Path);
@@ -88,7 +87,7 @@ internal sealed class RoslynPageCompiler : IPageCompiler
 
         var optimization = _isDebug ? OptimizationLevel.Debug : OptimizationLevel.Release;
 
-        var compilation = CSharpCompilation.Create($"WebForms.{writingResult.ClassName}",
+        var compilation = CSharpCompilation.Create($"WebForms.{writingResult.File.ClassName}",
             options: new CSharpCompilationOptions(
                 outputKind: OutputKind.DynamicallyLinkedLibrary,
                 optimizationLevel: optimization),
@@ -109,7 +108,7 @@ internal sealed class RoslynPageCompiler : IPageCompiler
 
         if (!result.Success)
         {
-            _logger.LogWarning("{ErrorCount} error(s) found compiling {Route}", result.Diagnostics.Length, writingResult.Path);
+            _logger.LogWarning("{ErrorCount} error(s) found compiling {Route}", result.Diagnostics.Length, writingResult.File.Path);
 
             var error = result.Diagnostics
                 .Select(d => new
@@ -120,28 +119,29 @@ internal sealed class RoslynPageCompiler : IPageCompiler
 
             var message = JsonSerializer.SerializeToUtf8Bytes(error);
 
-            return new CompiledPage(writingResult.Path, path) { Error = message };
+            return new CompiledPage(writingResult.File, dependentFiles) { Error = message };
         }
 
         pdbStream.Position = 0;
         peStream.Position = 0;
 
-        var context = new PageAssemblyLoadContext(writingResult.Path, _factory.CreateLogger<PageAssemblyLoadContext>());
+        var context = new PageAssemblyLoadContext(writingResult.File.Path, _factory.CreateLogger<PageAssemblyLoadContext>());
         var assembly = context.LoadFromStream(peStream, pdbStream);
-        if (assembly.GetType(writingResult.ClassName) is Type type)
+        if (assembly.GetType(writingResult.File.ClassName) is Type type)
         {
-            return new CompiledPage(writingResult.Path, path) { Type = type };
+            return new CompiledPage(writingResult.File, dependentFiles) { Type = type };
         }
 
-        return new CompiledPage(writingResult.Path, path) { Error = NotTypeFoundMessage };
+        return new CompiledPage(writingResult.File, dependentFiles) { Error = NotTypeFoundMessage };
     }
 
     private sealed class CompiledPage : ICompiledPage
     {
-        public CompiledPage(PathString path, string filePath)
+        public CompiledPage(PagePath path, string[] dependencies)
         {
-            Path = path;
-            FileDependencies = new[] { filePath };
+            Path = path.Path;
+            FileDependencies = dependencies;
+            AspxFile = path.File;
         }
 
         public Type? Type { get; set; }
@@ -152,11 +152,15 @@ internal sealed class RoslynPageCompiler : IPageCompiler
 
         public IReadOnlyCollection<string> FileDependencies { get; }
 
+        public string AspxFile { get; }
+
         public void Dispose()
         {
             if (Type is not null)
             {
-                RemovePage(Type);
+                var type = Type;
+                Type = null;
+                RemovePage(type);
             }
         }
 
@@ -212,7 +216,7 @@ internal sealed class RoslynPageCompiler : IPageCompiler
         var components = new List<ControlInfo>();
 
         // Enforce this type is loaded
-        var a = typeof(HttpUtility).Assembly;
+        _ = typeof(HttpUtility).Assembly;
 
         foreach (var assembly in AssemblyLoadContext.Default.Assemblies)
         {
@@ -296,8 +300,7 @@ internal sealed class RoslynPageCompiler : IPageCompiler
         var sourceFiles = new List<(SourceText, string)>();
         var aspxFiles = new List<(SourceText, string)>();
 
-        string? finalPath = null;
-        string? className = null;
+        PagePath? mainFile = null;
 
         while (paths.Count > 0)
         {
@@ -316,10 +319,9 @@ internal sealed class RoslynPageCompiler : IPageCompiler
 
                     var details = PageDetails.Build(path, contents, controls);
 
-                    if (finalPath is null)
+                    if (mainFile is null)
                     {
-                        finalPath = details.Path;
-                        className = details.ClassName;
+                        mainFile = details.File;
                     }
 
                     var cs = new CSharpPageWriter(writer, details);
@@ -328,7 +330,7 @@ internal sealed class RoslynPageCompiler : IPageCompiler
 
                     if (!details.Errors.IsDefaultOrEmpty)
                     {
-                        return new WritingResult(details.Path) { Errors = details.Errors };
+                        return new WritingResult(details.File) { Errors = details.Errors };
                     }
 
                     foreach (var additional in details.AdditionalFiles)
@@ -344,27 +346,26 @@ internal sealed class RoslynPageCompiler : IPageCompiler
             }
         }
 
-        return new WritingResult(finalPath!)
+        Debug.Assert(mainFile.HasValue);
+
+        return new WritingResult(mainFile.Value)
         {
-            ClassName = className,
-            AspxFiles = aspxFiles,
-            SourceFiles = sourceFiles,
+            UserFiles = aspxFiles,
+            GeneratedFiles = sourceFiles,
         };
     }
 
-    private sealed record WritingResult(string Path)
+    private sealed record WritingResult(PagePath File)
     {
-        public string? ClassName { get; init; }
-
         public string? ErrorMessage { get; init; }
 
-        public IReadOnlyCollection<(SourceText Text, string Path)> AspxFiles { get; init; } = Array.Empty<(SourceText Text, string Path)>();
+        public IReadOnlyCollection<(SourceText Text, string Path)> UserFiles { get; init; } = Array.Empty<(SourceText Text, string Path)>();
 
-        public IReadOnlyCollection<(SourceText Text, string Path)> SourceFiles { get; init; } = Array.Empty<(SourceText, string)>();
+        public IReadOnlyCollection<(SourceText Text, string Path)> GeneratedFiles { get; init; } = Array.Empty<(SourceText, string)>();
 
         public ImmutableArray<AspxParseError> Errors { get; init; }
 
-        public IEnumerable<(SourceText Text, string Path)> AllFiles => SourceFiles.Concat(AspxFiles);
+        public IEnumerable<(SourceText Text, string Path)> AllFiles => GeneratedFiles.Concat(UserFiles);
     }
 
     private async Task<string> RetryOpenFileAsync(IFileInfo file, CancellationToken token, int retryCount = 5)

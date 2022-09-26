@@ -9,6 +9,8 @@ internal interface ICompiledPage : IDisposable
 {
     PathString Path { get; }
 
+    string AspxFile { get; }
+
     Type? Type { get; }
 
     Memory<byte> Error { get; }

@@ -15,15 +15,43 @@ namespace Microsoft.AspNetCore.SystemWebAdapters.Compiler;
 
 public readonly struct PagePath
 {
-    public PagePath(string path, string className)
+    public PagePath(string path)
     {
-        Path = path;
-        ClassName = className;
+        File = path;
+
+        var trimmed = path.Trim('/', '~', '\\');
+        Path = EnsureStartsWithSlash(trimmed);
+        ClassName = ConvertPathToClassName(trimmed);
+    }
+
+    private static string EnsureStartsWithSlash(string path)
+    {
+        if (!path.StartsWith("/", StringComparison.OrdinalIgnoreCase))
+        {
+            path = "/" + path;
+        }
+
+        return path;
     }
 
     public string Path { get; }
 
     public string ClassName { get; }
+
+    public string File { get; }
+
+    private static string ConvertPathToClassName(string input)
+    {
+        var sb = new StringBuilder(input);
+
+        sb.Replace("~", string.Empty);
+        sb.Replace(".", "_");
+        sb.Replace("/", "_");
+        sb.Replace("\\", "_");
+
+        return sb.ToString();
+    }
+
 }
 
 public class PageDetails
@@ -39,9 +67,7 @@ public class PageDetails
 
     public IEnumerable<CodeRenderEncode> CodeSnippets => _encodes;
 
-    public string Path { get; private set; }
-
-    public string ClassName { get; private set; }
+    public PagePath File { get; private set; }
 
     public IEnumerable<string> ContentPlaceHolders => _contentPlaceHolders;
 
@@ -59,7 +85,7 @@ public class PageDetails
 
                 if (info.MasterPageFile is { } path)
                 {
-                    return new(NormalizePath(path), ConvertPathToClassName(path));
+                    return new(path);
                 }
             }
 
@@ -69,25 +95,22 @@ public class PageDetails
 
     public IEnumerable<AspxTag> Templates => _templates;
 
-    public IEnumerable<string> AdditionalFiles => MasterPage is { } page ? new[] { NormalizePath(page.Path) } : Array.Empty<string>();
+    public IEnumerable<string> AdditionalFiles => MasterPage is { } page ? new[] { page.Path } : Array.Empty<string>();
 
     public ImmutableArray<AspxParseError> Errors { get; private set; }
 
     public static PageDetails Build(string path, string contents, IEnumerable<ControlInfo> controlInfo)
     {
         var controls = controlInfo.ToDictionary(c => c.Name, c => c, StringComparer.OrdinalIgnoreCase);
-        var Path = NormalizePath(path);
-        var ClassName = ConvertPathToClassName(path);
 
         var parser = new AspxParser();
-        var source = new AspxSource(Path, contents);
+        var source = new AspxSource(path, contents);
         var tree = parser.Parse(source);
 
         var details = new PageDetails
         {
             Errors = tree.ParseErrors,
-            Path = Path,
-            ClassName = ClassName,
+            File = new(NormalizePath(path)),
             Controls = controls,
         };
 
@@ -253,27 +276,9 @@ public class PageDetails
     {
         var sb = new StringBuilder(path);
 
-        if (sb[0] != '/')
-        {
-            sb.Insert(0, '/');
-        }
-
-
         sb.Replace("~", string.Empty);
         sb.Replace("\\", "/");
         sb.Replace("//", "/");
-
-        return sb.ToString();
-    }
-
-    private static string ConvertPathToClassName(string input)
-    {
-        var sb = new StringBuilder(input);
-
-        sb.Replace("~", string.Empty);
-        sb.Replace(".", "_");
-        sb.Replace("/", "_");
-        sb.Replace("\\", "_");
 
         return sb.ToString();
     }
