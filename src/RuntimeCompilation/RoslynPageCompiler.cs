@@ -115,9 +115,12 @@ internal sealed class RoslynPageCompiler : IPageCompiler
                 {
                     d.Id,
                     Message = d.GetMessage(CultureInfo.CurrentCulture),
-                });
+                    Severity = d.Severity
+                })
+                .OrderByDescending(d => d.Severity);
 
-            var message = JsonSerializer.SerializeToUtf8Bytes(error);
+
+            var message = JsonSerializer.SerializeToUtf8Bytes(error, new JsonSerializerOptions() { Converters = { new System.Text.Json.Serialization.JsonStringEnumConverter() } });
 
             return new CompiledPage(writingResult.File, dependentFiles) { Error = message };
         }
