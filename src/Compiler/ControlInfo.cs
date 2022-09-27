@@ -25,6 +25,8 @@ public class ControlInfo
 
     public string DefaultEvent { get; set; }
 
+    public bool ChildrenAsProperties { get; set; }
+
     public bool SupportsEventValidation { get; set; }
 
     public ICollection<string> Events => _events ??= new HashSet<string>();

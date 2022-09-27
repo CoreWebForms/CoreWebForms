@@ -268,6 +268,11 @@ internal sealed class RoslynPageCompiler : IPageCompiler
                     {
                         info.SupportsEventValidation = true;
                     }
+
+                    if (attribute is ParseChildrenAttribute parseChildren)
+                    {
+                        info.ChildrenAsProperties = parseChildren.ChildrenAsProperties;
+                    }
                 }
 
                 foreach (var property in type.GetProperties())

@@ -5,54 +5,12 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using System.Text;
-using Microsoft.AspNetCore.SystemWebAdapters.Compiler.ParserImpl;
+using System.Xml.Linq;
 using Microsoft.AspNetCore.SystemWebAdapters.Compiler.Syntax;
 
 using static Microsoft.AspNetCore.SystemWebAdapters.Compiler.Syntax.AspxNode;
 
 namespace Microsoft.AspNetCore.SystemWebAdapters.Compiler;
-
-public readonly struct PagePath
-{
-    public PagePath(string path)
-    {
-        File = path;
-
-        var trimmed = path.Trim('/', '~', '\\');
-        Path = EnsureStartsWithSlash(trimmed);
-        ClassName = ConvertPathToClassName(trimmed);
-    }
-
-    private static string EnsureStartsWithSlash(string path)
-    {
-        if (!path.StartsWith("/", StringComparison.OrdinalIgnoreCase))
-        {
-            path = "/" + path;
-        }
-
-        return path;
-    }
-
-    public string Path { get; }
-
-    public string ClassName { get; }
-
-    public string File { get; }
-
-    private static string ConvertPathToClassName(string input)
-    {
-        var sb = new StringBuilder(input);
-
-        sb.Replace("~", string.Empty);
-        sb.Replace(".", "_");
-        sb.Replace("/", "_");
-        sb.Replace("\\", "_");
-
-        return sb.ToString();
-    }
-
-}
 
 public class PageDetails
 {
@@ -110,7 +68,7 @@ public class PageDetails
         var details = new PageDetails
         {
             Errors = tree.ParseErrors,
-            File = new(NormalizePath(path)),
+            File = new(path),
             Controls = controls,
         };
 
@@ -119,12 +77,24 @@ public class PageDetails
             return details;
         }
 
-        details.Nodes = Visit(tree.RootNode).ToList();
+        var visitor = new NodeVisitor(details);
+
+        details.Nodes = visitor.Visit(tree.RootNode).ToList();
 
         return details;
+    }
 
-        T VisitChildren<T>(T node)
-            where T : AspxNode
+    private class NodeVisitor
+    {
+        private readonly PageDetails _details;
+
+        public NodeVisitor(PageDetails details)
+        {
+            _details = details;
+        }
+
+        public T VisitChildren<T>(T node)
+             where T : AspxNode
         {
             if (node.Children.Count == 0)
             {
@@ -173,152 +143,99 @@ public class PageDetails
             return node;
         }
 
-        IEnumerable<AspxNode> Visit(AspxNode node)
+        public IEnumerable<AspxNode> Visit(Root root)
         {
-            if (node is Root root)
+            foreach (var child in VisitChildren(root).Children)
             {
-                foreach (var child in VisitChildren(root).Children)
-                {
-                    yield return child;
-                }
+                yield return child;
             }
-            else if (node is AspxDirective directive)
+        }
+
+        public IEnumerable<AspxNode> Visit(AspxDirective directive)
+        {
+            _details.Directive = directive;
+            return Enumerable.Empty<AspxNode>();
+        }
+
+        public IEnumerable<AspxNode> Visit(CodeRenderEncode encode)
+        {
+            _details._encodes.Add(encode);
+
+            return Enumerable.Empty<AspxNode>();
+        }
+
+        public IEnumerable<AspxNode> Visit(Literal literal)
+            => new[] { literal };
+
+        public IEnumerable<AspxNode> Visit(CloseAspxTag closeTag)
+            => Enumerable.Empty<AspxNode>();
+
+        public IEnumerable<AspxNode> Visit(CloseHtmlTag htmlTag)
+        {
+            // Can't tell if it is runat=server
+            //yield return new Literal($"</{closeHtml.Name}>", closeHtml.Location);
+            return Enumerable.Empty<AspxNode>();
+        }
+
+        public IEnumerable<AspxNode> Visit(AspxTag aspx)
+        {
+            if (string.Equals(aspx.ControlName, "Content", StringComparison.OrdinalIgnoreCase))
             {
-                details.Directive = directive;
+                _details._templates.Add(VisitChildren(aspx));
+
                 yield break;
             }
-            else if (node is CodeRenderEncode encode)
+
+            if (string.Equals(aspx.ControlName, "ContentPlaceHolder", StringComparison.OrdinalIgnoreCase) && aspx.Attributes.Id is { } id)
             {
-                details._encodes.Add(encode);
-                yield return node;
+                _details._contentPlaceHolders.Add(id);
             }
-            else if (node is Literal literal)
+
+            yield return VisitChildren(aspx);
+        }
+
+        public IEnumerable<AspxNode> Visit(HtmlTag html)
+        {
+            if (!html.Attributes.IsRunAtServer)
             {
-                yield return literal;
-            }
-            else if (node is CloseAspxTag closeAspx)
-            {
-                yield break;
-            }
-            else if (node is CloseHtmlTag closeHtml)
-            {
-                yield break;
-                // Can't tell if it is runat=server
-                //yield return new Literal($"</{closeHtml.Name}>", closeHtml.Location);
-            }
-            else if (node is AspxTag aspx)
-            {
-                if (string.Equals(aspx.ControlName, "Content", StringComparison.OrdinalIgnoreCase))
+                if (html is SelfClosingHtmlTag)
                 {
-                    details._templates.Add(VisitChildren(aspx));
-
-                    yield break;
-                }
-
-                if (string.Equals(aspx.ControlName, "ContentPlaceHolder", StringComparison.OrdinalIgnoreCase) && aspx.Attributes.Id is { } id)
-                {
-                    details._contentPlaceHolders.Add(id);
-                }
-
-                yield return VisitChildren(aspx);
-            }
-            else if (node is HtmlTag html)
-            {
-                if (!html.Attributes.IsRunAtServer)
-                {
-                    if (html is SelfClosingHtmlTag)
-                    {
-                        yield return new Literal($"<{html.Name} />", html.Location);
-                    }
-                    else
-                    {
-                        yield return new Literal($"<{html.Name}>", html.Location);
-
-                        foreach (var visited in VisitChildren(node).Children)
-                        {
-                            yield return visited;
-                        }
-
-                        yield return new Literal($"</{html.Name}>", new Location());
-                    }
-                }
-                else if (html.Attributes.IsRunAtServer && string.Equals(html.Name, "script", StringComparison.OrdinalIgnoreCase))
-                {
-                    details._scripts.Add(html);
-                    yield break;
+                    yield return new Literal($"<{html.Name} />", html.Location);
                 }
                 else
                 {
-                    yield return VisitChildren(html);
+                    yield return new Literal($"<{html.Name}>", html.Location);
+
+                    foreach (var visited in VisitChildren(html).Children)
+                    {
+                        yield return visited;
+                    }
+
+                    yield return new Literal($"</{html.Name}>", new Location());
                 }
+            }
+            else if (html.Attributes.IsRunAtServer && string.Equals(html.Name, "script", StringComparison.OrdinalIgnoreCase))
+            {
+                _details._scripts.Add(html);
+                yield break;
             }
             else
             {
-                throw new NotImplementedException($"Unknown node '{node.GetType()}'");
+                yield return VisitChildren(html);
             }
         }
-    }
 
-    private readonly struct Variable
-    {
-        public Variable(string name, QName qname)
+        public IEnumerable<AspxNode> Visit(AspxNode node) => node switch
         {
-            Name = name;
-            Type = qname;
-        }
-
-        public string Name { get; }
-
-        public QName Type { get; }
+            Root root => Visit(root),
+            AspxDirective directive => Visit(directive),
+            CodeRenderEncode encode => Visit(encode),
+            Literal literal => Visit(literal),
+            CloseAspxTag closeAspx => Visit(closeAspx),
+            CloseHtmlTag closeHtml => Visit(closeHtml),
+            AspxTag aspx => Visit(aspx),
+            HtmlTag html => Visit(html),
+            _ => throw new NotImplementedException($"Unknown node '{node.GetType()}'")
+        };
     }
-
-    private static string NormalizePath(string path)
-    {
-        var sb = new StringBuilder(path);
-
-        sb.Replace("~", string.Empty);
-        sb.Replace("\\", "/");
-        sb.Replace("//", "/");
-
-        return sb.ToString();
-    }
-}
-
-internal readonly struct QName
-{
-    public QName(string ns, string name)
-    {
-        Namespace = ns;
-        Name = name;
-    }
-
-    public string Namespace { get; }
-
-    public string Name { get; }
-}
-
-internal readonly struct Item
-{
-    public Item(QName qname, TagAttributes attributes)
-    {
-        QName = qname;
-        Attributes = attributes;
-    }
-
-    public QName QName { get; }
-
-    public TagAttributes Attributes { get; }
-}
-
-internal readonly struct Variable
-{
-    public Variable(string name, QName qname)
-    {
-        Name = name;
-        Type = qname;
-    }
-
-    public string Name { get; }
-
-    public QName Type { get; }
 }
