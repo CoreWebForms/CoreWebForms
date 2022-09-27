@@ -7,6 +7,7 @@ internal static class AssemblyRef
 {
     public const string SystemDesign = nameof(SystemDesign);
     public const string MicrosoftVisualStudioWeb = nameof(MicrosoftVisualStudioWeb);
+    public const string SystemWebDynamicData = nameof(SystemWebDynamicData);
 }
 
 internal static class SR
@@ -17,6 +18,9 @@ internal static class SR
     public const string Async_required = nameof(Async_required);
     public const string Async_task_timed_out = nameof(Async_task_timed_out);
     public const string AutoPostBackControl_CausesValidation = nameof(AutoPostBackControl_CausesValidation);
+    public const string BaseDataBoundControl_DataSource = nameof(BaseDataBoundControl_DataSource);
+    public const string BaseDataBoundControl_DataSourceID = nameof(BaseDataBoundControl_DataSourceID);
+    public const string BaseDataBoundControl_OnDataBound = nameof(BaseDataBoundControl_OnDataBound);
     public const string BindingBehavior_ValueNotFound = nameof(BindingBehavior_ValueNotFound);
     public const string Button_CausesValidation = nameof(Button_CausesValidation);
     public const string Button_OnClick = nameof(Button_OnClick);
@@ -66,6 +70,19 @@ internal static class SR
     public const string ControlRenderedOutsideServerForm = nameof(ControlRenderedOutsideServerForm);
     public const string Controls_Cant_Change_Between_Posts = nameof(Controls_Cant_Change_Between_Posts);
     public const string Ctrl_not_data_handler = nameof(Ctrl_not_data_handler);
+    public const string DataBoundControl_CallingDataMethods = nameof(DataBoundControl_CallingDataMethods);
+    public const string DataBoundControl_DataMember = nameof(DataBoundControl_DataMember);
+    public const string DataBoundControl_InvalidDataPropertyChange = nameof(DataBoundControl_InvalidDataPropertyChange);
+    public const string DataBoundControl_InvalidDataSourceType = nameof(DataBoundControl_InvalidDataSourceType);
+    public const string DataBoundControl_ItemType = nameof(DataBoundControl_ItemType);
+    public const string DataBoundControl_OnCreatingModelDataSource = nameof(DataBoundControl_OnCreatingModelDataSource);
+    public const string DataBoundControl_SelectMethod = nameof(DataBoundControl_SelectMethod);
+    public const string DataBoundControlHelper_NoNamingContainer = nameof(DataBoundControlHelper_NoNamingContainer);
+    public const string DataControl_DataSourceDoesntExist = nameof(DataControl_DataSourceDoesntExist);
+    public const string DataControl_DataSourceIDMustBeDataControl = nameof(DataControl_DataSourceIDMustBeDataControl);
+    public const string DataControl_ItemType_MultipleDataSources = nameof(DataControl_ItemType_MultipleDataSources);
+    public const string DataControl_MultipleDataSources = nameof(DataControl_MultipleDataSources);
+    public const string DataControl_ViewNotFound = nameof(DataControl_ViewNotFound);
     public const string DataSourceView_NoPaging = nameof(DataSourceView_NoPaging);
     public const string DataSourceView_NoRowCount = nameof(DataSourceView_NoRowCount);
     public const string DataSourceView_NoSorting = nameof(DataSourceView_NoSorting);
@@ -104,6 +121,8 @@ internal static class SR
     public const string LabelForNotFound = nameof(LabelForNotFound);
     public const string ListEnumCurrentOutOfRange = nameof(ListEnumCurrentOutOfRange);
     public const string ListEnumVersionMismatch = nameof(ListEnumVersionMismatch);
+    public const string ListSource_Missing_DataMember = nameof(ListSource_Missing_DataMember);
+    public const string ListSource_Without_DataMembers = nameof(ListSource_Without_DataMembers);
     public const string Literal_Mode = nameof(Literal_Mode);
     public const string Literal_Text = nameof(Literal_Text);
     public const string MasterPage_Cannot_ApplyTo_ReadOnly_Collection = nameof(MasterPage_Cannot_ApplyTo_ReadOnly_Collection);
