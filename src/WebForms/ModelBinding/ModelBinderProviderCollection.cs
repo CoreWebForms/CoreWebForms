@@ -31,8 +31,8 @@ public sealed class ModelBinderProviderCollection : Collection<ModelBinderProvid
             throw new ArgumentNullException(nameof(bindingContext));
         }
 
-        ModelBinderProvider providerFromAttr;
 #if PORT_MODELBINDING
+        ModelBinderProvider providerFromAttr;
         if (TryGetProviderFromAttributes(bindingContext.ModelType, out providerFromAttr)) {
             return providerFromAttr.GetBinder(modelBindingExecutionContext, bindingContext);
         }

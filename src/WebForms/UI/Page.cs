@@ -159,9 +159,6 @@ public class Page : TemplateControl, IHttpAsyncHandler
     internal const string WebPartExportID = systemPostFieldPrefix + "WEBPARTEXPORT";
 
     private bool _requireScrollScript;
-    private bool _isCallback;
-    private readonly bool _isCrossPagePostBack;
-    private bool _containsEncryptedViewState;
     private bool _enableEventValidation = EnableEventValidationDefault;
     internal const string callbackID = systemPostFieldPrefix + "CALLBACKID";
     internal const string callbackParameterID = systemPostFieldPrefix + "CALLBACKPARAM";
@@ -169,10 +166,6 @@ public class Page : TemplateControl, IHttpAsyncHandler
     internal const string callbackIndexID = systemPostFieldPrefix + "CALLBACKINDEX";
 
     internal const string previousPageID = systemPostFieldPrefix + "PREVIOUSPAGE";
-
-    // BasePartialCachingControl's currently on the stack
-    private Stack _partialCachingControlStack;
-
     private ArrayList _controlsRequiringPostBack;
     private ArrayList _registeredControlsThatRequirePostBack;
     private NameValueCollection _leftoverPostData;
@@ -183,18 +176,20 @@ public class Page : TemplateControl, IHttpAsyncHandler
     private bool _enableViewStateMac;
     private string _viewStateUserKey;
 
+#pragma warning disable CS0649
     private string _themeName;
     private readonly PageTheme _theme;
+
     private string _styleSheetName;
     private readonly PageTheme _styleSheet;
+#pragma warning restore CS0649
+
     private MasterPage _master;
     private IDictionary _contentTemplateCollection;
     internal HttpContext _context;
 
     private ValidatorCollection _validators;
     private bool _validated;
-
-    private HtmlHead _header;
     private int _supportsStyleSheets;
 
     private Control _autoPostBackControl;
@@ -246,26 +241,22 @@ public class Page : TemplateControl, IHttpAsyncHandler
 
     private bool _executingAsyncTasks;
 
-    private static readonly StringSet s_systemPostFields;
-    static Page()
+    private static readonly StringSet s_systemPostFields = new StringSet
     {
-        // Create a static hashtable with all the names that should be
-        // ignored in ProcessPostData().
-        s_systemPostFields = new StringSet();
-        s_systemPostFields.Add(postEventSourceID);
-        s_systemPostFields.Add(postEventArgumentID);
-        s_systemPostFields.Add(ViewStateFieldCountID);
-        s_systemPostFields.Add(ViewStateGeneratorFieldID);
-        s_systemPostFields.Add(ViewStateFieldPrefixID);
-        s_systemPostFields.Add(ViewStateEncryptionID);
-        s_systemPostFields.Add(previousPageID);
-        s_systemPostFields.Add(callbackID);
-        s_systemPostFields.Add(callbackParameterID);
-        s_systemPostFields.Add(lastFocusID);
-        s_systemPostFields.Add(UniqueFilePathSuffixID);
-        s_systemPostFields.Add("__redir");
-        s_systemPostFields.Add(EventValidationPrefixID);
-    }
+        postEventSourceID,
+        postEventArgumentID,
+        ViewStateFieldCountID,
+        ViewStateGeneratorFieldID,
+        ViewStateFieldPrefixID,
+        ViewStateEncryptionID,
+        previousPageID,
+        callbackID,
+        callbackParameterID,
+        lastFocusID,
+        UniqueFilePathSuffixID,
+        "__redir",
+        EventValidationPrefixID
+    };
 
     /// <devdoc>
     /// <para>Initializes a new instance of the <see cref='System.Web.UI.Page'/> class.</para>
@@ -609,17 +600,7 @@ public class Page : TemplateControl, IHttpAsyncHandler
         }
     }
 
-    internal bool ContainsEncryptedViewState
-    {
-        get
-        {
-            return _containsEncryptedViewState;
-        }
-        set
-        {
-            _containsEncryptedViewState = value;
-        }
-    }
+    internal bool ContainsEncryptedViewState { get; set; }
 
     /// <devdoc>
     ///    <para>
@@ -652,13 +633,7 @@ public class Page : TemplateControl, IHttpAsyncHandler
     Browsable(false),
     DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)
     ]
-    public bool IsCallback
-    {
-        get
-        {
-            return _isCallback;
-        }
-    }
+    public bool IsCallback { get; private set; }
 
     /// <internalonly/>
     /// <devdoc>Page class can be cached/reused</devdoc>
@@ -747,13 +722,7 @@ public class Page : TemplateControl, IHttpAsyncHandler
     Browsable(false),
     DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)
     ]
-    public HtmlHead Header
-    {
-        get
-        {
-            return _header;
-        }
-    }
+    public HtmlHead Header { get; private set; }
 
     /// <internalonly/>
     /// <devdoc>
@@ -933,13 +902,8 @@ public class Page : TemplateControl, IHttpAsyncHandler
         }
     }
 
-    internal Stack PartialCachingControlStack
-    {
-        get
-        {
-            return _partialCachingControlStack;
-        }
-    }
+    // BasePartialCachingControl's currently on the stack
+    internal Stack PartialCachingControlStack { get; private set; }
 
     /// <devdoc>
     ///    Returns the page state persister associated with the page.
@@ -1669,13 +1633,7 @@ public class Page : TemplateControl, IHttpAsyncHandler
     Browsable(false),
     DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)
     ]
-    public bool IsCrossPagePostBack
-    {
-        get
-        {
-            return _isCrossPagePostBack;
-        }
-    }
+    public bool IsCrossPagePostBack { get; }
 
     internal bool IsExportingWebPart
     {
@@ -1717,7 +1675,7 @@ public class Page : TemplateControl, IHttpAsyncHandler
             }
 
             // Treat it as postback if the page is created thru cross page postback.
-            if (_isCrossPagePostBack)
+            if (IsCrossPagePostBack)
             {
                 return true;
             }
@@ -2954,9 +2912,9 @@ window.onload = WebForm_RestoreScrollPosition;
             _requireFocusScript = true;
 
             // If there are any partial caching controls on the stack, forward the call to them
-            if (_partialCachingControlStack != null)
+            if (PartialCachingControlStack != null)
             {
-                foreach (BasePartialCachingControl c in _partialCachingControlStack)
+                foreach (BasePartialCachingControl c in PartialCachingControlStack)
                 {
                     c.RegisterFocusScript();
                 }
@@ -2985,9 +2943,9 @@ window.onload = WebForm_RestoreScrollPosition;
         }
 
         // If there are any partial caching controls on the stack, forward the call to them
-        if (_partialCachingControlStack != null)
+        if (PartialCachingControlStack != null)
         {
-            foreach (BasePartialCachingControl c in _partialCachingControlStack)
+            foreach (BasePartialCachingControl c in PartialCachingControlStack)
             {
                 c.RegisterPostBackScript();
             }
@@ -3039,9 +2997,9 @@ window.onload = WebForm_RestoreScrollPosition;
             _fRequireWebFormsScript = true;
 
             // If there are any partial caching controls on the stack, forward the call to them
-            if (_partialCachingControlStack != null)
+            if (PartialCachingControlStack != null)
             {
-                foreach (BasePartialCachingControl c in _partialCachingControlStack)
+                foreach (BasePartialCachingControl c in PartialCachingControlStack)
                 {
                     c.RegisterWebFormsScript();
                 }
@@ -3289,19 +3247,19 @@ window.onload = WebForm_RestoreScrollPosition;
     {
 
         // Create the stack on demand
-        if (_partialCachingControlStack == null)
+        if (PartialCachingControlStack == null)
         {
-            _partialCachingControlStack = new Stack();
+            PartialCachingControlStack = new Stack();
         }
 
-        _partialCachingControlStack.Push(c);
+        PartialCachingControlStack.Push(c);
     }
 
     // Pop a BasePartialCachingControl from the stack of registered caching controls
     internal void PopCachingControl()
     {
-        Debug.Assert(_partialCachingControlStack != null);
-        _partialCachingControlStack.Pop();
+        Debug.Assert(PartialCachingControlStack != null);
+        PartialCachingControlStack.Pop();
     }
 
     // Operations like FindControl and LoadPostData call EnsureDataBound, which may fire up 
@@ -3439,7 +3397,7 @@ window.onload = WebForm_RestoreScrollPosition;
 
     }
 
-    private static async Task<bool> LoadPostDataAsync(IPostBackDataHandler consumer, string postKey, NameValueCollection postCollection)
+    private static Task<bool> LoadPostDataAsync(IPostBackDataHandler consumer, string postKey, NameValueCollection postCollection)
     {
         bool changed = false;
 
@@ -3461,7 +3419,7 @@ window.onload = WebForm_RestoreScrollPosition;
 
         changed = consumer.LoadPostData(postKey, postCollection);
 
-        return changed;
+        return Task.FromResult(changed);
     }
 
     /*
@@ -3749,7 +3707,7 @@ window.onload = WebForm_RestoreScrollPosition;
 
         // DevDivBugs 18348: for a cross-page postback, use cache policy for
         // original page and ignore cache policy for this page.
-        if (_isCrossPagePostBack)
+        if (IsCrossPagePostBack)
         {
             return;
         }
@@ -4941,7 +4899,6 @@ window.onload = WebForm_RestoreScrollPosition;
         {
             HttpContext con = Context;
 
-            string exportedWebPartID = null;
             if (includeStagesBeforeAsyncPoint)
             {
                 // Is it a GET, POST or initial request?
@@ -4963,6 +4920,8 @@ window.onload = WebForm_RestoreScrollPosition;
                 string callbackControlId = String.Empty;
 
 #if PORT_WEBPART
+                string exportedWebPartID = null;
+
                 // Special-case Web Part Export so it executes in the same security context as the page itself (VSWhidbey 426574)
                 if (DetermineIsExportingWebPart())
                 {
@@ -5006,7 +4965,7 @@ window.onload = WebForm_RestoreScrollPosition;
                     // Only accepting POST callbacks to reduce mail attack possibilities (VSWhidbey 417355)
                     if ((callbackControlId != null) && (_request.IsPost()))
                     {
-                        _isCallback = true;
+                        IsCallback = true;
                     }
                     else
                     { // Otherwise, determine if this is cross-page posting(callsbacks can never be cross page posts)
@@ -5607,11 +5566,11 @@ window.onload = WebForm_RestoreScrollPosition;
     /// </devdoc>
     internal void SetHeader(HtmlHead header)
     {
-        _header = header;
+        Header = header;
 
         if (!String.IsNullOrEmpty(_titleToBeSet))
         {
-            if (_header == null)
+            if (Header == null)
             {
                 throw new InvalidOperationException(SR.GetString(SR.Page_Title_Requires_Head));
             }
@@ -5624,7 +5583,7 @@ window.onload = WebForm_RestoreScrollPosition;
 
         if (!String.IsNullOrEmpty(_descriptionToBeSet))
         {
-            if (_header == null)
+            if (Header == null)
             {
                 throw new InvalidOperationException(SR.GetString(SR.Page_Description_Requires_Head));
             }
@@ -5637,7 +5596,7 @@ window.onload = WebForm_RestoreScrollPosition;
 
         if (!String.IsNullOrEmpty(_keywordsToBeSet))
         {
-            if (_header == null)
+            if (Header == null)
             {
                 throw new InvalidOperationException(SR.GetString(SR.Page_Description_Requires_Head));
             }

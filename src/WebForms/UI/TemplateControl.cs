@@ -369,17 +369,17 @@ public abstract class TemplateControl : Control, INamingContainer
                 }
             }
 
-#if PORT_EVENTS_POINTER
             if (!eventExists)
             {
+#if PORT_EVENTS_POINTER
                 // Create a new Calli delegate proxy
                 IntPtr functionPtr = methodInfo.MethodHandle.GetFunctionPointer();
                 EventHandler handler = (new CalliEventHandlerDelegateProxy(this, functionPtr, info.IsArgless)).Handler;
 
                 // Adds the delegate to events list.
                 Events.AddHandler(_eventObjects[key], handler);
-            }
 #endif
+            }
         }
 
 #if PORT_ASYNCEVENTS

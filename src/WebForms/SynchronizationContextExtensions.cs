@@ -50,11 +50,14 @@ internal static class SynchronizationContextUtil
     public static IAsyncDisposable EnableAsyncVoidOperations(this SynchronizationContext? context)
     {
         return new Empty();
+
+#if PORT_ASYNC_VOID_OPERATIONS
         var newContext = new AsyncVoidSynchronizationContext(context);
 
         SynchronizationContext.SetSynchronizationContext(context);
 
         return newContext;
+#endif
     }
 
     private class Empty : IAsyncDisposable

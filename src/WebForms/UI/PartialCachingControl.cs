@@ -370,8 +370,6 @@ internal HttpCacheVaryByParams VaryByParams {
     /// </devdoc>
     protected internal override void Render(HtmlTextWriter output)
     {
-        CacheDependency sqlCacheDep = null;
-
         // If the output is cached, use it and do nothing else
         if (_outputString != null)
         {
@@ -382,6 +380,7 @@ internal HttpCacheVaryByParams VaryByParams {
 
         _cachedCtrl.RenderControl(output);
 #if PORT_OUTPUTCACHE
+        CacheDependency sqlCacheDep = null;
 
         // If caching was turned off, just render the control
         if (_cachingDisabled || !RuntimeConfig.GetAppConfig().OutputCache.EnableFragmentCache)

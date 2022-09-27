@@ -503,7 +503,7 @@ public class ModelDataSourceView : DataSourceView, IStateManager
         return method;
     }
 
-    private Type ExtractAsyncSelectReturnType(Type t)
+    private static Type ExtractAsyncSelectReturnType(Type t)
     {
         // Async select return type is expected to be Task<T>.
         // This method is trying to return type T.
@@ -618,7 +618,7 @@ public class ModelDataSourceView : DataSourceView, IStateManager
         return CreateSelectResult(result, false/*isAsyncSelect*/);
     }
 
-    private IEnumerable CreateSelectResult(object result, bool isAsyncSelect)
+    private static IEnumerable CreateSelectResult(object result, bool isAsyncSelect)
     {
         if (result == null)
         {

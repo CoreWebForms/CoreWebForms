@@ -12,7 +12,7 @@ namespace System.Web.UI.WebControls;
 [ToolboxItem(false)]
 public class Content : Control, INonBindingContainer
 {
-    private readonly string _contentPlaceHolderID;
+    private string _contentPlaceHolderID;
 
     [
     DefaultValue(""),
@@ -33,14 +33,12 @@ public class Content : Control, INonBindingContainer
         }
         set
         {
-#if PORT_DESIGNMODE
             if (!DesignMode)
             {
                 throw new NotSupportedException(SR.GetString(SR.Property_Set_Not_Supported, "ContentPlaceHolderID", this.GetType().ToString()));
             }
 
             _contentPlaceHolderID = value;
-#endif
         }
     }
 

@@ -111,7 +111,7 @@ public sealed class ObjectStateFormatter : IStateFormatter, IStateFormatter2, IF
     // If true, this class will throw an exception if it cannot deserialize a type or value.
     // If false, this class will use insert "null" if it cannot deserialize a type or value.
     // Default is true, WebParts Personalization sets this to false.
-    private readonly bool _throwOnErrorDeserializing;
+    private const bool _throwOnErrorDeserializing = false;
 
     /// <devdoc>
     /// Initializes a new instance of the ObjectStateFormatter.

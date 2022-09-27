@@ -12,7 +12,7 @@ internal static class AssemblyRef
 internal static class SR
 {
     public static string GetString(string name, params object[] args) => name;
-
+    
     public const string Async_addhandler_too_late = nameof(Async_addhandler_too_late);
     public const string Async_required = nameof(Async_required);
     public const string Async_task_timed_out = nameof(Async_task_timed_out);
@@ -93,6 +93,7 @@ internal static class SR
     public const string Inner_Content_not_literal = nameof(Inner_Content_not_literal);
     public const string Invalid_app_VirtualPath = nameof(Invalid_app_VirtualPath);
     public const string Invalid_cache_settings_location = nameof(Invalid_cache_settings_location);
+    public const string Invalid_ControlState = nameof(Invalid_ControlState);
     public const string Invalid_HtmlTextWriter = nameof(Invalid_HtmlTextWriter);
     public const string Invalid_vpath = nameof(Invalid_vpath);
     public const string InvalidArgumentValue = nameof(InvalidArgumentValue);
@@ -112,6 +113,7 @@ internal static class SR
     public const string MasterPage_MasterPageFile = nameof(MasterPage_MasterPageFile);
     public const string MasterPage_Multiple_content = nameof(MasterPage_Multiple_content);
     public const string Missing_output_cache_attr = nameof(Missing_output_cache_attr);
+    public const string ModelBinderDictionary_MultipleAttributes = nameof(ModelBinderDictionary_MultipleAttributes);
     public const string ModelBinderProviderCollection_BinderForTypeNotFound = nameof(ModelBinderProviderCollection_BinderForTypeNotFound);
     public const string ModelBinderProviderCollection_InvalidBinderType = nameof(ModelBinderProviderCollection_InvalidBinderType);
     public const string ModelBinderUtil_ModelCannotBeNull = nameof(ModelBinderUtil_ModelCannotBeNull);
@@ -256,7 +258,10 @@ internal static class SR
     public const string UnitParseNumericPart = nameof(UnitParseNumericPart);
     public const string ValueProviderResult_ConversionThrew = nameof(ValueProviderResult_ConversionThrew);
     public const string ValueProviderResult_NoConverterExists = nameof(ValueProviderResult_NoConverterExists);
+    public const string ViewState_AuthenticationFailed = nameof(ViewState_AuthenticationFailed);
+    public const string ViewState_ClientDisconnected = nameof(ViewState_ClientDisconnected);
     public const string ViewState_InvalidViewState = nameof(ViewState_InvalidViewState);
+    public const string ViewState_InvalidViewStatePlus = nameof(ViewState_InvalidViewStatePlus);
     public const string ViewState_MissingViewStateField = nameof(ViewState_MissingViewStateField);
     public const string VirtualPath_Length_Zero = nameof(VirtualPath_Length_Zero);
     public const string WebControl_AccessKey = nameof(WebControl_AccessKey);
