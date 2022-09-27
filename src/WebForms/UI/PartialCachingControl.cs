@@ -381,7 +381,7 @@ internal HttpCacheVaryByParams VaryByParams {
         }
 
         _cachedCtrl.RenderControl(output);
-#if PORT_CACHING
+#if PORT_OUTPUTCACHE
 
         // If caching was turned off, just render the control
         if (_cachingDisabled || !RuntimeConfig.GetAppConfig().OutputCache.EnableFragmentCache)
@@ -778,7 +778,7 @@ public class StaticPartialCachingControl : BasePartialCachingControl
         _ctrlID = ctrlID;
         Duration = new TimeSpan(0 /*hours*/, 0 /*mins*/, duration /*seconds*/);
 
-#if PORT_CACHING
+#if PORT_PARTIALCACHING
         SetVaryByParamsCollectionFromString(varyByParams);
 #endif
 
@@ -860,7 +860,7 @@ public class PartialCachingControl : BasePartialCachingControl
         _ctrlID = cacheKey;
         Duration = new TimeSpan(0 /*hours*/, 0 /*mins*/, cacheAttrib.Duration /*seconds*/);
 
-#if PORT_CACHING
+#if PORT_PARTIALCACHING
         SetVaryByParamsCollectionFromString(cacheAttrib.VaryByParams);
 #endif
 
@@ -871,7 +871,7 @@ public class PartialCachingControl : BasePartialCachingControl
 
         _varyByCustom = cacheAttrib.VaryByCustom;
         _sqlDependency = cacheAttrib.SqlDependency;
-#if PORT_CACHING
+#if PORT_PARTIALCACHING
         if (providerName == OutputCache.ASPNET_INTERNAL_PROVIDER_NAME)
         {
             providerName = null;
@@ -902,12 +902,10 @@ public class PartialCachingControl : BasePartialCachingControl
 
         Debug.Assert(false);
 
-#if PORT_USERCONTROL
         // If it's a user control, do some extra initialization
         UserControl uc = cachedControl as UserControl;
         if (uc != null)
             uc.InitializeAsUserControl(Page);
-#endif
 
         cachedControl.ID = _ctrlID;
 

@@ -882,7 +882,7 @@ public partial class Control : IComponent, IParserAccessor, IDataBindingsAccesso
     ]
     public Page Page => GetHierarchicalFeature<Page>() ?? HttpContext.Current.GetFeature<IHttpHandlerFeature>()?.Current as Page ?? throw new InvalidOperationException();
 
-#if PORT_ROUTE_TABLE
+#if PORT_ROUTING
     internal RouteCollection RouteCollection
     {
         get
@@ -954,7 +954,7 @@ public partial class Control : IComponent, IParserAccessor, IDataBindingsAccesso
         }
     }
 
-#if PORT_ROUTE_VALUES
+#if PORT_ROUTING
     [SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings",
         Justification = "Consistent with other URL properties in ASP.NET.")]
     public string GetRouteUrl(object routeParameters)
@@ -2188,7 +2188,7 @@ public partial class Control : IComponent, IParserAccessor, IDataBindingsAccesso
         }
     }
 
-#if PORT_VIRTUAL_PATH
+#if PORT_VIRTUALDIRECTORY
     ///
     /// Figure out if a path is physical or virtual.  This is useful because a number of our controls
     /// accept either type of path for the same attribute.
@@ -2501,7 +2501,7 @@ public partial class Control : IComponent, IParserAccessor, IDataBindingsAccesso
         }
         ControlState = ControlState.PreRendered;
     }
-#if PORT_TRACING
+#if PORT_TRACE
     internal int EstimateStateSize(object state)
     {
         if (state == null)
@@ -3119,7 +3119,7 @@ public partial class Control : IComponent, IParserAccessor, IDataBindingsAccesso
         }
     }
 
-#if PORT_VIRTUAL_DIR
+#if PORT_VIRTUALDIRECTORY
     /// <devdoc>
     ///    <para>Make a URL absolute using the AppRelativeTemplateSourceDirectory.  The returned URL is for
     ///        client use, and will contain the session cookie if appropriate.</para>
@@ -3508,7 +3508,7 @@ public partial class Control : IComponent, IParserAccessor, IDataBindingsAccesso
         control._page = null;
         control._namingContainer = null;
 
-#if PORT_VIRTUAL_DIRECTORY
+#if PORT_VIRTUALDIRECTORY
         // Don't reset template source virtual directory on TemplateControl's, because
         // the path is their own, not their parent. i.e. it doesn't change no matter
         // where in the tree they end up.
@@ -3685,7 +3685,7 @@ public partial class Control : IComponent, IParserAccessor, IDataBindingsAccesso
     [EditorBrowsable(EditorBrowsableState.Never)]
     public void SetTraceData(object tracedObject, object traceDataKey, object traceDataValue)
     {
-#if PORT_TRACING
+#if PORT_TRACE
         RenderTraceListener.CurrentListeners.SetTraceData(tracedObject, traceDataKey, traceDataValue);
 #endif
     }
@@ -3710,7 +3710,7 @@ public partial class Control : IComponent, IParserAccessor, IDataBindingsAccesso
 
         public Version RenderingCompatibility;
 
-#if PORT_ROUTETABLE
+#if PORT_ROUTING
         public RouteCollection RouteCollection;
 #endif
 
@@ -3730,7 +3730,7 @@ public partial class Control : IComponent, IParserAccessor, IDataBindingsAccesso
             ControlDesignerAccessorUserData = null;
             DesignModeState = null;
             RenderingCompatibility = null;
-#if PORT_ROUTETABLE
+#if PORT_ROUTING
             RouteCollection = null;
 #endif
         }

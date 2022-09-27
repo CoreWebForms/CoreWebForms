@@ -369,7 +369,7 @@ public abstract class TemplateControl : Control, INamingContainer
                 }
             }
 
-#if PORT_EVENTS
+#if PORT_EVENTS_POINTER
             if (!eventExists)
             {
                 // Create a new Calli delegate proxy

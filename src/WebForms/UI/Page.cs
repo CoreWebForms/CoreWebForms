@@ -331,7 +331,7 @@ public class Page : TemplateControl, IHttpAsyncHandler
                 //This is used to query the ViewState in ViewStateValueProvider later.
                 _modelBindingExecutionContext.PublishService<StateBag>(ViewState);
 
-#if PORT_ROUTINGDATA
+#if PORT_ROUTING
                 //This is used to query RouteData in RouteDataValueProvider later.
                 _modelBindingExecutionContext.PublishService<RouteData>(RouteData);
 #endif
@@ -2257,7 +2257,7 @@ public class Page : TemplateControl, IHttpAsyncHandler
     internal static bool ShouldSuppressMacValidationException(Exception e)
     {
         return false;
-#if PORT_SUPPRESS_MAC_VALIDATION
+#if PORT_MAC_VALIDATION
         // If the patch isn't active, don't suppress anything, as it would be a change in behavior.
         if (!EnableViewStateMacRegistryHelper.SuppressMacValidationErrorsFromCrossPagePostbacks)
         {
@@ -2426,7 +2426,7 @@ public class Page : TemplateControl, IHttpAsyncHandler
                 _hiddenFieldsToRender[name] = stateChunk;
             }
 
-#if PORT_MAC
+#if PORT_MAC_VALIDATION
             // DevDiv #461378: Write out an identifier so we know who generated this __VIEWSTATE field.
             // It doesn't need to be MACed since the only thing we use it for is error suppression,
             // similar to how __PREVIOUSPAGE works.
@@ -3755,7 +3755,7 @@ window.onload = WebForm_RestoreScrollPosition;
             return;
         }
 
-#if PORT_OUTPUT_CACHE
+#if PORT_OUTPUTCACHE
         OutputCacheParameters cacheSettings = new OutputCacheParameters();
 
         cacheSettings.Duration = duration;
@@ -4963,7 +4963,7 @@ window.onload = WebForm_RestoreScrollPosition;
 
                 string callbackControlId = String.Empty;
 
-#if PORT_WEBPARTS
+#if PORT_WEBPART
                 // Special-case Web Part Export so it executes in the same security context as the page itself (VSWhidbey 426574)
                 if (DetermineIsExportingWebPart())
                 {
@@ -5137,7 +5137,7 @@ window.onload = WebForm_RestoreScrollPosition;
                 SaveAllState();
                 OnSaveStateComplete(EventArgs.Empty);
 
-#if PORT_WEBPARTS
+#if PORT_WEBPART
                 // Special-case Web Part Export so it executes in the same security context as the page itself (VSWhidbey 426574)
                 if (exportedWebPartID != null)
                 {
@@ -5294,7 +5294,7 @@ window.onload = WebForm_RestoreScrollPosition;
     [SuppressMessage("Microsoft.Security.Xml", "CA3004 ReviewCodeForInformationDisclosureVulnerabilities", Justification = "Developer-controlled contents are implicitly trusted.")]
     private async Task PrepareCallbackAsync(string callbackControlID)
     {
-#if PORT_CACHE
+#if PORT_CACHEPOLICY
         Response.Cache.SetNoStore();
 #endif
         try
