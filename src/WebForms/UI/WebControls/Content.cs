@@ -12,7 +12,7 @@ namespace System.Web.UI.WebControls;
 [ToolboxItem(false)]
 public class Content : Control, INonBindingContainer
 {
-    private string _contentPlaceHolderID;
+    private readonly string _contentPlaceHolderID;
 
     [
     DefaultValue(""),
@@ -44,7 +44,7 @@ public class Content : Control, INonBindingContainer
         }
     }
 
-#region hide these events in the designer since they will not be invoked.
+    #region hide these events in the designer since they will not be invoked.
     [
     Browsable(false),
     DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden),
@@ -140,5 +140,5 @@ public class Content : Control, INonBindingContainer
             base.Unload -= value;
         }
     }
-#endregion
+    #endregion
 }

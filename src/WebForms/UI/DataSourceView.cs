@@ -1,9 +1,5 @@
-//------------------------------------------------------------------------------
-// <copyright file="DataSourceView.cs" company="Microsoft">
-//     Copyright (c) Microsoft Corporation.  All rights reserved.
-// </copyright>
-//------------------------------------------------------------------------------
-
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections;
 using System.ComponentModel;
@@ -16,18 +12,17 @@ public abstract class DataSourceView
     private static readonly object EventDataSourceViewChanged = new object();
 
     private EventHandlerList _events;
-    private string _name;
-
+    private readonly string _name;
 
     protected DataSourceView(IDataSource owner, string viewName)
     {
         if (owner == null)
         {
-            throw new ArgumentNullException("owner");
+            throw new ArgumentNullException(nameof(owner));
         }
         if (viewName == null)
         {
-            throw new ArgumentNullException("viewName");
+            throw new ArgumentNullException(nameof(viewName));
         }
 
         _name = viewName;
@@ -57,7 +52,6 @@ public abstract class DataSourceView
         }
     }
 
-
     public virtual bool CanInsert
     {
         get
@@ -65,7 +59,6 @@ public abstract class DataSourceView
             return false;
         }
     }
-
 
     public virtual bool CanPage
     {
@@ -75,7 +68,6 @@ public abstract class DataSourceView
         }
     }
 
-
     public virtual bool CanRetrieveTotalRowCount
     {
         get
@@ -83,7 +75,6 @@ public abstract class DataSourceView
             return false;
         }
     }
-
 
     public virtual bool CanSort
     {
@@ -93,7 +84,6 @@ public abstract class DataSourceView
         }
     }
 
-
     public virtual bool CanUpdate
     {
         get
@@ -101,7 +91,6 @@ public abstract class DataSourceView
             return false;
         }
     }
-
 
     /// <devdoc>
     /// Indicates the list of event handler delegates for the view. This property is read-only.
@@ -118,7 +107,6 @@ public abstract class DataSourceView
         }
     }
 
-
     public string Name
     {
         get
@@ -126,7 +114,6 @@ public abstract class DataSourceView
             return _name;
         }
     }
-
 
     public event EventHandler DataSourceViewChanged
     {
@@ -149,7 +136,7 @@ public abstract class DataSourceView
     {
         if (callback == null)
         {
-            throw new ArgumentNullException("callback");
+            throw new ArgumentNullException(nameof(callback));
         }
 
         int affectedRecords = 0;
@@ -180,7 +167,7 @@ public abstract class DataSourceView
     {
         if (callback == null)
         {
-            throw new ArgumentNullException("callback");
+            throw new ArgumentNullException(nameof(callback));
         }
 
         int affectedRecords = 0;
@@ -232,7 +219,6 @@ public abstract class DataSourceView
         throw new NotSupportedException();
     }
 
-
     /// <summary>
     /// Performs an insert operation on the specified list. This is only
     /// supported by a DataControl when CanInsert is true.
@@ -249,11 +235,9 @@ public abstract class DataSourceView
         throw new NotSupportedException();
     }
 
-
     /// <devdoc>
     /// </devdoc>
     protected internal abstract IEnumerable ExecuteSelect(DataSourceSelectArguments arguments);
-
 
     /// <summary>
     /// Performs an update operation on the specified list. This is only
@@ -284,7 +268,6 @@ public abstract class DataSourceView
         OnDataSourceViewChanged(e);
     }
 
-
     protected virtual void OnDataSourceViewChanged(EventArgs e)
     {
         EventHandler handler = Events[EventDataSourceViewChanged] as EventHandler;
@@ -298,7 +281,7 @@ public abstract class DataSourceView
     {
         if (callback == null)
         {
-            throw new ArgumentNullException("callback");
+            throw new ArgumentNullException(nameof(callback));
         }
 
         int affectedRecords = 0;
@@ -325,8 +308,6 @@ public abstract class DataSourceView
         }
     }
 
-
-
     protected internal virtual void RaiseUnsupportedCapabilityError(DataSourceCapabilities capability)
     {
         if (!CanPage && ((capability & DataSourceCapabilities.Page) != 0))
@@ -349,7 +330,7 @@ public abstract class DataSourceView
     {
         if (callback == null)
         {
-            throw new ArgumentNullException("callback");
+            throw new ArgumentNullException(nameof(callback));
         }
         callback(ExecuteSelect(arguments));
     }
@@ -358,7 +339,7 @@ public abstract class DataSourceView
     {
         if (callback == null)
         {
-            throw new ArgumentNullException("callback");
+            throw new ArgumentNullException(nameof(callback));
         }
 
         int affectedRecords = 0;

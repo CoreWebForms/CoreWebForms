@@ -1,20 +1,22 @@
-namespace System.Web.ModelBinding
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+
+namespace System.Web.ModelBinding;
+
+using System;
+using System.Collections.ObjectModel;
+
+[Serializable]
+public class ModelErrorCollection : Collection<ModelError>
 {
-    using System;
-    using System.Collections.ObjectModel;
 
-    [Serializable]
-    public class ModelErrorCollection : Collection<ModelError>
+    public void Add(Exception exception)
     {
+        Add(new ModelError(exception));
+    }
 
-        public void Add(Exception exception)
-        {
-            Add(new ModelError(exception));
-        }
-
-        public void Add(string errorMessage)
-        {
-            Add(new ModelError(errorMessage));
-        }
+    public void Add(string errorMessage)
+    {
+        Add(new ModelError(errorMessage));
     }
 }

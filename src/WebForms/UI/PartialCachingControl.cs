@@ -905,7 +905,9 @@ public class PartialCachingControl : BasePartialCachingControl
         // If it's a user control, do some extra initialization
         UserControl uc = cachedControl as UserControl;
         if (uc != null)
+        {
             uc.InitializeAsUserControl(Page);
+        }
 
         cachedControl.ID = _ctrlID;
 

@@ -1,88 +1,82 @@
-//------------------------------------------------------------------------------
-// <copyright file="NonVisualControlAttribute.cs" company="Microsoft">
-//     Copyright (c) Microsoft Corporation.  All rights reserved.
-// </copyright>
-//------------------------------------------------------------------------------
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
-namespace System.Web.UI {
+namespace System.Web.UI;
 
-    using System;
-    using System.Collections;
-    using System.ComponentModel;
+using System;
+
+/// <devdoc>
+/// </devdoc>
+[AttributeUsage(AttributeTargets.Class)]
+public sealed class NonVisualControlAttribute : Attribute
+{
+
+    /// <internalonly/>
+    /// <devdoc>
+    /// <para></para>
+    /// </devdoc>
+    public static readonly NonVisualControlAttribute NonVisual = new NonVisualControlAttribute(true);
+
+    /// <internalonly/>
+    /// <devdoc>
+    /// <para></para>
+    /// </devdoc>
+    public static readonly NonVisualControlAttribute Visual = new NonVisualControlAttribute(false);
+
+    /// <internalonly/>
+    /// <devdoc>
+    /// <para></para>
+    /// </devdoc>
+    public static readonly NonVisualControlAttribute Default = Visual;
+
+    private readonly bool _nonVisual;
 
     /// <devdoc>
     /// </devdoc>
-    [AttributeUsage(AttributeTargets.Class)]
-    public sealed class NonVisualControlAttribute : Attribute {
+    public NonVisualControlAttribute() : this(true)
+    {
+    }
 
+    /// <devdoc>
+    /// </devdoc>
+    public NonVisualControlAttribute(bool nonVisual)
+    {
+        _nonVisual = nonVisual;
+    }
 
-        /// <internalonly/>
-        /// <devdoc>
-        /// <para></para>
-        /// </devdoc>
-        public static readonly NonVisualControlAttribute NonVisual = new NonVisualControlAttribute(true);
+    /// <devdoc>
+    ///    <para>Indicates if the control is non-visual.</para>
+    /// </devdoc>
+    public bool IsNonVisual
+    {
+        get
+        {
+            return _nonVisual;
+        }
+    }
 
-
-        /// <internalonly/>
-        /// <devdoc>
-        /// <para></para>
-        /// </devdoc>
-        public static readonly NonVisualControlAttribute Visual = new NonVisualControlAttribute(false);
-
-
-        /// <internalonly/>
-        /// <devdoc>
-        /// <para></para>
-        /// </devdoc>
-        public static readonly NonVisualControlAttribute Default = Visual;
-
-        private bool _nonVisual;
-
-
-        /// <devdoc>
-        /// </devdoc>
-        public NonVisualControlAttribute() : this(true) {
+    /// <internalonly/>
+    public override bool Equals(object obj)
+    {
+        if (obj == this)
+        {
+            return true;
         }
 
+        NonVisualControlAttribute other = obj as NonVisualControlAttribute;
+        return (other != null) && (other.IsNonVisual == IsNonVisual);
+    }
 
-        /// <devdoc>
-        /// </devdoc>
-        public NonVisualControlAttribute(bool nonVisual) {
-            _nonVisual = nonVisual;
-        }
+    /// <internalonly/>
+    public override int GetHashCode()
+    {
+        return _nonVisual.GetHashCode();
+    }
 
-
-        /// <devdoc>
-        ///    <para>Indicates if the control is non-visual.</para>
-        /// </devdoc>
-        public bool IsNonVisual {
-            get {
-                return _nonVisual;
-            }
-        }
-
-
-        /// <internalonly/>
-        public override bool Equals(object obj) {
-            if (obj == this) {
-                return true;
-            }
-
-            NonVisualControlAttribute other = obj as NonVisualControlAttribute;
-            return (other != null) && (other.IsNonVisual == IsNonVisual);
-        }
-
-
-        /// <internalonly/>
-        public override int GetHashCode() {
-            return _nonVisual.GetHashCode();
-        }
-
-
-        /// <internalonly/>
-        public override bool IsDefaultAttribute() {
-            return this.Equals(Default);
-        }
+    /// <internalonly/>
+    public override bool IsDefaultAttribute()
+    {
+        return this.Equals(Default);
     }
 }
 

@@ -230,7 +230,9 @@ internal static class Util
         for (int i = 0; i < s.Length; i++)
         {
             if (!Char.IsWhiteSpace(s[i]))
+            {
                 return i;
+            }
         }
 
         return -1;

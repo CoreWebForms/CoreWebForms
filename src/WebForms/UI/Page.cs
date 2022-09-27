@@ -11,7 +11,6 @@ using System.ComponentModel.Design.Serialization;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using System.Security.Permissions;
 using System.Security.Principal;
 using System.Text;
 using System.Web.Caching;

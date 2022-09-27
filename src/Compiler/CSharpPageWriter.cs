@@ -6,11 +6,9 @@ using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
-using System.IO;
 using System.Linq;
 using Microsoft.AspNetCore.SystemWebAdapters.Compiler.ParserImpl;
 using Microsoft.AspNetCore.SystemWebAdapters.Compiler.Syntax;
-using static Microsoft.AspNetCore.SystemWebAdapters.Compiler.Syntax.AspxNode;
 
 namespace Microsoft.AspNetCore.SystemWebAdapters.Compiler;
 

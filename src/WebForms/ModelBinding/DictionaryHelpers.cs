@@ -1,40 +1,51 @@
-﻿namespace System.Web.ModelBinding {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
-    internal static class DictionaryHelpers {
+namespace System.Web.ModelBinding;
 
-        public static IEnumerable<KeyValuePair<string, TValue>> FindKeysWithPrefix<TValue>(IDictionary<string, TValue> dictionary, string prefix) {
-            TValue exactMatchValue;
-            if (dictionary.TryGetValue(prefix, out exactMatchValue)) {
-                yield return new KeyValuePair<string, TValue>(prefix, exactMatchValue);
-            }
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
-            foreach (var entry in dictionary) {
-                string key = entry.Key;
+internal static class DictionaryHelpers
+{
 
-                if (key.Length <= prefix.Length) {
-                    continue;
-                }
-
-                if (!key.StartsWith(prefix, StringComparison.OrdinalIgnoreCase)) {
-                    continue;
-                }
-
-                char charAfterPrefix = key[prefix.Length];
-                switch (charAfterPrefix) {
-                    case '[':
-                    case '.':
-                        yield return entry;
-                        break;
-                }
-            }
+    public static IEnumerable<KeyValuePair<string, TValue>> FindKeysWithPrefix<TValue>(IDictionary<string, TValue> dictionary, string prefix)
+    {
+        TValue exactMatchValue;
+        if (dictionary.TryGetValue(prefix, out exactMatchValue))
+        {
+            yield return new KeyValuePair<string, TValue>(prefix, exactMatchValue);
         }
 
-        public static bool DoesAnyKeyHavePrefix<TValue>(IDictionary<string, TValue> dictionary, string prefix) {
-            return FindKeysWithPrefix(dictionary, prefix).Any();
-        }
+        foreach (var entry in dictionary)
+        {
+            string key = entry.Key;
 
+            if (key.Length <= prefix.Length)
+            {
+                continue;
+            }
+
+            if (!key.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
+            {
+                continue;
+            }
+
+            char charAfterPrefix = key[prefix.Length];
+            switch (charAfterPrefix)
+            {
+                case '[':
+                case '.':
+                    yield return entry;
+                    break;
+            }
+        }
     }
+
+    public static bool DoesAnyKeyHavePrefix<TValue>(IDictionary<string, TValue> dictionary, string prefix)
+    {
+        return FindKeysWithPrefix(dictionary, prefix).Any();
+    }
+
 }

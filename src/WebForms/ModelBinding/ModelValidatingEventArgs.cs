@@ -1,27 +1,35 @@
-﻿namespace System.Web.ModelBinding {
-    using System;
-    using System.ComponentModel;
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
-    public sealed class ModelValidatingEventArgs : CancelEventArgs {
+namespace System.Web.ModelBinding;
 
-        public ModelValidatingEventArgs(ModelBindingExecutionContext modelBindingExecutionContext, ModelValidationNode parentNode) {
-            if (modelBindingExecutionContext == null) {
-                throw new ArgumentNullException("modelBindingExecutionContext");
-            }
+using System;
+using System.ComponentModel;
 
-            ModelBindingExecutionContext = modelBindingExecutionContext;
-            ParentNode = parentNode;
+public sealed class ModelValidatingEventArgs : CancelEventArgs
+{
+
+    public ModelValidatingEventArgs(ModelBindingExecutionContext modelBindingExecutionContext, ModelValidationNode parentNode)
+    {
+        if (modelBindingExecutionContext == null)
+        {
+            throw new ArgumentNullException(nameof(modelBindingExecutionContext));
         }
 
-        public ModelBindingExecutionContext ModelBindingExecutionContext {
-            get;
-            private set;
-        }
-
-        public ModelValidationNode ParentNode {
-            get;
-            private set;
-        }
-
+        ModelBindingExecutionContext = modelBindingExecutionContext;
+        ParentNode = parentNode;
     }
+
+    public ModelBindingExecutionContext ModelBindingExecutionContext
+    {
+        get;
+        private set;
+    }
+
+    public ModelValidationNode ParentNode
+    {
+        get;
+        private set;
+    }
+
 }

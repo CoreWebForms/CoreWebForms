@@ -17,5 +17,5 @@ internal sealed class CompilationRegistrar : ICompilationRegistrar
     }
 
     public ICompiledPagesCollection Register(IFileProvider files)
-        => new CompilationCollection(files, _compiler, _queue );
+        => new CompilationCollection(files, _compiler, _queue);
 }

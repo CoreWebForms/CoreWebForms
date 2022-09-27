@@ -1,29 +1,37 @@
-﻿using System.Linq;
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace System.Web.Util {
-    internal static class QueryableUtility {
-        private static readonly string[] _orderMethods = new[] { "OrderBy", "ThenBy", "OrderByDescending", "ThenByDescending" };
-        private static readonly MethodInfo[] _methods = typeof(Queryable).GetMethods(BindingFlags.Public | BindingFlags.Static);
+namespace System.Web.Util;
 
-        private static MethodInfo GetQueryableMethod(Expression expression) {
-            if (expression.NodeType == ExpressionType.Call) {
-                var call = (MethodCallExpression)expression;
-                if (call.Method.IsStatic && call.Method.DeclaringType == typeof(Queryable)) {
-                    return call.Method.GetGenericMethodDefinition();
-                }
+internal static class QueryableUtility
+{
+    private static readonly string[] _orderMethods = new[] { "OrderBy", "ThenBy", "OrderByDescending", "ThenByDescending" };
+    private static readonly MethodInfo[] _methods = typeof(Queryable).GetMethods(BindingFlags.Public | BindingFlags.Static);
+
+    private static MethodInfo GetQueryableMethod(Expression expression)
+    {
+        if (expression.NodeType == ExpressionType.Call)
+        {
+            var call = (MethodCallExpression)expression;
+            if (call.Method.IsStatic && call.Method.DeclaringType == typeof(Queryable))
+            {
+                return call.Method.GetGenericMethodDefinition();
             }
-            return null;
         }
-
-        public static bool IsQueryableMethod(Expression expression, string method) {
-            return _methods.Where(m => m.Name == method).Contains(GetQueryableMethod(expression));
-        }
-
-        public static bool IsOrderingMethod(Expression expression) {
-            return _orderMethods.Any(method => IsQueryableMethod(expression, method));
-        }
-
+        return null;
     }
+
+    public static bool IsQueryableMethod(Expression expression, string method)
+    {
+        return _methods.Where(m => m.Name == method).Contains(GetQueryableMethod(expression));
+    }
+
+    public static bool IsOrderingMethod(Expression expression)
+    {
+        return _orderMethods.Any(method => IsQueryableMethod(expression, method));
+    }
+
 }

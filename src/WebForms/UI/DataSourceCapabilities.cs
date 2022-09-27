@@ -1,20 +1,17 @@
-//------------------------------------------------------------------------------
-// <copyright file="DataSourceCapabilities.cs" company="Microsoft">
-//     Copyright (c) Microsoft Corporation.  All rights reserved.
-// </copyright>
-//------------------------------------------------------------------------------
-namespace System.Web.UI {
-    
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
-    [Flags]
-    public enum DataSourceCapabilities {
+namespace System.Web.UI;
 
-        None = 0x0,
+[Flags]
+public enum DataSourceCapabilities
+{
 
-        Sort = 0x1,
+    None = 0x0,
 
-        Page = 0x2,
+    Sort = 0x1,
 
-        RetrieveTotalRowCount = 0x4
-    }
+    Page = 0x2,
+
+    RetrieveTotalRowCount = 0x4
 }

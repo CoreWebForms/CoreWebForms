@@ -1,47 +1,59 @@
-﻿namespace System.Web.ModelBinding {
-    using System;
-    using System.Collections.Generic;
-    using System.Globalization;
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
-    public class DictionaryValueProvider<TValue> : IValueProvider {
+namespace System.Web.ModelBinding;
 
-        private readonly PrefixContainer _prefixes;
-        private readonly Dictionary<string, ValueProviderResult> _values = new Dictionary<string, ValueProviderResult>(StringComparer.OrdinalIgnoreCase);
+using System;
+using System.Collections.Generic;
+using System.Globalization;
 
-        public DictionaryValueProvider(IDictionary<string, TValue> dictionary, CultureInfo culture) {
-            if (dictionary == null) {
-                throw new ArgumentNullException("dictionary");
-            }
+public class DictionaryValueProvider<TValue> : IValueProvider
+{
 
-            _prefixes = new PrefixContainer(dictionary.Keys);
-            AddValues(dictionary, culture);
+    private readonly PrefixContainer _prefixes;
+    private readonly Dictionary<string, ValueProviderResult> _values = new Dictionary<string, ValueProviderResult>(StringComparer.OrdinalIgnoreCase);
+
+    public DictionaryValueProvider(IDictionary<string, TValue> dictionary, CultureInfo culture)
+    {
+        if (dictionary == null)
+        {
+            throw new ArgumentNullException(nameof(dictionary));
         }
 
-        private void AddValues(IDictionary<string, TValue> dictionary, CultureInfo culture) {
-            foreach (var entry in dictionary) {
-                object rawValue = entry.Value;
-                string attemptedValue = Convert.ToString(rawValue, culture);
-                _values[entry.Key] = new ValueProviderResult(rawValue, attemptedValue, culture);
-            }
-        }
-
-        public virtual bool ContainsPrefix(string prefix) {
-            if (prefix == null) {
-                throw new ArgumentNullException("prefix");
-            }
-
-            return _prefixes.ContainsPrefix(prefix);
-        }
-
-        public virtual ValueProviderResult GetValue(string key) {
-            if (key == null) {
-                throw new ArgumentNullException("key");
-            }
-
-            ValueProviderResult vpResult;
-            _values.TryGetValue(key, out vpResult);
-            return vpResult;
-        }
-
+        _prefixes = new PrefixContainer(dictionary.Keys);
+        AddValues(dictionary, culture);
     }
+
+    private void AddValues(IDictionary<string, TValue> dictionary, CultureInfo culture)
+    {
+        foreach (var entry in dictionary)
+        {
+            object rawValue = entry.Value;
+            string attemptedValue = Convert.ToString(rawValue, culture);
+            _values[entry.Key] = new ValueProviderResult(rawValue, attemptedValue, culture);
+        }
+    }
+
+    public virtual bool ContainsPrefix(string prefix)
+    {
+        if (prefix == null)
+        {
+            throw new ArgumentNullException(nameof(prefix));
+        }
+
+        return _prefixes.ContainsPrefix(prefix);
+    }
+
+    public virtual ValueProviderResult GetValue(string key)
+    {
+        if (key == null)
+        {
+            throw new ArgumentNullException(nameof(key));
+        }
+
+        ValueProviderResult vpResult;
+        _values.TryGetValue(key, out vpResult);
+        return vpResult;
+    }
+
 }

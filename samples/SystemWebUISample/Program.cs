@@ -38,7 +38,7 @@ app.MapDynamicAspxPages(new ExcludeObjBinDirectory(app.Environment.ContentRootFi
 
 app.Run();
 
-class ExcludeObjBinDirectory : IFileProvider
+sealed class ExcludeObjBinDirectory : IFileProvider
 {
     private readonly IFileProvider _provider;
 
@@ -60,7 +60,7 @@ class ExcludeObjBinDirectory : IFileProvider
 
     public IChangeToken Watch(string filter) => _provider.Watch(filter);
 
-    private class ExcludeDirectory : IDirectoryContents
+    private sealed class ExcludeDirectory : IDirectoryContents
     {
         private readonly IDirectoryContents _contents;
 

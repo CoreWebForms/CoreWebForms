@@ -119,7 +119,6 @@ internal sealed class RoslynPageCompiler : IPageCompiler
                 })
                 .OrderByDescending(d => d.Severity);
 
-
             var message = JsonSerializer.SerializeToUtf8Bytes(error, new JsonSerializerOptions() { Converters = { new System.Text.Json.Serialization.JsonStringEnumConverter() } });
 
             return new CompiledPage(writingResult.File, dependentFiles) { Error = message };
