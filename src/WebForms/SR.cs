@@ -164,6 +164,8 @@ internal static class SR
     public const string DataControlFieldCell_ShouldNotSetValidateRequestMode = nameof(DataControlFieldCell_ShouldNotSetValidateRequestMode);
     public const string DataControlFieldCollection_InvalidType = nameof(DataControlFieldCollection_InvalidType);
     public const string DataControlFieldCollection_InvalidTypeIndex = nameof(DataControlFieldCollection_InvalidTypeIndex);
+    public const string DataControls_OnItemCreated = nameof(DataControls_OnItemCreated);
+    public const string DataControls_OnItemDataBound = nameof(DataControls_OnItemDataBound);
     public const string DataItem_Not_Found = nameof(DataItem_Not_Found);
     public const string DataSourceView_NoPaging = nameof(DataSourceView_NoPaging);
     public const string DataSourceView_NoRowCount = nameof(DataSourceView_NoRowCount);
@@ -222,6 +224,7 @@ internal static class SR
     public const string Invalid_app_VirtualPath = nameof(Invalid_app_VirtualPath);
     public const string Invalid_cache_settings_location = nameof(Invalid_cache_settings_location);
     public const string Invalid_ControlState = nameof(Invalid_ControlState);
+    public const string Invalid_DataSource_Type = nameof(Invalid_DataSource_Type);
     public const string Invalid_HtmlTextWriter = nameof(Invalid_HtmlTextWriter);
     public const string Invalid_vpath = nameof(Invalid_vpath);
     public const string InvalidArgumentValue = nameof(InvalidArgumentValue);
@@ -335,6 +338,13 @@ internal static class SR
     public const string RadioButtonList_CellPadding = nameof(RadioButtonList_CellPadding);
     public const string RadioButtonList_CellSpacing = nameof(RadioButtonList_CellSpacing);
     public const string RadioButtonList_RepeatColumns = nameof(RadioButtonList_RepeatColumns);
+    public const string Repeater_AlternatingItemTemplate = nameof(Repeater_AlternatingItemTemplate);
+    public const string Repeater_DataMember = nameof(Repeater_DataMember);
+    public const string Repeater_FooterTemplate = nameof(Repeater_FooterTemplate);
+    public const string Repeater_Items = nameof(Repeater_Items);
+    public const string Repeater_ItemTemplate = nameof(Repeater_ItemTemplate);
+    public const string Repeater_OnItemCommand = nameof(Repeater_OnItemCommand);
+    public const string Repeater_SeparatorTemplate = nameof(Repeater_SeparatorTemplate);
     public const string RepeatInfo_ListLayoutDoesNotSupportHeaderFooterSeparator = nameof(RepeatInfo_ListLayoutDoesNotSupportHeaderFooterSeparator);
     public const string RepeatInfo_ListLayoutDoesNotSupportImpliedOuterTable = nameof(RepeatInfo_ListLayoutDoesNotSupportImpliedOuterTable);
     public const string RepeatInfo_ListLayoutDoesNotSupportMultipleColumn = nameof(RepeatInfo_ListLayoutDoesNotSupportMultipleColumn);
@@ -444,6 +454,7 @@ internal static class SR
     public const string WebControl_Enabled = nameof(WebControl_Enabled);
     public const string WebControl_Font = nameof(WebControl_Font);
     public const string WebControl_ForeColor = nameof(WebControl_ForeColor);
+    public const string WebControl_HeaderTemplate = nameof(WebControl_HeaderTemplate);
     public const string WebControl_Height = nameof(WebControl_Height);
     public const string WebControl_InvalidAccessKey = nameof(WebControl_InvalidAccessKey);
     public const string WebControl_RepeatLayout = nameof(WebControl_RepeatLayout);

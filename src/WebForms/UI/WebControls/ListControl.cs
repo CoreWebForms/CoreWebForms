@@ -820,12 +820,10 @@ public abstract class ListControl : DataBoundControl, IEditableTextControl
         // try to apply the cached SelectedIndex and SelectedValue now
         if (cachedSelectedValue != null)
         {
-            int cachedSelectedValueIndex = -1;
-
-            cachedSelectedValueIndex = Items.FindByValueInternal(cachedSelectedValue, true);
+            var cachedSelectedValueIndex = Items.FindByValueInternal(cachedSelectedValue, true);
             if (-1 == cachedSelectedValueIndex)
             {
-                throw new ArgumentOutOfRangeException("value", SR.GetString(SR.ListControl_SelectionOutOfRange, ID, "SelectedValue"));
+                throw new ArgumentOutOfRangeException(SR.GetString(SR.ListControl_SelectionOutOfRange, ID, "SelectedValue"));
             }
 
             if ((cachedSelectedIndex != -1) && (cachedSelectedIndex != cachedSelectedValueIndex))

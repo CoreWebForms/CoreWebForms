@@ -26,6 +26,20 @@
   <asp:Button id="button2" value="Go" runat="server" Text="Click Me" OnClick="Button2_Click" />
 
   Button clicked: <b><asp:Label id="label2" Text="None" runat="server" /></b>
+
+<hr/>
+<asp:Repeater id="MyView" runat="server">
+  <HeaderTemplate>
+    [Header markup goes here]
+  </HeaderTemplate>
+  <FooterTemplate>
+    [Footers markup goes here]
+  </FooterTemplate>
+  <ItemTemplate>
+    [Items markup goes here]
+  </ItemTemplate>
+</asp:Repeater>
+<hr/>
    
 <%--
      <asp:RequiredFieldValidator runat="server" ControlToValidate="Name" Display="Dynamic"

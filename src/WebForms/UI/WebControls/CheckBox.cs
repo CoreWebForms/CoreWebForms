@@ -9,6 +9,7 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Web;
 using System.Web.UI;
+
 using AttributeCollection = System.Web.UI.AttributeCollection;
 
 /// <devdoc>
@@ -28,7 +29,6 @@ public class CheckBox : WebControl, IPostBackDataHandler, ICheckBoxControl
     private StateBag _inputAttributesState;
     private AttributeCollection _labelAttributes;
     private StateBag _labelAttributesState;
-    private readonly string _valueAttribute;
 
     private static readonly object EventCheckedChanged = new object();
 
@@ -584,12 +584,6 @@ public class CheckBox : WebControl, IPostBackDataHandler, ICheckBoxControl
         if (UniqueID != null)
         {
             writer.AddAttribute(HtmlTextWriterAttribute.Name, UniqueID);
-        }
-
-        // Whidbey 20815
-        if (_valueAttribute != null)
-        {
-            writer.AddAttribute(HtmlTextWriterAttribute.Value, _valueAttribute);
         }
 
         if (Checked)
