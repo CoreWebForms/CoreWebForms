@@ -48,9 +48,7 @@ This project has some initial support for `IHttpHandler`. However, this ideally 
 
 ## Controls
 
-The majority of pages rely on built-in controls that derive from `System.Web.UI.Controls`. This includes the collection of controls for server side HTML controls (deriving from `System.Web.UI.HtmlControl`).
-
-A common pattern that differs in this implementation of controls is that in `System.Web` it was common to search up the hierarchy for a control that was in chard of some service (i.e. `NamingContainer` would be the one that tracks what the next id should be). In this implementation, we are making use of `IFeatureCollection`, where each level can have it's own, but the hieararchy can be searched. For performance reasons, the feature colleciton is only instantiated if it needs to add something to it (most controls will probably not need to add anything to it). For an example of this in the current implementation, see [the naming feature](./src/WebForms/UI/Features/UniqueIdGeneratorFeature.cs).
+The majority of pages rely on built-in controls that derive from `System.Web.UI.Controls`. This includes the collection of controls derived from `System.Web.UI.WebControl` as well as server side HTML controls (deriving from `System.Web.UI.HtmlControl`).
 
 ## Pages
 
