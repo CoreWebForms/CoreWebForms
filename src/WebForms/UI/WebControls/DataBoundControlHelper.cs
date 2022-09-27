@@ -137,8 +137,12 @@ internal static class DataBoundControlHelper
 
 #if PORT_DYNAMICDATA
     private static MethodInfo s_enableDynamicDataMethod;
+#endif
 
-    internal static void EnableDynamicData(INamingContainer control, string entityTypeName) {
+    internal static void EnableDynamicData(INamingContainer control, string entityTypeName)
+    {
+        throw new NotImplementedException();
+#if PORT_DYNAMICDATA
         if (control == null) {
             throw new ArgumentNullException("control");
         }
@@ -158,7 +162,7 @@ internal static class DataBoundControlHelper
             s_enableDynamicDataMethod.Invoke(obj: null,
                                            parameters: new object[] { control, entityType });
         }
-    }
 #endif
+    }
 }
 
