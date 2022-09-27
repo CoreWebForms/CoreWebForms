@@ -70,6 +70,9 @@ internal static class SR
     public const string ControlRenderedOutsideServerForm = nameof(ControlRenderedOutsideServerForm);
     public const string Controls_Cant_Change_Between_Posts = nameof(Controls_Cant_Change_Between_Posts);
     public const string Ctrl_not_data_handler = nameof(Ctrl_not_data_handler);
+    public const string DataBinder_Invalid_Indexed_Expr = nameof(DataBinder_Invalid_Indexed_Expr);
+    public const string DataBinder_No_Indexed_Accessor = nameof(DataBinder_No_Indexed_Accessor);
+    public const string DataBinder_Prop_Not_Found = nameof(DataBinder_Prop_Not_Found);
     public const string DataBoundControl_CallingDataMethods = nameof(DataBoundControl_CallingDataMethods);
     public const string DataBoundControl_DataMember = nameof(DataBoundControl_DataMember);
     public const string DataBoundControl_InvalidDataPropertyChange = nameof(DataBoundControl_InvalidDataPropertyChange);
