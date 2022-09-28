@@ -29,7 +29,7 @@ public class PageSymbolTests
         {
             Children:
             [
-                HtmlControl { Id: "hi", Children: [], Type: { Name: "HtmlHead", Namespace: "System.Web.UI.HtmlControls" } }
+                TypedControl { Id: "hi", Children: [], Type: { Name: "HtmlHead", Namespace: "System.Web.UI.HtmlControls" } }
             ]
         });
     }
@@ -77,7 +77,7 @@ public class PageSymbolTests
         {
             Children:
             [
-                WebControl { Id: "hi", Children: [], Type: { Name: "TextBox", Namespace: "System.Web.UI.WebControls" } }
+                TypedControl { Id: "hi", Children: [], Type: { Name: "TextBox", Namespace: "System.Web.UI.WebControls" } }
             ]
         });
     }
@@ -101,7 +101,7 @@ public class PageSymbolTests
         {
             Children:
             [
-                WebControl { Id: "hi", Children: [], Type: { Name: "TextBox", Namespace: "System.Web.UI.WebControls" } }
+                TypedControl { Id: "hi", Children: [], Type: { Name: "TextBox", Namespace: "System.Web.UI.WebControls" } }
             ]
         });
     }
@@ -125,7 +125,7 @@ public class PageSymbolTests
         {
             Children:
             [
-                WebControl
+                TypedControl
             {
                 Id: "hi",
                 Children: [],
@@ -173,7 +173,7 @@ Button clicked: <b><asp:TextBox runat=""server"" /></b>";
         Assert.Empty(result.Scripts);
         Assert.Empty(result.Errors);
 
-        if (result.Root is Root { Children: [LiteralControl { Text: { } text }, WebControl, LiteralControl { Text: "</b>" }] })
+        if (result.Root is Root { Children: [LiteralControl { Text: { } text }, TypedControl, LiteralControl { Text: "</b>" }] })
         {
             Assert.Equal($"{Environment.NewLine}Button clicked: <b>", text);
         }

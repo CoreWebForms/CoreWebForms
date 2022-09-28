@@ -97,19 +97,13 @@ internal record LiteralControl(string Text, Location Location) : TypedControl(ne
 internal record TypedControl(QName Type, Location Location) : Control
 {
     private ImmutableArray<Attribute> _attributes;
+    private ImmutableArray<TemplateProperty> _templates;
 
     public ImmutableArray<Attribute> Attributes
     {
         get => EnsureInitialized(_attributes);
         init => _attributes = value;
     }
-}
-
-internal record Attribute(string Key, string Value, DataType Kind);
-
-internal record WebControl(QName Type, Location Location) : TypedControl(Type, Location)
-{
-    private ImmutableArray<TemplateProperty> _templates;
 
     public ImmutableArray<TemplateProperty> Templates
     {
@@ -118,9 +112,7 @@ internal record WebControl(QName Type, Location Location) : TypedControl(Type, L
     }
 }
 
-internal record HtmlControl(QName Type, Location Location) : TypedControl(Type, Location)
-{
-}
+internal record Attribute(string Key, string Value, DataType Kind);
 
 internal record CodeControl(string Expression, Location location) : Control;
 

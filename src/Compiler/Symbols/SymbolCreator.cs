@@ -139,7 +139,7 @@ internal class SymbolCreator : DepthFirstAspxVisitor<Control?>
         else if (string.Equals(aspxTag.ControlName, "ContentPlaceHolder", StringComparison.OrdinalIgnoreCase) && aspxTag.Attributes.Id is { } id)
         {
             _contentPlaceHolders.Add(id);
-            return new WebControl(new("System.Web.UI.WebControls", "ContentPlaceHolder"), Convert(aspxTag.Location)) { Id = id };
+            return new TypedControl(new("System.Web.UI.WebControls", "ContentPlaceHolder"), Convert(aspxTag.Location)) { Id = id };
         }
         else if (_webControlLookup.TryGetValue(aspxTag.ControlName, out var known))
         {
@@ -160,7 +160,7 @@ internal class SymbolCreator : DepthFirstAspxVisitor<Control?>
                 }
             }
 
-            return new WebControl(known.QName, Convert(aspxTag.Location))
+            return new TypedControl(known.QName, Convert(aspxTag.Location))
             {
                 Attributes = BuildAttributes(aspxTag.Attributes, known),
                 Id = aspxTag.Attributes.Id,
@@ -218,7 +218,7 @@ internal class SymbolCreator : DepthFirstAspxVisitor<Control?>
                     builder.Add(child.Accept(this));
                 }
 
-                return new HtmlControl(known, Convert(htmlTag.Location))
+                return new TypedControl(known, Convert(htmlTag.Location))
                 {
                     Attributes = BuildAttributes(htmlTag.Attributes, null),
                     Id = htmlTag.Attributes.Id,

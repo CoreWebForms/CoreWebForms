@@ -221,12 +221,7 @@ public class CSharpPageWriter
 
         WriteId(control.Id, name, control.Type);
         WriteAttributes(control, name);
-
-        if (control is WebControl web)
-        {
-            WriteTemplate(name, web.Templates);
-        }
-
+        WriteTemplate(name, control.Templates);
 
         WriteControls(name, level);
     }
