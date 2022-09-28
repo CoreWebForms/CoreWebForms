@@ -1,5 +1,4 @@
-// Licensed to the .NET Foundation under one or more agreements.
-// The .NET Foundation licenses this file to you under the MIT license.
+// MIT License.
 
 namespace System.Web.UI;
 //NOTE:  do not add within the v1 region, go to the bottom of the enum and add new items in the v2 region

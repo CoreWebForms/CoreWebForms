@@ -1,5 +1,4 @@
-// Licensed to the .NET Foundation under one or more agreements.
-// The .NET Foundation licenses this file to you under the MIT license.
+// MIT License.
 
 using System.CodeDom.Compiler;
 using System.Text.RegularExpressions;
@@ -73,8 +72,8 @@ public partial class Program
         using var writer = new StreamWriter(fs);
         using var indented = new IndentedTextWriter(writer);
 
-        indented.WriteLine("// Licensed to the .NET Foundation under one or more agreements.");
-        indented.WriteLine("// The .NET Foundation licenses this file to you under the MIT license.");
+        indented.WriteLine("// MIT");
+        indented.WriteLine("");
         indented.WriteLine();
         indented.WriteLine("namespace System.Web;");
         indented.WriteLine();
