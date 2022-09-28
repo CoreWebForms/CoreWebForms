@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Microsoft.AspNetCore.SystemWebAdapters.Compiler;
+using Microsoft.AspNetCore.SystemWebAdapters.Compiler.Symbols;
 using Microsoft.CodeAnalysis;
 
 namespace Microsoft.AspNetCore.SystemWebAdapters.UI.Generator;
@@ -63,7 +64,7 @@ public class PageGenerator : IIncrementalGenerator
         using var stringWriter = new StringWriter();
         using var writer = new IndentedTextWriter(stringWriter);
 
-        var details = PageDetails.Build(text.Path, contents, controls);
+        var details = AspNetCompiler.ParsePage(text.Path, contents, controls);
         var builder = new CSharpPageWriter(writer, details);
 
         builder.Write();

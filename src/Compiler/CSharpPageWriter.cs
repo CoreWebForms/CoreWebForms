@@ -4,23 +4,16 @@
 using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
-using Microsoft.AspNetCore.SystemWebAdapters.Compiler.ParserImpl;
-using Microsoft.AspNetCore.SystemWebAdapters.Compiler.Syntax;
+using Microsoft.AspNetCore.SystemWebAdapters.Compiler.Symbols;
+
+using Location = Microsoft.AspNetCore.SystemWebAdapters.Compiler.Symbols.Location;
 
 namespace Microsoft.AspNetCore.SystemWebAdapters.Compiler;
 
 public class CSharpPageWriter
 {
-
-    private readonly Dictionary<string, string> _htmlControls = new()
-    {
-        { "form", "HtmlForm" },
-        { "head", "HtmlHead" },
-    };
-
     private readonly string[] DefaultUsings = new[]
     {
         "System",
@@ -29,11 +22,12 @@ public class CSharpPageWriter
     };
 
     private readonly IndentedTextWriter _writer;
-    private readonly PageDetails _details;
+    private readonly ParsedPage _details;
     private readonly IndentClose _blockClose;
     private readonly List<Variable> _variables = new();
+    private bool _needCodeRender;
 
-    public CSharpPageWriter(IndentedTextWriter writer, PageDetails details)
+    public CSharpPageWriter(IndentedTextWriter writer, ParsedPage details)
     {
         _writer = writer;
         _details = details;
@@ -70,7 +64,7 @@ public class CSharpPageWriter
 
     private void WriteClassDeclaration()
     {
-        var info = new DirectiveDetails(_details.Directive);
+        var info = _details.Directive;
 
         _writer.Write("[Microsoft.AspNetCore.SystemWebAdapters.UI.AspxPageAttribute(\"");
         _writer.Write(_details.File.Path);
@@ -95,7 +89,7 @@ public class CSharpPageWriter
         using (Block())
         {
             var level = new ComponentLevel("control.Controls", "control");
-            foreach (var node in _details.Nodes)
+            foreach (var node in _details.Root.Children)
             {
                 WriteTag(node, level);
             }
@@ -111,7 +105,7 @@ public class CSharpPageWriter
             using (Block())
             {
                 var level = new ComponentLevel("control.Controls", "control");
-                foreach (var node in template.Children)
+                foreach (var node in template.Controls)
                 {
                     WriteTag(node, level);
                 }
@@ -119,26 +113,37 @@ public class CSharpPageWriter
         }
     }
 
-    private void WriteTag(AspxNode tag, ComponentLevel level)
+    private void WriteTag(Control tag, ComponentLevel level)
     {
-        if (tag is AspxNode.Literal literal)
+        if (tag is LiteralControl literal)
         {
             WriteLiteral(literal.Text, level);
         }
-        else if (tag is AspxNode.AspxTag aspx)
+        else if (tag is TypedControl control)
         {
-            Write(aspx.Prefix, aspx.ControlName, "global::System.Web.UI.WebControls", aspx.Attributes, level);
+            Write(control, level);
+            WriteChildren(tag, level);
         }
-        else if (tag is AspxNode.HtmlTag html)
+        else if (tag is CodeControl code)
         {
-            Write(string.Empty, html.Name, "System.Web.UI.HtmlControls", html.Attributes, level);
+            WriteCode(code, level);
         }
-        else if (tag is AspxNode.CodeRenderEncode encode)
+        else if (tag is Root root)
         {
-            WriteCodeSnippets(encode, level);
+            foreach (var child in root.Children)
+            {
+                WriteTag(child, level);
+            }
         }
+        else
+        {
+            throw new NotImplementedException();
+        }
+    }
 
-        if (tag.Children.Count > 0)
+    private void WriteChildren(Control tag, ComponentLevel level)
+    {
+        if (tag.Children.Length > 0)
         {
             using (Block())
             {
@@ -151,8 +156,10 @@ public class CSharpPageWriter
         }
     }
 
-    private void WriteCodeSnippets(AspxNode.CodeRenderEncode encode, ComponentLevel level)
+    private void WriteCode(CodeControl encode, ComponentLevel level)
     {
+        _needCodeRender = true;
+
         var name = level.GetNextControlName();
 
         _writer.Write("var ");
@@ -164,56 +171,30 @@ public class CSharpPageWriter
         WriteControls(name, level);
     }
 
-    private void Write(string prefix, string tagName, string ns, TagAttributes attributes, ComponentLevel level)
+    private void Write(TypedControl control, ComponentLevel level)
     {
         var name = level.GetNextControlName();
 
         _writer.Write("var ");
         _writer.Write(name);
 
-        Debug.Assert(attributes.IsRunAtServer);
-
-        QName type;
-
-        if (_htmlControls.TryGetValue(tagName, out var known))
-        {
-            tagName = known;
-        }
-
         _writer.Write(" = new ");
-        _writer.Write(ns);
+        _writer.Write(control.Type.Namespace);
         _writer.Write('.');
-        _writer.Write(tagName);
+        _writer.Write(control.Type.Name);
         _writer.WriteLine("();");
 
-        type = new(ns, tagName);
-
-        WriteId(attributes.Id, name, type);
-        WriteAttributes(prefix, tagName, attributes, name);
+        WriteId(control.Id, name, control.Type);
+        WriteAttributes(control, name);
 
         WriteControls(name, level);
     }
 
-    private void WriteAttributes(string prefix, string tagName, TagAttributes attributes, string name)
+    private void WriteAttributes(TypedControl control, string name)
     {
-        if (!_details.Controls.TryGetValue(tagName, out var info))
+        foreach (var attribute in control.Attributes)
         {
-            _writer.Write("// Couldn't find info for ");
-
-            if (!string.IsNullOrEmpty(prefix))
-            {
-                _writer.Write(prefix);
-                _writer.Write(':');
-            }
-            _writer.WriteLine(tagName);
-            return;
-        }
-
-        foreach (var attribute in attributes)
-        {
-            var (kind, normalized) = info.GetDataType(attribute.Key);
-
-            if (kind == DataType.None)
+            if (attribute.Kind == DataType.None)
             {
                 _writer.Write(name);
                 _writer.Write(".Attributes.Add(\"");
@@ -227,9 +208,9 @@ public class CSharpPageWriter
                 _writer.Write(name);
                 _writer.Write(".");
 
-                _writer.Write(normalized);
+                _writer.Write(attribute.Key);
 
-                if (kind is DataType.Delegate)
+                if (attribute.Kind is DataType.Delegate)
                 {
                     _writer.Write(" += ");
                 }
@@ -238,7 +219,7 @@ public class CSharpPageWriter
                     _writer.Write(" = ");
                 }
 
-                WriteAttributeValue(kind, attribute.Value);
+                WriteAttributeValue(attribute.Kind, attribute.Value);
 
                 _writer.WriteLine(";");
             }
@@ -265,9 +246,9 @@ public class CSharpPageWriter
 
         _writer.Write("var ");
         _writer.Write(name);
-        _writer.Write(" = new global::System.Web.UI.LiteralControl(\"");
-        _writer.Write(NormalizeLiteral(text));
-        _writer.WriteLine("\");");
+        _writer.Write(" = new global::System.Web.UI.LiteralControl(");
+        WriteString(text);
+        _writer.WriteLine(");");
 
         WriteControls(name, level);
     }
@@ -309,7 +290,7 @@ public class CSharpPageWriter
 
         using (Block())
         {
-            foreach (var placeholder in _details.ContentPlaceHolders)
+            foreach (var placeholder in _details.ContentPlaceholders)
             {
                 _writer.Write("ContentPlaceHolders.Add(");
                 WriteString(placeholder.ToLower(CultureInfo.InvariantCulture));
@@ -327,21 +308,18 @@ public class CSharpPageWriter
 
         foreach (var script in _details.Scripts)
         {
-            foreach (var child in script.Children)
+            foreach (var child in script.Lines)
             {
-                if (child is AspxNode.Literal literal)
-                {
-                    WriteLineInfo(literal.Location);
-                    _writer.WriteLine(literal.Text.Trim());
-                    _writer.WriteLine("#line default");
-                }
+                WriteLineInfo(child.Location);
+                _writer.WriteLine(child.Text.Trim());
+                _writer.WriteLine("#line default");
             }
         }
     }
 
     private void WriteCodeSnippets()
     {
-        if (_details.CodeSnippets.Any())
+        if (_needCodeRender)
         {
             const string CodeRender = @"private sealed class CodeRender : global::System.Web.UI.Control
     {
@@ -376,7 +354,7 @@ public class CSharpPageWriter
         }
     }
 
-    private bool HasInitializer => _details.ContentPlaceHolders.Any();
+    private bool HasInitializer => !_details.ContentPlaceholders.IsDefaultOrEmpty;
 
     private void WriteConstructor()
     {
@@ -403,12 +381,9 @@ public class CSharpPageWriter
 
             foreach (var template in _details.Templates)
             {
-                if (template.Attributes.TryGetValue("ContentPlaceHolderID", out var id))
-                {
-                    _writer.Write("AddContentTemplate(");
-                    WriteString(id);
-                    _writer.WriteLine(", this);");
-                }
+                _writer.Write("AddContentTemplate(");
+                WriteString(template.PlaceholderId);
+                _writer.WriteLine(", this);");
             }
 
             _writer.WriteLine("BuildControlTree(this);");
@@ -449,8 +424,14 @@ public class CSharpPageWriter
     private void WriteString(string str)
     {
         _writer.Write('\"');
-        _writer.Write(str);
+        _writer.Write(NormalizeLiteral(str));
         _writer.Write('\"');
+
+        static string NormalizeLiteral(string input)
+            => input
+                .Replace("\n", "\\n")
+                .Replace("\r", "\\r")
+                .Replace("\"", "\\\"");
     }
 
     private IDisposable Block()
@@ -463,47 +444,19 @@ public class CSharpPageWriter
     private void WriteLineInfo(Location location)
     {
         _writer.Write("#line (");
-        var start = GetSpan(location.Start, location.Source.Text);
-        var end = GetSpan(location.End, location.Source.Text);
-        _writer.Write(start.line);
+        var start = location.Start;
+        var end = location.End;
+        _writer.Write(start.Line);
         _writer.Write(", ");
-        _writer.Write(start.column);
+        _writer.Write(start.Column);
         _writer.Write(") - (");
-        _writer.Write(end.line);
+        _writer.Write(end.Line);
         _writer.Write(", ");
-        _writer.Write(end.column);
+        _writer.Write(end.Column);
         _writer.Write(") \"");
         _writer.Write(_details.File.Path.Trim('/'));
         _writer.WriteLine('\"');
     }
-
-    private (int line, int column) GetSpan(int offset, string line)
-    {
-        var count = 1;
-        var n = 0;
-        var p = 0;
-
-        while (n < offset)
-        {
-            p = n;
-            var idx = line.IndexOf('\n', n);
-
-            if (idx < 0)
-            {
-                break;
-            }
-
-            n = idx + 1;
-            count++;
-        }
-
-        return (count, column: n - p);
-    }
-
-    private string NormalizeLiteral(string input)
-        => input
-            .Replace("\n", "\\n")
-            .Replace("\r", "\\r");
 
     private class ComponentLevel
     {

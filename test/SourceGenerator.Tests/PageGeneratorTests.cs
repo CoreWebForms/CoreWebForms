@@ -128,7 +128,7 @@ internal partial class page_aspx : WebApplication12.About
     }
 }";
         var aspx = @"<%@ Page Title=""About"" Language=""C#"" AutoEventWireup=""true"" CodeBehind=""About.aspx.cs"" Inherits=""WebApplication12.About"" %>
-<HtmlHead runat=""server"" id=""hi"" />
+<head runat=""server"" id=""hi"" />
 ";
         var generated = @$"using System;
 using System.Web;
@@ -208,7 +208,7 @@ internal partial class page_aspx : WebApplication12.About
         {{
             var control_1_1 = new global::System.Web.UI.LiteralControl(""{NewLine}    "");
             control_1.Controls.Add(control_1_1);
-            var control_1_2 = new global::System.Web.UI.WebControls.TextBox();
+            var control_1_2 = new System.Web.UI.WebControls.TextBox();
             control_1_2.ID = ""txt"";
             txt = control_1_2;
             control_1.Controls.Add(control_1_2);
@@ -219,7 +219,7 @@ internal partial class page_aspx : WebApplication12.About
         control.Controls.Add(control_2);
     }}
     protected System.Web.UI.HtmlControls.HtmlForm frm;
-    protected global::System.Web.UI.WebControls.TextBox txt;
+    protected System.Web.UI.WebControls.TextBox txt;
 }}
 ";
 

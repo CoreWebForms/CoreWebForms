@@ -14,8 +14,15 @@ public class ControlInfo
 
     public ControlInfo(string ns, string name)
     {
+        Namespace = ns;
         Name = name;
+
+        QName = new(ns, name);
     }
+
+    internal QName QName { get; }
+
+    public string Namespace { get; }
 
     public string Name { get; }
 

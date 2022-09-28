@@ -48,6 +48,8 @@ public abstract class AspxNode
     {
         public Location Location { get; }
 
+        public string GetOriginalText() => Location.Source.Text.Substring(Location.Start, Location.Length);
+
         protected Located(Location location)
         {
             Location = location;

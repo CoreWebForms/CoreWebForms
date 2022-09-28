@@ -14,7 +14,7 @@ using System.Web;
 using System.Web.UI;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SystemWebAdapters.Compiler;
-using Microsoft.AspNetCore.SystemWebAdapters.Compiler.Syntax;
+using Microsoft.AspNetCore.SystemWebAdapters.Compiler.Symbols;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Text;
@@ -68,6 +68,8 @@ internal sealed class RoslynPageCompiler : IPageCompiler
 
         var writingResult = await GetSourceAsync(files, path, components, token).ConfigureAwait(false);
         var dependentFiles = writingResult.UserFiles.Select(f => f.Path.Trim('/')).ToArray();
+
+        var file = string.Join(Environment.NewLine, writingResult.GeneratedFiles.Select(f => f.Text.ToString()));
 
         if (writingResult.ErrorMessage is { } errorMessage)
         {
@@ -324,7 +326,7 @@ internal sealed class RoslynPageCompiler : IPageCompiler
                 {
                     using var writer = new IndentedTextWriter(streamWriter);
 
-                    var details = PageDetails.Build(path, contents, controls);
+                    var details = AspNetCompiler.ParsePage(path, contents, controls);
 
                     if (mainFile is null)
                     {
@@ -370,7 +372,7 @@ internal sealed class RoslynPageCompiler : IPageCompiler
 
         public IReadOnlyCollection<(SourceText Text, string Path)> GeneratedFiles { get; init; } = Array.Empty<(SourceText, string)>();
 
-        public ImmutableArray<AspxParseError> Errors { get; init; }
+        public ImmutableArray<string> Errors { get; init; }
 
         public IEnumerable<(SourceText Text, string Path)> AllFiles => GeneratedFiles.Concat(UserFiles);
     }
