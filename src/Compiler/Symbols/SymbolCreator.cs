@@ -150,9 +150,9 @@ internal class SymbolCreator : DepthFirstAspxVisitor<Control?>
 
             foreach (var child in aspxTag.Children)
             {
-                if (asProperties && child is AspxNode.HtmlTag html)
+                if (asProperties && child is AspxNode.HtmlTag html && VisitChildren(html.Children) is { } templateChildren)
                 {
-                    templates.Add(new TemplateProperty(html.Name, VisitChildren(html.Children)));
+                    templates.Add(new TemplateProperty(html.Name, templateChildren));
                 }
                 else
                 {
