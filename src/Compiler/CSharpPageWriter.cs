@@ -3,6 +3,7 @@
 using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Globalization;
 using System.Linq;
 using Microsoft.AspNetCore.SystemWebAdapters.Compiler.Symbols;
@@ -25,6 +26,7 @@ public class CSharpPageWriter
     private readonly IndentClose _blockClose;
     private readonly List<Variable> _variables = new();
     private bool _needCodeRender;
+    private bool _needTemplateContainer;
 
     public CSharpPageWriter(IndentedTextWriter writer, ParsedPage details)
     {
@@ -55,6 +57,7 @@ public class CSharpPageWriter
             WriteInitializer();
             WriteScripts();
             WriteCodeSnippets();
+            WriteTemplateContainer();
 
             // Must be last for now as we populate the list while writing - this should be moved to PageDetails
             WriteVariables();
@@ -140,16 +143,49 @@ public class CSharpPageWriter
         }
     }
 
+    private void WriteTemplate(string name, ImmutableArray<TemplateProperty> templates)
+    {
+        if (templates.IsDefaultOrEmpty)
+        {
+            return;
+        }
+
+        _needTemplateContainer = true;
+
+        foreach (var template in templates)
+        {
+            _writer.Write(name);
+            _writer.Write('.');
+            _writer.Write(template.Name);
+            _writer.WriteLine(" = (ITemplate)new DelegateTemplate(parent =>");
+            _writer.WriteLine("{");
+            _writer.Indent++;
+            WriteChildren(template.Control, new("parent.Controls", "template"));
+            _writer.Indent--;
+            _writer.WriteLine("});");
+        }
+    }
+
     private void WriteChildren(Control tag, ComponentLevel level)
     {
         if (tag.Children.Length > 0)
         {
-            using (Block())
+            if (tag is Root)
             {
-                var next = level.GetNextLevel();
                 foreach (var child in tag.Children)
                 {
-                    WriteTag(child, next);
+                    WriteTag(child, level);
+                }
+            }
+            else
+            {
+                using (Block())
+                {
+                    var next = level.GetNextLevel();
+                    foreach (var child in tag.Children)
+                    {
+                        WriteTag(child, next);
+                    }
                 }
             }
         }
@@ -185,6 +221,12 @@ public class CSharpPageWriter
 
         WriteId(control.Id, name, control.Type);
         WriteAttributes(control, name);
+
+        if (control is WebControl web)
+        {
+            WriteTemplate(name, web.Templates);
+        }
+
 
         WriteControls(name, level);
     }
@@ -335,6 +377,26 @@ public class CSharpPageWriter
 
             base.RenderControl(writer);
         }
+    }";
+
+            _writer.WriteLine(CodeRender);
+        }
+    }
+
+    private void WriteTemplateContainer()
+    {
+        if (_needTemplateContainer)
+        {
+            const string CodeRender = @"private sealed class DelegateTemplate : global::System.Web.UI.ITemplate
+    {
+        private readonly Action<Control> _template;
+
+        public DelegateTemplate(Action<Control> template)
+        {
+            _template = template;
+        }
+
+        void global::System.Web.UI.ITemplate.InstantiateIn(Control container) => _template(container);
     }";
 
             _writer.WriteLine(CodeRender);

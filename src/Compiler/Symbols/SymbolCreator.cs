@@ -144,16 +144,27 @@ internal class SymbolCreator : DepthFirstAspxVisitor<Control?>
         else if (_webControlLookup.TryGetValue(aspxTag.ControlName, out var known))
         {
             var builder = new LiteralCombiningBuilder();
+            var templates = ImmutableArray.CreateBuilder<TemplateProperty>();
+
+            var asProperties = known.ChildrenAsProperties;
 
             foreach (var child in aspxTag.Children)
             {
-                builder.Add(child.Accept(this));
+                if (asProperties && child is AspxNode.HtmlTag html)
+                {
+                    templates.Add(new TemplateProperty(html.Name, VisitChildren(html.Children)));
+                }
+                else
+                {
+                    builder.Add(child.Accept(this));
+                }
             }
 
             return new WebControl(known.QName, Convert(aspxTag.Location))
             {
                 Attributes = BuildAttributes(aspxTag.Attributes, known),
                 Id = aspxTag.Attributes.Id,
+                Templates = templates.ToImmutable(),
                 Children = builder.Build(),
             };
         }
@@ -255,6 +266,18 @@ internal class SymbolCreator : DepthFirstAspxVisitor<Control?>
         }
 
         return builder.ToImmutable();
+    }
+
+    private Control? VisitChildren(List<AspxNode> children)
+    {
+        var builder = new LiteralCombiningBuilder();
+
+        foreach (var child in children)
+        {
+            builder.Add(child.Accept(this));
+        }
+
+        return new Root() { Children = builder.Build() };
     }
 
     protected override Control? VisitChildren(AspxNode node)

@@ -68,8 +68,6 @@ internal sealed class RoslynPageCompiler : IPageCompiler
         var writingResult = await GetSourceAsync(files, path, components, token).ConfigureAwait(false);
         var dependentFiles = writingResult.UserFiles.Select(f => f.Path.Trim('/')).ToArray();
 
-        var file = string.Join(Environment.NewLine, writingResult.GeneratedFiles.Select(f => f.Text.ToString()));
-
         if (writingResult.ErrorMessage is { } errorMessage)
         {
             return new CompiledPage(writingResult.File, dependentFiles) { Error = Encoding.UTF8.GetBytes(errorMessage) };

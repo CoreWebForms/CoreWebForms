@@ -109,6 +109,13 @@ internal record Attribute(string Key, string Value, DataType Kind);
 
 internal record WebControl(QName Type, Location Location) : TypedControl(Type, Location)
 {
+    private ImmutableArray<TemplateProperty> _templates;
+
+    public ImmutableArray<TemplateProperty> Templates
+    {
+        get => EnsureInitialized(_templates);
+        init => _templates = value;
+    }
 }
 
 internal record HtmlControl(QName Type, Location Location) : TypedControl(Type, Location)
@@ -118,6 +125,14 @@ internal record HtmlControl(QName Type, Location Location) : TypedControl(Type, 
 internal record CodeControl(string Expression, Location location) : Control;
 
 internal record Root : Control
+{
+}
+
+internal record Property(string Name) : Control
+{
+}
+
+internal record TemplateProperty(string Name, Control Control)
 {
 }
 
