@@ -25,16 +25,15 @@ app.UseHttpsRedirection();
 
 app.UseRouting();
 
-app.UseHttpHandlers();
 app.UseSystemWebAdapters();
+
+// Fix for https://github.com/dotnet/systemweb-adapters/pull/213
 app.Use((ctx, next) =>
 {
-    // Fix for https://github.com/dotnet/systemweb-adapters/pull/213
     ctx.Features.Set<IRequestBodyPipeFeature>(new FixedRequestBodyPipeFeature(ctx.Features.GetRequiredFeature<IHttpRequestFeature>()));
 
     return next(ctx);
 });
-app.UseWebForms();
 
 app.Map("/alcs", () => AssemblyLoadContext.All.Select(a => new { a.Name, Count = a.Assemblies.Count() }).OrderBy(a => a.Name));
 app.MapAspxPages();

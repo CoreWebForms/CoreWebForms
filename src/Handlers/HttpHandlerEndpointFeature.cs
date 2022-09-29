@@ -1,6 +1,5 @@
-// MIT License.
-
-#if NETCOREAPP
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Web;
 using Microsoft.AspNetCore.Http;
@@ -8,17 +7,17 @@ using Microsoft.AspNetCore.Http.Features;
 
 namespace Microsoft.AspNetCore.SystemWebAdapters;
 
-public class HttpHandlerEndpointFeature : IHttpHandlerFeature, IEndpointFeature
+internal class HttpHandlerEndpointFeature : IHttpHandlerFeature, IEndpointFeature
 {
     private readonly HttpContextCore _context;
 
     private Container _current;
     private Container _previous;
 
-    public HttpHandlerEndpointFeature(HttpContextCore context, IEndpointFeature? previous)
+    public HttpHandlerEndpointFeature(HttpContextCore context)
     {
         _context = context;
-        _current = new(_context, endpoint: previous?.Endpoint);
+        _current = new(_context, endpoint: context.Features.Get<IEndpointFeature>()?.Endpoint);
     }
 
     Endpoint? IEndpointFeature.Endpoint
@@ -95,4 +94,3 @@ public class HttpHandlerEndpointFeature : IHttpHandlerFeature, IEndpointFeature
     }
 }
 
-#endif

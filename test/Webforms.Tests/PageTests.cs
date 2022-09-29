@@ -74,9 +74,7 @@ public class PageTests
         var app = new ApplicationBuilder(provider);
 
         app.UseRouting();
-        app.UseHttpHandlers();
         app.UseSystemWebAdapters();
-        app.UseWebForms();
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapAspxPage<TPage>("/path");

@@ -1,14 +1,14 @@
-// MIT License.
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
 
 using System.Collections.Immutable;
+using System.Web;
 using System.Web.SessionState;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Features;
-using Microsoft.AspNetCore.SystemWebAdapters;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace System.Web;
+namespace Microsoft.AspNetCore.SystemWebAdapters;
 
 public static class HandlerExtensions
 {
@@ -23,18 +23,12 @@ public static class HandlerExtensions
     private static readonly ImmutableList<object> _metadataReadonlySession = _metadata.Add(new SessionAttribute { IsReadOnly = true });
     private static readonly ImmutableList<object> _metadataSession = _metadata.Add(new SessionAttribute { IsReadOnly = false });
 
-    public static void SetHandler(this HttpContext context, IHttpHandler handler)
-        => ((HttpContextCore)context).Features.GetRequired<IHttpHandlerFeature>().Current = handler;
-
-    public static IHttpHandler? GetHandler(this HttpContext context)
-        => ((HttpContextCore)context).Features.GetRequired<IHttpHandlerFeature>().Current;
-
-    internal static T GetRequired<T>(this IFeatureCollection features)
-        => features.Get<T>() ?? throw new InvalidOperationException();
-
     public static EndpointBuilder AddHttpHandler<THandler>(this EndpointBuilder builder)
         where THandler : IHttpHandler
         => builder.AddHttpHandler(typeof(THandler));
+
+    public static EndpointBuilder AddHttpHandler(this EndpointBuilder builder, IHttpHandler handler)
+        => builder.AddHttpHandler(_ => handler, handler.GetType());
 
     public static EndpointBuilder AddHttpHandler(this EndpointBuilder builder, Type type)
     {
@@ -45,7 +39,7 @@ public static class HandlerExtensions
 
         var factory = ActivatorUtilities.CreateFactory(type, Array.Empty<Type>());
 
-        return builder.AddHttpHandler(type, CreateActivator(factory));
+        return builder.AddHttpHandler(CreateActivator(factory), type);
 
         static Func<HttpContextCore, IHttpHandler> CreateActivator(ObjectFactory factory)
         {
@@ -62,7 +56,7 @@ public static class HandlerExtensions
 
                 if (newHandler.IsReusable)
                 {
-                    Interlocked.CompareExchange(ref handler, newHandler, null);
+                    Interlocked.Exchange(ref handler, newHandler);
                 }
 
                 return newHandler;
@@ -70,10 +64,7 @@ public static class HandlerExtensions
         }
     }
 
-    public static EndpointBuilder AddHttpHandler(this EndpointBuilder builder, IHttpHandler handler)
-        => builder.AddHttpHandler(handler.GetType(), (HttpContextCore context) => handler);
-
-    private static EndpointBuilder AddHttpHandler(this EndpointBuilder builder, Type type, Func<HttpContextCore, IHttpHandler> factory)
+    private static EndpointBuilder AddHttpHandler(this EndpointBuilder builder, Func<HttpContextCore, IHttpHandler> factory, Type type)
     {
         builder.Metadata.Add(factory);
 
@@ -113,15 +104,15 @@ public static class HandlerExtensions
         }
     }
 
-    private static async Task RunHandlerAsync(this IHttpHandler handler, HttpContext context)
+    private static async Task RunHandlerAsync(this IHttpHandler handler, HttpContextCore context)
     {
         if (handler is HttpTaskAsyncHandler task)
         {
-            await task.ProcessRequestAsync(context).ConfigureAwait(true);
+            await task.ProcessRequestAsync(context).ConfigureAwait(false);
         }
         else if (handler is IHttpAsyncHandler asyncHandler)
         {
-            await Task.Factory.FromAsync((cb, state) => asyncHandler.BeginProcessRequest(context, cb, state), asyncHandler.EndProcessRequest, null).ConfigureAwait(true);
+            await Task.Factory.FromAsync((cb, state) => asyncHandler.BeginProcessRequest(context, cb, state), asyncHandler.EndProcessRequest, null).ConfigureAwait(false);
         }
         else
         {
@@ -136,25 +127,9 @@ public static class HandlerExtensions
             return endpoint;
         }
 
-        var cache = core.RequestServices.GetRequiredService<HttpHandlerEndpointCache>();
+        var factory = core.RequestServices.GetRequiredService<IHttpHandlerEndpointFactory>();
 
-        if (cache.TryGetValue(handler, out var existing))
-        {
-            return existing;
-        }
-
-        var newEndpoint = new HandlerEndpointBuilder()
-            .AddHttpHandler(handler)
-            .Build();
-
-        cache.Add(handler, newEndpoint);
-
-        return newEndpoint;
-    }
-
-    private class HandlerEndpointBuilder : EndpointBuilder
-    {
-        public override Endpoint Build() => new(RequestDelegate, new(Metadata), DisplayName);
+        return factory.Create(handler);
     }
 
     internal static IHttpHandler CreateHandler(this HttpContextCore context, Endpoint endpoint)
@@ -182,7 +157,7 @@ public static class HandlerExtensions
 
         public Endpoint Endpoint { get; }
 
-        public override Task ProcessRequestAsync(HttpContext context)
+        public override Task ProcessRequestAsync(System.Web.HttpContext context)
         {
             if (Endpoint.RequestDelegate is { } request)
             {
