@@ -5,7 +5,9 @@ using System.Web.UI;
 using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
@@ -71,16 +73,26 @@ public class PageTests
 
         using var provider = services.BuildServiceProvider();
 
-        var app = new ApplicationBuilder(provider);
-
-        app.UseRouting();
-        app.UseSystemWebAdapters();
-        app.UseEndpoints(endpoints =>
+        var pipeline = CreatePipeline(provider, app =>
         {
-            endpoints.MapAspxPage<TPage>("/path");
+            app.UseRouting();
+
+            app.UseSystemWebAdapters();
+
+            // Fix for https://github.com/dotnet/systemweb-adapters/pull/213
+            app.Use((ctx, next) =>
+            {
+                ctx.Features.Set<IRequestBodyPipeFeature>(new FixedRequestBodyPipeFeature(ctx.Features.GetRequiredFeature<IHttpRequestFeature>()));
+
+                return next(ctx);
+            });
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapAspxPage<TPage>("/path");
+            });
         });
 
-        var pipeline = app.Build();
         var body = new MemoryStream();
         var httpContext = new DefaultHttpContext();
         httpContext.Request.Path = "/path";
@@ -94,6 +106,23 @@ public class PageTests
 
         using var reader = new StreamReader(body);
         return reader.ReadToEnd();
+    }
+
+    private static RequestDelegate CreatePipeline(IServiceProvider provider, Action<IApplicationBuilder> configure)
+    {
+        var startupFilters = provider.GetService<IEnumerable<IStartupFilter>>();
+
+        if (startupFilters is not null)
+        {
+            foreach (var filter in startupFilters.Reverse())
+            {
+                configure = filter.Configure(configure);
+            }
+        }
+
+        var builder = new ApplicationBuilder(provider);
+        configure(builder);
+        return builder.Build();
     }
 
     private sealed class Page1 : Page
