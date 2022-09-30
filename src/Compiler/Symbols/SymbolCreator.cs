@@ -13,12 +13,6 @@ namespace Microsoft.AspNetCore.SystemWebAdapters.Compiler.Symbols;
 
 internal class SymbolCreator : DepthFirstAspxVisitor<Control?>
 {
-    private readonly Dictionary<string, QName> _htmlControls = new()
-    {
-        { "form", new("System.Web.UI.HtmlControls", "HtmlForm") },
-        { "head", new("System.Web.UI.HtmlControls", "HtmlHead") },
-    };
-
     private readonly Dictionary<string, ControlInfo> _webControlLookup;
 
     private AspxNode.AspxDirective? _directive;
@@ -209,8 +203,9 @@ internal class SymbolCreator : DepthFirstAspxVisitor<Control?>
 
                 _scripts.Add(new(builder.ToImmutable()));
             }
-            else if (_htmlControls.TryGetValue(htmlTag.Name, out var known))
+            else
             {
+                var known = HtmlTagNameToTypeMapper.Instance.GetControlType(htmlTag.Name, htmlTag.Attributes);
                 var builder = new LiteralCombiningBuilder();
 
                 foreach (var child in htmlTag.Children)

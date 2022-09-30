@@ -5,7 +5,7 @@ using System.Collections.Immutable;
 
 namespace Microsoft.AspNetCore.SystemWebAdapters.Compiler.ParserImpl;
 
-public struct TagAttributes : IEnumerable<KeyValuePair<string, string>>
+public readonly struct TagAttributes : IEnumerable<KeyValuePair<string, string>>, IReadOnlyDictionary<string, string>
 {
     public static TagAttributes Empty { get; } = new TagAttributes(null, false, ImmutableDictionary<string, string>.Empty);
 
@@ -21,6 +21,12 @@ public struct TagAttributes : IEnumerable<KeyValuePair<string, string>>
     public string Id { get; }
 
     public bool IsRunAtServer { get; }
+
+    IEnumerable<string> IReadOnlyDictionary<string, string>.Keys => table.Keys;
+
+    IEnumerable<string> IReadOnlyDictionary<string, string>.Values => table.Values;
+
+    public int Count => table.Count;
 
     public string this[string key]
     {
