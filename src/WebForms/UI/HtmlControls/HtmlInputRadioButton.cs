@@ -6,8 +6,6 @@
  * Copyright (c) 2000 Microsoft Corporation
  */
 
-using System;
-
 namespace System.Web.UI.HtmlControls;
 
 using System;
