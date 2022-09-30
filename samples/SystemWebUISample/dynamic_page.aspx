@@ -18,7 +18,7 @@
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
   <asp:Label id="label" Text="First Name" runat="server" />
-  <asp:TextBox id="txt" runat="server" Value="Leave it alone" />
+  <asp:TextBox id="txt" runat="server" Value="" />
 
   <hr />
 
@@ -27,20 +27,6 @@
 
   Button clicked: <b><asp:Label id="label2" Text="None" runat="server" /></b>
 
-<hr/>
-<asp:Repeater id="MyView" runat="server">
-  <HeaderTemplate>
-    [Header markup goes here]
-  </HeaderTemplate>
-  <FooterTemplate>
-    [Footers markup goes here]
-  </FooterTemplate>
-  <ItemTemplate>
-    [Items markup goes here]
-  </ItemTemplate>
-</asp:Repeater>
-<hr/>
-   
 <%--
      <asp:RequiredFieldValidator runat="server" ControlToValidate="Name" Display="Dynamic"
             CssClass="field-validation-valid text-danger" ErrorMessage="The Name field is required." />

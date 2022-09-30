@@ -1,11 +1,19 @@
 // MIT License.
 
-using System.ComponentModel;
-using System.Globalization;
-
-#nullable disable
+/*
+ * HtmlControl.cs
+ *
+ * Copyright (c) 2000 Microsoft Corporation
+ */
 
 namespace System.Web.UI.HtmlControls;
+
+using System;
+using System.ComponentModel;
+using System.Globalization;
+using System.Web.UI;
+using AttributeCollection = System.Web.UI.AttributeCollection;
+
 /*
  * An abstract base class representing an intrinsic Html tag that
  * is not represented by both a begin and end tag, for example
@@ -55,7 +63,18 @@ public abstract class HtmlControl : Control, IAttributeAccessor
     Browsable(false),
     DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden),
     ]
-    public AttributeCollection Attributes => _attributes ??= new AttributeCollection(ViewState);
+    public AttributeCollection Attributes
+    {
+        get
+        {
+            if (_attributes == null)
+            {
+                _attributes = new AttributeCollection(ViewState);
+            }
+
+            return _attributes;
+        }
+    }
 
     /*
      *  Access to collection of styles.
@@ -74,7 +93,13 @@ public abstract class HtmlControl : Control, IAttributeAccessor
     Browsable(false),
     DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden),
     ]
-    public CssStyleCollection Style => Attributes.CssStyle;
+    public CssStyleCollection Style
+    {
+        get
+        {
+            return Attributes.CssStyle;
+        }
+    }
 
     /*
      * Property to get name of tag.
@@ -91,7 +116,10 @@ public abstract class HtmlControl : Control, IAttributeAccessor
     DefaultValue(""),
     DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)
     ]
-    public virtual string TagName => _tagName;
+    public virtual string TagName
+    {
+        get { return _tagName; }
+    }
 
     /*
      * Disabled property.
@@ -118,18 +146,37 @@ public abstract class HtmlControl : Control, IAttributeAccessor
             return ((s != null) ? (s.Equals("disabled")) : false);
         }
 
-        set => Attributes["disabled"] = value ? "disabled" : null;
+        set
+        {
+            if (value)
+            {
+                Attributes["disabled"] = "disabled";
+            }
+            else
+            {
+                Attributes["disabled"] = null;
+            }
+        }
     }
 
     /// <devdoc>
     /// </devdoc>
     /// <internalonly/>
-    protected override bool ViewStateIgnoresCase => true;
+    protected override bool ViewStateIgnoresCase
+    {
+        get
+        {
+            return true;
+        }
+    }
 
     /// <devdoc>
     ///    <para>[To be supplied.]</para>
     /// </devdoc>
-    protected override ControlCollection CreateControlCollection() => new EmptyControlCollection(this);
+    protected override ControlCollection CreateControlCollection()
+    {
+        return new EmptyControlCollection(this);
+    }
 
     /*
      * Render the control into the given writer.
@@ -138,7 +185,10 @@ public abstract class HtmlControl : Control, IAttributeAccessor
     /// <internalonly/>
     /// <devdoc>
     /// </devdoc>
-    protected internal override void Render(HtmlTextWriter writer) => RenderBeginTag(writer);
+    protected internal override void Render(HtmlTextWriter writer)
+    {
+        RenderBeginTag(writer);
+    }
 
     /*
      * Render only the attributes, attr1=value1 attr2=value2 ...
@@ -178,12 +228,18 @@ public abstract class HtmlControl : Control, IAttributeAccessor
     /// <internalonly/>
     /// <devdoc>
     /// </devdoc>
-    string IAttributeAccessor.GetAttribute(string name) => GetAttribute(name);
+    string IAttributeAccessor.GetAttribute(string name)
+    {
+        return GetAttribute(name);
+    }
 
     /// <internalonly/>
     /// <devdoc>
     /// </devdoc>
-    protected virtual string GetAttribute(string name) => Attributes[name];
+    protected virtual string GetAttribute(string name)
+    {
+        return Attributes[name];
+    }
 
     /*
      * HtmlControls support generic access to Attributes.
@@ -192,12 +248,18 @@ public abstract class HtmlControl : Control, IAttributeAccessor
     /// <internalonly/>
     /// <devdoc>
     /// </devdoc>
-    void IAttributeAccessor.SetAttribute(string name, string value) => SetAttribute(name, value);
+    void IAttributeAccessor.SetAttribute(string name, string value)
+    {
+        SetAttribute(name, value);
+    }
 
     /// <internalonly/>
     /// <devdoc>
     /// </devdoc>
-    protected virtual void SetAttribute(string name, string value) => Attributes[name] = value;
+    protected virtual void SetAttribute(string name, string value)
+    {
+        Attributes[name] = value;
+    }
 
     internal void PreProcessRelativeReferenceAttribute(HtmlTextWriter writer,
         string attribName)

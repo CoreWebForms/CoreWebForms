@@ -1,10 +1,17 @@
 // MIT License.
 
-using System.ComponentModel;
-
-#nullable disable
+/*
+ * HtmlGenericControl.cs
+ *
+ * Copyright (c) 2000 Microsoft Corporation
+ */
 
 namespace System.Web.UI.HtmlControls;
+
+using System;
+using System.ComponentModel;
+using System.Web.UI;
+
 /*
  *  A control representing an unknown Html tag.
  */
@@ -41,7 +48,12 @@ public class HtmlGenericControl : HtmlContainerControl
     /// </devdoc>
     public HtmlGenericControl(string tag)
     {
-        _tagName = tag ?? string.Empty;
+        if (tag == null)
+        {
+            tag = String.Empty;
+        }
+
+        _tagName = tag;
     }
 
     /*
@@ -61,7 +73,9 @@ public class HtmlGenericControl : HtmlContainerControl
     ]
     public new string TagName
     {
-        get => _tagName;
-        set => _tagName = value;
+        get { return _tagName; }
+
+        set { _tagName = value; }
     }
+
 }

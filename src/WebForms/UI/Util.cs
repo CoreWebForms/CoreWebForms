@@ -224,6 +224,14 @@ internal static class Util
         return true;
     }
 
+    internal static void WriteOnClickAttribute(HtmlTextWriter writer,
+                                              HtmlControls.HtmlControl control,
+                                              bool submitsAutomatically,
+                                              bool submitsProgramatically,
+                                              bool causesValidation,
+                                              string validationGroup)
+        => throw new NotImplementedException();
+
     internal static int FirstNonWhiteSpaceIndex(string s)
     {
         for (int i = 0; i < s.Length; i++)

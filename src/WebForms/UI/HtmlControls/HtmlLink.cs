@@ -1,10 +1,13 @@
 // MIT License.
 
+namespace System.Web.UI.HtmlControls;
+
+using System;
 using System.ComponentModel;
 
-#nullable disable
-
-namespace System.Web.UI.HtmlControls;
+[
+ControlBuilderAttribute(typeof(HtmlEmptyTagControlBuilder))
+]
 public class HtmlLink : HtmlControl
 {
 

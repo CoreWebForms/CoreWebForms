@@ -1,4 +1,4 @@
-﻿// MIT License.
+// MIT License.
 
 namespace Microsoft.AspNetCore.SystemWebAdapters.Compiler;
 

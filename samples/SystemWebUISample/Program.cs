@@ -1,6 +1,5 @@
 // MIT License.
 
-using System.Runtime.Loader;
 using Microsoft.AspNetCore.Http.Features;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -27,15 +26,14 @@ app.UseRouting();
 
 app.UseSystemWebAdapters();
 
-// Fix for https://github.com/dotnet/systemweb-adapters/pull/213
 app.Use((ctx, next) =>
 {
+    // Fix for https://github.com/dotnet/systemweb-adapters/pull/213
     ctx.Features.Set<IRequestBodyPipeFeature>(new FixedRequestBodyPipeFeature(ctx.Features.GetRequiredFeature<IHttpRequestFeature>()));
 
     return next(ctx);
 });
 
-app.Map("/alcs", () => AssemblyLoadContext.All.Select(a => new { a.Name, Count = a.Assemblies.Count() }).OrderBy(a => a.Name));
 app.MapAspxPages();
 app.MapDynamicAspxPages(new ExcludeObjBinDirectory(app.Environment.ContentRootFileProvider));
 

@@ -1,14 +1,49 @@
 // MIT License.
 
+namespace System.Web.UI.HtmlControls;
+
+using System;
 using System.Collections;
 using System.Globalization;
+using System.Web;
+using System.Web.UI;
 using System.Web.UI.WebControls;
 
-namespace System.Web.UI.HtmlControls;
+public class HtmlHeadBuilder : ControlBuilder
+{
+
+    public override Type GetChildControlType(string tagName, IDictionary attribs)
+    {
+        if (String.Equals(tagName, "title", StringComparison.OrdinalIgnoreCase))
+        {
+            return typeof(HtmlTitle);
+        }
+
+        if (String.Equals(tagName, "link", StringComparison.OrdinalIgnoreCase))
+        {
+            return typeof(HtmlLink);
+        }
+
+        if (String.Equals(tagName, "meta", StringComparison.OrdinalIgnoreCase))
+        {
+            return typeof(HtmlMeta);
+        }
+
+        return null;
+    }
+
+    public override bool AllowWhitespaceLiterals()
+    {
+        return false;
+    }
+}
 
 /// <devdoc>
 /// Represents the HEAD element.
 /// </devdoc>
+[
+ControlBuilderAttribute(typeof(HtmlHeadBuilder))
+]
 public sealed class HtmlHead : HtmlGenericControl
 {
 

@@ -186,10 +186,20 @@ internal static class SR
     public const string GenericModelBinderProvider_ParameterMustSpecifyOpenGenericType = nameof(GenericModelBinderProvider_ParameterMustSpecifyOpenGenericType);
     public const string GenericModelBinderProvider_TypeArgumentCountMismatch = nameof(GenericModelBinderProvider_TypeArgumentCountMismatch);
     public const string Head_Needs_Page = nameof(Head_Needs_Page);
+    public const string HtmlControl_OnServerClick = nameof(HtmlControl_OnServerClick);
     public const string HtmlForm_OnlyIButtonControlCanBeDefaultButton = nameof(HtmlForm_OnlyIButtonControlCanBeDefaultButton);
     public const string HtmlHead_OnlyOneHeadAllowed = nameof(HtmlHead_OnlyOneHeadAllowed);
     public const string HtmlHead_OnlyOneTitleAllowed = nameof(HtmlHead_OnlyOneTitleAllowed);
     public const string HtmlHead_StyleAlreadyRegistered = nameof(HtmlHead_StyleAlreadyRegistered);
+    public const string HtmlInputHidden_OnServerChange = nameof(HtmlInputHidden_OnServerChange);
+    public const string HtmlInputImage_OnServerClick = nameof(HtmlInputImage_OnServerClick);
+    public const string HtmlInputText_ServerChange = nameof(HtmlInputText_ServerChange);
+    public const string HtmlSelect_Cant_Multiselect_In_Single_Mode = nameof(HtmlSelect_Cant_Multiselect_In_Single_Mode);
+    public const string HtmlSelect_DataMember = nameof(HtmlSelect_DataMember);
+    public const string HtmlSelect_DataTextField = nameof(HtmlSelect_DataTextField);
+    public const string HtmlSelect_DataValueField = nameof(HtmlSelect_DataValueField);
+    public const string HtmlSelect_OnServerChange = nameof(HtmlSelect_OnServerChange);
+    public const string HtmlTextArea_OnServerChange = nameof(HtmlTextArea_OnServerChange);
     public const string HTMLTextWriterUnbalancedPop = nameof(HTMLTextWriterUnbalancedPop);
     public const string HyperLink_ImageHeight = nameof(HyperLink_ImageHeight);
     public const string HyperLink_ImageUrl = nameof(HyperLink_ImageUrl);
@@ -220,6 +230,8 @@ internal static class SR
     public const string ImageField_ReadOnly = nameof(ImageField_ReadOnly);
     public const string ImageField_WrongControlType = nameof(ImageField_WrongControlType);
     public const string Inner_Content_not_literal = nameof(Inner_Content_not_literal);
+    public const string InnerHtml_not_supported = nameof(InnerHtml_not_supported);
+    public const string InnerText_not_supported = nameof(InnerText_not_supported);
     public const string Invalid_app_VirtualPath = nameof(Invalid_app_VirtualPath);
     public const string Invalid_cache_settings_location = nameof(Invalid_cache_settings_location);
     public const string Invalid_ControlState = nameof(Invalid_ControlState);
@@ -430,6 +442,7 @@ internal static class SR
     public const string Unhandled_Err_Error = nameof(Unhandled_Err_Error);
     public const string UnitParseNoDigits = nameof(UnitParseNoDigits);
     public const string UnitParseNumericPart = nameof(UnitParseNumericPart);
+    public const string Value_Set_Not_Supported = nameof(Value_Set_Not_Supported);
     public const string ValueProviderResult_ConversionThrew = nameof(ValueProviderResult_ConversionThrew);
     public const string ValueProviderResult_NoConverterExists = nameof(ValueProviderResult_NoConverterExists);
     public const string ViewState_AuthenticationFailed = nameof(ViewState_AuthenticationFailed);

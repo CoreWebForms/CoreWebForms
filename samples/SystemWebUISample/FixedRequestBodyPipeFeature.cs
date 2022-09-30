@@ -3,7 +3,7 @@
 using System.IO.Pipelines;
 using Microsoft.AspNetCore.Http.Features;
 
-internal class FixedRequestBodyPipeFeature : IRequestBodyPipeFeature
+internal sealed class FixedRequestBodyPipeFeature : IRequestBodyPipeFeature
 {
     private readonly IHttpRequestFeature _other;
     private PipeReader? _reader;

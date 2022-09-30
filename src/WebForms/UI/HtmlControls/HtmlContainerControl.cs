@@ -1,13 +1,14 @@
 // MIT License.
 
-using System.ComponentModel;
-
-#nullable disable
-
 namespace System.Web.UI.HtmlControls;
+
+using System;
+using System.ComponentModel;
+using System.Web.UI;
+
 /*
-*  A control representing an intrinsic Html tag.
-*/
+ *  A control representing an intrinsic Html tag.
+ */
 
 /// <devdoc>
 /// <para>The <see langword='HtmlContainerControl'/> 
@@ -77,7 +78,7 @@ public abstract class HtmlContainerControl : HtmlControl
             {
                 if (Controls.Count == 0)
                 {
-                    return string.Empty;
+                    return String.Empty;
                 }
 
                 throw new HttpException(SR.GetString(SR.Inner_Content_not_literal, ID));
