@@ -878,7 +878,13 @@ public partial class Control : IComponent, IParserAccessor, IDataBindingsAccesso
     DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden),
     WebSysDescription(SR.Control_Page)
     ]
-    public Page Page => GetHierarchicalFeature<Page>() ?? HttpContext.Current.GetFeature<IHttpHandlerFeature>()?.Current as Page ?? throw new InvalidOperationException();
+    public Page Page
+    {
+        get => page ??= GetHierarchicalFeature<Page>() ?? HttpContext.Current.GetFeature<IHttpHandlerFeature>()?.Current as Page ?? throw new InvalidOperationException();
+        set => page = value;
+    }
+
+    private Page page;
 
 #if PORT_ROUTING
     internal RouteCollection RouteCollection

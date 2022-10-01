@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Reflection;
 using System.Text;
+using System.Web.UI.WebControls;
 
 /*
  * Implements various utility functions used by the template code
@@ -19,6 +20,23 @@ internal static class Util
     internal static bool IsWhiteSpaceString(string s)
     {
         return (s.Trim().Length == 0);
+    }
+
+    internal static void CopyBaseAttributesToInnerControl(WebControl control, WebControl child)
+    {
+        short oldTab = control.TabIndex;
+        string oldAccess = control.AccessKey;
+        try
+        {
+            control.AccessKey = String.Empty;
+            control.TabIndex = 0;
+            child.CopyBaseAttributes(control);
+        }
+        finally
+        {
+            control.TabIndex = oldTab;
+            control.AccessKey = oldAccess;
+        }
     }
 
     internal static bool CanConvertToFrom(TypeConverter converter, Type type)
