@@ -220,21 +220,28 @@ internal static class UrlPath
 internal static String Combine(String basepath, String relative) {
     return Combine(HttpRuntime.AppDomainAppVirtualPathString, basepath, relative);
 }
+#endif
 
-// This simple version of combine should only be used when the relative
-// path is known to be relative.  It's more efficient, but doesn't do any
-// sanity checks.
-internal static String SimpleCombine(String basepath, String relative) {
-    Debug.Assert(!String.IsNullOrEmpty(basepath));
-    Debug.Assert(!String.IsNullOrEmpty(relative));
-    Debug.Assert(relative[0] != '/');
+    // This simple version of combine should only be used when the relative
+    // path is known to be relative.  It's more efficient, but doesn't do any
+    // sanity checks.
+    internal static String SimpleCombine(String basepath, String relative)
+    {
+        Debug.Assert(!String.IsNullOrEmpty(basepath));
+        Debug.Assert(!String.IsNullOrEmpty(relative));
+        Debug.Assert(relative[0] != '/');
 
-    if (HasTrailingSlash(basepath))
-        return basepath + relative;
-    else
-        return basepath + "/" + relative;
-}
+        if (HasTrailingSlash(basepath))
+        {
+            return basepath + relative;
+        }
+        else
+        {
+            return basepath + "/" + relative;
+        }
+    }
 
+#if PORT_URLPATH
 internal static String Reduce(String path) {
 
     // ignore query string

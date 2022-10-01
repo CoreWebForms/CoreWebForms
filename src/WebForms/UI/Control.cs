@@ -32,8 +32,7 @@ Themeable(false),
 ToolboxItemFilter("System.Web.UI", ToolboxItemFilterType.Require),
 ToolboxItemAttribute("System.Web.UI.Design.WebControlToolboxItem, " + AssemblyRef.SystemDesign)
 ]
-public partial class Control : IComponent, IParserAccessor, IDataBindingsAccessor
-// IUrlResolutionService
+public partial class Control : IComponent, IParserAccessor, IDataBindingsAccessor, IUrlResolutionService
 {
     internal static readonly object EventDataBinding = new object();
     internal static readonly object EventInit = new object();
