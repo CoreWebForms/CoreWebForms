@@ -21,6 +21,14 @@ internal static class SR
     public const string BaseDataBoundControl_DataSource = nameof(BaseDataBoundControl_DataSource);
     public const string BaseDataBoundControl_DataSourceID = nameof(BaseDataBoundControl_DataSourceID);
     public const string BaseDataBoundControl_OnDataBound = nameof(BaseDataBoundControl_OnDataBound);
+    public const string BaseValidator_ControlToValidate = nameof(BaseValidator_ControlToValidate);
+    public const string BaseValidator_Display = nameof(BaseValidator_Display);
+    public const string BaseValidator_EnableClientScript = nameof(BaseValidator_EnableClientScript);
+    public const string BaseValidator_ErrorMessage = nameof(BaseValidator_ErrorMessage);
+    public const string BaseValidator_IsValid = nameof(BaseValidator_IsValid);
+    public const string BaseValidator_SetFocusOnError = nameof(BaseValidator_SetFocusOnError);
+    public const string BaseValidator_Text = nameof(BaseValidator_Text);
+    public const string BaseValidator_ValidationGroup = nameof(BaseValidator_ValidationGroup);
     public const string Binding_DataMember = nameof(Binding_DataMember);
     public const string BindingBehavior_ValueNotFound = nameof(BindingBehavior_ValueNotFound);
     public const string BoundField_ApplyFormatInEditMode = nameof(BoundField_ApplyFormatInEditMode);
@@ -401,6 +409,7 @@ internal static class SR
     public const string PostBackControl_ValidationGroup = nameof(PostBackControl_ValidationGroup);
     public const string Previous_Page_Not_Authorized = nameof(Previous_Page_Not_Authorized);
     public const string Property_Had_Malformed_Url = nameof(Property_Had_Malformed_Url);
+    public const string Property_Not_Supported = nameof(Property_Not_Supported);
     public const string Property_Set_Not_Supported = nameof(Property_Set_Not_Supported);
     public const string PropertySetAfterFrameworkInitialize = nameof(PropertySetAfterFrameworkInitialize);
     public const string PropertySetBeforePageEvent = nameof(PropertySetBeforePageEvent);
@@ -423,6 +432,7 @@ internal static class SR
     public const string RepeatInfo_ListLayoutDoesNotSupportMultipleColumn = nameof(RepeatInfo_ListLayoutDoesNotSupportMultipleColumn);
     public const string RepeatInfo_ListLayoutOnlySupportsVerticalLayout = nameof(RepeatInfo_ListLayoutOnlySupportsVerticalLayout);
     public const string Request_not_available = nameof(Request_not_available);
+    public const string RequiredFieldValidator_InitialValue = nameof(RequiredFieldValidator_InitialValue);
     public const string Response_not_available = nameof(Response_not_available);
     public const string Sample_Databound_Text = nameof(Sample_Databound_Text);
     public const string Session_not_enabled = nameof(Session_not_enabled);
@@ -585,6 +595,9 @@ internal static class SR
     public const string Unhandled_Err_Error = nameof(Unhandled_Err_Error);
     public const string UnitParseNoDigits = nameof(UnitParseNoDigits);
     public const string UnitParseNumericPart = nameof(UnitParseNumericPart);
+    public const string Validator_bad_control_type = nameof(Validator_bad_control_type);
+    public const string Validator_control_blank = nameof(Validator_control_blank);
+    public const string Validator_control_not_found = nameof(Validator_control_not_found);
     public const string Value_Set_Not_Supported = nameof(Value_Set_Not_Supported);
     public const string ValueProviderResult_ConversionThrew = nameof(ValueProviderResult_ConversionThrew);
     public const string ValueProviderResult_NoConverterExists = nameof(ValueProviderResult_NoConverterExists);

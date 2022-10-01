@@ -16,6 +16,11 @@ using System.Text;
 namespace System.Web.UI;
 internal static class Util
 {
+    internal static bool IsWhiteSpaceString(string s)
+    {
+        return (s.Trim().Length == 0);
+    }
+
     internal static bool CanConvertToFrom(TypeConverter converter, Type type)
     {
         return (converter != null && converter.CanConvertTo(type) &&
