@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
+    <IsShipped>true</IsShipped>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <AssemblyName>Microsoft.AspNetCore.SystemWebAdapters.HttpHandler</AssemblyName>

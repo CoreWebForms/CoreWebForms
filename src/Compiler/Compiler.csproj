@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <IsShipped>true</IsShipped>
     <AssemblyName>Microsoft.AspNetCore.SystemWebAdapters.Compiler</AssemblyName>
     <RootNamespace>Microsoft.AspNetCore.SystemWebAdapters.Compiler</RootNamespace>
   </PropertyGroup>

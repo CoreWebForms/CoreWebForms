@@ -24,8 +24,16 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
-      run: dotnet build --no-restore
+      run: dotnet build -c Release --no-restore
     - name: Test
-      run: dotnet test --no-build --verbosity normal
+      run: dotnet test -c Release --no-build --verbosity normal
     - name: Pack
-      run: dotnet pack --no-build
+      run: dotnet pack -c Release --no-build
+    - name: Upload NuGet
+      run: dotnet nuget push --source https://nuget.pkg.github.com/twsouthwick/index.json -k ${{secrets.GITHUB_TOKEN}} bin/Release/packages/shipping/*.nupkg 
+    - name: Upload artifact
+      uses: actions/upload-artifact@v2.2.0
+      with:
+        path: |
+          **/*/bin/Release/*.nupkg
+          **/*/bin/Release/*.snupkg
