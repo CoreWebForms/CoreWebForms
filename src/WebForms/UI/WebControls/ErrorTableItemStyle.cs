@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Drawing;
 
 namespace System.Web.UI.WebControls;
+
 // A derived TableItemStyle class with the default ForeColor set to Color.Red instead of Color.Empty
 internal sealed class ErrorTableItemStyle : TableItemStyle, ICustomTypeDescriptor
 {
@@ -14,7 +15,7 @@ internal sealed class ErrorTableItemStyle : TableItemStyle, ICustomTypeDescripto
     }
 
     #region ICustomTypeDesciptor implementation
-    AttributeCollection ICustomTypeDescriptor.GetAttributes()
+    ComponentModel.AttributeCollection ICustomTypeDescriptor.GetAttributes()
     {
         return TypeDescriptor.GetAttributes(this, true);
     }

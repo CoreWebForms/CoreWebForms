@@ -1886,7 +1886,6 @@ public class Login : CompositeControl, IBorderPaddingControl, IRenderOuterTableC
         }
     }
 
-    [SecurityPermission(SecurityAction.Demand, Unrestricted = true)]
     protected override void SetDesignModeState(IDictionary data)
     {
         if (data != null)

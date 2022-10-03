@@ -26,14 +26,6 @@ app.UseRouting();
 
 app.UseSystemWebAdapters();
 
-app.Use((ctx, next) =>
-{
-    // Fix for https://github.com/dotnet/systemweb-adapters/pull/213
-    ctx.Features.Set<IRequestBodyPipeFeature>(new FixedRequestBodyPipeFeature(ctx.Features.GetRequiredFeature<IHttpRequestFeature>()));
-
-    return next(ctx);
-});
-
 app.MapAspxPages();
 app.MapDynamicAspxPages(new ExcludeObjBinDirectory(app.Environment.ContentRootFileProvider));
 

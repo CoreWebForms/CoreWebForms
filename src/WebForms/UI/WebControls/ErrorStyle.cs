@@ -14,7 +14,7 @@ internal sealed class ErrorStyle : Style, ICustomTypeDescriptor
     }
 
     #region ICustomTypeDesciptor implementation
-    AttributeCollection ICustomTypeDescriptor.GetAttributes()
+    System.ComponentModel.AttributeCollection ICustomTypeDescriptor.GetAttributes()
     {
         return TypeDescriptor.GetAttributes(this, true);
     }

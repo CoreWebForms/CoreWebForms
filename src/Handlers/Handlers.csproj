@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.SystemWebAdapters.CoreServices" Version="1.0.0-rc.2.22478.1" />
+    <PackageReference Include="Microsoft.AspNetCore.SystemWebAdapters.CoreServices" Version="1.0.0-rc.2.22503.1" />
   </ItemGroup>
 
   <ItemGroup>

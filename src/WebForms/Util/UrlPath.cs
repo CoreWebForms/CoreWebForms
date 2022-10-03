@@ -732,11 +732,11 @@ internal static class UrlPath
             if (applicationPath.Length > 1)
             {
                 Debug.Assert(HasTrailingSlash(applicationPath));
-                return applicationPath + virtualPath.Substring(2);
+                return string.Concat(applicationPath, virtualPath.AsSpan(2));
             }
             else
             {
-                return "/" + virtualPath.Substring(2);
+                return string.Concat("/", virtualPath.AsSpan(2));
             }
         }
 
