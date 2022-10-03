@@ -1,5 +1,7 @@
 // MIT License.
 
+using System.ComponentModel;
+
 /*
  * HtmlGenericControl.cs
  *
@@ -7,11 +9,6 @@
  */
 
 namespace System.Web.UI.HtmlControls;
-
-using System;
-using System.ComponentModel;
-using System.Web.UI;
-
 /*
  *  A control representing an unknown Html tag.
  */

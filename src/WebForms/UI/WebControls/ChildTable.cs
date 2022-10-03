@@ -1,12 +1,9 @@
 // MIT License.
 
-namespace System.Web.UI.WebControls;
-
-using System;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Web.UI;
 
+namespace System.Web.UI.WebControls;
 [
 ToolboxItem(false),
 SupportsEventValidation,

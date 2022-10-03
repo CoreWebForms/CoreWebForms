@@ -1,11 +1,8 @@
 // MIT License.
 
-namespace System.Web.UI.WebControls;
-
-using System;
 using System.ComponentModel;
-using System.Web;
 
+namespace System.Web.UI.WebControls;
 /// <devdoc>
 ///     Provides a data mapping definition for a TreeView
 /// </devdoc>

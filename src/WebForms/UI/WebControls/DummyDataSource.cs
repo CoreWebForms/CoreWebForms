@@ -1,10 +1,8 @@
 // MIT License.
 
-namespace System.Web.UI.WebControls;
-
-using System;
 using System.Collections;
 
+namespace System.Web.UI.WebControls;
 /// <devdoc>
 /// </devdoc>
 internal sealed class DummyDataSource : ICollection

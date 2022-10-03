@@ -1,16 +1,10 @@
 // MIT License.
 
-namespace System.Web.UI.WebControls;
-
-using System;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Globalization;
-using System.Web;
-using System.Web.UI;
 
-using AttributeCollection = System.Web.UI.AttributeCollection;
-
+namespace System.Web.UI.WebControls;
 /// <devdoc>
 ///    <para>Represents a Windows checkbox control.</para>
 /// </devdoc>

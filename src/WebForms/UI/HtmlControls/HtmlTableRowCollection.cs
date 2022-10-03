@@ -1,5 +1,7 @@
 // MIT License.
 
+using System.Collections;
+
 /*
  * HtmlTableRowCollection.cs
  *
@@ -7,10 +9,6 @@
  */
 
 namespace System.Web.UI.HtmlControls;
-
-using System;
-using System.Collections;
-
 /// <devdoc>
 ///    <para>
 ///       The <see langword='HtmlTableRowCollection'/> contains all

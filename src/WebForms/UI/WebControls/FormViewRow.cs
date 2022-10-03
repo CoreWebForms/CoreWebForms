@@ -1,9 +1,6 @@
 // MIT License.
 
 namespace System.Web.UI.WebControls;
-
-using System;
-
 /// <devdoc>
 /// <para>Represents an individual row in the <see cref='System.Web.UI.WebControls.FormView'/>.</para>
 /// </devdoc>

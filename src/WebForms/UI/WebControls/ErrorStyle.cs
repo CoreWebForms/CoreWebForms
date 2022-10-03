@@ -1,11 +1,9 @@
 // MIT License.
 
-namespace System.Web.UI.WebControls;
-
-using System;
 using System.ComponentModel;
 using System.Drawing;
 
+namespace System.Web.UI.WebControls;
 // A derived Style class with the default ForeColor set to Color.Red instead of Color.Empty
 internal sealed class ErrorStyle : Style, ICustomTypeDescriptor
 {

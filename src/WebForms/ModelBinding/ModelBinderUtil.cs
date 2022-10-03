@@ -1,12 +1,9 @@
 // MIT License.
 
-namespace System.Web.ModelBinding;
-
-using System;
 using System.Collections;
 using System.Globalization;
-using System.Linq;
 
+namespace System.Web.ModelBinding;
 internal static class ModelBinderUtil
 {
 

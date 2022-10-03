@@ -1,12 +1,10 @@
 // MIT License.
 
-namespace System.Web.UI.WebControls;
-
-using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 
+namespace System.Web.UI.WebControls;
 /// <devdoc>
 /// <para>Creates a field with a set of <see cref='System.Web.UI.WebControls.Button'/>
 /// controls.</para>

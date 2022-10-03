@@ -1,11 +1,8 @@
 // MIT License.
 
-namespace System.Web.ModelBinding;
-
-using System;
-using System.Collections.Generic;
 using System.Globalization;
 
+namespace System.Web.ModelBinding;
 public class DictionaryValueProvider<TValue> : IValueProvider
 {
 

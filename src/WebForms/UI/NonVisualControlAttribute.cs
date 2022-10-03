@@ -1,9 +1,6 @@
 // MIT License.
 
 namespace System.Web.UI;
-
-using System;
-
 /// <devdoc>
 /// </devdoc>
 [AttributeUsage(AttributeTargets.Class)]

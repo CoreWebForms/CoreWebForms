@@ -1,14 +1,10 @@
 // MIT License.
 
-namespace System.Web.UI.WebControls;
-
-using System;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Web;
-using System.Web.UI;
 using System.Web.Util;
 
+namespace System.Web.UI.WebControls;
 /// <devdoc>
 ///    <para>Generates a single-selection radio button group and
 ///       defines its properties.</para>

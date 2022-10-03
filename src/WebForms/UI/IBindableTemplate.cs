@@ -1,9 +1,8 @@
 // MIT License.
 
-namespace System.Web.UI;
-
 using System.Collections.Specialized;
 
+namespace System.Web.UI;
 /// <devdoc>
 /// </devdoc>
 public interface IBindableTemplate : ITemplate

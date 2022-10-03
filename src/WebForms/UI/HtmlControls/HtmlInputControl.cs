@@ -1,5 +1,7 @@
 // MIT License.
 
+using System.ComponentModel;
+
 /*
  * HtmlInputControl.cs
  *
@@ -7,12 +9,6 @@
  */
 
 namespace System.Web.UI.HtmlControls;
-
-using System;
-using System.ComponentModel;
-using System.Web;
-using System.Web.UI;
-
 /*
  * An abstract base class representing an intrinsic INPUT tag.
  */

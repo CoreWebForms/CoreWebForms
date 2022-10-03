@@ -1,5 +1,9 @@
 // MIT License.
 
+using System.Collections.Specialized;
+using System.ComponentModel;
+using System.Globalization;
+
 /*
  * HtmlTextArea.cs
  *
@@ -7,14 +11,6 @@
  */
 
 namespace System.Web.UI.HtmlControls;
-
-using System;
-using System.Collections.Specialized;
-using System.ComponentModel;
-using System.Globalization;
-using System.Web;
-using System.Web.UI;
-
 /// <devdoc>
 ///    <para>Defines the methods, properties, and events for the
 ///    <see cref='System.Web.UI.HtmlControls.HtmlTextArea'/>

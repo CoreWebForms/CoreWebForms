@@ -1,9 +1,6 @@
 // MIT License.
 
 namespace System.Web.ModelBinding;
-
-using System;
-
 [Serializable]
 public class ModelError
 {

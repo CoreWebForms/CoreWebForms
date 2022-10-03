@@ -1,12 +1,11 @@
 // MIT License.
 
+using System.Diagnostics.CodeAnalysis;
+
 /*
  */
 
 namespace System.Web.UI.WebControls;
-
-using System.Diagnostics.CodeAnalysis;
-
 /// <devdoc>
 /// <para>Provides data for some <see cref='System.Web.UI.WebControls.FormView'/> events.</para>
 /// </devdoc>

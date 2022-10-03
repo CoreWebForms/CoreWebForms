@@ -1,10 +1,8 @@
 // MIT License.
 
-namespace System.Web.UI.WebControls;
-
 using System.Collections;
-using System.Web.UI;
 
+namespace System.Web.UI.WebControls;
 /// <devdoc>
 /// This class is used by ReadOnlyDataSource to represent an individual
 /// view of a generic data source.

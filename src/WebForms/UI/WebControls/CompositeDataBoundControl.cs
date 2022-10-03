@@ -1,10 +1,8 @@
 // MIT License.
 
-namespace System.Web.UI.WebControls;
-
-using System;
 using System.Collections;
 
+namespace System.Web.UI.WebControls;
 public abstract class CompositeDataBoundControl : DataBoundControl, INamingContainer
 {
 

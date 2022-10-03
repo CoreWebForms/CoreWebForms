@@ -1,11 +1,10 @@
 // MIT License.
 
+using System.Collections;
+
 /*
  */
 namespace System.Web.UI;
-
-using System.Collections;
-
 [AttributeUsage(AttributeTargets.Property)]
 internal sealed class IgnoreUnknownContentAttribute : Attribute
 {

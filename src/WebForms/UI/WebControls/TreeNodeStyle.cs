@@ -1,12 +1,10 @@
 // MIT License.
 
-namespace System.Web.UI.WebControls;
-
 using System.ComponentModel;
 using System.Drawing;
 using System.Globalization;
-using System.Web.UI;
 
+namespace System.Web.UI.WebControls;
 /// <devdoc>
 ///    Specifies the style of a TreeNode.
 /// </devdoc>

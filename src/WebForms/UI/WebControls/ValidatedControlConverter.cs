@@ -1,9 +1,8 @@
 // MIT License.
 
-namespace System.Web.UI.WebControls;
-
 using System.ComponentModel;
 
+namespace System.Web.UI.WebControls;
 /// <devdoc>
 ///    <para> Filters and retrieves several types of values from validated controls.</para>
 /// </devdoc>

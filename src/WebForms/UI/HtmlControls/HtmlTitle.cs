@@ -1,10 +1,8 @@
 // MIT License.
 
-namespace System.Web.UI.HtmlControls;
-
-using System;
 using System.ComponentModel;
 
+namespace System.Web.UI.HtmlControls;
 public class HtmlTitle : HtmlControl
 {
     private string _text;

@@ -1,9 +1,6 @@
 // MIT License.
 
 namespace System.Web.UI.WebControls;
-
-using System;
-
 /// <devdoc>
 /// <para>Creates a special cell that is contained within a DataControlField.</para>
 /// </devdoc>

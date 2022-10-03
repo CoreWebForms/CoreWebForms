@@ -4,9 +4,6 @@
  */
 
 namespace System.Web.UI.WebControls;
-
-using System;
-
 /// <devdoc>
 ///    <para>Specifies the type of the item in a list.</para>
 /// </devdoc>

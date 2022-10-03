@@ -1,11 +1,9 @@
 // MIT License.
 
-namespace System.Web.UI.WebControls;
-
 using System.Collections;
-using System.Collections.Generic;
 using System.Diagnostics;
 
+namespace System.Web.UI.WebControls;
 internal sealed class MethodParametersDictionary : IDictionary<string, MethodParameterValue>, IStateManager
 {
 

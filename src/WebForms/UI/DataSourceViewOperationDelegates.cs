@@ -1,9 +1,8 @@
 // MIT License.
 
-namespace System.Web.UI;
-
 using System.Collections;
 
+namespace System.Web.UI;
 public delegate void DataSourceViewSelectCallback(IEnumerable data);
 
 // returns whether the exception was handled

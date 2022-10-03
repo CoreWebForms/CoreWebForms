@@ -1,14 +1,10 @@
 // MIT License.
 
-namespace System.Web.ModelBinding;
-
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using System.Linq;
 
+namespace System.Web.ModelBinding;
 public class ModelMetadata
 {
     public const int DefaultOrder = 10000;

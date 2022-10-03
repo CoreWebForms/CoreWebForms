@@ -1,10 +1,8 @@
 // MIT License.
 
-namespace System.Web.UI.WebControls;
-
-using System;
 using System.ComponentModel;
 
+namespace System.Web.UI.WebControls;
 /// <devdoc>
 /// Defines the base class for DataControlFields whose main purpose is to contain buttons for commands.
 /// </devdoc>

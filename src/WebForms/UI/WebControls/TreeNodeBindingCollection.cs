@@ -1,10 +1,8 @@
 // MIT License.
 
-namespace System.Web.UI.WebControls;
-
-using System;
 using System.Collections;
 
+namespace System.Web.UI.WebControls;
 /// <devdoc>
 ///     Provides a collection of TreeNodeBinding objects
 /// </devdoc>

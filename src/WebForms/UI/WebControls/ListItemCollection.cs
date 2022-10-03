@@ -1,11 +1,9 @@
 // MIT License.
 
-namespace System.Web.UI.WebControls;
-
-using System;
 using System.Collections;
 using System.ComponentModel;
 
+namespace System.Web.UI.WebControls;
 /// <devdoc>
 /// <para>Encapsulates the items within a <see cref='System.Web.UI.WebControls.ListControl'/> . 
 ///    This class cannot be inherited.</para>

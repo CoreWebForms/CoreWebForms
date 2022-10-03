@@ -1,28 +1,24 @@
 // MIT License.
 
+using System.Collections;
 using System.Diagnostics;
-
-/*
- * UrlPath class
- *
- * Copyright (c) 1999 Microsoft Corporation
- */
-
-#nullable disable
+using System.Text;
+using System;
 
 namespace System.Web.Util;
-/*
- * Code to perform Url path combining
- */
+
 internal static class UrlPath
 {
+    private static string AppDomainAppVirtualPathString => VirtualPath.GetVirtualPathString(HttpRuntime.AppDomainAppVirtualPath);
 
     internal const char appRelativeCharacter = '~';
     internal const string appRelativeCharacterString = "~/";
 
-    internal static bool IsRooted(string basepath)
+    private static readonly char[] s_slashChars = new char[] { '\\', '/' };
+
+    internal static bool IsRooted(String basepath)
     {
-        return string.IsNullOrEmpty(basepath) || basepath[0] == '/' || basepath[0] == '\\';
+        return (String.IsNullOrEmpty(basepath) || basepath[0] == '/' || basepath[0] == '\\');
     }
 
     // Checks if virtual path contains a protocol, which is referred to as a scheme in the
@@ -47,7 +43,7 @@ internal static class UrlPath
         }
 
         int indexOfSlash = virtualPath.IndexOf('/');
-        return indexOfSlash == -1 || indexOfColon < indexOfSlash;
+        return (indexOfSlash == -1 || indexOfColon < indexOfSlash);
     }
 
     // Returns whether the virtual path is relative.  Note that this returns true for
@@ -55,7 +51,7 @@ internal static class UrlPath
     internal static bool IsRelativeUrl(string virtualPath)
     {
         // If it has a protocol, it's not relative
-        return HasScheme(virtualPath) ? false : !IsRooted(virtualPath);
+        return !HasScheme(virtualPath) && !IsRooted(virtualPath);
     }
 
     internal static bool IsAppRelativePath(string path)
@@ -92,12 +88,12 @@ internal static class UrlPath
 
     internal static bool IsValidVirtualPathWithoutProtocol(string path)
     {
-        return path == null ? false : !HasScheme(path);
+        return path != null && !HasScheme(path);
     }
 
-    internal static string GetDirectory(string path)
+    internal static String GetDirectory(String path)
     {
-        if (string.IsNullOrEmpty(path))
+        if (String.IsNullOrEmpty(path))
         {
             throw new ArgumentException(SR.GetString(SR.Empty_path_has_no_directory));
         }
@@ -121,7 +117,7 @@ internal static class UrlPath
 
     private static bool IsDirectorySeparatorChar(char ch)
     {
-        return ch == '\\' || ch == '/';
+        return (ch == '\\' || ch == '/');
     }
 
     internal static bool IsAbsolutePhysicalPath(string path)
@@ -168,59 +164,78 @@ internal static class UrlPath
         }
     }
 
-#if FALSE
-    private static String Combine(String appPath, String basepath, String relative) {
-    String path;
+    private static String Combine(String appPath, String basepath, String relative)
+    {
+        String path;
 
-    if (String.IsNullOrEmpty(relative))
-        throw new ArgumentNullException("relative");
-    if (String.IsNullOrEmpty(basepath))
-        throw new ArgumentNullException("basepath");
-
-    if (basepath[0] == appRelativeCharacter && basepath.Length == 1) {
-        // If it's "~", change it to "~/"
-        basepath = appRelativeCharacterString;
-    }
-    else {
-        // If the base path includes a file name, get rid of it before combining
-        int lastSlashIndex = basepath.LastIndexOf('/');
-        Debug.Assert(lastSlashIndex >= 0);
-        if (lastSlashIndex < basepath.Length - 1) {
-            basepath = basepath.Substring(0, lastSlashIndex + 1);
+        if (String.IsNullOrEmpty(relative))
+        {
+            throw new ArgumentNullException(nameof(relative));
         }
-    }
 
-    // Make sure it's a virtual path (ASURT 73641)
-    CheckValidVirtualPath(relative);
+        if (String.IsNullOrEmpty(basepath))
+        {
+            throw new ArgumentNullException(nameof(basepath));
+        }
 
-    if (IsRooted(relative)) {
-        path = relative;
-    }
-    else {
+        if (basepath[0] == appRelativeCharacter && basepath.Length == 1)
+        {
+            // If it's "~", change it to "~/"
+            basepath = appRelativeCharacterString;
+        }
+        else
+        {
+            // If the base path includes a file name, get rid of it before combining
+            int lastSlashIndex = basepath.LastIndexOf('/');
+            Debug.Assert(lastSlashIndex >= 0);
+            if (lastSlashIndex < basepath.Length - 1)
+            {
+                basepath = basepath.Substring(0, lastSlashIndex + 1);
+            }
+        }
 
-        // If the path is exactly "~", just return the app root path
-        if (relative.Length == 1 && relative[0] == appRelativeCharacter)
-            return appPath;
+        // Make sure it's a virtual path (ASURT 73641)
+        CheckValidVirtualPath(relative);
 
-        // If the relative path starts with "~/" or "~\", treat it as app root
-        // relative (ASURT 68628)
-        if (IsAppRelativePath(relative)) {
-            if (appPath.Length > 1)
-                path = appPath + "/" + relative.Substring(2);
+        if (IsRooted(relative))
+        {
+            path = relative;
+        }
+        else
+        {
+
+            // If the path is exactly "~", just return the app root path
+            if (relative.Length == 1 && relative[0] == appRelativeCharacter)
+            {
+                return appPath;
+            }
+
+            // If the relative path starts with "~/" or "~\", treat it as app root
+            // relative (ASURT 68628)
+            if (IsAppRelativePath(relative))
+            {
+                if (appPath.Length > 1)
+                {
+                    path = string.Concat(appPath, "/", relative.AsSpan(2));
+                }
+                else
+                {
+                    path = string.Concat("/", relative.AsSpan(2));
+                }
+            }
             else
-                path = "/" + relative.Substring(2);
-        } else {
-            path = SimpleCombine(basepath, relative);
+            {
+                path = SimpleCombine(basepath, relative);
+            }
         }
+
+        return Reduce(path);
     }
 
-    return Reduce(path);
-}
-
-internal static String Combine(String basepath, String relative) {
-    return Combine(HttpRuntime.AppDomainAppVirtualPathString, basepath, relative);
-}
-#endif
+    internal static String Combine(String basepath, String relative)
+    {
+        return Combine(AppDomainAppVirtualPathString, basepath, relative);
+    }
 
     // This simple version of combine should only be used when the relative
     // path is known to be relative.  It's more efficient, but doesn't do any
@@ -231,200 +246,234 @@ internal static String Combine(String basepath, String relative) {
         Debug.Assert(!String.IsNullOrEmpty(relative));
         Debug.Assert(relative[0] != '/');
 
-        if (HasTrailingSlash(basepath))
-        {
-            return basepath + relative;
-        }
-        else
-        {
-            return basepath + "/" + relative;
-        }
+        return HasTrailingSlash(basepath) ? basepath + relative : basepath + "/" + relative;
     }
 
-#if PORT_URLPATH
-internal static String Reduce(String path) {
+    internal static String Reduce(String path)
+    {
 
-    // ignore query string
-    String queryString = null;
-    if (path != null) {
-        int iqs = path.IndexOf('?');
-        if (iqs >= 0) {
-            queryString = path.Substring(iqs);
-            path = path.Substring(0, iqs);
+        // ignore query string
+        String queryString = null;
+        if (path != null)
+        {
+            int iqs = path.IndexOf('?');
+            if (iqs >= 0)
+            {
+                queryString = path.Substring(iqs);
+                path = path.Substring(0, iqs);
+            }
         }
+
+        // Take care of backslashes and duplicate slashes
+        path = FixVirtualPathSlashes(path);
+
+        path = ReduceVirtualPath(path);
+
+        return (queryString != null) ? (path + queryString) : path;
     }
-
-    // Take care of backslashes and duplicate slashes
-    path = FixVirtualPathSlashes(path);
-
-    path = ReduceVirtualPath(path);
-
-    return (queryString != null) ? (path + queryString) : path;
-}
 
     // Same as Reduce, but for a virtual path that is known to be well formed
-    internal static String ReduceVirtualPath(String path) {
+    internal static String ReduceVirtualPath(String path)
+    {
 
-    int length = path.Length;
-    int examine;
+        int length = path.Length;
+        int examine;
 
-    // quickly rule out situations in which there are no . or ..
+        // quickly rule out situations in which there are no . or ..
 
-    for (examine = 0; ; examine++) {
-        examine = path.IndexOf('.', examine);
-        if (examine < 0)
-            return path;
+        for (examine = 0; ; examine++)
+        {
+            examine = path.IndexOf('.', examine);
+            if (examine < 0)
+            {
+                return path;
+            }
 
-        if ((examine == 0 || path[examine - 1] == '/')
-            && (examine + 1 == length || path[examine + 1] == '/' ||
-                (path[examine + 1] == '.' && (examine + 2 == length || path[examine + 2] == '/'))))
-            break;
-    }
-
-    // OK, we found a . or .. so process it:
-
-    ArrayList list = new ArrayList();
-    StringBuilder sb = new StringBuilder();
-    int start;
-    examine = 0;
-
-    for (; ; ) {
-        start = examine;
-        examine = path.IndexOf('/', start + 1);
-
-        if (examine < 0)
-            examine = length;
-
-        if (examine - start <= 3 &&
-            (examine < 1 || path[examine - 1] == '.') &&
-            (start + 1 >= length || path[start + 1] == '.')) {
-            if (examine - start == 3) {
-                if (list.Count == 0)
-                    throw new HttpException(SR.GetString(SR.Cannot_exit_up_top_directory));
-
-                // We're about to backtrack onto a starting '~', which would yield
-                // incorrect results.  Instead, make the path App Absolute, and call
-                // Reduce on that.
-                if (list.Count == 1 && IsAppRelativePath(path)) {
-                    Debug.Assert(sb.Length == 1);
-                    return ReduceVirtualPath(MakeVirtualPathAppAbsolute(path));
-                }
-
-                sb.Length = (int)list[list.Count - 1];
-                list.RemoveRange(list.Count - 1, 1);
+            if ((examine == 0 || path[examine - 1] == '/')
+                && (examine + 1 == length || path[examine + 1] == '/' ||
+                    (path[examine + 1] == '.' && (examine + 2 == length || path[examine + 2] == '/'))))
+            {
+                break;
             }
         }
-        else {
-            list.Add(sb.Length);
 
-            sb.Append(path, start, examine - start);
+        // OK, we found a . or .. so process it:
+
+        ArrayList list = new ArrayList();
+        StringBuilder sb = new StringBuilder();
+        int start;
+        examine = 0;
+
+        for (; ; )
+        {
+            start = examine;
+            examine = path.IndexOf('/', start + 1);
+
+            if (examine < 0)
+            {
+                examine = length;
+            }
+
+            if (examine - start <= 3 &&
+                (examine < 1 || path[examine - 1] == '.') &&
+                (start + 1 >= length || path[start + 1] == '.'))
+            {
+                if (examine - start == 3)
+                {
+                    if (list.Count == 0)
+                    {
+                        throw new HttpException(SR.GetString(SR.Cannot_exit_up_top_directory));
+                    }
+
+                    // We're about to backtrack onto a starting '~', which would yield
+                    // incorrect results.  Instead, make the path App Absolute, and call
+                    // Reduce on that.
+                    if (list.Count == 1 && IsAppRelativePath(path))
+                    {
+                        Debug.Assert(sb.Length == 1);
+                        return ReduceVirtualPath(MakeVirtualPathAppAbsolute(path));
+                    }
+
+                    sb.Length = (int)list[list.Count - 1];
+                    list.RemoveRange(list.Count - 1, 1);
+                }
+            }
+            else
+            {
+                list.Add(sb.Length);
+
+                sb.Append(path, start, examine - start);
+            }
+
+            if (examine == length)
+            {
+                break;
+            }
         }
 
-        if (examine == length)
-            break;
+        string result = sb.ToString();
+
+        // If we end up with en empty string, turn it into either "/" or "." (VSWhidbey 289175)
+        if (result.Length == 0)
+        {
+            if (length > 0 && path[0] == '/')
+            {
+                result = @"/";
+            }
+            else
+            {
+                result = ".";
+            }
+        }
+
+        return result;
     }
 
-    string result = sb.ToString();
+    // Change backslashes to forward slashes, and remove duplicate slashes
+    internal static String FixVirtualPathSlashes(string virtualPath)
+    {
 
-    // If we end up with en empty string, turn it into either "/" or "." (VSWhidbey 289175)
-    if (result.Length == 0) {
-        if (length > 0 && path[0] == '/')
-            result = @"/";
-        else
-            result = ".";
+        // Make sure we don't have any back slashes
+        virtualPath = virtualPath.Replace('\\', '/');
+
+        // Replace any double forward slashes
+        for (; ; )
+        {
+            string newPath = virtualPath.Replace("//", "/");
+
+            // If it didn't do anything, we're done
+            if ((object)newPath == (object)virtualPath)
+            {
+                break;
+            }
+
+            // We need to loop again to take care of triple (or more) slashes (VSWhidbey 288782)
+            virtualPath = newPath;
+        }
+
+        return virtualPath;
     }
 
-    return result;
-}
-
-// Change backslashes to forward slashes, and remove duplicate slashes
-internal static String FixVirtualPathSlashes(string virtualPath) {
-
-    // Make sure we don't have any back slashes
-    virtualPath = virtualPath.Replace('\\', '/');
-
-    // Replace any double forward slashes
-    for (;;) {
-        string newPath = virtualPath.Replace("//", "/");
-
-        // If it didn't do anything, we're done
-        if ((object)newPath == (object)virtualPath)
-            break;
-
-        // We need to loop again to take care of triple (or more) slashes (VSWhidbey 288782)
-        virtualPath = newPath;
-    }
-
-    return virtualPath;
-}
-
-// We use file: protocol instead of http:, so that Uri.MakeRelative behaves
-// in a case insensitive way (VSWhidbey 80078)
-private const string dummyProtocolAndServer = "file://foo";
+    // We use file: protocol instead of http:, so that Uri.MakeRelative behaves
+    // in a case insensitive way (VSWhidbey 80078)
+    private const string dummyProtocolAndServer = "file://foo";
 
     // Return the relative vpath path from one rooted vpath to another
-    internal static string MakeRelative(string from, string to) {
+    internal static string MakeRelative(string from, string to)
+    {
 
-    // If either path is app relative (~/...), make it absolute, since the Uri
-    // class wouldn't know how to deal with it.
-    from = MakeVirtualPathAppAbsolute(from);
-    to = MakeVirtualPathAppAbsolute(to);
+        // If either path is app relative (~/...), make it absolute, since the Uri
+        // class wouldn't know how to deal with it.
+        from = MakeVirtualPathAppAbsolute(from);
+        to = MakeVirtualPathAppAbsolute(to);
 
-    // Make sure both virtual paths are rooted
-    if (!IsRooted(from))
-        throw new ArgumentException(SR.GetString(SR.Path_must_be_rooted, from));
-    if (!IsRooted(to))
-        throw new ArgumentException(SR.GetString(SR.Path_must_be_rooted, to));
-
-    // Remove the query string, so that System.Uri doesn't corrupt it
-    string queryString = null;
-    if (to != null) {
-        int iqs = to.IndexOf('?');
-        if (iqs >= 0) {
-            queryString = to.Substring(iqs);
-            to = to.Substring(0, iqs);
+        // Make sure both virtual paths are rooted
+        if (!IsRooted(from))
+        {
+            throw new ArgumentException(SR.GetString(SR.Path_must_be_rooted, from));
         }
-    }
 
-    // Uri's need full url's so, we use a dummy root
-    Uri fromUri = new Uri(dummyProtocolAndServer + from);
-    Uri toUri = new Uri(dummyProtocolAndServer + to);
+        if (!IsRooted(to))
+        {
+            throw new ArgumentException(SR.GetString(SR.Path_must_be_rooted, to));
+        }
 
-    string relativePath;
-
-    // VSWhidbey 144946: If to and from points to identical path (excluding query and fragment), just use them instead
-    // of returning an empty string.
-    if (fromUri.Equals(toUri)) {
-        int iPos = to.LastIndexOfAny(s_slashChars);
-
-        if (iPos >= 0) {
-
-            // If it's the same directory, simply return "./"
-            // Browsers should interpret "./" as the original directory.
-            if (iPos == to.Length - 1) {
-                relativePath = "./";
-            }
-            else {
-                relativePath = to.Substring(iPos + 1);
+        // Remove the query string, so that System.Uri doesn't corrupt it
+        string queryString = null;
+        if (to != null)
+        {
+            int iqs = to.IndexOf('?');
+            if (iqs >= 0)
+            {
+                queryString = to.Substring(iqs);
+                to = to.Substring(0, iqs);
             }
         }
-        else {
-            relativePath = to;
+
+        // Uri's need full url's so, we use a dummy root
+        Uri fromUri = new Uri(dummyProtocolAndServer + from);
+        Uri toUri = new Uri(dummyProtocolAndServer + to);
+
+        string relativePath;
+
+        // VSWhidbey 144946: If to and from points to identical path (excluding query and fragment), just use them instead
+        // of returning an empty string.
+        if (fromUri.Equals(toUri))
+        {
+            int iPos = to.LastIndexOfAny(s_slashChars);
+
+            if (iPos >= 0)
+            {
+
+                // If it's the same directory, simply return "./"
+                // Browsers should interpret "./" as the original directory.
+                if (iPos == to.Length - 1)
+                {
+                    relativePath = "./";
+                }
+                else
+                {
+                    relativePath = to.Substring(iPos + 1);
+                }
+            }
+            else
+            {
+                relativePath = to;
+            }
         }
-    }
-    else {
-// To avoid deprecation warning.  It says we should use MakeRelativeUri instead (which returns a Uri),
-// but we wouldn't gain anything from it.  The way we use MakeRelative is hacky anyway (fake protocol, ...),
-// and I don't want to take the chance of breaking something with this change.
+        else
+        {
+            // To avoid deprecation warning.  It says we should use MakeRelativeUri instead (which returns a Uri),
+            // but we wouldn't gain anything from it.  The way we use MakeRelative is hacky anyway (fake protocol, ...),
+            // and I don't want to take the chance of breaking something with this change.
 #pragma warning disable 0618
-        relativePath = fromUri.MakeRelative(toUri);
+            relativePath = fromUri.MakeRelative(toUri);
 #pragma warning restore 0618
-    }
+        }
 
-    // Note that we need to re-append the query string and fragment (e.g. #anchor)
-    return relativePath + queryString + toUri.Fragment;
-}
-#endif
+        // Note that we need to re-append the query string and fragment (e.g. #anchor)
+        return relativePath + queryString + toUri.Fragment;
+    }
 
     internal static string GetDirectoryOrRootName(string path)
     {
@@ -492,14 +541,14 @@ private const string dummyProtocolAndServer = "file://foo";
             char ch = virtualPath[i];
             if (ch == '.')
             {
-                return i != length - 1 ? virtualPath.Substring(i, length - i) : string.Empty;
+                return i != length - 1 ? virtualPath.Substring(i, length - i) : String.Empty;
             }
             if (ch == '/')
             {
                 break;
             }
         }
-        return string.Empty;
+        return String.Empty;
     }
 
     internal static bool HasTrailingSlash(string virtualPath)
@@ -594,26 +643,24 @@ private const string dummyProtocolAndServer = "file://foo";
         return true;
     }
 
-#if FALSE
-    internal static bool VirtualPathStartsWithAppPath(string virtualPath) {
-    Debug.Assert(HttpRuntime.AppDomainAppVirtualPathObject != null);
-    return VirtualPathStartsWithVirtualPath(virtualPath,
-        HttpRuntime.AppDomainAppVirtualPathString);
-}
+    internal static bool VirtualPathStartsWithAppPath(string virtualPath)
+    {
+        return VirtualPathStartsWithVirtualPath(virtualPath,
+            AppDomainAppVirtualPathString);
+    }
 
-internal static string MakeVirtualPathAppRelative(string virtualPath) {
-    Debug.Assert(HttpRuntime.AppDomainAppVirtualPathObject != null);
-    return MakeVirtualPathAppRelative(virtualPath,
-        HttpRuntime.AppDomainAppVirtualPathString, false /*nullIfNotInApp*/);
-}
+    internal static string MakeVirtualPathAppRelative(string virtualPath)
+    {
+        return MakeVirtualPathAppRelative(virtualPath,
+            AppDomainAppVirtualPathString, false /*nullIfNotInApp*/);
+    }
 
-// Same as MakeVirtualPathAppRelative, but return null if app relative can't be obtained
-internal static string MakeVirtualPathAppRelativeOrNull(string virtualPath) {
-    Debug.Assert(HttpRuntime.AppDomainAppVirtualPathObject != null);
-    return MakeVirtualPathAppRelative(virtualPath,
-        HttpRuntime.AppDomainAppVirtualPathString, true /*nullIfNotInApp*/);
-}
-#endif
+    // Same as MakeVirtualPathAppRelative, but return null if app relative can't be obtained
+    internal static string MakeVirtualPathAppRelativeOrNull(string virtualPath)
+    {
+        return MakeVirtualPathAppRelative(virtualPath,
+            AppDomainAppVirtualPathString, true /*nullIfNotInApp*/);
+    }
 
     // If a virtual path starts with the app path, make it start with
     // ~ instead, so that it becomes application agnostic
@@ -659,12 +706,10 @@ internal static string MakeVirtualPathAppRelativeOrNull(string virtualPath) {
         return appPathLength == 1 ? appRelativeCharacter + virtualPath : appRelativeCharacter + virtualPath.Substring(appPathLength - 1);
     }
 
-#if FALSE
-    internal static string MakeVirtualPathAppAbsolute(string virtualPath) {
-    Debug.Assert(HttpRuntime.AppDomainAppVirtualPathObject != null);
-    return MakeVirtualPathAppAbsolute(virtualPath, HttpRuntime.AppDomainAppVirtualPathString);
-}
-#endif
+    internal static string MakeVirtualPathAppAbsolute(string virtualPath)
+    {
+        return MakeVirtualPathAppAbsolute(virtualPath, AppDomainAppVirtualPathString);
+    }
 
     // If a virtual path is app relative (i.e. starts with ~/), change it to
     // start with the actuall app path.
@@ -687,11 +732,11 @@ internal static string MakeVirtualPathAppRelativeOrNull(string virtualPath) {
             if (applicationPath.Length > 1)
             {
                 Debug.Assert(HasTrailingSlash(applicationPath));
-                return string.Concat(applicationPath, virtualPath.AsSpan(2));
+                return applicationPath + virtualPath.Substring(2);
             }
             else
             {
-                return string.Concat("/", virtualPath.AsSpan(2));
+                return "/" + virtualPath.Substring(2);
             }
         }
 
@@ -705,25 +750,23 @@ internal static string MakeVirtualPathAppRelativeOrNull(string virtualPath) {
         return virtualPath;
     }
 
-#if FALSE
     // To be called by APIs accepting virtual path that is expectedto be within the app.
     // returns reduced absolute virtual path or throws
-    internal static string MakeVirtualPathAppAbsoluteReduceAndCheck(string virtualPath) {
-    if (virtualPath == null) {
-        throw new ArgumentNullException("virtualPath");
+    internal static string MakeVirtualPathAppAbsoluteReduceAndCheck(string virtualPath)
+    {
+        if (virtualPath == null)
+        {
+            throw new ArgumentNullException(nameof(virtualPath));
+        }
+
+        string path = Reduce(MakeVirtualPathAppAbsolute(virtualPath));
+
+        return !UrlPath.VirtualPathStartsWithAppPath(path)
+            ? throw new ArgumentException(SR.GetString(SR.Invalid_app_VirtualPath, virtualPath))
+            : path;
     }
 
-    string path = Reduce(MakeVirtualPathAppAbsolute(virtualPath));
-
-    if (!UrlPath.VirtualPathStartsWithAppPath(path)) {
-        throw new ArgumentException(SR.GetString(SR.Invalid_app_VirtualPath, virtualPath));
-    }
-
-    return path;
-}
-#endif
-
-    internal static bool PathEndsWithExtraSlash(string path)
+    internal static bool PathEndsWithExtraSlash(String path)
     {
         if (path == null)
         {
@@ -763,12 +806,12 @@ internal static string MakeVirtualPathAppRelativeOrNull(string virtualPath) {
     //
     internal static bool IsEqualOrSubpath(string path, string subpath)
     {
-        if (string.IsNullOrEmpty(path))
+        if (String.IsNullOrEmpty(path))
         {
             return true;
         }
 
-        if (string.IsNullOrEmpty(subpath))
+        if (String.IsNullOrEmpty(subpath))
         {
             return false;
         }
@@ -814,7 +857,12 @@ internal static string MakeVirtualPathAppRelativeOrNull(string virtualPath) {
             // MSRC 11063
             // A failure to construct absolute url (by System.Uri) doesn't implictly mean the url is relative (on the same server)
             // Make sure the url path can't be recognized as absolute
-            return (IsRooted(absUriOrLocalPath) || IsRelativeUrl(absUriOrLocalPath)) && !absUriOrLocalPath.TrimStart(' ').StartsWith("//", StringComparison.Ordinal);
+#if PORT_CONFIG
+            return AppSettings.AllowRelaxedRelativeUrl ||
+#else
+            return
+#endif
+                   ((IsRooted(absUriOrLocalPath) || IsRelativeUrl(absUriOrLocalPath)) && !absUriOrLocalPath.TrimStart(' ').StartsWith("//", StringComparison.Ordinal));
         }
 
         return absUri.IsLoopback || string.Equals(currentRequestUri.Host, absUri.Host, StringComparison.OrdinalIgnoreCase);

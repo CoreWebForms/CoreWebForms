@@ -1,11 +1,9 @@
 // MIT License.
 
-namespace System.Web.UI.WebControls;
-
-using System;
 using System.Collections;
 using System.ComponentModel;
 
+namespace System.Web.UI.WebControls;
 /// <devdoc>
 ///    <para>Provides a wrapper over an ICollection datasource to implement paging 
 ///       semantics or 'paged views' on top of the underlying datasource.</para>

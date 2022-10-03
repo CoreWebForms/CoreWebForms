@@ -1,9 +1,8 @@
 // MIT License.
 
-namespace System.Web.UI.WebControls;
-
 using System.Diagnostics.CodeAnalysis;
 
+namespace System.Web.UI.WebControls;
 // Needed to support Validators in AJAX 1.0 (Windows OS Bugs 2015831)
 internal static class ValidatorCompatibilityHelper
 {

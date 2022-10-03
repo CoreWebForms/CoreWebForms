@@ -1,9 +1,8 @@
 // MIT License.
 
-namespace System.Web.UI.WebControls;
-
 using System.ComponentModel;
 
+namespace System.Web.UI.WebControls;
 /// <devdoc>
 /// </devdoc>
 public class TargetConverter : StringConverter

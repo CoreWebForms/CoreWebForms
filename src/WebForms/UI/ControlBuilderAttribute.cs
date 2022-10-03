@@ -1,12 +1,10 @@
 // MIT License.
 
+using System.Diagnostics.CodeAnalysis;
+
 /*
  */
 namespace System.Web.UI;
-
-using System;
-using System.Diagnostics.CodeAnalysis;
-
 /// <devdoc>
 /// <para>Allows a control to specify a custom <see cref='System.Web.UI.ControlBuilder'/> object
 ///    for building that control within the ASP.NET parser.</para>

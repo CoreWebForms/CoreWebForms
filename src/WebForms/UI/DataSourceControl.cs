@@ -1,10 +1,9 @@
 // MIT License.
 
-namespace System.Web.UI;
-
 using System.Collections;
 using System.ComponentModel;
 
+namespace System.Web.UI;
 /// <summary>
 /// A DataSourceControl represents a data source that can be used to
 /// data-bind a DataBoundControl.

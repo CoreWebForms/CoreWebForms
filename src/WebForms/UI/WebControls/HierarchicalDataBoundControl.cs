@@ -1,10 +1,9 @@
 // MIT License.
 
-namespace System.Web.UI.WebControls;
-
 using System.ComponentModel;
 using System.Diagnostics;
 
+namespace System.Web.UI.WebControls;
 [
 Designer("System.Web.UI.Design.WebControls.HierarchicalDataBoundControlDesigner, " + AssemblyRef.SystemDesign)
 ]

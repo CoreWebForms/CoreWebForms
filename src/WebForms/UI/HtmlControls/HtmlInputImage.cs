@@ -1,5 +1,9 @@
 // MIT License.
 
+using System.Collections.Specialized;
+using System.ComponentModel;
+using System.Globalization;
+
 /*
  * HtmlInputImage.cs
  *
@@ -7,14 +11,6 @@
  */
 
 namespace System.Web.UI.HtmlControls;
-
-using System;
-using System.Collections.Specialized;
-using System.ComponentModel;
-using System.Globalization;
-using System.Web;
-using System.Web.UI;
-
 /// <devdoc>
 ///    <para>
 ///       The <see langword='HtmlInputImage'/> class defines the

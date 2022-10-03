@@ -3123,12 +3123,13 @@ public partial class Control : IComponent, IParserAccessor, IDataBindingsAccesso
         }
     }
 
-#if PORT_VIRTUALDIRECTORY
     /// <devdoc>
     ///    <para>Make a URL absolute using the AppRelativeTemplateSourceDirectory.  The returned URL is for
     ///        client use, and will contain the session cookie if appropriate.</para>
     /// </devdoc>
     public string ResolveUrl(string relativeUrl)
+        => relativeUrl;
+#if PORT_VIRTUALDIRECTORY
     {
         if (relativeUrl == null)
         {

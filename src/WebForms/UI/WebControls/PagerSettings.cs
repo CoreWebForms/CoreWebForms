@@ -1,10 +1,8 @@
 // MIT License.
 
-namespace System.Web.UI.WebControls;
-
-using System;
 using System.ComponentModel;
 
+namespace System.Web.UI.WebControls;
 /// <devdoc>
 /// <para>Specifies the <see cref='System.Web.UI.WebControls.GridView'/> pager setting for the control. This class cannot be inherited.</para>
 /// </devdoc>

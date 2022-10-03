@@ -1,9 +1,6 @@
 // MIT License.
 
 namespace System.Web.UI.HtmlControls;
-
-using System.Web.UI;
-
 /// <devdoc>
 /// Used as ControlBuilder for controls that do not have a body or end
 /// tag, for example, INPUT and IMG.

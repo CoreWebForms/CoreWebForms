@@ -1,12 +1,9 @@
 // MIT License.
 
-namespace System.Web.UI;
-
-using System;
 using System.Globalization;
 using System.Runtime.Serialization;
-using System.Web;
 
+namespace System.Web.UI;
 [Serializable]
 public sealed class ViewStateException : Exception, ISerializable
 {

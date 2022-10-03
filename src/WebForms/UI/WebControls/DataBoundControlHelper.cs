@@ -1,13 +1,11 @@
 // MIT License.
 
-namespace System.Web.UI.WebControls;
-
-using System;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 
+namespace System.Web.UI.WebControls;
 /// <devdoc>
 /// Helper class for DataBoundControls and v1 data controls.
 /// This is also used by ControlParameter to find its associated

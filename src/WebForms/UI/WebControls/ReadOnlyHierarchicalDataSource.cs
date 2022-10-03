@@ -1,12 +1,8 @@
 // MIT License.
 
-namespace System.Web.UI.WebControls;
-
-using System;
 using System.Diagnostics;
-using System.Web;
-using System.Web.UI;
 
+namespace System.Web.UI.WebControls;
 /// <devdoc>
 /// Helper class for hierarchical data bound controls to wrap an generic
 /// data source with a strongly typed IHierarchicalDataSource. This class

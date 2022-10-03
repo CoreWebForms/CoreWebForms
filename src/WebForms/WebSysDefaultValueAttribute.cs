@@ -1,10 +1,8 @@
 // MIT License.
 
-namespace System.Web;
-
-using System;
 using System.ComponentModel;
 
+namespace System.Web;
 [AttributeUsage(AttributeTargets.All)]
 internal sealed class WebSysDefaultValueAttribute : DefaultValueAttribute
 {

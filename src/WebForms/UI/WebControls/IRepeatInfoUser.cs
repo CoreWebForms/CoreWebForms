@@ -4,9 +4,6 @@
  */
 
 namespace System.Web.UI.WebControls;
-
-using System.Web.UI;
-
 /// <devdoc>
 /// <para>Specifies a contract for implementing <see cref='System.Web.UI.WebControls.Repeater'/> objects in list controls.</para>
 /// </devdoc>

@@ -1,5 +1,11 @@
 // MIT License.
 
+using System.Collections;
+using System.ComponentModel;
+using System.ComponentModel.Design;
+using System.Diagnostics;
+using System.Globalization;
+
 /*
  * MasterPage class definition
  *
@@ -7,14 +13,6 @@
  */
 
 namespace System.Web.UI;
-
-using System;
-using System.Collections;
-using System.ComponentModel;
-using System.ComponentModel.Design;
-using System.Diagnostics;
-using System.Globalization;
-
 /// <devdoc>
 ///    <para>This class is not marked as abstract, because the VS designer
 ///          needs to instantiate it when opening .master files</para>

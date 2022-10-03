@@ -1,5 +1,7 @@
 // MIT License.
 
+using System.ComponentModel;
+
 /*
  * HtmlInputPassword.cs
  *
@@ -7,10 +9,6 @@
  */
 
 namespace System.Web.UI.HtmlControls;
-
-using System.ComponentModel;
-using System.Web.UI;
-
 /// <devdoc>
 ///    <para>
 ///       The <see langword='HtmlInputPassword'/>

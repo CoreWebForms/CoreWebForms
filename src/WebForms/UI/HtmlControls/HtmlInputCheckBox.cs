@@ -1,5 +1,8 @@
 // MIT License.
 
+using System.Collections.Specialized;
+using System.ComponentModel;
+
 /*
  * HtmlInputCheckBox.cs
  *
@@ -7,13 +10,6 @@
  */
 
 namespace System.Web.UI.HtmlControls;
-
-using System;
-using System.Collections.Specialized;
-using System.ComponentModel;
-using System.Web;
-using System.Web.UI;
-
 /// <devdoc>
 ///    <para>
 ///       The <see langword='HtmlInputCheckBox'/> class defines the methods,

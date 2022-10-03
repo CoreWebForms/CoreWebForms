@@ -1,15 +1,11 @@
 // MIT License.
 
-namespace System.Web.UI.WebControls;
-
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
-using System.Web.UI;
 
+namespace System.Web.UI.WebControls;
 /// <devdoc>
 ///     Provides a tree node for use in the TreeView class
 /// </devdoc>

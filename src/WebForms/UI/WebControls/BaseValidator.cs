@@ -1,13 +1,10 @@
 // MIT License.
 
-namespace System.Web.UI.WebControls;
-
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
-using System.Web;
-using System.Web.UI;
 
+namespace System.Web.UI.WebControls;
 /// <devdoc>
 ///    <para> Serves as the abstract base
 ///       class for validator objects.</para>

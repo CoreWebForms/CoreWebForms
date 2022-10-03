@@ -1,15 +1,11 @@
 // MIT License.
 
-namespace System.Web.UI.WebControls;
-
-using System;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Globalization;
-using System.Web;
-using System.Web.UI;
 using System.Web.Util;
 
+namespace System.Web.UI.WebControls;
 /// <devdoc>
 /// <para>Creates a group of <see cref='System.Web.UI.WebControls.CheckBox'/> controls.</para>
 /// </devdoc>

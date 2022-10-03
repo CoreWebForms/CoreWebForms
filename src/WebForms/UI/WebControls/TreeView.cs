@@ -1,22 +1,16 @@
 // MIT License.
 
-namespace System.Web.UI.WebControls;
-
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
-using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
-using System.Web;
-using System.Web.UI;
 using System.Web.Util;
 
+namespace System.Web.UI.WebControls;
 /// <devdoc>
 ///     Provides a tree view control
 /// </devdoc>

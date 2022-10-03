@@ -1,11 +1,8 @@
 // MIT License.
 
-namespace System.Web.UI.WebControls;
-
-using System;
 using System.ComponentModel;
-using System.Web.UI;
 
+namespace System.Web.UI.WebControls;
 /// <devdoc>
 /// <para>Encapsulates an item within the <see cref='System.Web.UI.WebControls.Repeater'/> control.</para>
 /// </devdoc>

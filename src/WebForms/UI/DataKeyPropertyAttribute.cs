@@ -1,10 +1,8 @@
 // MIT License.
 
-namespace System.Web.UI;
-
-using System;
 using System.Diagnostics.CodeAnalysis;
 
+namespace System.Web.UI;
 [AttributeUsage(AttributeTargets.Class)]
 public sealed class DataKeyPropertyAttribute : Attribute
 {

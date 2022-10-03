@@ -1,12 +1,8 @@
 // MIT License.
 
-namespace System.Web.ModelBinding;
-
-using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 
+namespace System.Web.ModelBinding;
 [Serializable]
 public class ModelStateDictionary : IDictionary<string, ModelState>
 {

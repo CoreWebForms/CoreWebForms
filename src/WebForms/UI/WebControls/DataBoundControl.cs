@@ -1,12 +1,10 @@
 // MIT License.
 
-namespace System.Web.UI.WebControls;
-
-using System;
 using System.Collections;
 using System.ComponentModel;
 using System.Diagnostics;
 
+namespace System.Web.UI.WebControls;
 /// <summary>
 /// A DataBoundControl is bound to a data source and generates its
 /// user interface (or child control hierarchy typically), by enumerating

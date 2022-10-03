@@ -1,9 +1,6 @@
 // MIT License.
 
 namespace System.Web.UI.WebControls;
-
-using System;
-
 /// <devdoc>
 ///    Provides doata for TreeView events
 /// </devdoc>

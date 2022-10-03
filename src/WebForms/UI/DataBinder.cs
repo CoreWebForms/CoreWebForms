@@ -1,8 +1,5 @@
 // MIT License.
 
-namespace System.Web.UI;
-
-using System;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.ComponentModel;
@@ -11,6 +8,7 @@ using System.Globalization;
 using System.Reflection;
 using System.Web.UI.WebControls;
 
+namespace System.Web.UI;
 /// <devdoc>
 ///    <para> Provides design-time support for RAD designers to 
 ///       generate and parse <see topic='cpconDatabindingExpressionSyntax'/> . This class cannot be inherited.</para>

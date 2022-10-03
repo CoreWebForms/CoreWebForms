@@ -1,11 +1,9 @@
 // MIT License.
 
-namespace System.Web.UI.WebControls;
-
-using System;
 using System.Collections.Specialized;
 using System.ComponentModel;
 
+namespace System.Web.UI.WebControls;
 /// <devdoc>
 /// Creates a field and is the base class for all <see cref='System.Web.UI.WebControls.DataControlField'/> types.
 /// </devdoc>

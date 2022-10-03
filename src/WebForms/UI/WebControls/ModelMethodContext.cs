@@ -1,10 +1,8 @@
 // MIT License.
 
-namespace System.Web.UI.WebControls;
-
-using System;
 using System.Web.ModelBinding;
 
+namespace System.Web.UI.WebControls;
 /// <summary>
 /// Used to invoke <see cref='System.Web.UI.Page.UpdateModel' />/<see cref='System.Web.UI.Page.TryUpdateModel' /> 
 /// methods where <see cref='System.Web.UI.Page' /> is directly not accessible.

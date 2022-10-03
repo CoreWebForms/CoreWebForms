@@ -1,10 +1,8 @@
 // MIT License.
 
-namespace System.Web.ModelBinding;
-
-using System;
 using System.Collections.ObjectModel;
 
+namespace System.Web.ModelBinding;
 [Serializable]
 public class ModelErrorCollection : Collection<ModelError>
 {

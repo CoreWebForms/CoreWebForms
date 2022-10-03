@@ -4,9 +4,6 @@
  */
 
 namespace System.Web.UI;
-
-using System;
-
 /// <devdoc>
 ///    <para>[To be supplied.]</para>
 /// </devdoc>

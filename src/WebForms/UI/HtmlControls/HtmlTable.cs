@@ -1,13 +1,9 @@
 // MIT License.
 
-namespace System.Web.UI.HtmlControls;
-
-using System;
 using System.ComponentModel;
 using System.Globalization;
-using System.Web;
-using System.Web.UI;
 
+namespace System.Web.UI.HtmlControls;
 /// <devdoc>
 ///    <para>Defines the properties, methods, and events for the 
 ///    <see cref='System.Web.UI.HtmlControls.HtmlTable'/> 

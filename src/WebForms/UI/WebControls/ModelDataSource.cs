@@ -1,11 +1,8 @@
 // MIT License.
 
-namespace System.Web.UI.WebControls;
-
-using System;
 using System.Collections;
-using System.Web.UI;
 
+namespace System.Web.UI.WebControls;
 /// <summary>
 /// The data source used by DataBoundControls like GridView/FormView to support data methods
 /// to perform the Delete, Insert, Select, and Update operations. 

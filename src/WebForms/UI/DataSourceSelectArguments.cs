@@ -1,9 +1,8 @@
 // MIT License.
 
-namespace System.Web.UI;
-
 using System.Diagnostics;
 
+namespace System.Web.UI;
 public sealed class DataSourceSelectArguments
 {
     private DataSourceCapabilities _requestedCapabilities;

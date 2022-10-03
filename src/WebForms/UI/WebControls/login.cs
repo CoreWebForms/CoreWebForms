@@ -1,7 +1,5 @@
 // MIT License.
 
-namespace System.Web.UI.WebControls;
-
 using System.Collections;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
@@ -9,6 +7,7 @@ using System.Security.Permissions;
 using System.Web.Services;
 using Microsoft.Extensions.DependencyInjection;
 
+namespace System.Web.UI.WebControls;
 /// <devdoc>
 ///     Displays UI that allows a user to login to the site.  Uses a Membership provider
 ///     or custom authentication logic in the OnAuthenticate event.  UI can be customized

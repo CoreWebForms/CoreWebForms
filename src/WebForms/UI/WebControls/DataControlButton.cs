@@ -1,9 +1,6 @@
 // MIT License.
 
 namespace System.Web.UI.WebControls;
-
-using System;
-
 /// <devdoc>
 ///  Derived version of Button used within a DataControl.
 /// </devdoc>

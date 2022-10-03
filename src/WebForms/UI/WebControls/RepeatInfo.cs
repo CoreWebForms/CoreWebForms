@@ -1,14 +1,10 @@
 // MIT License.
 
-namespace System.Web.UI.WebControls;
-
-using System;
 using System.Diagnostics;
 using System.Globalization;
-using System.Web;
-using System.Web.UI;
 using System.Web.Util;
 
+namespace System.Web.UI.WebControls;
 /// <devdoc>
 ///    <para>Defines the information used to render a list of items using
 ///       a <see cref='System.Web.UI.WebControls.Repeater'/>.</para>

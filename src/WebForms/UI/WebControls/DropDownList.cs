@@ -1,15 +1,11 @@
 // MIT License.
 
-namespace System.Web.UI.WebControls;
-
-using System;
 using System.Collections;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Drawing;
-using System.Web;
-using System.Web.UI;
 
+namespace System.Web.UI.WebControls;
 /// <devdoc>
 ///    <para>Creates a control that allows the user to select a single item from a
 ///       drop-down list.</para>

@@ -1,13 +1,11 @@
 // MIT License.
 
+using System.Collections;
+
 /*
  */
 
 namespace System.Web.UI.WebControls;
-
-using System;
-using System.Collections;
-
 /// <devdoc>
 /// <para>Encapsulates the collection of <see cref='System.Web.UI.WebControls.RepeaterItem'/> objects within a <see cref='System.Web.UI.WebControls.Repeater'/> control.</para>
 /// </devdoc>

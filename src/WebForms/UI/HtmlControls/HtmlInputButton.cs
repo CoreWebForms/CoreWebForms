@@ -1,5 +1,7 @@
 // MIT License.
 
+using System.ComponentModel;
+
 /*
  * HtmlInputButton.cs
  *
@@ -7,12 +9,6 @@
  */
 
 namespace System.Web.UI.HtmlControls;
-
-using System;
-using System.ComponentModel;
-using System.Web;
-using System.Web.UI;
-
 /// <devdoc>
 ///    <para>
 ///       The <see langword='HtmlInputButton'/> class defines the methods,

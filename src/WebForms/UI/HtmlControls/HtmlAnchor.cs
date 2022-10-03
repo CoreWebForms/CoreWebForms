@@ -1,5 +1,8 @@
 // MIT License.
 
+using System.ComponentModel;
+using System.Diagnostics;
+
 /*
  * HtmlAnchor.cs
  *
@@ -7,14 +10,6 @@
  */
 
 namespace System.Web.UI.HtmlControls;
-
-using System;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Web;
-using System.Web.UI;
-using System.Web.UI.WebControls;
-
 /// <devdoc>
 /// <para>The <see langword='HtmlAnchor'/>
 /// class defines the methods, properties, and

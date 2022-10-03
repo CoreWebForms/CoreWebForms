@@ -1,10 +1,8 @@
 // MIT License.
 
-namespace System.Web.ModelBinding;
-
-using System;
 using System.ComponentModel;
 
+namespace System.Web.ModelBinding;
 public sealed class ModelValidatingEventArgs : CancelEventArgs
 {
 

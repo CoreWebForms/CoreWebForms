@@ -1,9 +1,6 @@
 // MIT License.
 
 namespace System.Web.UI.WebControls;
-
-using System;
-
 public class LoginCancelEventArgs : EventArgs
 {
 

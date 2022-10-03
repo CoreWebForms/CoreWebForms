@@ -1,11 +1,8 @@
 // MIT License.
 
-namespace System.Web.UI.HtmlControls;
-
-using System;
 using System.ComponentModel;
-using System.Web.UI;
 
+namespace System.Web.UI.HtmlControls;
 /*
  *  A control representing an intrinsic Html tag.
  */

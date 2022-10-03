@@ -1,9 +1,8 @@
 // MIT License.
 
-namespace System.Web.UI.WebControls;
-
 using System.Collections.Specialized;
 
+namespace System.Web.UI.WebControls;
 /// <summary>
 /// Encapsulates the result of a Data Method Operation done by <see cref='System.Web.UI.WebControls.ModelDataSourceView' />.
 /// </summary>

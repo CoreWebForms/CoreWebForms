@@ -1,14 +1,10 @@
 // MIT License.
 
-namespace System.Web.UI.WebControls;
-
-using System;
 using System.Collections;
 using System.ComponentModel;
 using System.Globalization;
-using System.Web;
-using System.Web.UI;
 
+namespace System.Web.UI.WebControls;
 /// <devdoc>
 ///    <para>An abstract base class. Defines the common
 ///       properties, methods, and events for all list-type controls.</para>

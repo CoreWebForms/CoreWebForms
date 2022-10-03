@@ -1,17 +1,13 @@
 // MIT License.
 
+using System.Collections.Specialized;
+using System.ComponentModel;
+using System.Web.Util;
+
 /*
  */
 
 namespace System.Web.UI.WebControls;
-
-using System;
-using System.Collections.Specialized;
-using System.ComponentModel;
-using System.Web;
-using System.Web.UI;
-using System.Web.Util;
-
 /// <devdoc>
 ///    <para>Creates a control that displays an image, responds to mouse clicks,
 ///       and records the mouse pointer position.</para>

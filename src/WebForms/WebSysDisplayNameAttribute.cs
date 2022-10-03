@@ -1,12 +1,10 @@
 // MIT License.
 
+using System.ComponentModel;
+
 /*
  */
 namespace System.Web;
-
-using System;
-using System.ComponentModel;
-
 /// <devdoc>
 ///     DisplayNameAttribute marks a property, event, or extender with a
 ///     DisplayName. Visual designers can display this DisplayName when referencing

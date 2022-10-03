@@ -1,11 +1,9 @@
 // MIT License.
 
-namespace System.Web.UI.WebControls;
-
-using System;
 using System.ComponentModel;
 using System.Globalization;
 
+namespace System.Web.UI.WebControls;
 /// <devdoc>
 /// <para>Creates a special field with buttons for <see langword='Edit'/>,
 /// <see langword='Update'/>, and <see langword='Cancel'/> commands to edit items

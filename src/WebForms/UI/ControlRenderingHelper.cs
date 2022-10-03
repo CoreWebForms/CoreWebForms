@@ -1,9 +1,6 @@
 // MIT License.
 
 namespace System.Web.UI;
-
-using System;
-
 internal static class ControlRenderingHelper
 {
     private const string SkipLinkContentMark = "_SkipLink";

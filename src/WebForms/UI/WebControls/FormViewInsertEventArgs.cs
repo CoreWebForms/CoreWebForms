@@ -1,10 +1,9 @@
 // MIT License.
 
-namespace System.Web.UI.WebControls;
-
 using System.Collections.Specialized;
 using System.ComponentModel;
 
+namespace System.Web.UI.WebControls;
 /// <devdoc>
 /// <para>Provides data for some <see cref='System.Web.UI.WebControls.FormView'/> events.</para>
 /// </devdoc>

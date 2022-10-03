@@ -1,9 +1,6 @@
 // MIT License.
 
 namespace System.Web.UI.WebControls;
-
-using System.Web.UI;
-
 /// <devdoc>
 /// This class is used by ReadOnlyHierarchicalDataSource to represent an
 /// individual view of a generic hierarchical data source.

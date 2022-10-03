@@ -1,5 +1,8 @@
 // MIT License.
 
+using System.ComponentModel;
+using System.Globalization;
+
 /*
  * HtmlControl.cs
  *
@@ -7,13 +10,6 @@
  */
 
 namespace System.Web.UI.HtmlControls;
-
-using System;
-using System.ComponentModel;
-using System.Globalization;
-using System.Web.UI;
-using AttributeCollection = System.Web.UI.AttributeCollection;
-
 /*
  * An abstract base class representing an intrinsic Html tag that
  * is not represented by both a begin and end tag, for example

@@ -4,7 +4,8 @@
 
 using System.ComponentModel;
 
-namespace System.Web.UI.WebControls;
+namespace System.Web.UI;
+
 public sealed class PostBackOptions
 {
     public PostBackOptions(Control targetControl) :

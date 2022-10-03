@@ -1,12 +1,10 @@
 // MIT License.
 
-namespace System.Web.UI.WebControls;
-
-using System;
 using System.Collections;
 using System.Collections.Specialized;
 using System.ComponentModel;
 
+namespace System.Web.UI.WebControls;
 /// <devdoc>
 ///    <para>Defines the template for controls layout within a 
 ///    <see cref='System.Web.UI.WebControls.DataBoundControl'/> 

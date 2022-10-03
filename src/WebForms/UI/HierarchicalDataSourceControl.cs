@@ -1,9 +1,8 @@
 // MIT License.
 
-namespace System.Web.UI;
-
 using System.ComponentModel;
 
+namespace System.Web.UI;
 [
 Bindable(false),
 Designer("System.Web.UI.Design.HierarchicalDataSourceDesigner, " + AssemblyRef.SystemDesign),

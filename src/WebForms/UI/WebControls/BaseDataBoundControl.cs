@@ -1,11 +1,9 @@
 // MIT License.
 
-namespace System.Web.UI.WebControls;
-
-using System;
 using System.Collections;
 using System.ComponentModel;
 
+namespace System.Web.UI.WebControls;
 /// <summary>
 /// A BaseDataBoundControl is bound to a data source and generates its
 /// user interface (or child control hierarchy typically), by enumerating

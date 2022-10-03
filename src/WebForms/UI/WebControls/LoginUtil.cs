@@ -1,11 +1,9 @@
 // MIT License.
 
-namespace System.Web.UI.WebControls;
-
-using System;
 using System.Drawing;
 using System.Security.Principal;
 
+namespace System.Web.UI.WebControls;
 // Utility methods used by the Login controls
 internal static class LoginUtil
 {

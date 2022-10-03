@@ -1,12 +1,8 @@
 // MIT License.
 
-namespace System.Web.UI.WebControls;
-
-using System;
 using System.ComponentModel;
-using System.Web;
-using System.Web.UI;
 
+namespace System.Web.UI.WebControls;
 /// <devdoc>
 ///    <para>Creates a link for the browser to navigate to another page.</para>
 /// </devdoc>

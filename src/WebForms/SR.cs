@@ -4,6 +4,7 @@ namespace System.Web;
 
 internal static class AssemblyRef
 {
+    public const string SystemWebExtensionsDesign = nameof(SystemWebExtensionsDesign);
     public const string SystemDesign = nameof(SystemDesign);
     public const string MicrosoftVisualStudioWeb = nameof(MicrosoftVisualStudioWeb);
     public const string SystemWebDynamicData = nameof(SystemWebDynamicData);

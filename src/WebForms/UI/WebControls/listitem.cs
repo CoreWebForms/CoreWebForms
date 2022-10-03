@@ -1,13 +1,10 @@
 // MIT License.
 
-namespace System.Web.UI.WebControls;
-
-using System;
 using System.ComponentModel;
 using System.Globalization;
 using System.Web.Util;
-using AttributeCollection = System.Web.UI.AttributeCollection;
 
+namespace System.Web.UI.WebControls;
 /// <devdoc>
 ///    <para>Constructs a list item control and defines
 ///       its properties. This class cannot be inherited.</para>

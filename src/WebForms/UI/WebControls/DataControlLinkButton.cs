@@ -1,11 +1,9 @@
 // MIT License.
 
-namespace System.Web.UI.WebControls;
-
-using System;
 using System.Diagnostics;
 using System.Drawing;
 
+namespace System.Web.UI.WebControls;
 /// <devdoc>
 ///  Derived version of LinkButton used within a DataControl.
 /// </devdoc>

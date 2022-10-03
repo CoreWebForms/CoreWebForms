@@ -1,10 +1,6 @@
 // MIT License.
 
 namespace System.Web.ModelBinding;
-
-using System;
-using System.Collections.Generic;
-
 public abstract class ModelMetadataProvider
 {
     public abstract IEnumerable<ModelMetadata> GetMetadataForProperties(object container, Type containerType);

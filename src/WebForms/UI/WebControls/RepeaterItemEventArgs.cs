@@ -1,9 +1,6 @@
 // MIT License.
 
 namespace System.Web.UI.WebControls;
-
-using System;
-
 /// <devdoc>
 /// <para>Provides data for the <see langword='ItemCreated'/> and 
 /// <see langword='ItemDataBound '/>events.</para>

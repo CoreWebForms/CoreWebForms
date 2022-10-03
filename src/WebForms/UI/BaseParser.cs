@@ -1,5 +1,8 @@
 // MIT License.
 
+using System.Collections;
+using System.Text.RegularExpressions;
+
 /*
  * Implements the ASP.NET template parser
  *
@@ -28,10 +31,6 @@ BaseParser
 **********************************/
 
 namespace System.Web.UI;
-
-using System.Collections;
-using System.Text.RegularExpressions;
-
 // Internal interface for Parser that have exteranl assembly dependency.
 internal interface IAssemblyDependencyParser
 {

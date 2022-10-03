@@ -1,14 +1,10 @@
 // MIT License.
 
-namespace System.Web.UI.WebControls;
-
-using System;
 using System.Collections;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Web;
-using System.Web.UI;
 
+namespace System.Web.UI.WebControls;
 /// <devdoc>
 /// <para>Defines the properties, methods, and events of a <see cref='System.Web.UI.WebControls.Repeater'/> class.</para>
 /// </devdoc>

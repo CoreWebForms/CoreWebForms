@@ -1,8 +1,5 @@
 // MIT License.
 
-namespace System.Web.UI.WebControls;
-
-using System;
 using System.Collections;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -11,6 +8,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Web.Util;
 
+namespace System.Web.UI.WebControls;
 /// <devdoc>
 ///    <para>
 ///       Displays a data record from a data source in a table layout. The data source

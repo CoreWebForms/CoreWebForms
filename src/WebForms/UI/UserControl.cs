@@ -1,14 +1,5 @@
 // MIT License.
 
-/*
- * Page class definition
- *
- * Copyright (c) 1998 Microsoft Corporation
- */
-
-namespace System.Web.UI;
-
-using System;
 using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.ComponentModel.Design.Serialization;
@@ -16,6 +7,13 @@ using System.Web.Caching;
 using System.Web.ModelBinding;
 using System.Web.SessionState;
 
+/*
+ * Page class definition
+ *
+ * Copyright (c) 1998 Microsoft Corporation
+ */
+
+namespace System.Web.UI;
 /// <devdoc>
 ///    <para>This class is not marked as abstract, because the VS designer
 ///          needs to instantiate it when opening .ascx files</para> 

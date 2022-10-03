@@ -1,12 +1,10 @@
 // MIT License.
 
-namespace System.Web.UI.WebControls;
-
 using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
-using System.Web.UI;
 
+namespace System.Web.UI.WebControls;
 // This class renders selectively attributes from the owner class, filtering out anything not font or forecolor
 internal sealed class HyperLinkStyle : Style
 {

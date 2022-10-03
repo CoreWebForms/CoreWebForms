@@ -1,5 +1,7 @@
 // MIT License.
 
+using System.Web.UI.WebControls;
+
 /*
  * Helper class for performing common enumeration range checks.
  * 
@@ -7,9 +9,6 @@
  */
 
 namespace System.Web.Util;
-
-using System.Web.UI.WebControls;
-
 internal static class EnumerationRangeValidationUtil
 {
 

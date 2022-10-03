@@ -1,13 +1,10 @@
 // MIT License.
 
-namespace System.Web.UI.WebControls;
-
-using System;
 using System.Collections;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Web.UI;
 
+namespace System.Web.UI.WebControls;
 /// <devdoc>
 /// Helper class for data bound controls to wrap an generic data source
 /// with a strongly typed IDataSource. This class automatically handles
