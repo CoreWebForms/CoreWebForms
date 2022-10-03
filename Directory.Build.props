@@ -3,6 +3,13 @@
     <LangVersion>10</LangVersion>
   </PropertyGroup>
 
+ <PropertyGroup>
+    <InformationalVersion>$(GitVersion_InformationalVersion)</InformationalVersion>
+    <FileVersion>$(GitVersion_MajorMinorPatch)</FileVersion>
+    <AssemblyVersion>$(GitVersion_AssemblySemVer)</AssemblyVersion>
+    <Version>$(GitVersion_NuGetVersionV2)</Version>
+  </PropertyGroup>
+
   <PropertyGroup>
     <OutputFullPath>$(MSBuildThisFileDirectory)</OutputFullPath>
     <OutputDrop Condition=" '$(OutputDrop)' == '' ">$(OutputFullPath)bin\$(Configuration)\</OutputDrop>
