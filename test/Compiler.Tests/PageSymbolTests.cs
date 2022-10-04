@@ -189,12 +189,12 @@ Button clicked: <b><asp:TextBox runat=""server"" /></b>";
             new ControlInfo("System.Web.UI.WebControls", "TextBox"),
         };
 
-    private sealed class Controls : Dictionary<(string, string), ControlInfo>, IControlLookup
+    private sealed class Controls : Dictionary<string, ControlInfo>, IControlLookup
     {
         public void Add(ControlInfo info)
-            => Add((info.Namespace, info.Name), info);
+            => Add(info.Name, info);
 
         bool IControlLookup.TryGetControl(string prefix, string name, out ControlInfo info)
-            => TryGetValue(("System.Web.UI", name), out info);
+            => TryGetValue(name, out info!);
     }
 }
