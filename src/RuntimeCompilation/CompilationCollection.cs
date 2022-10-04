@@ -80,15 +80,8 @@ internal sealed class CompilationCollection : ICompiledPagesCollection
 
             var compilation = await _compiler.CompilePageAsync(_files, aspx, token).ConfigureAwait(false);
 
-            if (compilation is not null)
-            {
-                _logger.LogTrace("Adding page {Path}", compilation.AspxFile);
-                finalPages.Add(new(compilation, file.LastModified));
-            }
-            else
-            {
-                _logger.LogTrace("Failed to add page {Path}", aspx);
-            }
+            _logger.LogTrace("Adding page {Path}", compilation.AspxFile);
+            finalPages.Add(new(compilation, file.LastModified));
         }
 
         Interlocked.Exchange(ref _compiledPages, finalPages.ToImmutable());
