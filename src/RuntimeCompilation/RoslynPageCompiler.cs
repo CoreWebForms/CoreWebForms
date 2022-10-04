@@ -242,6 +242,7 @@ internal sealed class RoslynPageCompiler : IPageCompiler
 
         var sourceFiles = new List<(SourceText, string)>();
         var aspxFiles = new List<(SourceText, string)>();
+        var pagePath = new PagePath(filePath);
 
         while (paths.Count > 0)
         {
@@ -266,7 +267,7 @@ internal sealed class RoslynPageCompiler : IPageCompiler
 
                     if (!details.Errors.IsDefaultOrEmpty)
                     {
-                        return new WritingResult(details.File) { Errors = details.Errors };
+                        return new WritingResult(pagePath) { Errors = details.Errors };
                     }
 
                     foreach (var additional in details.AdditionalFiles)
@@ -290,7 +291,7 @@ internal sealed class RoslynPageCompiler : IPageCompiler
             }
         }
 
-        return new WritingResult(new(filePath))
+        return new WritingResult(pagePath)
         {
             UserFiles = aspxFiles,
             GeneratedFiles = sourceFiles,
