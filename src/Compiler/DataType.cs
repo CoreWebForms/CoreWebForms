@@ -8,4 +8,6 @@ public enum DataType
     String,
     Delegate,
     NoQuotes,
+    Collection,
+    Template,
 }

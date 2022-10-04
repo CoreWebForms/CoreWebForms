@@ -215,7 +215,7 @@ internal sealed class RoslynPageCompiler : IPageCompiler
     {
         var references = new List<MetadataReference>();
 
-        foreach (var assembly in AssemblyLoadContext.Default.Assemblies)
+        foreach (var assembly in AssemblyLoadContext.Default.Assemblies.Concat(_options.Value.Assemblies))
         {
             if (!assembly.IsDynamic)
             {

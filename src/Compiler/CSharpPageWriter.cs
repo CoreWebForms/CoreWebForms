@@ -143,26 +143,42 @@ public class CSharpPageWriter
         }
     }
 
-    private void WriteTemplate(string name, ImmutableArray<TemplateProperty> templates)
+    private void WriteProperties(string name, ImmutableArray<Property> properties)
     {
-        if (templates.IsDefaultOrEmpty)
+        if (properties.IsDefaultOrEmpty)
         {
             return;
         }
 
-        _needTemplateContainer = true;
+        int c = 0;
 
-        foreach (var template in templates)
+        foreach (var property in properties)
         {
-            _writer.Write(name);
-            _writer.Write('.');
-            _writer.Write(template.Name);
-            _writer.WriteLine(" = (ITemplate)new DelegateTemplate(parent =>");
-            _writer.WriteLine("{");
-            _writer.Indent++;
-            WriteChildren(template.Control, new("parent.Controls", "template"));
-            _writer.Indent--;
-            _writer.WriteLine("});");
+            if (property.Type == DataType.Template)
+            {
+                _needTemplateContainer = true;
+
+                _writer.Write(name);
+                _writer.Write('.');
+                _writer.Write(property.Name);
+                _writer.WriteLine(" = (ITemplate)new DelegateTemplate(parent =>");
+                _writer.WriteLine("{");
+                _writer.Indent++;
+                WriteChildren(property.Control, new("parent.Controls", "template"));
+                _writer.Indent--;
+                _writer.WriteLine("});");
+            }
+            else if (property.Type == DataType.Collection)
+            {
+                _writer.WriteLine("{");
+                _writer.Indent++;
+                WriteChildren(property.Control, new($"{name}.{property.Name}", $"{name}_collection"));
+                _writer.Indent--;
+                _writer.WriteLine("};");
+            }
+            else
+            {
+            }
         }
     }
 
@@ -221,7 +237,7 @@ public class CSharpPageWriter
 
         WriteId(control.Id, name, control.Type);
         WriteAttributes(control, name);
-        WriteTemplate(name, control.Templates);
+        WriteProperties(name, control.Properties);
 
         WriteControls(name, level);
     }

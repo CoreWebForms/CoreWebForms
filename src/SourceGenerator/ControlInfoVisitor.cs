@@ -76,15 +76,17 @@ internal class ControlInfoVisitor : SymbolVisitor
                 {
                     if (_compilation.ClassifyConversion(property.Type, _string) is { IsImplicit: true })
                     {
-                        info.Strings.Add(property.Name);
+                        info.AddProperty(property.Name, DataType.String);
                     }
                     else if (_compilation.ClassifyConversion(property.Type, _delegate) is { IsImplicit: true })
                     {
-                        info.Events.Add(property.Name);
+                        info.AddProperty(property.Name, DataType.Delegate);
                     }
+                    // TODO: collection
+                    //else if()
                     else
                     {
-                        info.Other.Add(property.Name);
+                        info.AddProperty(property.Name, DataType.NoQuotes);
                     }
                 }
             }

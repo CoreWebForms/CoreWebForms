@@ -1,12 +1,28 @@
 // MIT License.
 
+using System.ComponentModel;
+
 namespace System.Web.UI.WebControls;
 
-public class LoginView : Control
+[
+ Bindable(false),
+ ParseChildren(true),
+ PersistChildren(false),
+ Designer("System.Web.UI.Design.WebControls.LoginViewDesigner," + AssemblyRef.SystemDesign),
+ DefaultProperty("CurrentView"),
+ DefaultEvent("ViewChanged"),
+ Themeable(true),
+ ]
+public class LoginView : Control, INamingContainer
 {
 }
 
-public class LoginStatus
+[
+  Bindable(false),
+  DefaultEvent("LoggingOut"),
+  Designer("System.Web.UI.Design.WebControls.LoginStatusDesigner, " + AssemblyRef.SystemDesign),
+  ]
+public class LoginStatus : CompositeControl
 {
 }
 

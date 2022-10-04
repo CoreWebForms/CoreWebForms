@@ -1,8 +1,10 @@
 // MIT License.
 
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -25,6 +27,8 @@ public class PageCompilationOptions
         AddTypeNamespace(typeof(TextBox), "asp");
     }
 
+    public IReadOnlyCollection<Assembly> Assemblies => _controls.Assemblies;
+
     public void AddTypeNamespace(Type type, string prefix)
         => AddAssembly(type.Assembly, type.Namespace ?? throw new InvalidOperationException(), prefix);
 
@@ -35,11 +39,14 @@ public class PageCompilationOptions
 
     private sealed class ControlCollection : IControlLookup
     {
-        private readonly Dictionary<string, Dictionary<string, ControlInfo>> _assemblies = new();
+        private readonly Dictionary<string, Dictionary<string, ControlInfo>> _info = new();
+        private readonly HashSet<Assembly> _assemblies = new();
+
+        public IReadOnlyCollection<Assembly> Assemblies => _assemblies;
 
         public bool TryGetControl(string prefix, string name, [MaybeNullWhen(false)] out ControlInfo info)
         {
-            if (_assemblies.TryGetValue(prefix, out var lookup) && lookup.TryGetValue(name, out info))
+            if (_info.TryGetValue(prefix, out var lookup) && lookup.TryGetValue(name, out info))
             {
                 return true;
             }
@@ -50,13 +57,15 @@ public class PageCompilationOptions
 
         public void Add(Assembly assembly, string ns, string prefix)
         {
-            if (_assemblies.TryGetValue(prefix, out var existing))
+            _assemblies.Add(assembly);
+
+            if (_info.TryGetValue(prefix, out var existing))
             {
                 GatherComponents(assembly, ns, existing);
             }
             else
             {
-                _assemblies.TryAdd(prefix, GatherComponents(assembly, ns, new()));
+                _info.TryAdd(prefix, GatherComponents(assembly, ns, new()));
             }
         }
 
@@ -101,19 +110,27 @@ public class PageCompilationOptions
 
                 foreach (var property in type.GetProperties())
                 {
-                    if (property.SetMethod is { IsPublic: true } && property.GetCustomAttribute<DefaultValueAttribute>() is { })
+                    if (property.GetCustomAttribute<DefaultValueAttribute>() is { })
                     {
                         if (property.PropertyType.IsAssignableTo(typeof(Delegate)))
                         {
-                            info.Events.Add(property.Name);
+                            info.AddProperty(property.Name, DataType.Delegate);
                         }
                         else if (property.PropertyType.IsAssignableTo(typeof(string)))
                         {
-                            info.Strings.Add(property.Name);
+                            info.AddProperty(property.Name, DataType.String);
+                        }
+                        else if (property.PropertyType.IsAssignableTo(typeof(ITemplate)))
+                        {
+                            info.AddProperty(property.Name, DataType.Template);
+                        }
+                        else if (property.PropertyType.IsAssignableTo(typeof(System.Collections.ICollection)))
+                        {
+                            info.AddProperty(property.Name, DataType.Collection);
                         }
                         else
                         {
-                            info.Other.Add(property.Name);
+                            info.AddProperty(property.Name, DataType.NoQuotes);
                         }
                     }
                 }

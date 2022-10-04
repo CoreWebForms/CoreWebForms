@@ -97,7 +97,7 @@ internal record LiteralControl(string Text, Location Location) : TypedControl(ne
 internal record TypedControl(QName Type, Location Location) : Control
 {
     private ImmutableArray<Attribute> _attributes;
-    private ImmutableArray<TemplateProperty> _templates;
+    private ImmutableArray<Property> _templates;
 
     public ImmutableArray<Attribute> Attributes
     {
@@ -105,7 +105,7 @@ internal record TypedControl(QName Type, Location Location) : Control
         init => _attributes = value;
     }
 
-    public ImmutableArray<TemplateProperty> Templates
+    public ImmutableArray<Property> Properties
     {
         get => EnsureInitialized(_templates);
         init => _templates = value;
@@ -120,11 +120,7 @@ internal record Root : Control
 {
 }
 
-internal record Property(string Name) : Control
-{
-}
-
-internal record TemplateProperty(string Name, Control Control)
+internal record Property(string Name, Control Control, DataType Type)
 {
 }
 

@@ -11,6 +11,8 @@ public class ControlInfo
     private HashSet<string> _strings;
     private HashSet<string> _other;
 
+    private readonly Dictionary<string, DataType> _types = new();
+
     public ControlInfo(string ns, string name)
     {
         Namespace = ns;
@@ -35,12 +37,6 @@ public class ControlInfo
 
     public bool SupportsEventValidation { get; set; }
 
-    public ICollection<string> Events => _events ??= new HashSet<string>();
-
-    public ICollection<string> Strings => _strings ??= new HashSet<string>();
-
-    public ICollection<string> Other => _other ??= new HashSet<string>();
-
     private string Normalize(string name, string match, string defaultName)
     {
         if (defaultName is null)
@@ -56,21 +52,29 @@ public class ControlInfo
         return name;
     }
 
+    public void AddProperty(string name, DataType type)
+        => _types.Add(name, type);
+
     public (DataType, string Key) GetDataType(string name)
     {
-        if (_events?.Contains(name) == true || string.Equals("OnClick", name, StringComparison.OrdinalIgnoreCase))
+        if (_types.TryGetValue(name, out var type))
         {
-            return (DataType.Delegate, Normalize(name, "OnClick", DefaultEvent));
-        }
+            if (type == DataType.Delegate || string.Equals("OnClick", name, StringComparison.OrdinalIgnoreCase))
+            {
+                return (DataType.Delegate, Normalize(name, "OnClick", DefaultEvent));
+            }
 
-        if (_strings?.Contains(name) == true || string.Equals("Value", name, StringComparison.OrdinalIgnoreCase))
-        {
-            return (DataType.String, Normalize(name, "Value", DefaultProperty));
-        }
+            if (type == DataType.String || string.Equals("Value", name, StringComparison.OrdinalIgnoreCase))
+            {
+                return (DataType.String, Normalize(name, "Value", DefaultProperty));
+            }
 
-        if (_other?.Contains(name) == true || string.Equals("Value", name, StringComparison.OrdinalIgnoreCase))
-        {
-            return (DataType.NoQuotes, Normalize(name, "Value", DefaultProperty));
+            if (type == DataType.NoQuotes || string.Equals("Value", name, StringComparison.OrdinalIgnoreCase))
+            {
+                return (DataType.NoQuotes, Normalize(name, "Value", DefaultProperty));
+            }
+
+            return (type, name);
         }
 
         return (DataType.None, name);

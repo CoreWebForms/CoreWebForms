@@ -136,15 +136,15 @@ internal class SymbolCreator : DepthFirstAspxVisitor<Control?>
         else if (_webControlLookup.TryGetControl(aspxTag.Prefix, aspxTag.ControlName, out var known))
         {
             var builder = new LiteralCombiningBuilder();
-            var templates = ImmutableArray.CreateBuilder<TemplateProperty>();
+            var properties = ImmutableArray.CreateBuilder<Property>();
 
             var asProperties = known.ChildrenAsProperties;
 
             foreach (var child in aspxTag.Children)
             {
-                if (asProperties && child is AspxNode.HtmlTag html && VisitChildren(html.Children) is { } templateChildren)
+                if (asProperties && child is AspxNode.HtmlTag html && VisitChildren(html.Children, removeLiterals: true) is { } propertyChildren && known.GetDataType(html.Name) is { } type)
                 {
-                    templates.Add(new TemplateProperty(html.Name, templateChildren));
+                    properties.Add(new Property(html.Name, propertyChildren, type.Item1));
                 }
                 else
                 {
@@ -156,7 +156,7 @@ internal class SymbolCreator : DepthFirstAspxVisitor<Control?>
             {
                 Attributes = BuildAttributes(aspxTag.Attributes, known),
                 Id = aspxTag.Attributes.Id,
-                Templates = templates.ToImmutable(),
+                Properties = properties.ToImmutable(),
                 Children = builder.Build(),
             };
         }
@@ -261,9 +261,9 @@ internal class SymbolCreator : DepthFirstAspxVisitor<Control?>
         return builder.ToImmutable();
     }
 
-    private Control? VisitChildren(List<AspxNode> children)
+    private Control? VisitChildren(List<AspxNode> children, bool removeLiterals)
     {
-        var builder = new LiteralCombiningBuilder();
+        var builder = new LiteralCombiningBuilder(removeLiterals);
 
         foreach (var child in children)
         {
@@ -320,13 +320,15 @@ internal class SymbolCreator : DepthFirstAspxVisitor<Control?>
         }
     }
 
-    private readonly struct LiteralCombiningBuilder
+    private class LiteralCombiningBuilder
     {
         private readonly ImmutableArray<Control>.Builder _builder;
+        private readonly bool _removeLiterals;
 
-        public LiteralCombiningBuilder()
+        public LiteralCombiningBuilder(bool removeLiterals = false)
         {
             _builder = ImmutableArray.CreateBuilder<Control>();
+            _removeLiterals = removeLiterals;
         }
 
         public ImmutableArray<Control> Build()
@@ -338,7 +340,10 @@ internal class SymbolCreator : DepthFirstAspxVisitor<Control?>
 
         public void Add(Control? control)
         {
-            if (control is null)
+            if (control is LiteralControl && _removeLiterals)
+            {
+            }
+            else if (control is null)
             {
                 return;
             }
