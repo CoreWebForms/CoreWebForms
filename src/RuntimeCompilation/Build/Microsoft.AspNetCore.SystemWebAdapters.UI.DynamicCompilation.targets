@@ -7,31 +7,23 @@
   <ItemGroup>
     <AspxFiles Include="$(MSBuildProjectDirectory)\**\*.aspx" />
     <AspxFiles Include="$(MSBuildProjectDirectory)\**\*.Master" />
-    <AspxCodeBehindFiles Include="$(MSBuildProjectDirectory)\**\*.aspx.vb" />
-    <AspxCodeBehindFiles Include="$(MSBuildProjectDirectory)\**\*.aspx.cs" />
-    <AspxCodeBehindFiles Include="$(MSBuildProjectDirectory)\**\*.Master.vb" />
-    <AspxCodeBehindFiles Include="$(MSBuildProjectDirectory)\**\*.Master.cs" />
+    <__CodeBehindFiles Include="$(MSBuildProjectDirectory)\**\*.aspx.vb" />
+    <__CodeBehindFiles Include="$(MSBuildProjectDirectory)\**\*.aspx.cs" />
+    <__CodeBehindFiles Include="$(MSBuildProjectDirectory)\**\*.Master.vb" />
+    <__CodeBehindFiles Include="$(MSBuildProjectDirectory)\**\*.Master.cs" />
   </ItemGroup>
 
-  <Target Name="RemoveCodeBehind" Condition="$(CopyAspxCodeBehindToOutput)">
-    <ItemGroup>
-      <Compile Remove="@(AspxCodeBehindFiles)" />
-    </ItemGroup>
-  </Target>
+  <ItemGroup Condition="$(CopyAspxToOutput)">
+    <None Include="@(AspxFiles)">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 
-  <Target Name="AssignAspxPaths" BeforeTargets="GetCopyToOutputDirectoryItems">
+  <ItemGroup Condition="$(CopyAspxCodeBehindToOutput)">
+    <Compile Remove="@(__CodeBehindFiles)" />
+    <None Include="@(__CodeBehindFiles)">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 
-    <ItemGroup>
-      <__AllAspxFiles Include="@(AspxFiles)" Condition="$(CopyAspxToOutput)" />
-      <__AllAspxFiles Include="@(AspxCodeBehindFiles)" Condition="$(CopyAspxCodeBehindToOutput)" />
-
-      <ContentWithTargetPath Include="@(__AllAspxFiles)">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-        <TargetPath>$([MSBuild]::MakeRelative($(MSBuildProjectDirectory), %(__AllAspxFiles.FullPath)))</TargetPath>
-      </ContentWithTargetPath>
-
-    </ItemGroup>
-
-  </Target>
 </Project>
