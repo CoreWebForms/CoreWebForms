@@ -34,23 +34,13 @@ public class ControlInfo
 
     public bool SupportsEventValidation { get; set; }
 
-    private string Normalize(string name, string match, string defaultName)
-    {
-        if (defaultName is null)
-        {
-            return name;
-        }
-
-        if (string.Equals(name, match, StringComparison.OrdinalIgnoreCase))
-        {
-            return defaultName;
-        }
-
-        return name;
-    }
-
     public void AddProperty(string name, DataType type)
-        => _types.Add(name, type);
+    {
+        if (!_types.ContainsKey(name))
+        {
+            _types.Add(name, type);
+        }
+    }
 
     public void AddEnum(string propertyName, Type @enum)
     {
@@ -58,31 +48,33 @@ public class ControlInfo
         _enums.Add(propertyName, $"{@enum.Namespace}.{@enum.Name}");
     }
 
+    private string Normalize(string name)
+    {
+        if (string.Equals(name, "OnClick", StringComparison.OrdinalIgnoreCase))
+        {
+            return DefaultEvent ?? name;
+        }
+
+        if (string.Equals(name, "Value", StringComparison.OrdinalIgnoreCase))
+        {
+            return DefaultProperty ?? name;
+        }
+
+        return name;
+    }
+
     public (DataType, string Key) GetDataType(string name)
     {
-        if (_types.TryGetValue(name, out var type))
+        var normalized = Normalize(name);
+
+        if (_types.TryGetValue(normalized, out var type))
         {
-            if (type == DataType.Delegate || string.Equals("OnClick", name, StringComparison.OrdinalIgnoreCase))
-            {
-                return (DataType.Delegate, Normalize(name, "OnClick", DefaultEvent));
-            }
-
-            if (type == DataType.String || string.Equals("Value", name, StringComparison.OrdinalIgnoreCase))
-            {
-                return (DataType.String, Normalize(name, "Value", DefaultProperty));
-            }
-
-            if (type == DataType.NoQuotes || string.Equals("Value", name, StringComparison.OrdinalIgnoreCase))
-            {
-                return (DataType.NoQuotes, Normalize(name, "Value", DefaultProperty));
-            }
-
             if (type == DataType.Enum)
             {
                 return (type, _enums[name]);
             }
 
-            return (type, name);
+            return (type, normalized);
         }
 
         return (DataType.None, name);

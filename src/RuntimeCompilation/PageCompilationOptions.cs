@@ -1,7 +1,6 @@
 // MIT License.
 
 using System.ComponentModel;
-using System.Configuration;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Web;
@@ -109,33 +108,31 @@ public class PageCompilationOptions
 
                 foreach (var property in type.GetProperties())
                 {
-                    if (property.GetCustomAttribute<DefaultValueAttribute>() is { })
+                    if (property.PropertyType.IsAssignableTo(typeof(string)))
                     {
-                        if (property.PropertyType.IsAssignableTo(typeof(Delegate)))
-                        {
-                            info.AddProperty(property.Name, DataType.Delegate);
-                        }
-                        else if (property.PropertyType.IsAssignableTo(typeof(string)))
-                        {
-                            info.AddProperty(property.Name, DataType.String);
-                        }
-                        else if (property.PropertyType.IsAssignableTo(typeof(ITemplate)))
-                        {
-                            info.AddProperty(property.Name, DataType.Template);
-                        }
-                        else if (property.PropertyType.IsAssignableTo(typeof(System.Collections.ICollection)))
-                        {
-                            info.AddProperty(property.Name, DataType.Collection);
-                        }
-                        else if (property.PropertyType.IsEnum)
-                        {
-                            info.AddEnum(property.Name, property.PropertyType);
-                        }
-                        else
-                        {
-                            info.AddProperty(property.Name, DataType.NoQuotes);
-                        }
+                        info.AddProperty(property.Name, DataType.String);
                     }
+                    else if (property.PropertyType.IsAssignableTo(typeof(ITemplate)))
+                    {
+                        info.AddProperty(property.Name, DataType.Template);
+                    }
+                    else if (property.PropertyType.IsAssignableTo(typeof(System.Collections.ICollection)))
+                    {
+                        info.AddProperty(property.Name, DataType.Collection);
+                    }
+                    else if (property.PropertyType.IsEnum)
+                    {
+                        info.AddEnum(property.Name, property.PropertyType);
+                    }
+                    else
+                    {
+                        info.AddProperty(property.Name, DataType.NoQuotes);
+                    }
+                }
+
+                foreach (var @event in type.GetEvents())
+                {
+                    info.AddProperty(@event.Name, DataType.Delegate);
                 }
 
                 result.TryAdd(info.Name, info);
