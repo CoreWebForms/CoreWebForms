@@ -260,9 +260,9 @@ public class LoginView : Control, INamingContainer
                 {
                     template = roleGroups[roleGroupIndex].ContentTemplate;
                 }
+                break;
 #endif
                 throw new NotImplementedException();
-                break;
         }
 
         if (template != null)
