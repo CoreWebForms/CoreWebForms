@@ -10,4 +10,5 @@ public enum DataType
     NoQuotes,
     Collection,
     Template,
+    Enum,
 }

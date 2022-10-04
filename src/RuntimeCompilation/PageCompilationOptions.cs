@@ -1,10 +1,9 @@
 // MIT License.
 
 using System.ComponentModel;
-using System.Diagnostics;
+using System.Configuration;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -127,6 +126,10 @@ public class PageCompilationOptions
                         else if (property.PropertyType.IsAssignableTo(typeof(System.Collections.ICollection)))
                         {
                             info.AddProperty(property.Name, DataType.Collection);
+                        }
+                        else if (property.PropertyType.IsEnum)
+                        {
+                            info.AddEnum(property.Name, property.PropertyType);
                         }
                         else
                         {

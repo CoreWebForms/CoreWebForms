@@ -7,11 +7,8 @@ namespace Microsoft.AspNetCore.SystemWebAdapters.Compiler;
 
 public class ControlInfo
 {
-    private HashSet<string> _events;
-    private HashSet<string> _strings;
-    private HashSet<string> _other;
-
     private readonly Dictionary<string, DataType> _types = new();
+    private readonly Dictionary<string, string> _enums = new();
 
     public ControlInfo(string ns, string name)
     {
@@ -55,6 +52,12 @@ public class ControlInfo
     public void AddProperty(string name, DataType type)
         => _types.Add(name, type);
 
+    public void AddEnum(string propertyName, Type @enum)
+    {
+        AddProperty(propertyName, DataType.Enum);
+        _enums.Add(propertyName, $"{@enum.Namespace}.{@enum.Name}");
+    }
+
     public (DataType, string Key) GetDataType(string name)
     {
         if (_types.TryGetValue(name, out var type))
@@ -72,6 +75,11 @@ public class ControlInfo
             if (type == DataType.NoQuotes || string.Equals("Value", name, StringComparison.OrdinalIgnoreCase))
             {
                 return (DataType.NoQuotes, Normalize(name, "Value", DefaultProperty));
+            }
+
+            if (type == DataType.Enum)
+            {
+                return (type, _enums[name]);
             }
 
             return (type, name);

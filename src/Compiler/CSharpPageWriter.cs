@@ -4,6 +4,7 @@ using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using Microsoft.AspNetCore.SystemWebAdapters.Compiler.Symbols;
@@ -149,8 +150,6 @@ public class CSharpPageWriter
         {
             return;
         }
-
-        int c = 0;
 
         foreach (var property in properties)
         {

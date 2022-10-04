@@ -4,10 +4,10 @@ namespace System.Web;
 
 internal static class AssemblyRef
 {
-    public const string SystemWebExtensionsDesign = nameof(SystemWebExtensionsDesign);
     public const string SystemDesign = nameof(SystemDesign);
     public const string MicrosoftVisualStudioWeb = nameof(MicrosoftVisualStudioWeb);
     public const string SystemWebDynamicData = nameof(SystemWebDynamicData);
+    public const string SystemWebExtensionsDesign = nameof(SystemWebExtensionsDesign);
 }
 
 internal static class SR
@@ -375,6 +375,19 @@ internal static class SR
     public const string LoginControls_TitleText = nameof(LoginControls_TitleText);
     public const string LoginControls_TitleTextStyle = nameof(LoginControls_TitleTextStyle);
     public const string LoginControls_UserNameLabelText = nameof(LoginControls_UserNameLabelText);
+    public const string LoginStatus_DefaultLoginText = nameof(LoginStatus_DefaultLoginText);
+    public const string LoginStatus_DefaultLogoutText = nameof(LoginStatus_DefaultLogoutText);
+    public const string LoginStatus_LoggedOut = nameof(LoginStatus_LoggedOut);
+    public const string LoginStatus_LoggingOut = nameof(LoginStatus_LoggingOut);
+    public const string LoginStatus_LoginImageUrl = nameof(LoginStatus_LoginImageUrl);
+    public const string LoginStatus_LoginText = nameof(LoginStatus_LoginText);
+    public const string LoginStatus_LogoutAction = nameof(LoginStatus_LogoutAction);
+    public const string LoginStatus_LogoutImageUrl = nameof(LoginStatus_LogoutImageUrl);
+    public const string LoginStatus_LogoutPageUrl = nameof(LoginStatus_LogoutPageUrl);
+    public const string LoginStatus_LogoutText = nameof(LoginStatus_LogoutText);
+    public const string LoginView_RoleGroups = nameof(LoginView_RoleGroups);
+    public const string LoginView_ViewChanged = nameof(LoginView_ViewChanged);
+    public const string LoginView_ViewChanging = nameof(LoginView_ViewChanging);
     public const string MasterPage_Cannot_ApplyTo_ReadOnly_Collection = nameof(MasterPage_Cannot_ApplyTo_ReadOnly_Collection);
     public const string MasterPage_Circular_Master_Not_Allowed = nameof(MasterPage_Circular_Master_Not_Allowed);
     public const string MasterPage_doesnt_have_contentplaceholder = nameof(MasterPage_doesnt_have_contentplaceholder);

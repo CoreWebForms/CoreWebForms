@@ -1,7 +1,6 @@
 // MIT License.
 
 using System.Diagnostics.CodeAnalysis;
-using System;
 
 namespace System.Web.UI;
 [AttributeUsage(AttributeTargets.Assembly, AllowMultiple = true)]

@@ -2,7 +2,6 @@
 
 #nullable enable
 
-
 namespace Microsoft.AspNetCore.SystemWebAdapters.Compiler.Symbols;
 
 public class AspNetCompiler

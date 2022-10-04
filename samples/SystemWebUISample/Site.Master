@@ -39,7 +39,7 @@
                 <a runat="server" href="~/">
                     <img src="/images/brand.png" />
                 </a>
-                <asp:LoginView id="Login" runat="server">
+                <asp:LoginView id="Login" runat="server" ViewStateMode="Disabled">
                     <AnonymousTemplate>
                         <ul class="nav navbar-nav navbar-right">
                             <li><asp:LinkButton CssClass="esh-login-link" runat="server" Text="Sign in" OnClick="Login_Click" /></li>

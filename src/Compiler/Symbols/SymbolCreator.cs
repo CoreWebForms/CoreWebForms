@@ -5,7 +5,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
 using Microsoft.AspNetCore.SystemWebAdapters.Compiler.ParserImpl;
 using Microsoft.AspNetCore.SystemWebAdapters.Compiler.Syntax;
 
@@ -250,7 +249,15 @@ internal class SymbolCreator : DepthFirstAspxVisitor<Control?>
             if (control is not null)
             {
                 var (kind, key) = control.GetDataType(attribute.Key);
-                builder.Add(new(key, attribute.Value, kind));
+
+                if (kind == DataType.Enum)
+                {
+                    builder.Add(new(attribute.Key, $"{key}.{attribute.Value}", kind));
+                }
+                else
+                {
+                    builder.Add(new(key, attribute.Value, kind));
+                }
             }
             else
             {
