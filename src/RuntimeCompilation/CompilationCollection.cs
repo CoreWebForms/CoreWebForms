@@ -3,6 +3,7 @@
 using System.Collections;
 using System.Collections.Immutable;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
 
 namespace Microsoft.AspNetCore.SystemWebAdapters.UI.RuntimeCompilation;
@@ -12,6 +13,7 @@ internal sealed class CompilationCollection : ICompiledPagesCollection
     private readonly IQueue _queue;
     private readonly IFileProvider _files;
     private readonly IPageCompiler _compiler;
+    private readonly ILogger<CompilationCollection> _logger;
 
     private ImmutableList<Timed<ICompiledPage>> _compiledPages;
     private IReadOnlyList<ICompiledPage> _wrapped;
@@ -22,11 +24,12 @@ internal sealed class CompilationCollection : ICompiledPagesCollection
     private readonly IDisposable _aspxFilter;
     private readonly IDisposable _siteFilter;
 
-    public CompilationCollection(IFileProvider files, IPageCompiler compiler, IQueue queue)
+    public CompilationCollection(IFileProvider files, IPageCompiler compiler, IQueue queue, ILoggerFactory logger)
     {
         _queue = queue;
         _files = files;
         _compiler = compiler;
+        _logger = logger.CreateLogger<CompilationCollection>();
         _compiledPages = ImmutableList<Timed<ICompiledPage>>.Empty;
         _wrapped = Array.Empty<ICompiledPage>();
         _cts = new CancellationTokenSource();
@@ -43,7 +46,10 @@ internal sealed class CompilationCollection : ICompiledPagesCollection
     IChangeToken ICompiledPagesCollection.ChangeToken => _token;
 
     private void OnFileChange()
-        => _queue.Add(UpdateTypesAsync);
+    {
+        _logger.LogTrace("Enqueueing update tracking");
+        _queue.Add(UpdateTypesAsync);
+    }
 
     private async Task UpdateTypesAsync(CancellationToken token)
     {
@@ -52,6 +58,7 @@ internal sealed class CompilationCollection : ICompiledPagesCollection
 
         foreach (var file in changedFiles.Deletions)
         {
+            _logger.LogTrace("Removing page {Path}", file.Item.Path);
             finalPages.Remove(file);
             file.Item.Dispose();
         }
@@ -60,8 +67,13 @@ internal sealed class CompilationCollection : ICompiledPagesCollection
         {
             if (file.Item.CompiledPage is { } existing)
             {
+                _logger.LogTrace("Removing {Path}", existing.Item.AspxFile);
                 finalPages.Remove(existing);
                 existing.Item.Dispose();
+            }
+            else
+            {
+                _logger.LogTrace("Creating page {Path}", file.Item.FullPath);
             }
 
             var aspx = file.Item.CompiledPage is { } compiled ? compiled.Item.AspxFile : file.Item.FullPath;
@@ -70,7 +82,12 @@ internal sealed class CompilationCollection : ICompiledPagesCollection
 
             if (compilation is not null)
             {
+                _logger.LogTrace("Adding page {Path}", compilation.AspxFile);
                 finalPages.Add(new(compilation, file.LastModified));
+            }
+            else
+            {
+                _logger.LogTrace("Failed to add page {Path}", aspx);
             }
         }
 

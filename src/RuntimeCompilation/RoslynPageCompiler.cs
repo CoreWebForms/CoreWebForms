@@ -61,6 +61,8 @@ internal sealed class RoslynPageCompiler : IPageCompiler
 
     public async Task<ICompiledPage> CompilePageInternalAsync(IFileProvider files, string path, CancellationToken token)
     {
+        _logger.LogTrace("Compiling {Path}", path);
+
         var references = GetMetadataReferences();
 
         var directory = Path.GetDirectoryName(path)!;
