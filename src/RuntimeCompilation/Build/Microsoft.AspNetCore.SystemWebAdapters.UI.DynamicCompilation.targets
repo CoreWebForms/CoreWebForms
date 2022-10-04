@@ -13,7 +13,7 @@
     <AspxCodeBehindFiles Include="$(MSBuildProjectDirectory)\**\*.Master.cs" />
   </ItemGroup>
 
-  <Target Name="RemoveCodeBehind" Condition="!$(CopyAspxCodeBehindToOutput)">
+  <Target Name="RemoveCodeBehind" Condition="$(CopyAspxCodeBehindToOutput)">
     <ItemGroup>
       <Compile Remove="@(AspxCodeBehindFiles)" />
     </ItemGroup>
