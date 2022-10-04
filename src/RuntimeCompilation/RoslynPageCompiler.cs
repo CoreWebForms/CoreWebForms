@@ -243,8 +243,6 @@ internal sealed class RoslynPageCompiler : IPageCompiler
         var sourceFiles = new List<(SourceText, string)>();
         var aspxFiles = new List<(SourceText, string)>();
 
-        PagePath? mainFile = null;
-
         while (paths.Count > 0)
         {
             var path = paths.Dequeue();
@@ -261,11 +259,6 @@ internal sealed class RoslynPageCompiler : IPageCompiler
                     using var writer = new IndentedTextWriter(streamWriter);
 
                     var details = AspNetCompiler.ParsePage(path, contents, _options.Value.Info);
-
-                    if (mainFile is null)
-                    {
-                        mainFile = details.File;
-                    }
 
                     var cs = new CSharpPageWriter(writer, details);
 
@@ -297,9 +290,7 @@ internal sealed class RoslynPageCompiler : IPageCompiler
             }
         }
 
-        Debug.Assert(mainFile.HasValue);
-
-        return new WritingResult(mainFile.Value)
+        return new WritingResult(new(filePath))
         {
             UserFiles = aspxFiles,
             GeneratedFiles = sourceFiles,
