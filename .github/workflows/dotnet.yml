@@ -35,5 +35,5 @@ jobs:
       uses: actions/upload-artifact@v2.2.0
       with:
         path: |
-          **/*/bin/Release/*.nupkg
-          **/*/bin/Release/*.snupkg
+          bin/Release/packages/shipping/*.nupkg 
+          bin/Release/packages/shipping/*.snupkg 
