@@ -4,7 +4,6 @@ namespace System.Web.UI.WebControls;
 
 using System.Collections;
 using System.ComponentModel;
-using System.Security.Permissions;
 using System.Web.UI;
 
 /// <devdoc>
@@ -469,7 +468,6 @@ public class LoginStatus : CompositeControl
     /// <devdoc>
     /// Allows the designer to set the LoggedIn and NavigateUrl properties for proper rendering in the designer.
     /// </devdoc>
-    [SecurityPermission(SecurityAction.Demand, Unrestricted = true)]
     protected override void SetDesignModeState(IDictionary data)
     {
         if (data != null)

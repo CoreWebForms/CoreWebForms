@@ -377,7 +377,6 @@ public class LoginView : Control, INamingContainer
     /// <devdoc>
     /// Allows the designer to set the TemplateIndex, so the different templates can be shown in the designer.
     /// </devdoc>
-    [SecurityPermission(SecurityAction.Demand, Unrestricted = true)]
     protected override void SetDesignModeState(IDictionary data)
     {
         if (data != null)
