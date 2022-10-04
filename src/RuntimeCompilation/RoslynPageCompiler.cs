@@ -2,15 +2,12 @@
 
 using System.CodeDom.Compiler;
 using System.Collections.Immutable;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.Reflection;
 using System.Runtime.Loader;
 using System.Text;
 using System.Text.Json;
-using System.Web;
-using System.Web.UI;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SystemWebAdapters.Compiler;
 using Microsoft.AspNetCore.SystemWebAdapters.Compiler.Symbols;
@@ -20,6 +17,7 @@ using Microsoft.CodeAnalysis.Text;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Microsoft.AspNetCore.SystemWebAdapters.UI.RuntimeCompilation;
 
@@ -30,14 +28,16 @@ internal sealed class RoslynPageCompiler : IPageCompiler
     private readonly bool _isDebug;
     private readonly ILogger<RoslynPageCompiler> _logger;
     private readonly ILoggerFactory _factory;
+    private readonly IOptions<PageCompilationOptions> _options;
 
     private bool _isCompiling;
 
-    public RoslynPageCompiler(ILoggerFactory factory, IHostEnvironment env)
+    public RoslynPageCompiler(ILoggerFactory factory, IHostEnvironment env, IOptions<PageCompilationOptions> options)
     {
         _isDebug = env.IsDevelopment();
         _logger = factory.CreateLogger<RoslynPageCompiler>();
         _factory = factory;
+        _options = options;
     }
 
     public async Task<ICompiledPage> CompilePageAsync(IFileProvider files, string path, CancellationToken token)
@@ -61,11 +61,11 @@ internal sealed class RoslynPageCompiler : IPageCompiler
 
     public async Task<ICompiledPage> CompilePageInternalAsync(IFileProvider files, string path, CancellationToken token)
     {
-        var (references, components) = GetMetadataReferences();
+        var references = GetMetadataReferences();
 
         var directory = Path.GetDirectoryName(path)!;
 
-        var writingResult = await GetSourceAsync(files, path, components, token).ConfigureAwait(false);
+        var writingResult = await GetSourceAsync(files, path, token).ConfigureAwait(false);
         var dependentFiles = writingResult.UserFiles.Select(f => f.Path.Trim('/')).ToArray();
 
         if (writingResult.ErrorMessage is { } errorMessage)
@@ -211,20 +211,14 @@ internal sealed class RoslynPageCompiler : IPageCompiler
 
     private readonly Dictionary<Assembly, MetadataReference> _references = new();
 
-    private (IEnumerable<MetadataReference>, IEnumerable<ControlInfo>) GetMetadataReferences()
+    private IEnumerable<MetadataReference> GetMetadataReferences()
     {
         var references = new List<MetadataReference>();
-        var components = new List<ControlInfo>();
-
-        // Enforce this type is loaded
-        _ = typeof(HttpUtility).Assembly;
 
         foreach (var assembly in AssemblyLoadContext.Default.Assemblies)
         {
             if (!assembly.IsDynamic)
             {
-                GatherComponents(components, assembly);
-
                 if (!_references.TryGetValue(assembly, out var metadata))
                 {
                     metadata = MetadataReference.CreateFromFile(assembly.Location);
@@ -235,70 +229,10 @@ internal sealed class RoslynPageCompiler : IPageCompiler
             }
         }
 
-        return (references, components);
+        return references;
     }
 
-    private static void GatherComponents(List<ControlInfo> controls, Assembly assembly)
-    {
-        foreach (var type in assembly.GetTypes())
-        {
-            if (type.IsAssignableTo(typeof(Control)))
-            {
-                var info = new ControlInfo(type.Namespace, type.Name);
-
-                foreach (var attribute in type.GetCustomAttributes())
-                {
-                    if (attribute is DefaultPropertyAttribute defaultProperty)
-                    {
-                        info.DefaultProperty = defaultProperty.Name;
-                    }
-
-                    if (attribute is ValidationPropertyAttribute validationProperty)
-                    {
-                        info.ValidationProperty = validationProperty.Name;
-                    }
-
-                    if (attribute is DefaultEventAttribute defaultEvent)
-                    {
-                        info.DefaultEvent = defaultEvent.Name;
-                    }
-
-                    if (attribute is SupportsEventValidationAttribute)
-                    {
-                        info.SupportsEventValidation = true;
-                    }
-
-                    if (attribute is ParseChildrenAttribute parseChildren)
-                    {
-                        info.ChildrenAsProperties = parseChildren.ChildrenAsProperties;
-                    }
-                }
-
-                foreach (var property in type.GetProperties())
-                {
-                    if (property.SetMethod is { IsPublic: true } && property.GetCustomAttribute<DefaultValueAttribute>() is { })
-                    {
-                        if (property.PropertyType.IsAssignableTo(typeof(Delegate)))
-                        {
-                            info.Events.Add(property.Name);
-                        }
-                        else if (property.PropertyType.IsAssignableTo(typeof(string)))
-                        {
-                            info.Strings.Add(property.Name);
-                        }
-                        else
-                        {
-                            info.Other.Add(property.Name);
-                        }
-                    }
-                }
-
-                controls.Add(info);
-            }
-        }
-    }
-
-    private async Task<WritingResult> GetSourceAsync(IFileProvider files, string filePath, IEnumerable<ControlInfo> controls, CancellationToken token)
+    private async Task<WritingResult> GetSourceAsync(IFileProvider files, string filePath, CancellationToken token)
     {
         var paths = new Queue<string>();
         paths.Enqueue(filePath);
@@ -323,7 +257,7 @@ internal sealed class RoslynPageCompiler : IPageCompiler
                 {
                     using var writer = new IndentedTextWriter(streamWriter);
 
-                    var details = AspNetCompiler.ParsePage(path, contents, controls);
+                    var details = AspNetCompiler.ParsePage(path, contents, _options.Value.Info);
 
                     if (mainFile is null)
                     {

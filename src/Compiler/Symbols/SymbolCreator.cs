@@ -13,7 +13,7 @@ namespace Microsoft.AspNetCore.SystemWebAdapters.Compiler.Symbols;
 
 internal class SymbolCreator : DepthFirstAspxVisitor<Control?>
 {
-    private readonly Dictionary<string, ControlInfo> _webControlLookup;
+    private readonly IControlLookup _webControlLookup;
 
     private AspxNode.AspxDirective? _directive;
 
@@ -22,10 +22,8 @@ internal class SymbolCreator : DepthFirstAspxVisitor<Control?>
     private readonly List<Template> _content = new();
     private readonly List<string> _contentPlaceHolders = new();
 
-    public static ParsedPage ParsePage(string path, string contents, IEnumerable<ControlInfo> controlInfo)
+    public static ParsedPage ParsePage(string path, string contents, IControlLookup controls)
     {
-        var controls = controlInfo.ToDictionary(c => c.Name, c => c, StringComparer.OrdinalIgnoreCase);
-
         var parser = new AspxParser();
         var source = new AspxSource(path, contents);
         var tree = parser.Parse(source);
@@ -55,7 +53,7 @@ internal class SymbolCreator : DepthFirstAspxVisitor<Control?>
         };
     }
 
-    private SymbolCreator(Dictionary<string, ControlInfo> webcontrols)
+    private SymbolCreator(IControlLookup webcontrols)
     {
         _webControlLookup = webcontrols;
     }
@@ -135,7 +133,7 @@ internal class SymbolCreator : DepthFirstAspxVisitor<Control?>
             _contentPlaceHolders.Add(id);
             return new TypedControl(new("System.Web.UI.WebControls", "ContentPlaceHolder"), Convert(aspxTag.Location)) { Id = id };
         }
-        else if (_webControlLookup.TryGetValue(aspxTag.ControlName, out var known))
+        else if (_webControlLookup.TryGetControl(aspxTag.Prefix, aspxTag.ControlName, out var known))
         {
             var builder = new LiteralCombiningBuilder();
             var templates = ImmutableArray.CreateBuilder<TemplateProperty>();

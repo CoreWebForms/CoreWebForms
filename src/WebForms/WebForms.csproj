@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <IsShipped>true</IsShipped>
@@ -30,10 +30,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Handlers\Handlers.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="ModelBinding\" />
   </ItemGroup>
 
 </Project>

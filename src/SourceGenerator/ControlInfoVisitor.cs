@@ -15,6 +15,7 @@ internal class ControlInfoVisitor : SymbolVisitor
     private readonly ITypeSymbol _control;
 
     private readonly HashSet<IAssemblySymbol> _visited = new HashSet<IAssemblySymbol>(SymbolEqualityComparer.Default);
+    private readonly SourceGeneratorLookup _lookup = new();
 
     public ControlInfoVisitor(Compilation compilation)
     {
@@ -26,7 +27,7 @@ internal class ControlInfoVisitor : SymbolVisitor
 
     public bool IsValid => _string is not null && _delegate is not null && _control is not null;
 
-    public List<ControlInfo> List { get; } = new List<ControlInfo>();
+    public IControlLookup Lookup => _lookup;
 
     public override void VisitAssembly(IAssemblySymbol symbol)
     {
@@ -88,7 +89,7 @@ internal class ControlInfoVisitor : SymbolVisitor
                 }
             }
 
-            List.Add(info);
+            _lookup.Add(info);
         }
     }
 }

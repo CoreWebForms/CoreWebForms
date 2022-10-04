@@ -18,7 +18,7 @@ public class PageSymbolTests
 <head runat=""server"" id=""hi"" />";
 
         // Act
-        var result = SymbolCreator.ParsePage(Path, PageContents, Enumerable.Empty<ControlInfo>());
+        var result = SymbolCreator.ParsePage(Path, PageContents, GetControls());
 
         // Assert
         Assert.Empty(result.Templates);
@@ -42,7 +42,7 @@ public class PageSymbolTests
 <head id=""hi"" />";
 
         // Act
-        var result = SymbolCreator.ParsePage(Path, PageContents, Enumerable.Empty<ControlInfo>());
+        var result = SymbolCreator.ParsePage(Path, PageContents, GetControls());
 
         // Assert
         Assert.Empty(result.Templates);
@@ -183,10 +183,18 @@ Button clicked: <b><asp:TextBox runat=""server"" /></b>";
         }
     }
 
-    private static IEnumerable<ControlInfo> GetControls()
-    {
-        yield return new ControlInfo("System.Web.UI.WebControls", "TextBox")
+    private static IControlLookup GetControls()
+        => new Controls
         {
+            new ControlInfo("System.Web.UI.WebControls", "TextBox"),
         };
+
+    private sealed class Controls : Dictionary<(string, string), ControlInfo>, IControlLookup
+    {
+        public void Add(ControlInfo info)
+            => Add((info.Namespace, info.Name), info);
+
+        bool IControlLookup.TryGetControl(string prefix, string name, out ControlInfo info)
+            => TryGetValue(("System.Web.UI", name), out info);
     }
 }

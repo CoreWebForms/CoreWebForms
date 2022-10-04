@@ -16,6 +16,7 @@ public class PageGenerator : IIncrementalGenerator
 {
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
+        var emptyLookup = new SourceGeneratorLookup();
         var aspxFiles = context.AdditionalTextsProvider
             .Where(text => text.Path.EndsWith(".aspx", StringComparison.OrdinalIgnoreCase));
         var symbols = context.CompilationProvider
@@ -25,18 +26,18 @@ public class PageGenerator : IIncrementalGenerator
 
                 if (!visitor.IsValid)
                 {
-                    return (IReadOnlyCollection<ControlInfo>)Array.Empty<ControlInfo>();
+                    return emptyLookup;
                 }
 
                 visitor.Visit(s.Assembly);
 
-                return visitor.List;
+                return visitor.Lookup;
             });
 
         context.RegisterSourceOutput(aspxFiles.Combine(symbols), (context, arg) => GenerateSource(context, arg.Left, arg.Right));
     }
 
-    private void GenerateSource(SourceProductionContext context, AdditionalText text, IEnumerable<ControlInfo> controls)
+    private void GenerateSource(SourceProductionContext context, AdditionalText text, IControlLookup controls)
     {
         // TODO: maybe want to use CopyTo to load into a pooled buffer instead of getting a string each time
         var contents = text.GetText(context.CancellationToken)?.ToString();
@@ -58,7 +59,7 @@ public class PageGenerator : IIncrementalGenerator
         context.AddSource(path, generated);
     }
 
-    private string? GenerateFile(AdditionalText text, string contents, IEnumerable<ControlInfo> controls)
+    private string? GenerateFile(AdditionalText text, string contents, IControlLookup controls)
     {
         using var stringWriter = new StringWriter();
         using var writer = new IndentedTextWriter(stringWriter);
@@ -71,4 +72,3 @@ public class PageGenerator : IIncrementalGenerator
         return stringWriter.ToString();
     }
 }
-
