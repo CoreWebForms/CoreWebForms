@@ -1,0 +1,37 @@
+<Project>
+  <PropertyGroup>
+    <CopyAspxToOutput Condition=" '$(CopyAspxToOutput)' == '' ">true</CopyAspxToOutput>
+    <CopyAspxCodeBehindToOutput Condition=" '$(CopyAspxCodeBehindToOutput)' == '' ">true</CopyAspxCodeBehindToOutput>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <AspxFiles Include="$(MSBuildProjectDirectory)\**\*.aspx" />
+    <AspxFiles Include="$(MSBuildProjectDirectory)\**\*.Master" />
+    <AspxCodeBehindFiles Include="$(MSBuildProjectDirectory)\**\*.aspx.vb" />
+    <AspxCodeBehindFiles Include="$(MSBuildProjectDirectory)\**\*.aspx.cs" />
+    <AspxCodeBehindFiles Include="$(MSBuildProjectDirectory)\**\*.Master.vb" />
+    <AspxCodeBehindFiles Include="$(MSBuildProjectDirectory)\**\*.Master.cs" />
+  </ItemGroup>
+
+  <Target Name="RemoveCodeBehind" Condition="!$(CopyAspxCodeBehindToOutput)">
+    <ItemGroup>
+      <Compile Remove="@(AspxCodeBehindFiles)" />
+    </ItemGroup>
+  </Target>
+
+  <Target Name="AssignAspxPaths" BeforeTargets="GetCopyToOutputDirectoryItems">
+
+    <ItemGroup>
+      <__AllAspxFiles Include="@(AspxFiles)" Condition="$(CopyAspxToOutput)" />
+      <__AllAspxFiles Include="@(AspxCodeBehindFiles)" Condition="$(CopyAspxCodeBehindToOutput)" />
+
+      <ContentWithTargetPath Include="@(__AllAspxFiles)">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+        <TargetPath>$([MSBuild]::MakeRelative($(MSBuildProjectDirectory), %(__AllAspxFiles.FullPath)))</TargetPath>
+      </ContentWithTargetPath>
+
+    </ItemGroup>
+
+  </Target>
+</Project>

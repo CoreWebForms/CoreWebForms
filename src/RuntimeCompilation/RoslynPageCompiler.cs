@@ -114,7 +114,8 @@ internal sealed class RoslynPageCompiler : IPageCompiler
                 {
                     d.Id,
                     Message = d.GetMessage(CultureInfo.CurrentCulture),
-                    Severity = d.Severity
+                    Severity = d.Severity,
+                    Location = d.Location.ToString(),
                 })
                 .OrderByDescending(d => d.Severity);
 
@@ -275,7 +276,15 @@ internal sealed class RoslynPageCompiler : IPageCompiler
 
                     foreach (var additional in details.AdditionalFiles)
                     {
-                        paths.Enqueue(additional);
+                        if (IsSourceFile(additional))
+                        {
+                            var additionalSource = await RetryOpenFileAsync(files.GetFileInfo(additional), token).ConfigureAwait(false);
+                            sourceFiles.Add((SourceText.From(additionalSource, Encoding.UTF8), additional));
+                        }
+                        else
+                        {
+                            paths.Enqueue(additional);
+                        }
                     }
                 }
 
@@ -294,6 +303,8 @@ internal sealed class RoslynPageCompiler : IPageCompiler
             GeneratedFiles = sourceFiles,
         };
     }
+
+    private static bool IsSourceFile(string path) => path.EndsWith(".cs") || path.EndsWith(".vb");
 
     private sealed record WritingResult(PagePath File)
     {

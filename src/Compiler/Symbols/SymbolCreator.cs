@@ -41,10 +41,19 @@ internal class SymbolCreator : DepthFirstAspxVisitor<Control?>
             ContentPlaceholders = visitor._contentPlaceHolders.ToImmutableArray()
         };
 
+        var additional = ImmutableArray.CreateBuilder<string>();
+
         if (page.Directive.MasterPageFile is { } masterFile)
         {
-            page = page with { AdditionalFiles = ImmutableArray.Create(new PagePath(masterFile).Path) };
+            additional.Add(new PagePath(masterFile).Path);
         }
+
+        if (page.Directive.CodeBehind is { } codeBehind)
+        {
+            additional.Add(new PagePath(codeBehind).Path);
+        }
+
+        page = page with { AdditionalFiles = additional.ToImmutable() };
 
         return page with
         {

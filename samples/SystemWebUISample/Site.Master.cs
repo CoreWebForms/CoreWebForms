@@ -1,7 +1,7 @@
 // MIT License.
 
+using System;
 using System.Web.UI;
-using Microsoft.AspNetCore.Authentication;
 
 namespace SystemWebUISample;
 

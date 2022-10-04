@@ -4,18 +4,13 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\..\src\Extensions\Extensions.csproj" />
     <ProjectReference Include="..\..\src\RuntimeCompilation\RuntimeCompilation.csproj" />
     <ProjectReference Include="..\..\src\WebForms\WebForms.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <None Update="dynamic_page.aspx">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Site.Master">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
+
+  <Import Project="C:\Work\systemweb-adapters-ui\src\RuntimeCompilation\Build\Microsoft.AspNetCore.SystemWebAdapters.UI.DynamicCompilation.targets" />
 
 </Project>
