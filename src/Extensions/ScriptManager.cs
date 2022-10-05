@@ -13,6 +13,15 @@ PersistChildren(false),
 ]
 public class ScriptManager : Control
 {
+    private static readonly Dictionary<string, string> _knownScripts = new()
+    {
+        { "MsAjaxBundle", "https://ajax.aspnetcdn.com/ajax/4.5.1/1/MsAjaxBundle.js" },
+        { "jquery", "https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.5.1.min.js" },
+        { "bootstrap", "https://ajax.aspnetcdn.com/ajax/bootstrap/4.5.3/bootstrap.min.js" },
+        { "respond", "https://cdnjs.cloudflare.com/ajax/libs/respond.js/1.4.0/respond.min.js" },
+        { "WebFormsBundle", "https://ajax.aspnetcdn.com/ajax/4.5.1/1/WebFormsBundle.js" },
+    };
+
     private ScriptReferenceCollection _scripts;
     [
     Category("Behavior"),
@@ -22,4 +31,28 @@ public class ScriptManager : Control
     MergableProperty(false),
     ]
     public ScriptReferenceCollection Scripts => _scripts ??= new ScriptReferenceCollection();
+
+    protected internal override void Render(HtmlTextWriter writer)
+    {
+        if (_scripts is null)
+        {
+            return;
+        }
+
+        foreach (var script in _scripts)
+        {
+            if (_knownScripts.TryGetValue(script.Name, out var knownScript))
+            {
+                writer.Write("<script src=\"");
+                writer.Write(knownScript);
+                writer.WriteLine("\" type=\"text/javascript\"></script>");
+            }
+            else
+            {
+                writer.Write("<!-- Unknown script '");
+                writer.Write(script.Name);
+                writer.WriteLine("' -->");
+            }
+        }
+    }
 }

@@ -8,9 +8,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title><%: Page.Title %> - Catalog manager (Web Forms)</title>
 
-    <asp:PlaceHolder runat="server">
-    </asp:PlaceHolder>
-
     <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
 
 </head>
