@@ -122,7 +122,7 @@ internal partial class page_aspx : WebApplication12.About
     {
         const string BaseClass = @"namespace WebApplication12
 {
-    public class About : global::System.Web.UI.Page
+    public partial class About : global::System.Web.UI.Page
     {
     }
 }";
@@ -149,7 +149,13 @@ internal partial class page_aspx : WebApplication12.About
         var control_2 = new global::System.Web.UI.LiteralControl(""{NewLine}"");
         control.Controls.Add(control_2);
     }}
-    protected System.Web.UI.HtmlControls.HtmlHead hi;
+}}
+namespace WebApplication12
+{{
+    partial class About
+    {{
+        protected System.Web.UI.HtmlControls.HtmlHead hi;
+    }}
 }}
 ";
 
@@ -178,7 +184,7 @@ internal partial class page_aspx : WebApplication12.About
     {
         const string BaseClass = @"namespace WebApplication12
 {
-    public class About : global::System.Web.UI.Page
+    public partial class About : global::System.Web.UI.Page
     {
     }
 }";
@@ -217,8 +223,14 @@ internal partial class page_aspx : WebApplication12.About
         var control_2 = new global::System.Web.UI.LiteralControl(""{NewLine}"");
         control.Controls.Add(control_2);
     }}
-    protected System.Web.UI.HtmlControls.HtmlForm frm;
-    protected System.Web.UI.WebControls.TextBox txt;
+}}
+namespace WebApplication12
+{{
+    partial class About
+    {{
+        protected System.Web.UI.HtmlControls.HtmlForm frm;
+        protected System.Web.UI.WebControls.TextBox txt;
+    }}
 }}
 ";
 

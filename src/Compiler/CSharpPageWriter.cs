@@ -25,6 +25,7 @@ public class CSharpPageWriter
     private readonly ParsedPage _details;
     private readonly IndentClose _blockClose;
     private readonly List<Variable> _variables = new();
+
     private bool _needCodeRender;
     private bool _needTemplateContainer;
 
@@ -58,9 +59,35 @@ public class CSharpPageWriter
             WriteScripts();
             WriteCodeSnippets();
             WriteTemplateContainer();
+        }
 
-            // Must be last for now as we populate the list while writing - this should be moved to PageDetails
-            WriteVariables();
+        WritePartialCodeBehind();
+    }
+
+    private void WritePartialCodeBehind()
+    {
+        if (_variables.Count == 0)
+        {
+            return;
+        }
+
+        var codeBehindClass = _details.Directive.Inherits;
+        var idx = codeBehindClass.LastIndexOf('.');
+        var ns = codeBehindClass.Substring(0, idx);
+        codeBehindClass = codeBehindClass.Substring(idx + 1);
+
+        _writer.Write("namespace ");
+        _writer.WriteLine(ns);
+
+        using (Block())
+        {
+            _writer.Write("partial class ");
+            _writer.WriteLine(codeBehindClass);
+
+            using (Block())
+            {
+                WriteVariables();
+            }
         }
     }
 

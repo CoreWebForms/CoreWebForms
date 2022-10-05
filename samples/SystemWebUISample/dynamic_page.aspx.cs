@@ -4,7 +4,7 @@ using System.Web.UI;
 
 namespace SystemWebUISample.Pages;
 
-public class DynamicPage : Page
+public partial class DynamicPage : Page
 {
     protected string TestValue1 = "Hello there!";
 
