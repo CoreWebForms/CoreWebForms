@@ -103,6 +103,11 @@ public class CSharpPageWriter
         _writer.Write(" : ");
         _writer.Write(info.Inherits);
 
+        if (_details.Directive.IsPage)
+        {
+            _writer.Write(", global::System.Web.SessionState.IRequiresSessionState");
+        }
+
         if (_details.Templates.Any())
         {
             _writer.Write(", global::System.Web.UI.ITemplate");

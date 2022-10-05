@@ -8,6 +8,7 @@ using System.Reflection;
 using System.Runtime.Loader;
 using System.Text;
 using System.Text.Json;
+using System.Web.SessionState;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SystemWebAdapters.Compiler;
 using Microsoft.AspNetCore.SystemWebAdapters.Compiler.Symbols;

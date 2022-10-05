@@ -6,7 +6,12 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDataProtection();
 
+builder.Services.AddSession();
+builder.Services.AddDistributedMemoryCache();
+
 builder.Services.AddSystemWebAdapters()
+    .AddJsonSessionSerializer()
+    .WrapAspNetCoreSession()
     .AddWebForms()
     .AddDynamicPages(options =>
     {
@@ -27,6 +32,7 @@ app.UseHttpsRedirection();
 
 app.UseRouting();
 
+app.UseSession();
 app.UseSystemWebAdapters();
 
 app.MapAspxPages();
