@@ -2,6 +2,7 @@
 
 using System.Collections;
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
@@ -35,8 +36,8 @@ internal sealed class CompilationCollection : ICompiledPagesCollection
         _cts = new CancellationTokenSource();
         _token = new CancellationChangeToken(_cts.Token);
 
-        _aspxFilter = ChangeToken.OnChange(() => _files.Watch("**/*.aspx"), OnFileChange);
-        _siteFilter = ChangeToken.OnChange(() => _files.Watch("**/*.Master"), OnFileChange);
+        _aspxFilter = ChangeToken.OnChange(() => _files.Watch("**/*.aspx*"), OnFileChange);
+        _siteFilter = ChangeToken.OnChange(() => _files.Watch("**/*.Master*"), OnFileChange);
 
         OnFileChange();
     }
@@ -96,12 +97,23 @@ internal sealed class CompilationCollection : ICompiledPagesCollection
         current.Dispose();
     }
 
+    private class CompiledPageComparer : IEqualityComparer<Timed<ChangedPage>>
+    {
+        public static CompiledPageComparer Instance { get; } = new();
+
+        public bool Equals(Timed<ChangedPage> x, Timed<ChangedPage> y)
+            => string.Equals(x.Item.FullPath, y.Item.FullPath, StringComparison.OrdinalIgnoreCase);
+
+        public int GetHashCode([DisallowNull] Timed<ChangedPage> obj)
+            => StringComparer.OrdinalIgnoreCase.GetHashCode(obj.Item.FullPath);
+    }
+
     private TrackedFiles GetFileChanges()
     {
         var dependencies = _compiledPages.SelectMany(t => t.Item.FileDependencies.Select(d => (d, t)))
             .ToLookup(d => d.d, d => d.t)
             .ToDictionary(d => d.Key, d => d.ToList(), StringComparer.OrdinalIgnoreCase);
-        var changes = new HashSet<Timed<ChangedPage>>();
+        var changes = new HashSet<Timed<ChangedPage>>(CompiledPageComparer.Instance);
 
         var result = _compiledPages;
 

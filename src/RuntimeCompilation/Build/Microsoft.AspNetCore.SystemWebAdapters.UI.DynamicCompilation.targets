@@ -1,7 +1,6 @@
 <Project>
   <PropertyGroup>
-    <CopyAspxToOutput Condition=" '$(CopyAspxToOutput)' == '' ">true</CopyAspxToOutput>
-    <CopyAspxCodeBehindToOutput Condition=" '$(CopyAspxCodeBehindToOutput)' == '' ">true</CopyAspxCodeBehindToOutput>
+    <EnableRuntimAspxCompilation Condition=" '$(EnableRuntimAspxCompilation)' == '' ">true</EnableRuntimAspxCompilation>
   </PropertyGroup>
 
   <ItemGroup>
@@ -13,13 +12,13 @@
     <__CodeBehindFiles Include="$(MSBuildProjectDirectory)\**\*.Master.cs" />
   </ItemGroup>
 
-  <ItemGroup Condition="$(CopyAspxToOutput)">
-    <None Include="@(AspxFiles)">
+  <ItemGroup Condition="$(EnableRuntimAspxCompilation)">
+    <None Include="@(EnableRuntimAspxCompilation)">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 
-  <ItemGroup Condition="$(CopyAspxCodeBehindToOutput)">
+  <ItemGroup Condition="$(EnableRuntimAspxCompilation)">
     <Compile Remove="@(__CodeBehindFiles)" />
     <None Include="@(__CodeBehindFiles)">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

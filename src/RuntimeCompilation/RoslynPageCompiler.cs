@@ -69,7 +69,9 @@ internal sealed class RoslynPageCompiler : IPageCompiler
         var directory = Path.GetDirectoryName(path)!;
 
         var writingResult = await GetSourceAsync(files, path, token).ConfigureAwait(false);
-        var dependentFiles = writingResult.UserFiles.Select(f => f.Path.Trim('/')).ToArray();
+        var dependentFiles = writingResult
+            .UserFiles
+            .Select(f => f.Path.Trim('/')).ToArray();
 
         if (writingResult.ErrorMessage is { } errorMessage)
         {
@@ -81,11 +83,10 @@ internal sealed class RoslynPageCompiler : IPageCompiler
             return new CompiledPage(writingResult.File, dependentFiles) { Error = JsonSerializer.SerializeToUtf8Bytes(writingResult.Errors) };
         }
 
-        var trees = writingResult.GeneratedFiles.Select(result =>
-        {
-            return CSharpSyntaxTree.ParseText(result.Text, cancellationToken: token)
-                .WithFilePath(result.Path);
-        });
+        var trees = writingResult.SourceFiles
+            .Concat(writingResult.GeneratedSourceFiles)
+            .Select(result => CSharpSyntaxTree.ParseText(result.Text, cancellationToken: token)
+                .WithFilePath(result.Path));
 
         var optimization = _isDebug ? OptimizationLevel.Debug : OptimizationLevel.Release;
 
@@ -242,7 +243,8 @@ internal sealed class RoslynPageCompiler : IPageCompiler
         paths.Enqueue(filePath);
 
         var sourceFiles = new List<(SourceText, string)>();
-        var aspxFiles = new List<(SourceText, string)>();
+        var generatedFiles = new List<(SourceText, string)>();
+        var nonSourceFiles = new List<(SourceText, string)>();
         var pagePath = new PagePath(filePath);
 
         while (paths.Count > 0)
@@ -285,17 +287,18 @@ internal sealed class RoslynPageCompiler : IPageCompiler
                     }
                 }
 
-                aspxFiles.Add((SourceText.From(contents, Encoding.UTF8), path));
+                nonSourceFiles.Add((SourceText.From(contents, Encoding.UTF8), path));
 
                 var bytes = stream.ToArray();
-                sourceFiles.Add((SourceText.From(bytes, bytes.Length, Encoding.UTF8, canBeEmbedded: true), $"{path}.cs"));
+                generatedFiles.Add((SourceText.From(bytes, bytes.Length, Encoding.UTF8, canBeEmbedded: true), $"{path}.g.cs"));
             }
         }
 
         return new WritingResult(pagePath)
         {
-            UserFiles = aspxFiles,
-            GeneratedFiles = sourceFiles,
+            UserFiles = nonSourceFiles,
+            SourceFiles = sourceFiles,
+            GeneratedSourceFiles = generatedFiles,
         };
     }
 
@@ -307,11 +310,13 @@ internal sealed class RoslynPageCompiler : IPageCompiler
 
         public IReadOnlyCollection<(SourceText Text, string Path)> UserFiles { get; init; } = Array.Empty<(SourceText Text, string Path)>();
 
-        public IReadOnlyCollection<(SourceText Text, string Path)> GeneratedFiles { get; init; } = Array.Empty<(SourceText, string)>();
+        public IReadOnlyCollection<(SourceText Text, string Path)> SourceFiles { get; init; } = Array.Empty<(SourceText, string)>();
+
+        public IReadOnlyCollection<(SourceText Text, string Path)> GeneratedSourceFiles { get; init; } = Array.Empty<(SourceText, string)>();
 
         public ImmutableArray<string> Errors { get; init; }
 
-        public IEnumerable<(SourceText Text, string Path)> AllFiles => GeneratedFiles.Concat(UserFiles);
+        public IEnumerable<(SourceText Text, string Path)> AllFiles => SourceFiles.Concat(UserFiles).Concat(GeneratedSourceFiles);
     }
 
     private async Task<string> RetryOpenFileAsync(IFileInfo file, CancellationToken token, int retryCount = 5)
