@@ -1,5 +1,4 @@
-// MIT
-
+// MIT License.
 
 namespace System.Web;
 
@@ -8,12 +7,13 @@ internal static class AssemblyRef
     public const string SystemDesign = nameof(SystemDesign);
     public const string MicrosoftVisualStudioWeb = nameof(MicrosoftVisualStudioWeb);
     public const string SystemWebDynamicData = nameof(SystemWebDynamicData);
+    public const string SystemWebExtensionsDesign = nameof(SystemWebExtensionsDesign);
 }
 
 internal static class SR
 {
     public static string GetString(string name, params object[] args) => name;
-    
+
     public const string Async_addhandler_too_late = nameof(Async_addhandler_too_late);
     public const string Async_required = nameof(Async_required);
     public const string Async_task_timed_out = nameof(Async_task_timed_out);
@@ -79,6 +79,7 @@ internal static class SR
     public const string CheckBoxList_CellPadding = nameof(CheckBoxList_CellPadding);
     public const string CheckBoxList_CellSpacing = nameof(CheckBoxList_CellSpacing);
     public const string CheckBoxList_RepeatColumns = nameof(CheckBoxList_RepeatColumns);
+    public const string Circular_include = nameof(Circular_include);
     public const string ClientScriptManager_InvalidPostBackArgument = nameof(ClientScriptManager_InvalidPostBackArgument);
     public const string ClientScriptManager_JqueryNotRegistered = nameof(ClientScriptManager_JqueryNotRegistered);
     public const string ClientScriptManager_RegisterForEventValidation_Too_Early = nameof(ClientScriptManager_RegisterForEventValidation_Too_Early);
@@ -204,6 +205,7 @@ internal static class SR
     public const string DetailsViewFormView_ControlMustBeInEditMode = nameof(DetailsViewFormView_ControlMustBeInEditMode);
     public const string DetailsViewFormView_ControlMustBeInInsertMode = nameof(DetailsViewFormView_ControlMustBeInInsertMode);
     public const string Duplicate_id_used = nameof(Duplicate_id_used);
+    public const string Empty_attribute = nameof(Empty_attribute);
     public const string Empty_path_has_no_directory = nameof(Empty_path_has_no_directory);
     public const string Enumerator_MoveNext_Not_Called = nameof(Enumerator_MoveNext_Not_Called);
     public const string ErrorSerializingValue = nameof(ErrorSerializingValue);
@@ -395,6 +397,7 @@ internal static class SR
     public const string MasterPage_MasterPageFile = nameof(MasterPage_MasterPageFile);
     public const string MasterPage_Multiple_content = nameof(MasterPage_Multiple_content);
     public const string MembershipProvider_Name = nameof(MembershipProvider_Name);
+    public const string Missing_attr = nameof(Missing_attr);
     public const string Missing_output_cache_attr = nameof(Missing_output_cache_attr);
     public const string ModelBinderDictionary_MultipleAttributes = nameof(ModelBinderDictionary_MultipleAttributes);
     public const string ModelBinderProviderCollection_BinderForTypeNotFound = nameof(ModelBinderProviderCollection_BinderForTypeNotFound);
@@ -575,6 +578,7 @@ internal static class SR
     public const string TextBox_Wrap = nameof(TextBox_Wrap);
     public const string Too_late_for_RegisterRequiresViewStateEncryption = nameof(Too_late_for_RegisterRequiresViewStateEncryption);
     public const string Too_late_for_ViewStateUserKey = nameof(Too_late_for_ViewStateUserKey);
+    public const string Too_many_filters = nameof(Too_many_filters);
     public const string TreeNode_Checked = nameof(TreeNode_Checked);
     public const string TreeNode_Expanded = nameof(TreeNode_Expanded);
     public const string TreeNode_ImageToolTip = nameof(TreeNode_ImageToolTip);
@@ -657,6 +661,7 @@ internal static class SR
     public const string TreeView_TreeNodeExpanded = nameof(TreeView_TreeNodeExpanded);
     public const string TreeView_TreeNodePopulate = nameof(TreeView_TreeNodePopulate);
     public const string Type_not_creatable_from_string = nameof(Type_not_creatable_from_string);
+    public const string Unexpected_Directory = nameof(Unexpected_Directory);
     public const string Unhandled_Err_Error = nameof(Unhandled_Err_Error);
     public const string UnitParseNoDigits = nameof(UnitParseNoDigits);
     public const string UnitParseNumericPart = nameof(UnitParseNumericPart);

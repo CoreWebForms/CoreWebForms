@@ -37,6 +37,16 @@ internal sealed class VirtualPath
     {
         throw new NotImplementedException();
     }
+
+    internal Stream OpenFile()
+    {
+        throw new NotImplementedException();
+    }
+
+    internal static VirtualPath Create(string filename)
+    {
+        throw new NotImplementedException();
+    }
 }
 
 internal static class VirtualPathProvider

@@ -1,10 +1,12 @@
 // MIT License.
 
+using System.Collections;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Reflection;
 using System.Text;
 using System.Web.UI.WebControls;
+using System.Web.Util;
 
 /*
  * Implements various utility functions used by the template code
@@ -267,4 +269,175 @@ internal static class Util
 
         return -1;
     }
+
+    internal /*public*/ static StreamReader ReaderFromFile(string filename, VirtualPath configPath)
+    {
+
+        StreamReader reader;
+
+        // Check if a file encoding is specified in the config
+        Encoding fileEncoding = Encoding.Default;
+        if (configPath != null)
+        {
+            fileEncoding = GetEncodingFromConfigPath(configPath);
+        }
+
+        try
+        {
+            // Create a reader on the file, using the encoding
+            // Throws an exception if the file can't be opened.
+            reader = new StreamReader(filename, fileEncoding,
+                true /*detectEncodingFromByteOrderMarks*/, 4096);
+        }
+        catch (UnauthorizedAccessException)
+        {
+            // AccessException might mean two very different things: it could be a real
+            // access problem, or it could be that it's actually a directory.
+
+            // It's a directory: give a specific error.
+            if (Directory.Exists(filename))
+            {
+                throw new HttpException(
+                    SR.GetString(SR.Unexpected_Directory, filename));
+            }
+
+            // It's a real access problem, so just rethrow it
+            throw;
+        }
+
+        return reader;
+    }
+
+    internal /*public*/ static StreamReader ReaderFromStream(Stream stream, VirtualPath configPath)
+    {
+
+        // Check if a file encoding is specified in the config
+        Encoding fileEncoding = GetEncodingFromConfigPath(configPath);
+
+        // Create a reader on the file, using the encoding
+        return new StreamReader(stream, fileEncoding,
+            true /*detectEncodingFromByteOrderMarks*/, 4096);
+    }
+
+    internal static Encoding GetEncodingFromConfigPath(VirtualPath configPath)
+    {
+#if PORT_CONFIG
+        Debug.Assert(configPath != null, "configPath != null");
+
+        // Check if a file encoding is specified in the config
+        Encoding fileEncoding = null;
+        GlobalizationSection globConfig = RuntimeConfig.GetConfig(configPath).Globalization;
+        fileEncoding = globConfig.FileEncoding;
+
+        // If not, use the default encoding
+        if (fileEncoding == null)
+            fileEncoding = Encoding.Default;
+
+        return fileEncoding;
+#else
+        return Encoding.UTF8;
+#endif
+    }
+
+    internal static VirtualPath GetAndRemoveVirtualPathAttribute(IDictionary directives, string key)
+    {
+        return GetAndRemoveVirtualPathAttribute(directives, key, false /*required*/);
+    }
+
+    internal static VirtualPath GetAndRemoveVirtualPathAttribute(IDictionary directives, string key, bool required)
+    {
+
+        string val = GetAndRemoveNonEmptyAttribute(directives, key, required);
+        if (val == null)
+        {
+            return null;
+        }
+
+        return VirtualPath.Create(val);
+    }
+
+    internal static string GetAndRemoveNonEmptyAttribute(IDictionary directives, string key, bool required)
+    {
+        string val = Util.GetAndRemove(directives, key);
+
+        if (val == null)
+        {
+            if (required)
+            {
+                throw new HttpException(SR.GetString(SR.Missing_attr, key));
+            }
+
+            return null;
+        }
+
+        return GetNonEmptyAttribute(key, val);
+    }
+
+    private static string GetAndRemove(IDictionary dict, string key)
+    {
+        string val = (string)dict[key];
+        if (val != null)
+        {
+            dict.Remove(key);
+            val = val.Trim();
+        }
+        return val;
+    }
+
+    internal static string GetNonEmptyAttribute(string name, string value)
+    {
+
+        value = value.Trim();
+
+        if (value.Length == 0)
+        {
+            throw new HttpException(
+                SR.GetString(SR.Empty_attribute, name));
+        }
+
+        return value;
+    }
+
+    internal const char DeviceFilterSeparator = ':';
+    internal const string XmlnsAttribute = "xmlns:";
+    public static string ParsePropertyDeviceFilter(string input, out string propName)
+    {
+        string deviceName = String.Empty;
+
+        // If the string has no device filter, the whole string is the property name
+        if (input.IndexOf(DeviceFilterSeparator) < 0)
+        {
+            propName = input;
+        }
+        // Don't treat xmlns as filters, this needs to be treated differently.
+        // VSWhidbey 495125
+        else if (StringUtil.StringStartsWithIgnoreCase(input, XmlnsAttribute))
+        {
+            propName = input;
+        }
+        else
+        {
+            // There is a filter: parse it out
+            string[] tmp = input.Split(DeviceFilterSeparator);
+
+            if (tmp.Length > 2)
+            {
+                throw new HttpException(
+                    SR.GetString(SR.Too_many_filters, input));
+            }
+
+            if (MTConfigUtil.GetPagesConfig().IgnoreDeviceFilters[tmp[0]] != null)
+            {
+                propName = input;
+            }
+            else
+            {
+                deviceName = tmp[0];
+                propName = tmp[1];
+            }
+        }
+
+        return deviceName;
+    }
+
 }

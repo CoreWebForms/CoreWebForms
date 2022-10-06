@@ -593,7 +593,6 @@ public abstract class TemplateControl : Control, INamingContainer, IFilterResolu
     }
 #endif
 
-
     #region IFilterResolutionService
 
     /// <internalonly/>
@@ -605,7 +604,6 @@ public abstract class TemplateControl : Control, INamingContainer, IFilterResolu
         throw new NotImplementedException();
 #endif
     }
-
 
     /// <internalonly/>
     int IFilterResolutionService.CompareFilters(string filter1, string filter2)

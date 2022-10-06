@@ -4,7 +4,6 @@ namespace System.Web.UI.WebControls;
 
 using System.Collections;
 using System.ComponentModel;
-using System.Security.Permissions;
 using System.Security.Principal;
 using System.Web.UI;
 

@@ -97,7 +97,7 @@ internal sealed class CompilationCollection : ICompiledPagesCollection
         current.Dispose();
     }
 
-    private class CompiledPageComparer : IEqualityComparer<Timed<ChangedPage>>
+    private sealed class CompiledPageComparer : IEqualityComparer<Timed<ChangedPage>>
     {
         public static CompiledPageComparer Instance { get; } = new();
 
