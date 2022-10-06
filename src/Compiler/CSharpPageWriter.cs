@@ -460,16 +460,18 @@ public class CSharpPageWriter
 
     private void WriteConstructor()
     {
-        if (HasInitializer)
+        if (!HasInitializer)
         {
-            _writer.Write("public ");
-            _writer.Write(_details.File.ClassName);
-            _writer.WriteLine("()");
+            return;
+        }
 
-            using (Block())
-            {
-                _writer.WriteLine("Initialize();");
-            }
+        _writer.Write("public ");
+        _writer.Write(_details.File.ClassName);
+        _writer.WriteLine("()");
+
+        using (Block())
+        {
+            _writer.WriteLine("Initialize();");
         }
     }
 
@@ -486,6 +488,13 @@ public class CSharpPageWriter
                 _writer.Write("AddContentTemplate(");
                 WriteString(template.PlaceholderId);
                 _writer.WriteLine(", this);");
+            }
+
+            if (_details.Directive.Title is { } title)
+            {
+                _writer.Write("Title = ");
+                WriteString(title);
+                _writer.WriteLine(";");
             }
 
             _writer.WriteLine("BuildControlTree(this);");
