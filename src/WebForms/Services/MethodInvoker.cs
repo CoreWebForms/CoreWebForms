@@ -3,7 +3,6 @@
 using System.Reflection;
 
 namespace System.Web;
-
 internal static class MethodInvoker
 {
     public static EventHandler Create(MethodInfo method, object target)
