@@ -38,6 +38,7 @@ internal partial class page_aspx : WebApplication12.About, global::System.Web.Se
     protected override void FrameworkInitialize()
     {{
         base.FrameworkInitialize();
+        Title = ""About"";
         BuildControlTree(this);
     }}
     private void BuildControlTree(Control control)
@@ -87,6 +88,7 @@ internal partial class page_aspx : WebApplication12.About, global::System.Web.Se
     protected override void FrameworkInitialize()
     {{
         base.FrameworkInitialize();
+        Title = ""About"";
         BuildControlTree(this);
     }}
     private void BuildControlTree(Control control)
@@ -138,6 +140,7 @@ internal partial class page_aspx : WebApplication12.About, global::System.Web.Se
     protected override void FrameworkInitialize()
     {{
         base.FrameworkInitialize();
+        Title = ""About"";
         BuildControlTree(this);
     }}
     private void BuildControlTree(Control control)
@@ -202,6 +205,7 @@ internal partial class page_aspx : WebApplication12.About, global::System.Web.Se
     protected override void FrameworkInitialize()
     {{
         base.FrameworkInitialize();
+        Title = ""About"";
         BuildControlTree(this);
     }}
     private void BuildControlTree(Control control)
@@ -275,6 +279,7 @@ internal partial class page_aspx : WebApplication12.About, global::System.Web.Se
     protected override void FrameworkInitialize()
     {{
         base.FrameworkInitialize();
+        Title = ""About"";
         BuildControlTree(this);
     }}
     private void BuildControlTree(Control control)
@@ -336,6 +341,7 @@ internal partial class page_aspx : WebApplication12.About, global::System.Web.Se
     protected override void FrameworkInitialize()
     {{
         base.FrameworkInitialize();
+        Title = ""About"";
         BuildControlTree(this);
     }}
     private void BuildControlTree(Control control)
