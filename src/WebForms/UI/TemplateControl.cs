@@ -12,10 +12,7 @@ namespace System.Web.UI;
 /// <devdoc>
 /// <para>Provides the <see cref='System.Web.UI.Page'/> class and the <see cref='System.Web.UI.UserControl'/> class with a base set of functionality.</para>
 /// </devdoc>
-public abstract class TemplateControl : Control, INamingContainer
-#if PORT_FILTER
-    , IFilterResolutionService
-#endif
+public abstract class TemplateControl : Control, INamingContainer, IFilterResolutionService
 {
     private static readonly object _lockObject = new object();
 
@@ -595,6 +592,31 @@ public abstract class TemplateControl : Control, INamingContainer
         return XPathBinder.Select(Page.GetDataItem(), xPathExpression, resolver);
     }
 #endif
+
+
+    #region IFilterResolutionService
+
+    /// <internalonly/>
+    bool IFilterResolutionService.EvaluateFilter(string filterName)
+    {
+#if PORT_BROWSER
+        return TestDeviceFilter(filterName);
+#else
+        throw new NotImplementedException();
+#endif
+    }
+
+
+    /// <internalonly/>
+    int IFilterResolutionService.CompareFilters(string filter1, string filter2)
+    {
+#if PORT_BROWSER
+        return BrowserCapabilitiesCompiler.BrowserCapabilitiesFactory.CompareFilters(filter1, filter2);
+#else
+        throw new NotImplementedException();
+#endif
+    }
+    #endregion
 
     private class EventList
     {

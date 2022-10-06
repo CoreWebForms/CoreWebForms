@@ -2,14 +2,7 @@
 
 using System.Collections;
 
-/*
- */
 namespace System.Web.UI;
-[AttributeUsage(AttributeTargets.Property)]
-internal sealed class IgnoreUnknownContentAttribute : Attribute
-{
-    internal IgnoreUnknownContentAttribute() { }
-}
 
 public abstract class ControlBuilder
 {

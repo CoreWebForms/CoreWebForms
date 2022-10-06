@@ -1,4 +1,5 @@
-// MIT License.
+// MIT
+
 
 namespace System.Web;
 
@@ -7,13 +8,12 @@ internal static class AssemblyRef
     public const string SystemDesign = nameof(SystemDesign);
     public const string MicrosoftVisualStudioWeb = nameof(MicrosoftVisualStudioWeb);
     public const string SystemWebDynamicData = nameof(SystemWebDynamicData);
-    public const string SystemWebExtensionsDesign = nameof(SystemWebExtensionsDesign);
 }
 
 internal static class SR
 {
     public static string GetString(string name, params object[] args) => name;
-
+    
     public const string Async_addhandler_too_late = nameof(Async_addhandler_too_late);
     public const string Async_required = nameof(Async_required);
     public const string Async_task_timed_out = nameof(Async_task_timed_out);
