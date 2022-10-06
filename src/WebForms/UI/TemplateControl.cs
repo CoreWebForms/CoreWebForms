@@ -377,6 +377,8 @@ public abstract class TemplateControl : Control, INamingContainer
 
                 // Adds the delegate to events list.
                 Events.AddHandler(_eventObjects[key], handler);
+#else
+                Events.AddHandler(_eventObjects[key], MethodInvoker.Create(methodInfo, this));
 #endif
             }
         }
