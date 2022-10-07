@@ -20,6 +20,95 @@ using System.Web.Util;
 namespace System.Web.UI;
 internal static class Util
 {
+    internal static bool GetAndRemovePositiveIntegerAttribute(IDictionary directives,
+                                                             string key, ref int val)
+    {
+        string s = Util.GetAndRemove(directives, key);
+
+        if (s == null)
+        {
+            return false;
+        }
+
+        try
+        {
+            val = int.Parse(s, CultureInfo.InvariantCulture);
+        }
+        catch
+        {
+            throw new HttpException(
+                SR.GetString(SR.Invalid_positive_integer_attribute, key));
+        }
+
+        // Make sure it's positive
+        if (val <= 0)
+        {
+            throw new HttpException(
+                SR.GetString(SR.Invalid_positive_integer_attribute, key));
+        }
+
+        return true;
+    }
+
+    internal static object GetAndRemoveEnumAttribute(IDictionary directives, Type enumType,
+                                                  string key)
+    {
+        string s = Util.GetAndRemove(directives, key);
+
+        if (s == null)
+        {
+            return null;
+        }
+
+        return GetEnumAttribute(key, s, enumType);
+    }
+
+    internal static object GetEnumAttribute(string name, string value, Type enumType)
+    {
+        return GetEnumAttribute(name, value, enumType, false);
+    }
+
+    internal static object GetEnumAttribute(string name, string value, Type enumType, bool allowMultiple)
+    {
+        object val;
+
+        try
+        {
+            // Don't allow numbers to be specified (ASURT 71851)
+            // Also, don't allow several values (e.g. "red,blue")
+            if (Char.IsDigit(value[0]) || value[0] == '-' || ((!allowMultiple) && (value.Contains(','))))
+            {
+                throw new FormatException(SR.GetString(SR.EnumAttributeInvalidString, value, name, enumType.FullName));
+            }
+
+            val = Enum.Parse(enumType, value, true /*ignoreCase*/);
+        }
+        catch
+        {
+            string names = null;
+            foreach (string n in Enum.GetNames(enumType))
+            {
+                if (names == null)
+                {
+                    names = n;
+                }
+                else
+                {
+                    names += ", " + n;
+                }
+            }
+            throw new HttpException(
+                SR.GetString(SR.Invalid_enum_attribute, name, names));
+        }
+
+        return val;
+    }
+
+    internal static string GetStringFromBool(bool flag)
+    {
+        return flag ? "true" : "false";
+    }
+
     public static string CreateFilteredName(string deviceName, string name)
     {
         if (deviceName.Length > 0)

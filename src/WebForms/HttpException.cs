@@ -12,7 +12,6 @@ using System.CodeDom.Compiler;
 using System.Collections;
 using System.Globalization;
 using System.Runtime.Serialization;
-using System.Security.Permissions;
 
 /// <devdoc>
 ///    <para> Exception thrown when a compilation error occurs.</para>

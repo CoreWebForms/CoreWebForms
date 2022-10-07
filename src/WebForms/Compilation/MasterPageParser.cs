@@ -52,6 +52,11 @@ internal class PageParserFilter
         throw new NotImplementedException();
     }
 
+    internal CompilationMode GetCompilationMode(CompilationMode compilationMode)
+    {
+        throw new NotImplementedException();
+    }
+
     internal Type GetNoCompileUserControlType()
     {
         throw new NotImplementedException();

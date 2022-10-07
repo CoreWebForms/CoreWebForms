@@ -7,7 +7,6 @@ using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Resources;
-using System.Security.Permissions;
 using System.Web.UI;
 
 /*

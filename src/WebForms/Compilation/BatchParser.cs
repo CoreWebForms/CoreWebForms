@@ -49,6 +49,9 @@ internal class PagesSection
     public Hashtable UserControlRegisterEntriesInternal { get; internal set; }
     public NamespaceCollection Namespaces { get; internal set; }
     public TagMappingCollection TagMapping { get; internal set; }
+    public bool AutoEventWireup { get; internal set; }
+    public bool EnableViewState { get; internal set; }
+    public CompilationMode CompilationMode { get; internal set; }
 
     internal class TagMappingCollection
     {
