@@ -111,14 +111,6 @@ internal class BaseCodeDomTreeGenerator
 internal class ControlBuilderInterceptor
 {
 }
-internal class UserControlParser : TemplateParser
-{
-    internal static string defaultDirectiveName;
-
-    internal override Type DefaultBaseType => throw new NotImplementedException();
-
-    internal override string DefaultDirectiveName => throw new NotImplementedException();
-}
 
 internal class BaseResourcesBuildProvider
 {
@@ -203,6 +195,14 @@ internal class FileLevelPageControlBuilder : RootBuilder
     public object ContentBuilderEntries { get; internal set; }
 }
 
+internal class FileLevelUserControlBuilder : RootBuilder
+{
+}
+
+internal class FileLevelMasterPageControlBuilder : RootBuilder
+{
+}
+
 internal class RootBuilder : ControlBuilder, ITemplate
 {
     public void InstantiateIn(Control container)
@@ -224,9 +224,4 @@ internal class RootBuilder : ControlBuilder, ITemplate
     {
         throw new NotImplementedException();
     }
-}
-
-internal class MasterPageParser
-{
-    internal static readonly string defaultDirectiveName;
 }

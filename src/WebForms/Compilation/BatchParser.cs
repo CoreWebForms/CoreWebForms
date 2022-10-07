@@ -65,6 +65,7 @@ internal class PagesSection
     public PagesEnableSessionState EnableSessionState { get; internal set; }
     public bool ValidateRequest { get; internal set; }
     public Type PageBaseTypeInternal { get; internal set; }
+    public Type UserControlBaseTypeInternal { get; internal set; }
 
     internal class TagMappingCollection
     {

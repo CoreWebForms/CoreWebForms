@@ -25,6 +25,7 @@ internal static class SR
     public const string Async_task_timed_out = nameof(Async_task_timed_out);
     public const string Attr_not_supported_in_directive = nameof(Attr_not_supported_in_directive);
     public const string Attr_not_supported_in_pagedirective = nameof(Attr_not_supported_in_pagedirective);
+    public const string Attr_not_supported_in_ucdirective = nameof(Attr_not_supported_in_ucdirective);
     public const string Attrib_not_allowed = nameof(Attrib_not_allowed);
     public const string Attrib_parse_error = nameof(Attrib_parse_error);
     public const string Attributes_mutually_exclusive = nameof(Attributes_mutually_exclusive);
