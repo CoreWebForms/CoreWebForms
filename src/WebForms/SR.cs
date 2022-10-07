@@ -13,7 +13,7 @@ internal static class AssemblyRef
 internal static class SR
 {
     public static string GetString(string name, params object[] args) => name;
-
+    
     public const string Async_addhandler_too_late = nameof(Async_addhandler_too_late);
     public const string Async_required = nameof(Async_required);
     public const string Async_task_timed_out = nameof(Async_task_timed_out);
@@ -243,6 +243,8 @@ internal static class SR
     public const string GenericModelBinderProvider_TypeArgumentCountMismatch = nameof(GenericModelBinderProvider_TypeArgumentCountMismatch);
     public const string GridView_PagerSettings = nameof(GridView_PagerSettings);
     public const string Head_Needs_Page = nameof(Head_Needs_Page);
+    public const string HiddenField_OnValueChanged = nameof(HiddenField_OnValueChanged);
+    public const string HiddenField_Value = nameof(HiddenField_Value);
     public const string HierarchicalDataBoundControl_InvalidDataSource = nameof(HierarchicalDataBoundControl_InvalidDataSource);
     public const string HierarchicalDataControl_DataSourceDoesntExist = nameof(HierarchicalDataControl_DataSourceDoesntExist);
     public const string HierarchicalDataControl_DataSourceIDMustBeHierarchicalDataControl = nameof(HierarchicalDataControl_DataSourceIDMustBeHierarchicalDataControl);
