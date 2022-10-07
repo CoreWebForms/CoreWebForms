@@ -20,6 +20,49 @@ using System.Web.Util;
 namespace System.Web.UI;
 internal static class Util
 {
+    internal static bool IsFalseString(string s)
+    {
+        return s != null && (StringUtil.EqualsIgnoreCase(s, "false"));
+    }
+    internal static bool IsTrueString(string s)
+    {
+        return s != null && (StringUtil.EqualsIgnoreCase(s, "true"));
+    }
+
+    internal static void CheckThemeAttribute(string themeName)
+    {
+        if (themeName.Length > 0)
+        {
+            if (!FileUtil.IsValidDirectoryName(themeName))
+            {
+                throw new HttpException(SR.GetString(SR.Page_theme_invalid_name, themeName));
+            }
+
+            if (!ThemeExists(themeName))
+            {
+                throw new HttpException(SR.GetString(SR.Page_theme_not_found, themeName));
+            }
+        }
+    }
+
+    internal static bool ThemeExists(string themeName)
+    {
+#if PORT_THEMES
+        VirtualPath virtualDir = ThemeDirectoryCompiler.GetAppThemeVirtualDir(themeName);
+        if (!VirtualDirectoryExistsWithAssert(virtualDir))
+        {
+            virtualDir = ThemeDirectoryCompiler.GetGlobalThemeVirtualDir(themeName);
+            if (!VirtualDirectoryExistsWithAssert(virtualDir))
+            {
+                return false;
+            }
+        }
+
+        return true;
+#endif
+        throw new NotImplementedException("Themes are not available");
+    }
+
     internal static bool GetAndRemovePositiveIntegerAttribute(IDictionary directives,
                                                              string key, ref int val)
     {

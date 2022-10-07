@@ -19,9 +19,12 @@ internal static class SR
     public const string App_session_only_valid_in_global_asax = nameof(App_session_only_valid_in_global_asax);
     public const string Assembly_not_compiled = nameof(Assembly_not_compiled);
     public const string Async_addhandler_too_late = nameof(Async_addhandler_too_late);
+    public const string Async_and_aspcompat = nameof(Async_and_aspcompat);
+    public const string Async_and_transaction = nameof(Async_and_transaction);
     public const string Async_required = nameof(Async_required);
     public const string Async_task_timed_out = nameof(Async_task_timed_out);
     public const string Attr_not_supported_in_directive = nameof(Attr_not_supported_in_directive);
+    public const string Attr_not_supported_in_pagedirective = nameof(Attr_not_supported_in_pagedirective);
     public const string Attrib_not_allowed = nameof(Attrib_not_allowed);
     public const string Attrib_parse_error = nameof(Attrib_parse_error);
     public const string Attributes_mutually_exclusive = nameof(Attributes_mutually_exclusive);
@@ -232,8 +235,10 @@ internal static class SR
     public const string Empty_extension = nameof(Empty_extension);
     public const string Empty_file_name = nameof(Empty_file_name);
     public const string Empty_path_has_no_directory = nameof(Empty_path_has_no_directory);
+    public const string Enablesessionstate_must_be_true_false_or_readonly = nameof(Enablesessionstate_must_be_true_false_or_readonly);
     public const string EnumAttributeInvalidString = nameof(EnumAttributeInvalidString);
     public const string Enumerator_MoveNext_Not_Called = nameof(Enumerator_MoveNext_Not_Called);
+    public const string Error_page_not_supported_when_buffering_off = nameof(Error_page_not_supported_when_buffering_off);
     public const string ErrorSerializingValue = nameof(ErrorSerializingValue);
     public const string Event_not_allowed = nameof(Event_not_allowed);
     public const string ExpressionBuilder_LiteralExpressionsNotAllowed = nameof(ExpressionBuilder_LiteralExpressionsNotAllowed);
@@ -338,10 +343,12 @@ internal static class SR
     public const string Invalid_cache_settings_location = nameof(Invalid_cache_settings_location);
     public const string Invalid_clsid = nameof(Invalid_clsid);
     public const string Invalid_ControlState = nameof(Invalid_ControlState);
+    public const string Invalid_culture_attribute = nameof(Invalid_culture_attribute);
     public const string Invalid_DataSource_Type = nameof(Invalid_DataSource_Type);
     public const string Invalid_enum_attribute = nameof(Invalid_enum_attribute);
     public const string Invalid_HtmlTextWriter = nameof(Invalid_HtmlTextWriter);
     public const string Invalid_identifier = nameof(Invalid_identifier);
+    public const string Invalid_master_base = nameof(Invalid_master_base);
     public const string Invalid_nonnegative_integer_attribute = nameof(Invalid_nonnegative_integer_attribute);
     public const string Invalid_positive_integer_attribute = nameof(Invalid_positive_integer_attribute);
     public const string Invalid_progid = nameof(Invalid_progid);

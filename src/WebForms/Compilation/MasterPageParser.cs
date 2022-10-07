@@ -156,6 +156,11 @@ internal static class BuildManager
         throw new NotImplementedException();
     }
 
+    internal static void ThrowIfPreAppStartNotRunning()
+    {
+        throw new NotImplementedException();
+    }
+
     internal static void ValidateCodeFileVirtualPath(VirtualPath codeFileVirtualPath)
     {
         throw new NotImplementedException();
@@ -191,6 +196,11 @@ public enum CodeConstructType
     DataBindingSnippet,     // <%# ... %>
     ScriptTag,              // <script runat="server">...</script>
     EncodedExpressionSnippet // <%: ... %>
+}
+
+internal class FileLevelPageControlBuilder : RootBuilder
+{
+    public object ContentBuilderEntries { get; internal set; }
 }
 
 internal class RootBuilder : ControlBuilder, ITemplate

@@ -9,6 +9,7 @@ using System.Globalization;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Web.Configuration;
 using System.Web.Util;
 
 using HttpException = System.Web.HttpException;
@@ -52,6 +53,18 @@ internal class PagesSection
     public bool AutoEventWireup { get; internal set; }
     public bool EnableViewState { get; internal set; }
     public CompilationMode CompilationMode { get; internal set; }
+    public bool Buffer { get; internal set; }
+    public bool EnableViewStateMac { get; internal set; }
+    public bool EnableEventValidation { get; internal set; }
+    public object ThemeInternal { get; internal set; }
+    public string Theme { get; internal set; }
+    public string StyleSheetThemeInternal { get; internal set; }
+    public ViewStateEncryptionMode ViewStateEncryptionMode { get; internal set; }
+    public bool MaintainScrollPositionOnPostBack { get; internal set; }
+    public int MaxPageStateFieldLength { get; internal set; }
+    public PagesEnableSessionState EnableSessionState { get; internal set; }
+    public bool ValidateRequest { get; internal set; }
+    public Type PageBaseTypeInternal { get; internal set; }
 
     internal class TagMappingCollection
     {

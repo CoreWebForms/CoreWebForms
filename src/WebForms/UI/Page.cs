@@ -4062,9 +4062,9 @@ window.onload = WebForm_RestoreScrollPosition;
     }
 #endif
 
-#if PORT_BUFFEROUTPUT
     internal const bool BufferDefault = true;
 
+#if PORT_BUFFEROUTPUT
     /// <internalonly/>
     [EditorBrowsable(EditorBrowsableState.Never)]
     [Browsable(false)]
