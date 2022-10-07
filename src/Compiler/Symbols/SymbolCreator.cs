@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.SystemWebAdapters.Compiler.ParserImpl;
 using Microsoft.AspNetCore.SystemWebAdapters.Compiler.Syntax;
 
@@ -255,27 +256,38 @@ internal class SymbolCreator : DepthFirstAspxVisitor<Control?>
 
         foreach (var attribute in attributes)
         {
+            Attribute final;
+
             if (control is not null)
             {
                 var (kind, key) = control.GetDataType(attribute.Key);
 
                 if (kind == DataType.Enum)
                 {
-                    builder.Add(new(attribute.Key, $"{key}.{attribute.Value}", kind));
+                    final = new(attribute.Key, $"{key}.{attribute.Value}", kind);
                 }
                 else
                 {
-                    builder.Add(new(key, attribute.Value, kind));
+                    final = new(key, attribute.Value, kind);
                 }
             }
             else
             {
-                builder.Add(new(attribute.Key, attribute.Value, DataType.None));
+                final = new(attribute.Key, attribute.Value, DataType.None);
             }
+
+            if (DatabindExpression.Matches(attribute.Value) is { Count: 1 } matches)
+            {
+                final = final with { Value = matches[0].Groups["code"].Value, Kind = DataType.DataBinding };
+            }
+
+            builder.Add(final);
         }
 
         return builder.ToImmutable();
     }
+
+    private static readonly Regex DatabindExpression = new Regex("\\G<%#(?<encode>:)?(?<code>.*?)?%>", RegexOptions.Multiline | RegexOptions.Singleline);
 
     private Control? VisitChildren(List<AspxNode> children, bool removeLiterals)
     {

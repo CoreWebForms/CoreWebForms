@@ -10,5 +10,6 @@ public enum DataType
     NoQuotes,
     Collection,
     Template,
+    DataBinding,
     Enum,
 }
