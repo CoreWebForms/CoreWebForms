@@ -40,7 +40,7 @@ internal interface IAssemblyDependencyParser
 /// <devdoc>
 ///    <para>[To be supplied.]</para>
 /// </devdoc>
-internal partial class BaseParser
+public partial class BaseParser
 {
 
     // The directory used for relative path calculations

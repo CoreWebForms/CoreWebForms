@@ -30,8 +30,8 @@ public partial class Program
         var srRegex = new Regex(@"SR\.\w*", RegexOptions.Compiled);
         var assemblyRefRegex = new Regex(@"AssemblyRef\.\w*", RegexOptions.Compiled);
 
-        var dir = Path.Combine(GetGitDir(), "src", "WebForms");
-        var srFile = Path.Combine(dir, "SR.cs");
+        var dir = Path.Combine(GetGitDir(), "src");
+        var srFile = Path.Combine(dir, "WebForms", "SR.cs");
 
         if (File.Exists(srFile))
         {

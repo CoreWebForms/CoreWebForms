@@ -3,6 +3,7 @@
 using System.Collections;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.Reflection;
 using System.Text;
 using System.Web.UI.WebControls;
@@ -19,6 +20,199 @@ using System.Web.Util;
 namespace System.Web.UI;
 internal static class Util
 {
+    public static string CreateFilteredName(string deviceName, string name)
+    {
+        if (deviceName.Length > 0)
+        {
+            return deviceName + DeviceFilterSeparator + name;
+        }
+        return name;
+    }
+
+    internal static string GetNonEmptyFullClassNameAttribute(string name, string value,
+       ref string ns)
+    {
+
+        value = GetNonEmptyNoSpaceAttribute(name, value);
+
+        // The value can be of the form NS1.NS2.MyClassName.  Split it into its parts.
+        string[] parts = value.Split('.');
+
+        // Check that all the parts are valid identifiers
+        foreach (string part in parts)
+        {
+            if (!System.CodeDom.Compiler.CodeGenerator.IsValidLanguageIndependentIdentifier(part))
+            {
+                throw new HttpException(
+                    SR.GetString(SR.Invalid_attribute_value, value, name));
+            }
+        }
+
+        // If there is a namespace, return it
+        if (parts.Length > 1)
+        {
+            ns = String.Join(".", parts, 0, parts.Length - 1);
+        }
+
+        // Return the class name (which is the last part)
+        return parts[parts.Length - 1];
+    }
+
+    internal static string GetAndRemoveNonEmptyNoSpaceAttribute(IDictionary directives,
+       string key)
+    {
+        return GetAndRemoveNonEmptyNoSpaceAttribute(directives, key, false /*required*/);
+    }
+
+    internal static void CheckUnknownDirectiveAttributes(string directiveName, IDictionary directive)
+    {
+
+        CheckUnknownDirectiveAttributes(directiveName, directive, SR.Attr_not_supported_in_directive);
+    }
+
+    internal static void CheckUnknownDirectiveAttributes(string directiveName, IDictionary directive,
+        string resourceKey)
+    {
+
+        // If there are some attributes left, fail
+        if (directive.Count > 0)
+        {
+            throw new HttpException(
+                SR.GetString(resourceKey,
+                    FirstDictionaryKey(directive), directiveName));
+        }
+    }
+    private static string FirstDictionaryKey(IDictionary dict)
+    {
+        IDictionaryEnumerator e = dict.GetEnumerator();
+        e.MoveNext();
+        return (string)e.Key;
+    }
+
+    internal static string GetAndRemoveRequiredAttribute(IDictionary directives, string key)
+    {
+        return GetAndRemoveNonEmptyAttribute(directives, key, true /*required*/);
+    }
+
+    internal /*public*/ static int LineCount(string text, int offset, int newoffset)
+    {
+        Debug.Assert(offset <= newoffset);
+
+        int linecount = 0;
+
+        while (offset < newoffset)
+        {
+            if (text[offset] == '\r' || (text[offset] == '\n' && (offset == 0 || text[offset - 1] != '\r')))
+            {
+                linecount++;
+            }
+
+            offset++;
+        }
+
+        return linecount;
+    }
+
+    internal static string GetAndRemoveNonEmptyIdentifierAttribute(IDictionary directives,
+      string key, bool required)
+    {
+
+        string val = GetAndRemoveNonEmptyNoSpaceAttribute(directives, key, required);
+
+        if (val == null)
+        {
+            return null;
+        }
+
+        return GetNonEmptyIdentifierAttribute(key, val);
+    }
+
+    internal static string GetAndRemoveNonEmptyAttribute(IDictionary directives, string key)
+    {
+        return GetAndRemoveNonEmptyAttribute(directives, key, false /*required*/);
+    }
+
+    internal static string GetNonEmptyIdentifierAttribute(string name, string value)
+    {
+        value = GetNonEmptyNoSpaceAttribute(name, value);
+
+        if (!System.CodeDom.Compiler.CodeGenerator.IsValidLanguageIndependentIdentifier(value))
+        {
+            throw new HttpException(
+                SR.GetString(SR.Invalid_attribute_value, value, name));
+        }
+
+        return value;
+    }
+
+    internal static string GetAndRemoveNonEmptyNoSpaceAttribute(IDictionary directives,
+     string key, bool required)
+    {
+
+        string val = Util.GetAndRemoveNonEmptyAttribute(directives, key, required);
+
+        if (val == null)
+        {
+            return null;
+        }
+
+        return GetNonEmptyNoSpaceAttribute(key, val);
+    }
+
+    internal static string GetNonEmptyNoSpaceAttribute(string name, string value)
+    {
+        value = GetNonEmptyAttribute(name, value);
+        return GetNoSpaceAttribute(name, value);
+    }
+
+    internal static string GetNonEmptyAttribute(string name, string value)
+    {
+
+        value = value.Trim();
+
+        if (value.Length == 0)
+        {
+            throw new HttpException(
+                SR.GetString(SR.Empty_attribute, name));
+        }
+
+        return value;
+    }
+
+    // Return the value, after checking that it doesn't contain spaces
+    internal static string GetNoSpaceAttribute(string name, string value)
+    {
+        if (ContainsWhiteSpace(value))
+        {
+            throw new HttpException(
+                SR.GetString(SR.Space_attribute, name));
+        }
+
+        return value;
+    }
+
+    private static bool ContainsWhiteSpace(string name)
+    {
+        foreach (char c in name)
+        {
+            if (Char.IsWhiteSpace(c))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    internal static void CheckAssignableType(Type baseType, Type type)
+    {
+        if (!baseType.IsAssignableFrom(type))
+        {
+            throw new HttpException(
+                SR.GetString(SR.Type_doesnt_inherit_from_type,
+                    type.FullName, baseType.FullName));
+        }
+    }
+
     internal static bool IsWhiteSpaceString(string s)
     {
         return (s.Trim().Length == 0);
@@ -384,20 +578,6 @@ internal static class Util
         return val;
     }
 
-    internal static string GetNonEmptyAttribute(string name, string value)
-    {
-
-        value = value.Trim();
-
-        if (value.Length == 0)
-        {
-            throw new HttpException(
-                SR.GetString(SR.Empty_attribute, name));
-        }
-
-        return value;
-    }
-
     internal const char DeviceFilterSeparator = ':';
     internal const string XmlnsAttribute = "xmlns:";
     public static string ParsePropertyDeviceFilter(string input, out string propName)
@@ -440,4 +620,168 @@ internal static class Util
         return deviceName;
     }
 
+    internal static bool GetAndRemoveBooleanAttribute(IDictionary directives,
+                                                      string key, ref bool val)
+    {
+        string s = Util.GetAndRemove(directives, key);
+
+        if (s == null)
+        {
+            return false;
+        }
+
+        val = GetBooleanAttribute(key, s);
+        return true;
+    }
+
+    internal static bool IsLateBoundComClassicType(Type t)
+    {
+        // 
+        return (String.Compare(t.FullName, "System.__ComObject", StringComparison.Ordinal) == 0);
+    }
+
+    internal static AssemblySet GetReferencedAssemblies(Assembly a)
+    {
+
+        AssemblySet referencedAssemblies = new AssemblySet();
+        AssemblyName[] refs = a.GetReferencedAssemblies();
+
+        foreach (AssemblyName aname in refs)
+        {
+            Assembly referencedAssembly = Assembly.Load(aname);
+
+            // Ignore mscorlib
+            if (referencedAssembly == typeof(string).Assembly)
+            {
+                continue;
+            }
+
+            referencedAssemblies.Add(referencedAssembly);
+        }
+
+        return referencedAssemblies;
+    }
+
+    internal static int CommaIndexInTypeName(string typeName)
+    {
+
+        // Look for the last comma
+        int commaIndex = typeName.LastIndexOf(',');
+
+        // If it doesn't have one, there is no assembly
+        if (commaIndex < 0)
+        {
+            return -1;
+        }
+
+        // It has a comma, we need to account for the generics syntax.
+        // E.g. it could be "SomeType[int,string]
+
+        // Check for a ]
+        int rightBracketIndex = typeName.LastIndexOf(']');
+
+        // If it has one, and it's after the last comma, there is no assembly
+        if (rightBracketIndex > commaIndex)
+        {
+            return -1;
+        }
+
+        // The comma that we want is the first one after the last ']'
+        commaIndex = typeName.IndexOf(',', rightBracketIndex + 1);
+
+        // There is an assembly
+        return commaIndex;
+    }
+
+    internal static Type GetTypeFromAssemblies(IEnumerable assemblies, string typeName, bool ignoreCase)
+    {
+        if (assemblies == null)
+        {
+            return null;
+        }
+
+        Type type = null;
+
+        foreach (Assembly assembly in assemblies)
+        {
+            Type t = assembly.GetType(typeName, false /*throwOnError*/, ignoreCase);
+
+            if (t == null)
+            {
+                continue;
+            }
+
+            // If we had already found a different one, it's an ambiguous type reference
+            if (type != null && t != type)
+            {
+                throw new HttpException(SR.GetString(SR.Ambiguous_type, typeName,
+                    type.FullName, t.FullName));
+            }
+
+            // Keep track of it
+            type = t;
+        }
+
+        return type;
+    }
+
+    internal static void CheckVirtualFileExists(VirtualPath virtualPath)
+    {
+        if (!virtualPath.FileExists())
+        {
+            throw new HttpException(
+                //HttpStatus.NotFound,
+                SR.GetString(SR.FileName_does_not_exist,
+                    virtualPath.VirtualPathString));
+        }
+    }
+
+    internal static int GetNonNegativeIntegerAttribute(string name, string value)
+    {
+
+        int ret;
+
+        try
+        {
+            ret = int.Parse(value, CultureInfo.InvariantCulture);
+        }
+        catch
+        {
+            throw new HttpException(
+                SR.GetString(SR.Invalid_nonnegative_integer_attribute, name));
+        }
+
+        // Make sure it's not negative
+        if (ret < 0)
+        {
+            throw new HttpException(
+                SR.GetString(SR.Invalid_nonnegative_integer_attribute, name));
+        }
+
+        return ret;
+    }
+
+    internal static bool GetBooleanAttribute(string name, string value)
+    {
+        try
+        {
+            return bool.Parse(value);
+        }
+        catch
+        {
+            throw new HttpException(
+                SR.GetString(SR.Invalid_boolean_attribute, name));
+        }
+    }
+
+    internal /*public*/ static String StringFromVirtualPath(VirtualPath virtualPath)
+    {
+
+        using (Stream stream = virtualPath.OpenFile())
+        {
+            // Create a reader on the file, and read the whole thing
+            TextReader reader = Util.ReaderFromStream(stream, virtualPath);
+            return reader.ReadToEnd();
+        }
+    }
 }

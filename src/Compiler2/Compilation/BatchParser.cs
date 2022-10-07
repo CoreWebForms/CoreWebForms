@@ -15,6 +15,21 @@ using HttpException = System.Web.HttpException;
 
 internal static class MTConfigUtil
 {
+    internal static CompilationSection GetCompilationAppConfig()
+    {
+        throw new NotImplementedException();
+    }
+
+    internal static CompilationSection GetCompilationConfig(VirtualPath currentVirtualPath)
+    {
+        throw new NotImplementedException();
+    }
+
+    internal static CompilationSection GetCompilationConfig(HttpContext context)
+    {
+        throw new NotImplementedException();
+    }
+
     internal static PagesSection GetPagesConfig()
         => PagesSection.Instance;
 
@@ -26,10 +41,18 @@ internal static class MTConfigUtil
 internal class PagesSection
 {
     public static PagesSection Instance { get; } = new();
-
+    public static IEnumerable<TagNamespaceRegisterEntry> DefaultTagNamespaceRegisterEntries { get; internal set; }
     public IStringIndexCollection<string> IgnoreDeviceFilters { get; }
 
     public string MasterPageFileInternal { get; internal set; } = string.Empty;
+    public TagNamespaceRegisterEntryTable? TagNamespaceRegisterEntriesInternal { get; internal set; }
+    public Hashtable UserControlRegisterEntriesInternal { get; internal set; }
+    public NamespaceCollection Namespaces { get; internal set; }
+
+    internal class NamespaceCollection
+    {
+        public Hashtable NamespaceEntries { get; internal set; }
+    }
 
     public interface IStringIndexCollection<T> : IList<T>
     {

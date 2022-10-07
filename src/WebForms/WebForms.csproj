@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <IsShipped>true</IsShipped>
@@ -16,7 +16,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="System.CodeDom" Version="6.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <InternalsVisibleTo Include="Microsoft.AspNetCore.SystemWebAdapters.UI.DynamicCompilation" />
+    <InternalsVisibleTo Include="Microsoft.AspNetCore.SystemWebAdapters.UI.Compiler2"/>
   </ItemGroup>
 
   <ItemGroup>

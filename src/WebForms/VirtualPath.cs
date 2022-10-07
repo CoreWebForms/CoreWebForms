@@ -15,6 +15,9 @@ internal sealed class VirtualPath
     public string VirtualPathStringNoTrailingSlash { get; internal set; }
     public string VirtualPathString => Path;
 
+    public string Extension { get; internal set; }
+    public string FileName { get; internal set; }
+
     public static implicit operator VirtualPath(string path) => new(path);
     public static implicit operator string(VirtualPath vpath) => vpath.Path;
 
@@ -44,6 +47,16 @@ internal sealed class VirtualPath
     }
 
     internal static VirtualPath Create(string filename)
+    {
+        throw new NotImplementedException();
+    }
+
+    internal bool FileExists()
+    {
+        throw new NotImplementedException();
+    }
+
+    internal string MapPath()
     {
         throw new NotImplementedException();
     }
