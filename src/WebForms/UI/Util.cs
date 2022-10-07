@@ -20,6 +20,19 @@ using System.Web.Util;
 namespace System.Web.UI;
 internal static class Util
 {
+    internal static bool IsMultiInstanceTemplateProperty(PropertyInfo pInfo)
+    {
+        object[] instanceAttrs = pInfo.GetCustomAttributes(typeof(TemplateInstanceAttribute), /*inherits*/ false);
+
+        // Default value for TemplateInstanceAttribute is TemplateInstance.Multiple
+        if (instanceAttrs == null || instanceAttrs.Length == 0)
+        {
+            return true;
+        }
+
+        return ((TemplateInstanceAttribute)instanceAttrs[0]).Instances == TemplateInstance.Multiple;
+    }
+
     internal static bool IsFalseString(string s)
     {
         return s != null && (StringUtil.EqualsIgnoreCase(s, "false"));

@@ -3,9 +3,61 @@
 #nullable disable
 
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Text;
 
 namespace System.Web.UI;
+
+internal class DataBoundLiteralControlBuilder : ControlBuilder
+{
+
+    internal DataBoundLiteralControlBuilder()
+    {
+    }
+
+    internal void AddLiteralString(string s)
+    {
+
+        Debug.Assert(!InDesigner, "!InDesigner");
+
+        // Make sure strings and databinding expressions alternate
+        object lastBuilder = GetLastBuilder();
+        if (lastBuilder != null && lastBuilder is string)
+        {
+            AddSubBuilder(null);
+        }
+        AddSubBuilder(s);
+    }
+
+    internal void AddDataBindingExpression(CodeBlockBuilder codeBlockBuilder)
+    {
+
+        Debug.Assert(!InDesigner, "!InDesigner");
+
+        // Make sure strings and databinding expressions alternate
+        object lastBuilder = GetLastBuilder();
+        if (lastBuilder == null || lastBuilder is CodeBlockBuilder)
+        {
+            AddSubBuilder(null);
+        }
+        AddSubBuilder(codeBlockBuilder);
+    }
+
+    internal int GetStaticLiteralsCount()
+    {
+        // it's divided by 2 because half are strings and half are databinding
+        // expressions).  '+1' because we always start with a literal string.
+        return (SubBuilders.Count + 1) / 2;
+    }
+
+    internal int GetDataBoundLiteralCount()
+    {
+        // it's divided by 2 because half are strings and half are databinding
+        // expressions)
+        return SubBuilders.Count / 2;
+    }
+}
+
 /// <devdoc>
 /// <para>Defines the properties and methods of the DataBoundLiteralControl class. </para>
 /// </devdoc>

@@ -167,7 +167,7 @@ internal static class HttpRuntime2
     }
 }
 
-public class PageThemeParser
+public class PageThemeParser : BaseTemplateParser
 {
 }
 
@@ -201,6 +201,20 @@ internal class FileLevelUserControlBuilder : RootBuilder
 
 internal class FileLevelMasterPageControlBuilder : RootBuilder
 {
+}
+
+internal class FileLevelPageThemeBuilder : ControlBuilder
+{
+}
+
+internal class BaseTemplateCodeDomTreeGenerator
+{
+    internal static string skinIDPropertyName;
+}
+
+internal class DesignTimePageThemeParser : PageThemeParser
+{
+    public string ThemePhysicalPath { get; internal set; }
 }
 
 internal class RootBuilder : ControlBuilder, ITemplate

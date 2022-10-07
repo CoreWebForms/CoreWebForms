@@ -1,4 +1,7 @@
-// MIT License.
+// MIT
+
+
+using System.Runtime.Serialization;
 
 namespace System.Web;
 
@@ -30,6 +33,8 @@ internal static class SR
     public const string Attrib_parse_error = nameof(Attrib_parse_error);
     public const string Attributes_mutually_exclusive = nameof(Attributes_mutually_exclusive);
     public const string AutoPostBackControl_CausesValidation = nameof(AutoPostBackControl_CausesValidation);
+    public const string BadlyFormattedBind = nameof(BadlyFormattedBind);
+    public const string BadlyFormattedBindItem = nameof(BadlyFormattedBindItem);
     public const string Base_type_not_allowed = nameof(Base_type_not_allowed);
     public const string BaseDataBoundControl_DataSource = nameof(BaseDataBoundControl_DataSource);
     public const string BaseDataBoundControl_DataSourceID = nameof(BaseDataBoundControl_DataSourceID);
@@ -68,13 +73,19 @@ internal static class SR
     public const string ButtonFieldBase_ValidationGroup = nameof(ButtonFieldBase_ValidationGroup);
     public const string Cache_not_available = nameof(Cache_not_available);
     public const string CacheProfile_Not_Found = nameof(CacheProfile_Not_Found);
+    public const string Cannot_add_value_not_collection = nameof(Cannot_add_value_not_collection);
+    public const string Cannot_evaluate_expression = nameof(Cannot_evaluate_expression);
     public const string Cannot_exit_up_top_directory = nameof(Cannot_exit_up_top_directory);
     public const string Cannot_Have_Children_Of_Type = nameof(Cannot_Have_Children_Of_Type);
+    public const string Cannot_init = nameof(Cannot_init);
+    public const string Cannot_set_property = nameof(Cannot_set_property);
+    public const string Cannot_set_recursive_skin = nameof(Cannot_set_recursive_skin);
     public const string CannotSetValidationOnDataControlButtons = nameof(CannotSetValidationOnDataControlButtons);
     public const string CannotSetValidationOnPagerButtons = nameof(CannotSetValidationOnPagerButtons);
     public const string CannotUseParentPostBackWhenValidating = nameof(CannotUseParentPostBackWhenValidating);
     public const string Cant_Multiselect = nameof(Cant_Multiselect);
     public const string Cant_Multiselect_In_Single_Mode = nameof(Cant_Multiselect_In_Single_Mode);
+    public const string Cant_use_default_items_and_filtered_collection = nameof(Cant_use_default_items_and_filtered_collection);
     public const string Cant_use_nocompile_uc = nameof(Cant_use_nocompile_uc);
     public const string ChangePassword_CreateUserText = nameof(ChangePassword_CreateUserText);
     public const string ChangePassword_HelpPageText = nameof(ChangePassword_HelpPageText);
@@ -92,11 +103,13 @@ internal static class SR
     public const string CheckBoxList_CellPadding = nameof(CheckBoxList_CellPadding);
     public const string CheckBoxList_CellSpacing = nameof(CheckBoxList_CellSpacing);
     public const string CheckBoxList_RepeatColumns = nameof(CheckBoxList_RepeatColumns);
+    public const string Children_not_supported_on_not_controls = nameof(Children_not_supported_on_not_controls);
     public const string Circular_include = nameof(Circular_include);
     public const string ClientScriptManager_InvalidPostBackArgument = nameof(ClientScriptManager_InvalidPostBackArgument);
     public const string ClientScriptManager_JqueryNotRegistered = nameof(ClientScriptManager_JqueryNotRegistered);
     public const string ClientScriptManager_RegisterForEventValidation_Too_Early = nameof(ClientScriptManager_RegisterForEventValidation_Too_Early);
     public const string Code_not_allowed = nameof(Code_not_allowed);
+    public const string Code_not_supported_on_not_controls = nameof(Code_not_supported_on_not_controls);
     public const string Codefile_without_inherits = nameof(Codefile_without_inherits);
     public const string CodeFileBaseClass_Without_Codefile = nameof(CodeFileBaseClass_Without_Codefile);
     public const string Collection_readonly_Codeblocks = nameof(Collection_readonly_Codeblocks);
@@ -161,6 +174,15 @@ internal static class SR
     public const string Control_ViewStateMode = nameof(Control_ViewStateMode);
     public const string Control_Visible = nameof(Control_Visible);
     public const string ControlAdapters_TypeNotFound = nameof(ControlAdapters_TypeNotFound);
+    public const string ControlBuilder_CannotHaveComplexString = nameof(ControlBuilder_CannotHaveComplexString);
+    public const string ControlBuilder_CannotHaveMultipleBoundEntries = nameof(ControlBuilder_CannotHaveMultipleBoundEntries);
+    public const string ControlBuilder_CollectionHasNoAddMethod = nameof(ControlBuilder_CollectionHasNoAddMethod);
+    public const string ControlBuilder_DatabindingRequiresEvent = nameof(ControlBuilder_DatabindingRequiresEvent);
+    public const string ControlBuilder_ExpressionsNotAllowedInThemes = nameof(ControlBuilder_ExpressionsNotAllowedInThemes);
+    public const string ControlBuilder_IDMustUseAttribute = nameof(ControlBuilder_IDMustUseAttribute);
+    public const string ControlBuilder_InvalidLocalizeValue = nameof(ControlBuilder_InvalidLocalizeValue);
+    public const string ControlBuilder_ParseTimeDataNotAvailable = nameof(ControlBuilder_ParseTimeDataNotAvailable);
+    public const string ControlBuilder_TwoWayBindingNonProperty = nameof(ControlBuilder_TwoWayBindingNonProperty);
     public const string ControlNonVisual = nameof(ControlNonVisual);
     public const string ControlRenderedOutsideServerForm = nameof(ControlRenderedOutsideServerForm);
     public const string Controls_Cant_Change_Between_Posts = nameof(Controls_Cant_Change_Between_Posts);
@@ -184,6 +206,7 @@ internal static class SR
     public const string DataBoundControl_SelectMethod = nameof(DataBoundControl_SelectMethod);
     public const string DataBoundControl_UpdateMethod = nameof(DataBoundControl_UpdateMethod);
     public const string DataBoundControlHelper_NoNamingContainer = nameof(DataBoundControlHelper_NoNamingContainer);
+    public const string DataBoundLiterals_cant_bind = nameof(DataBoundLiterals_cant_bind);
     public const string DataControl_DataSourceDoesntExist = nameof(DataControl_DataSourceDoesntExist);
     public const string DataControl_DataSourceIDMustBeDataControl = nameof(DataControl_DataSourceIDMustBeDataControl);
     public const string DataControl_ItemType_MultipleDataSources = nameof(DataControl_ItemType_MultipleDataSources);
@@ -241,7 +264,9 @@ internal static class SR
     public const string Enumerator_MoveNext_Not_Called = nameof(Enumerator_MoveNext_Not_Called);
     public const string Error_page_not_supported_when_buffering_off = nameof(Error_page_not_supported_when_buffering_off);
     public const string ErrorSerializingValue = nameof(ErrorSerializingValue);
+    public const string Event_handler_cant_be_empty = nameof(Event_handler_cant_be_empty);
     public const string Event_not_allowed = nameof(Event_not_allowed);
+    public const string Events_cant_be_filtered = nameof(Events_cant_be_filtered);
     public const string ExpressionBuilder_LiteralExpressionsNotAllowed = nameof(ExpressionBuilder_LiteralExpressionsNotAllowed);
     public const string Field_Not_Found = nameof(Field_Not_Found);
     public const string FileName_does_not_exist = nameof(FileName_does_not_exist);
@@ -347,6 +372,7 @@ internal static class SR
     public const string Invalid_culture_attribute = nameof(Invalid_culture_attribute);
     public const string Invalid_DataSource_Type = nameof(Invalid_DataSource_Type);
     public const string Invalid_enum_attribute = nameof(Invalid_enum_attribute);
+    public const string Invalid_enum_value = nameof(Invalid_enum_value);
     public const string Invalid_HtmlTextWriter = nameof(Invalid_HtmlTextWriter);
     public const string Invalid_identifier = nameof(Invalid_identifier);
     public const string Invalid_master_base = nameof(Invalid_master_base);
@@ -355,7 +381,9 @@ internal static class SR
     public const string Invalid_progid = nameof(Invalid_progid);
     public const string Invalid_reference_directive = nameof(Invalid_reference_directive);
     public const string Invalid_reference_directive_attrib = nameof(Invalid_reference_directive_attrib);
+    public const string Invalid_resourcekey = nameof(Invalid_resourcekey);
     public const string Invalid_scope = nameof(Invalid_scope);
+    public const string Invalid_template_container = nameof(Invalid_template_container);
     public const string Invalid_type = nameof(Invalid_type);
     public const string Invalid_type_to_implement = nameof(Invalid_type_to_implement);
     public const string Invalid_type_to_inherit_from = nameof(Invalid_type_to_inherit_from);
@@ -364,6 +392,7 @@ internal static class SR
     public const string Invalid_use_of_config_uc = nameof(Invalid_use_of_config_uc);
     public const string Invalid_vpath = nameof(Invalid_vpath);
     public const string InvalidArgumentValue = nameof(InvalidArgumentValue);
+    public const string InvalidExpressionSyntax = nameof(InvalidExpressionSyntax);
     public const string InvalidSerializedData = nameof(InvalidSerializedData);
     public const string IRenderOuterTableControl_CannotSetStyleWhenDisableRenderOuterTable = nameof(IRenderOuterTableControl_CannotSetStyleWhenDisableRenderOuterTable);
     public const string IsValid_Cant_Be_Called = nameof(IsValid_Cant_Be_Called);
@@ -393,6 +422,8 @@ internal static class SR
     public const string ListEnumVersionMismatch = nameof(ListEnumVersionMismatch);
     public const string ListSource_Missing_DataMember = nameof(ListSource_Missing_DataMember);
     public const string ListSource_Without_DataMembers = nameof(ListSource_Without_DataMembers);
+    public const string Literal_content_not_allowed = nameof(Literal_content_not_allowed);
+    public const string Literal_content_not_match_property = nameof(Literal_content_not_match_property);
     public const string Literal_Mode = nameof(Literal_Mode);
     public const string Literal_Text = nameof(Literal_Text);
     public const string Login_Authenticate = nameof(Login_Authenticate);
@@ -463,9 +494,14 @@ internal static class SR
     public const string MasterPage_MasterPageFile = nameof(MasterPage_MasterPageFile);
     public const string MasterPage_Multiple_content = nameof(MasterPage_Multiple_content);
     public const string MembershipProvider_Name = nameof(MembershipProvider_Name);
+    public const string meta_localize_error = nameof(meta_localize_error);
+    public const string meta_localize_notallowed = nameof(meta_localize_notallowed);
+    public const string meta_reskey_notallowed = nameof(meta_reskey_notallowed);
     public const string Missing_attr = nameof(Missing_attr);
     public const string Missing_output_cache_attr = nameof(Missing_output_cache_attr);
     public const string Missing_varybyparam_attr = nameof(Missing_varybyparam_attr);
+    public const string MissingExpressionPrefix = nameof(MissingExpressionPrefix);
+    public const string MissingExpressionValue = nameof(MissingExpressionValue);
     public const string Mixed_lang_not_supported = nameof(Mixed_lang_not_supported);
     public const string ModelBinderDictionary_MultipleAttributes = nameof(ModelBinderDictionary_MultipleAttributes);
     public const string ModelBinderProviderCollection_BinderForTypeNotFound = nameof(ModelBinderProviderCollection_BinderForTypeNotFound);
@@ -496,6 +532,7 @@ internal static class SR
     public const string ModelDataSourceView_UseAsyncMethodMustBeUsingAsyncPage = nameof(ModelDataSourceView_UseAsyncMethodMustBeUsingAsyncPage);
     public const string Multiple_forms_not_allowed = nameof(Multiple_forms_not_allowed);
     public const string NeedHeader = nameof(NeedHeader);
+    public const string NoCompileBinding_requires_ID = nameof(NoCompileBinding_requires_ID);
     public const string NoFocusSupport = nameof(NoFocusSupport);
     public const string Non_existent_base_type = nameof(Non_existent_base_type);
     public const string Not_a_src_file = nameof(Not_a_src_file);
@@ -551,11 +588,16 @@ internal static class SR
     public const string Postback_ctrl_not_found = nameof(Postback_ctrl_not_found);
     public const string PostBackControl_ValidationGroup = nameof(PostBackControl_ValidationGroup);
     public const string Previous_Page_Not_Authorized = nameof(Previous_Page_Not_Authorized);
+    public const string Property_doesnt_have_property = nameof(Property_doesnt_have_property);
     public const string Property_Had_Malformed_Url = nameof(Property_Had_Malformed_Url);
     public const string Property_Invalid = nameof(Property_Invalid);
+    public const string Property_Not_ClsCompliant = nameof(Property_Not_ClsCompliant);
+    public const string Property_Not_Persistable = nameof(Property_Not_Persistable);
     public const string Property_Not_Supported = nameof(Property_Not_Supported);
     public const string Property_NullOrEmpty = nameof(Property_NullOrEmpty);
+    public const string Property_readonly = nameof(Property_readonly);
     public const string Property_Set_Not_Supported = nameof(Property_Set_Not_Supported);
+    public const string Property_theme_disabled = nameof(Property_theme_disabled);
     public const string PropertySetAfterFrameworkInitialize = nameof(PropertySetAfterFrameworkInitialize);
     public const string PropertySetBeforePageEvent = nameof(PropertySetBeforePageEvent);
     public const string PropertySetBeforePreInitOrAddToControls = nameof(PropertySetBeforePreInitOrAddToControls);
@@ -744,6 +786,8 @@ internal static class SR
     public const string TreeView_TreeNodeDataBound = nameof(TreeView_TreeNodeDataBound);
     public const string TreeView_TreeNodeExpanded = nameof(TreeView_TreeNodeExpanded);
     public const string TreeView_TreeNodePopulate = nameof(TreeView_TreeNodePopulate);
+    public const string TwoWayBinding_requires_ID = nameof(TwoWayBinding_requires_ID);
+    public const string Type_doesnt_have_property = nameof(Type_doesnt_have_property);
     public const string Type_doesnt_inherit_from_type = nameof(Type_doesnt_inherit_from_type);
     public const string Type_not_creatable_from_string = nameof(Type_not_creatable_from_string);
     public const string TypeResService_Needed = nameof(TypeResService_Needed);
