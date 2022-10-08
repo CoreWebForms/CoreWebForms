@@ -20,12 +20,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.SystemWebAdapters" Version="1.0.0-rc.2.22503.1" />
-    <PackageReference Include="Microsoft.AspNetCore.SystemWebAdapters.CoreServices" Version="1.0.0-rc.2.22503.1" />
+    <PackageReference Include="Microsoft.AspNetCore.SystemWebAdapters" Version="1.0.0-rc.1.22477.1" />
+    <PackageReference Include="Microsoft.AspNetCore.SystemWebAdapters.CoreServices" Version="1.0.0-rc.1.22477.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <InternalsVisibleTo Include="Microsoft.AspNetCore.SystemWebAdapters.UI.Extensions"/>
+    <InternalsVisibleTo Include="Microsoft.AspNetCore.SystemWebAdapters.UI.Extensions" />
   </ItemGroup>
 
   <ItemGroup>
