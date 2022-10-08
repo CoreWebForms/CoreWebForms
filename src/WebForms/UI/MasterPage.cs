@@ -128,6 +128,22 @@ public class MasterPage : UserControl
         }
     }
 
+    protected internal override void OnInit(EventArgs ev)
+    {
+        base.OnInit(ev);
+
+        // NOTE: This was done in the Builder on ASP.NET Framework
+        var e = ContentTemplates.GetEnumerator();
+
+        while (e.MoveNext())
+        {
+            if (e.Key is string id && e.Value is ITemplate template && FindControl(id) is { } control)
+            {
+                InstantiateInContentPlaceHolder(control, template);
+            }
+        }
+    }
+
     [EditorBrowsable(EditorBrowsableState.Advanced)]
     protected internal void AddContentTemplate(string templateName, ITemplate template)
     {

@@ -78,7 +78,7 @@ internal class HtmlTagNameToTypeMapper
         }
 
         // If unknown, use generic
-        return Create("HtmlInputGenericControl");
+        return Create("HtmlGenericControl");
     }
 }
 

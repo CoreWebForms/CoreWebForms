@@ -71,7 +71,7 @@ internal class SymbolCreator : DepthFirstAspxVisitor<Control?>
 
     public override Control? Visit(AspxNode.Root node)
     {
-        var builder = new LiteralCombiningBuilder();
+        var builder = new CombiningBuilder();
 
         foreach (var child in node.Children)
         {
@@ -128,7 +128,7 @@ internal class SymbolCreator : DepthFirstAspxVisitor<Control?>
     {
         if (string.Equals(aspxTag.ControlName, "Content", StringComparison.OrdinalIgnoreCase))
         {
-            var builder = new LiteralCombiningBuilder();
+            var builder = new CombiningBuilder();
 
             foreach (var child in aspxTag.Children)
             {
@@ -146,7 +146,7 @@ internal class SymbolCreator : DepthFirstAspxVisitor<Control?>
         }
         else if (_webControlLookup.TryGetControl(aspxTag.Prefix, aspxTag.ControlName, out var known))
         {
-            var builder = new LiteralCombiningBuilder();
+            var builder = new CombiningBuilder();
             var properties = ImmutableArray.CreateBuilder<Property>();
 
             var asProperties = known.ChildrenAsProperties;
@@ -215,7 +215,7 @@ internal class SymbolCreator : DepthFirstAspxVisitor<Control?>
             else
             {
                 var known = HtmlTagNameToTypeMapper.Instance.GetControlType(htmlTag.Name, htmlTag.Attributes);
-                var builder = new LiteralCombiningBuilder();
+                var builder = new CombiningBuilder();
 
                 foreach (var child in htmlTag.Children)
                 {
@@ -232,7 +232,7 @@ internal class SymbolCreator : DepthFirstAspxVisitor<Control?>
         }
         else
         {
-            var builder = new LiteralCombiningBuilder();
+            var builder = new CombiningBuilder();
 
             builder.Add(new LiteralControl(htmlTag.GetOriginalText(), Convert(htmlTag.Location)));
 
@@ -293,7 +293,7 @@ internal class SymbolCreator : DepthFirstAspxVisitor<Control?>
 
     private Control? VisitChildren(List<AspxNode> children, bool removeLiterals)
     {
-        var builder = new LiteralCombiningBuilder(removeLiterals);
+        var builder = new CombiningBuilder(removeLiterals);
 
         foreach (var child in children)
         {
@@ -312,7 +312,7 @@ internal class SymbolCreator : DepthFirstAspxVisitor<Control?>
             return null;
         }
 
-        var builder = new LiteralCombiningBuilder();
+        var builder = new CombiningBuilder();
 
         foreach (var child in result.Children)
         {
@@ -350,12 +350,12 @@ internal class SymbolCreator : DepthFirstAspxVisitor<Control?>
         }
     }
 
-    private class LiteralCombiningBuilder
+    private class CombiningBuilder
     {
         private readonly ImmutableArray<Control>.Builder _builder;
         private readonly bool _removeLiterals;
 
-        public LiteralCombiningBuilder(bool removeLiterals = false)
+        public CombiningBuilder(bool removeLiterals = false)
         {
             _builder = ImmutableArray.CreateBuilder<Control>();
             _removeLiterals = removeLiterals;
