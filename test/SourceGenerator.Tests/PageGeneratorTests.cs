@@ -33,7 +33,7 @@ public class PageGeneratorTests
 using System.Web;
 using System.Web.UI;
 [Microsoft.AspNetCore.SystemWebAdapters.UI.AspxPageAttribute(""/page.aspx"")]
-internal partial class page_aspx : WebApplication12.About, global::System.Web.SessionState.IRequiresSessionState
+internal partial class _page_aspx : WebApplication12.About, global::System.Web.SessionState.IRequiresSessionState
 {{
     protected override void FrameworkInitialize()
     {{
@@ -83,7 +83,7 @@ internal partial class page_aspx : WebApplication12.About, global::System.Web.Se
 using System.Web;
 using System.Web.UI;
 [Microsoft.AspNetCore.SystemWebAdapters.UI.AspxPageAttribute(""/page.aspx"")]
-internal partial class page_aspx : WebApplication12.About, global::System.Web.SessionState.IRequiresSessionState
+internal partial class _page_aspx : WebApplication12.About, global::System.Web.SessionState.IRequiresSessionState
 {{
     protected override void FrameworkInitialize()
     {{
@@ -135,7 +135,7 @@ internal partial class page_aspx : WebApplication12.About, global::System.Web.Se
 using System.Web;
 using System.Web.UI;
 [Microsoft.AspNetCore.SystemWebAdapters.UI.AspxPageAttribute(""/page.aspx"")]
-internal partial class page_aspx : WebApplication12.About, global::System.Web.SessionState.IRequiresSessionState
+internal partial class _page_aspx : WebApplication12.About, global::System.Web.SessionState.IRequiresSessionState
 {{
     protected override void FrameworkInitialize()
     {{
@@ -200,7 +200,7 @@ namespace WebApplication12
 using System.Web;
 using System.Web.UI;
 [Microsoft.AspNetCore.SystemWebAdapters.UI.AspxPageAttribute(""/page.aspx"")]
-internal partial class page_aspx : WebApplication12.About, global::System.Web.SessionState.IRequiresSessionState
+internal partial class _page_aspx : WebApplication12.About, global::System.Web.SessionState.IRequiresSessionState
 {{
     protected override void FrameworkInitialize()
     {{
@@ -274,7 +274,7 @@ namespace WebApplication12
 using System.Web;
 using System.Web.UI;
 [Microsoft.AspNetCore.SystemWebAdapters.UI.AspxPageAttribute(""/page.aspx"")]
-internal partial class page_aspx : WebApplication12.About, global::System.Web.SessionState.IRequiresSessionState
+internal partial class _page_aspx : WebApplication12.About, global::System.Web.SessionState.IRequiresSessionState
 {{
     protected override void FrameworkInitialize()
     {{
@@ -336,7 +336,7 @@ internal partial class page_aspx : WebApplication12.About, global::System.Web.Se
 using System.Web;
 using System.Web.UI;
 [Microsoft.AspNetCore.SystemWebAdapters.UI.AspxPageAttribute(""/page.aspx"")]
-internal partial class page_aspx : WebApplication12.About, global::System.Web.SessionState.IRequiresSessionState
+internal partial class _page_aspx : WebApplication12.About, global::System.Web.SessionState.IRequiresSessionState
 {{
     protected override void FrameworkInitialize()
     {{

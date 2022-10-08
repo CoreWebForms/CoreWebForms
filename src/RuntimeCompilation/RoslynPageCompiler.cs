@@ -109,7 +109,7 @@ internal sealed class RoslynPageCompiler : IPageCompiler
 
         if (!result.Success)
         {
-            _logger.LogWarning("{ErrorCount} error(s) found compiling {Route}", result.Diagnostics.Length, writingResult.File.Path);
+            _logger.LogWarning("{ErrorCount} error(s) found compiling {Route}", result.Diagnostics.Length, writingResult.File.UrlPath);
 
             var error = result.Diagnostics
                 .Select(d => new
@@ -129,7 +129,7 @@ internal sealed class RoslynPageCompiler : IPageCompiler
         pdbStream.Position = 0;
         peStream.Position = 0;
 
-        var context = new PageAssemblyLoadContext(writingResult.File.Path, _factory.CreateLogger<PageAssemblyLoadContext>());
+        var context = new PageAssemblyLoadContext(writingResult.File.UrlPath, _factory.CreateLogger<PageAssemblyLoadContext>());
         var assembly = context.LoadFromStream(peStream, pdbStream);
         if (assembly.GetType(writingResult.File.ClassName) is Type type)
         {
@@ -143,9 +143,9 @@ internal sealed class RoslynPageCompiler : IPageCompiler
     {
         public CompiledPage(PagePath path, string[] dependencies)
         {
-            Path = path.Path;
+            Path = path.UrlPath;
             FileDependencies = dependencies;
-            AspxFile = path.File;
+            AspxFile = path.FilePath;
         }
 
         public Type? Type { get; set; }
@@ -252,6 +252,7 @@ internal sealed class RoslynPageCompiler : IPageCompiler
             using (var stream = new MemoryStream())
             {
                 var file = files.GetFileInfo(path);
+                var dir = Path.GetDirectoryName(path);
                 var contents = await RetryOpenFileAsync(file, token).ConfigureAwait(false);
 
                 contents = contents.Trim();
@@ -273,14 +274,16 @@ internal sealed class RoslynPageCompiler : IPageCompiler
 
                     foreach (var additional in details.AdditionalFiles)
                     {
-                        if (IsSourceFile(additional))
+                        var fullAdditional = dir is null ? additional : Path.Combine(dir, additional);
+
+                        if (IsSourceFile(fullAdditional))
                         {
-                            var additionalSource = await RetryOpenFileAsync(files.GetFileInfo(additional), token).ConfigureAwait(false);
-                            sourceFiles.Add((SourceText.From(additionalSource, Encoding.UTF8), additional));
+                            var additionalSource = await RetryOpenFileAsync(files.GetFileInfo(fullAdditional), token).ConfigureAwait(false);
+                            sourceFiles.Add((SourceText.From(additionalSource, Encoding.UTF8), fullAdditional));
                         }
                         else
                         {
-                            paths.Enqueue(additional);
+                            paths.Enqueue(fullAdditional);
                         }
                     }
                 }

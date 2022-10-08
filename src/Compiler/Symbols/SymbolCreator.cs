@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.IO;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.SystemWebAdapters.Compiler.ParserImpl;
 using Microsoft.AspNetCore.SystemWebAdapters.Compiler.Syntax;
@@ -26,6 +27,7 @@ internal class SymbolCreator : DepthFirstAspxVisitor<Control?>
     {
         var parser = new AspxParser();
         var source = new AspxSource(path, contents);
+        var dir = Path.GetDirectoryName(path);
         var tree = parser.Parse(source);
 
         var visitor = new SymbolCreator(controls);
@@ -46,12 +48,12 @@ internal class SymbolCreator : DepthFirstAspxVisitor<Control?>
 
         if (page.Directive.MasterPageFile is { } masterFile)
         {
-            additional.Add(new PagePath(masterFile).Path);
+            additional.Add(new PagePath(dir, masterFile).UrlPath);
         }
 
         if (page.Directive.CodeBehind is { } codeBehind)
         {
-            additional.Add(new PagePath(codeBehind).Path);
+            additional.Add(new PagePath(dir, codeBehind).UrlPath);
         }
 
         page = page with { AdditionalFiles = additional.ToImmutable() };
