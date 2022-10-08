@@ -25,7 +25,7 @@ internal sealed class PageEndpointDataSource : EndpointDataSource, IChangeToken
         }
         else
         {
-            _endpoints.Add(endpoint);
+            _endpoints.Add(endpoint.Build());
         }
     }
 
@@ -33,7 +33,7 @@ internal sealed class PageEndpointDataSource : EndpointDataSource, IChangeToken
     {
         var endpoint = PageEndpointRoute.Create(type, path);
 
-        _endpoints.Add(endpoint);
+        _endpoints.Add(endpoint.Build());
     }
 
     public override IReadOnlyList<Endpoint> Endpoints => _endpoints;

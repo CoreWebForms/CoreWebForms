@@ -15,12 +15,12 @@ namespace Microsoft.AspNetCore.Builder;
 
 internal class PageEndpointRoute
 {
-    public static Endpoint? Create(Type type)
+    public static EndpointBuilder? Create(Type type)
     {
         return type.GetCustomAttribute<AspxPageAttribute>() is { Path: { } path } ? Create(type, path) : null;
     }
 
-    public static Endpoint Create(Type type, PathString path)
+    public static EndpointBuilder Create(Type type, PathString path)
     {
         var pattern = RoutePatternFactory.Parse(path.ToString());
         var builder = new RouteEndpointBuilder(null!, pattern, 0);
@@ -46,6 +46,6 @@ internal class PageEndpointRoute
             }
         };
 
-        return builder.Build();
+        return builder;
     }
 }

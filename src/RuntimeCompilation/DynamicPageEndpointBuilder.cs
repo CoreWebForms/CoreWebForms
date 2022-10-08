@@ -12,17 +12,22 @@ namespace Microsoft.AspNetCore.Builder;
 
 public static class DynamicPageEndpointBuilder
 {
-    public static void MapDynamicAspxPages(this IEndpointRouteBuilder endpoints, IFileProvider files)
+    public static IEndpointConventionBuilder MapDynamicAspxPages(this IEndpointRouteBuilder endpoints, IFileProvider files)
     {
         var registrar = endpoints.ServiceProvider.GetRequiredService<ICompilationRegistrar>();
         var collection = registrar.Register(files);
 
-        endpoints.DataSources.Add(new DynamicPageEndpointDataSource(collection));
+        var source = new DynamicPageEndpointDataSource(collection);
+        endpoints.DataSources.Add(source);
+
+        return source;
     }
 
-    private sealed class DynamicPageEndpointDataSource : EndpointDataSource, IDisposable
+    private sealed class DynamicPageEndpointDataSource : EndpointDataSource, IDisposable, IEndpointConventionBuilder
     {
         private readonly ICompiledPagesCollection _collection;
+        private readonly List<Action<EndpointBuilder>> _conventions = new();
+
         private CompiledEndpoint _endpoints;
 
         public DynamicPageEndpointDataSource(ICompiledPagesCollection collection)
@@ -47,7 +52,9 @@ public static class DynamicPageEndpointBuilder
                 {
                     if (page.Type is { } type)
                     {
-                        newList.Add(PageEndpointRoute.Create(type, page.Path));
+                        var endpoint = PageEndpointRoute.Create(type, page.Path);
+                        ApplyConventions(endpoint);
+                        newList.Add(endpoint.Build());
                     }
                     else
                     {
@@ -66,6 +73,17 @@ public static class DynamicPageEndpointBuilder
         void IDisposable.Dispose() => _collection.Dispose();
 
         public override IChangeToken GetChangeToken() => _collection.ChangeToken;
+
+        private void ApplyConventions(EndpointBuilder builder)
+        {
+            foreach (var c in _conventions)
+            {
+                c(builder);
+            }
+        }
+
+        void IEndpointConventionBuilder.Add(Action<EndpointBuilder> convention)
+            => _conventions.Add(convention);
 
         private readonly record struct CompiledEndpoint(IReadOnlyList<Endpoint> Endpoints, IReadOnlyList<ICompiledPage> Types);
     }
