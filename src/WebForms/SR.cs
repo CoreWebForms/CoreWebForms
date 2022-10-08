@@ -13,12 +13,13 @@ internal static class AssemblyRef
 internal static class SR
 {
     public static string GetString(string name, params object[] args) => name;
-    
+
     public const string Async_addhandler_too_late = nameof(Async_addhandler_too_late);
     public const string Async_required = nameof(Async_required);
     public const string Async_task_timed_out = nameof(Async_task_timed_out);
     public const string Attributes_mutually_exclusive = nameof(Attributes_mutually_exclusive);
     public const string AutoPostBackControl_CausesValidation = nameof(AutoPostBackControl_CausesValidation);
+    public const string BaseCompareValidator_CultureInvariantValues = nameof(BaseCompareValidator_CultureInvariantValues);
     public const string BaseDataBoundControl_DataSource = nameof(BaseDataBoundControl_DataSource);
     public const string BaseDataBoundControl_DataSourceID = nameof(BaseDataBoundControl_DataSourceID);
     public const string BaseDataBoundControl_OnDataBound = nameof(BaseDataBoundControl_OnDataBound);
@@ -489,6 +490,9 @@ internal static class SR
     public const string RadioButtonList_CellPadding = nameof(RadioButtonList_CellPadding);
     public const string RadioButtonList_CellSpacing = nameof(RadioButtonList_CellSpacing);
     public const string RadioButtonList_RepeatColumns = nameof(RadioButtonList_RepeatColumns);
+    public const string RangeValidator_MaximumValue = nameof(RangeValidator_MaximumValue);
+    public const string RangeValidator_MinmumValue = nameof(RangeValidator_MinmumValue);
+    public const string RangeValidator_Type = nameof(RangeValidator_Type);
     public const string ReadOnlyHierarchicalDataSourceView_CantAccessPathInEnumerable = nameof(ReadOnlyHierarchicalDataSourceView_CantAccessPathInEnumerable);
     public const string Repeater_AlternatingItemTemplate = nameof(Repeater_AlternatingItemTemplate);
     public const string Repeater_DataMember = nameof(Repeater_DataMember);
@@ -671,6 +675,8 @@ internal static class SR
     public const string Validator_bad_control_type = nameof(Validator_bad_control_type);
     public const string Validator_control_blank = nameof(Validator_control_blank);
     public const string Validator_control_not_found = nameof(Validator_control_not_found);
+    public const string Validator_range_overalap = nameof(Validator_range_overalap);
+    public const string Validator_value_bad_type = nameof(Validator_value_bad_type);
     public const string Value_Set_Not_Supported = nameof(Value_Set_Not_Supported);
     public const string ValueProviderResult_ConversionThrew = nameof(ValueProviderResult_ConversionThrew);
     public const string ValueProviderResult_NoConverterExists = nameof(ValueProviderResult_NoConverterExists);
