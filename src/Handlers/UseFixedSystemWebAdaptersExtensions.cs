@@ -7,9 +7,9 @@ using Microsoft.AspNetCore.SystemWebAdapters;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
-public class UseFixedSystemWebAdaptersExtensions
+public static class UseFixedSystemWebAdaptersExtensions
 {
-    public void UseFixedSystemWebAdapters(IApplicationBuilder app)
+    public static void UseFixedSystemWebAdapters(this IApplicationBuilder app)
     {
         app.UseSystemWebAdapters();
         app.Use((ctx, next) =>
