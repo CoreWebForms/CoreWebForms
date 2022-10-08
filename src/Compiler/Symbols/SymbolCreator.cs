@@ -146,7 +146,7 @@ internal class SymbolCreator : DepthFirstAspxVisitor<Control?>
         }
         else if (_webControlLookup.TryGetControl(aspxTag.Prefix, aspxTag.ControlName, out var known))
         {
-            var builder = new CombiningBuilder();
+            var builder = new CombiningBuilder(removeLiterals: known.ChildrenAsProperties);
             var properties = ImmutableArray.CreateBuilder<Property>();
 
             var asProperties = known.ChildrenAsProperties;
