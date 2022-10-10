@@ -29,11 +29,11 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseRouting();
 
 app.UseSession();
 app.UseSystemWebAdapters();
+app.UseWebForms();
 
 app.MapAspxPages();
 app.MapDynamicAspxPages(new ExcludeObjBinDirectory(app.Environment.ContentRootFileProvider));
