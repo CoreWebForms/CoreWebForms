@@ -4,11 +4,11 @@ namespace Microsoft.Extensions.Configuration;
 
 internal class WebConfigSource : FileConfigurationSource
 {
-    public WebConfigSource(string path)
+    public WebConfigSource(string path, bool isOptional)
     {
         Path = path;
         ReloadOnChange = true;
-        Optional = true;
+        Optional = isOptional;
     }
 
     public override IConfigurationProvider Build(IConfigurationBuilder builder)
