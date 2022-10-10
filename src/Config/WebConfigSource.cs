@@ -1,4 +1,4 @@
-﻿// MIT License.
+// MIT License.
 
 namespace Microsoft.Extensions.Configuration;
 
@@ -8,7 +8,7 @@ internal class WebConfigSource : FileConfigurationSource
     {
         Path = path;
         ReloadOnChange = true;
-        Optional = false;
+        Optional = true;
     }
 
     public override IConfigurationProvider Build(IConfigurationBuilder builder)
