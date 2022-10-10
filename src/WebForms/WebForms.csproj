@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <IsShipped>true</IsShipped>
@@ -11,6 +11,10 @@
 
   <ItemGroup>
     <EmbeddedResource Include="UI\WebControls\RuntimeScripts\*" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Build\*" Pack="true" PackagePath="Build\" />
   </ItemGroup>
 
   <ItemGroup>

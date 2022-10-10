@@ -1,2 +1,4 @@
 <Project>
+    <Import Project="$(MSBuildThisFileDirectory)/AddNugetContentFiles.targets" />
+    <Import Project="$(MSBuildThisFileDirectory)/WebConfigTransform.targets" />
 </Project>
