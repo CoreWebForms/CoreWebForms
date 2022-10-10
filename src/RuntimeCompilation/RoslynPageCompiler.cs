@@ -263,6 +263,11 @@ internal sealed class RoslynPageCompiler : IPageCompiler
 
                     var details = AspNetCompiler.ParsePage(path, contents, _options.Value.Info);
 
+                    if (!details.Errors.IsDefaultOrEmpty)
+                    {
+                        return new WritingResult(pagePath) { Errors = details.Errors };
+                    }
+
                     var cs = new CSharpPageWriter(writer, details);
 
                     cs.Write();
