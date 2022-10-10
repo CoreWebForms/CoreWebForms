@@ -4,7 +4,7 @@
         <__FinalConfigPath>$(OutDir)$(AssemblyName).dll.config</__FinalConfigPath>
     </PropertyGroup>
 
-  <Target Name="TransformWebConfig" AfterTargets="FindWebConfig" Condition=" '$(WebConfigPath)' != '' ">
+  <Target Name="TransformWebConfig" BeforeTargets="AssignTargetPaths" Condition=" '$(WebConfigPath)' != '' ">
     <Message Text="Copying AppSettings and ConnectionStrings from '$(WebConfigPath)' to '$(__FinalConfigPath)' " Importance="high" />
 
     <XslTransformation XslInputPath="$(__WebConfigXsl)" XmlInputPaths="$(WebConfigPath)" OutputPaths="$(__FinalConfigPath)" />
