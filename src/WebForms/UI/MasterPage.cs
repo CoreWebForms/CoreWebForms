@@ -132,7 +132,12 @@ public class MasterPage : UserControl
     {
         base.OnInit(ev);
 
-        // NOTE: This was done in the Builder on ASP.NET Framework
+        SetContentPlaceHolders();
+    }
+
+    // NOTE: This was done in the Builder on ASP.NET Framework
+    private void SetContentPlaceHolders()
+    {
         var e = ContentTemplates.GetEnumerator();
 
         while (e.MoveNext())
@@ -140,6 +145,12 @@ public class MasterPage : UserControl
             if (e.Key is string id && e.Value is ITemplate template && FindControl(id) is { } control)
             {
                 InstantiateInContentPlaceHolder(control, template);
+
+                // TODO: Workaround to handle databinding issue
+                if (template is TemplateControl tControl)
+                {
+                    control.TemplateControl = tControl;
+                }
             }
         }
     }
