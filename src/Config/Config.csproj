@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
+    <IsShipped>true</IsShipped>
     <AssemblyName>Microsoft.AspNetCore.SystemWebAdapters.Config</AssemblyName>
   </PropertyGroup>
 
