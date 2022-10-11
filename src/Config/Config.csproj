@@ -4,7 +4,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
     <IsShipped>true</IsShipped>
-    <AssemblyName>Microsoft.AspNetCore.SystemWebAdapters.Config</AssemblyName>
+    <AssemblyName>Swick.ConfigurationManagerAdapter</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
