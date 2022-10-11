@@ -8,7 +8,7 @@ using System.Xml;
 
 namespace Microsoft.Extensions.Configuration;
 
-internal class WebConfigConfigurationProvider : FileConfigurationProvider
+internal sealed class WebConfigConfigurationProvider : FileConfigurationProvider
 {
     internal KnownKeys Keys { get; private set; } = new(Enumerable.Empty<string>(), Enumerable.Empty<string>());
 
@@ -47,32 +47,46 @@ internal class WebConfigConfigurationProvider : FileConfigurationProvider
         var keys = new HashSet<string>();
         var appSettings = doc.SelectNodes("/configuration/appSettings/add");
 
-        foreach (XmlNode child in appSettings)
+        if (appSettings is not null)
         {
-            var key = child.Attributes["key"].Value;
-
-            keys.Add(key);
-            data[key] = child.Attributes["value"].Value;
+            foreach (XmlNode child in appSettings)
+            {
+                if (child.Attributes is { } attributes &&
+                    attributes["key"] is { Value: { } key } &&
+                    attributes["value"] is { Value: { } value })
+                {
+                    keys.Add(key);
+                    data[key] = value;
+                }
+            }
         }
 
         return keys;
     }
 
-    private static new HashSet<string> ReadConnectionStrings(XmlDocument doc, Dictionary<string, string> data)
+    private static HashSet<string> ReadConnectionStrings(XmlDocument doc, Dictionary<string, string> data)
     {
         var keys = new HashSet<string>();
         var connectionStrings = doc.SelectNodes("/configuration/connectionStrings/add");
 
-        foreach (XmlNode child in connectionStrings)
+        if (connectionStrings is not null)
         {
-            var key = child.Attributes["name"].Value;
-            var value = child.Attributes["connectionString"].Value;
-            var provider = child.Attributes["providerName"].Value;
+            foreach (XmlNode child in connectionStrings)
+            {
+                if (child.Attributes is { } attributes &&
+                    attributes["connectionString"] is { Value: { } connectionString } &&
+                    attributes["name"] is { Value: { } name })
+                {
+                    keys.Add(name);
 
-            keys.Add(key);
+                    data[$"ConnectionStrings:{name}"] = connectionString;
 
-            data[$"ConnectionStrings:{key}"] = value;
-            data[$"ConnectionStringProviders:{key}"] = provider;
+                    if (attributes["providerName"] is { Value: { } providerName })
+                    {
+                        data[$"ConnectionStringProviders:{name}"] = providerName;
+                    }
+                }
+            }
         }
 
         return keys;

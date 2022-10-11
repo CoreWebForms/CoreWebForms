@@ -2,7 +2,7 @@
 
 namespace Microsoft.Extensions.Configuration;
 
-internal class WebConfigSource : FileConfigurationSource
+internal sealed class WebConfigSource : FileConfigurationSource
 {
     public WebConfigSource(string path, bool isOptional)
     {

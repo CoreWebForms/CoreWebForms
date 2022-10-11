@@ -8,40 +8,54 @@ using System.Linq;
 using System.Reflection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
 
 namespace Microsoft.Extensions.Configuration;
 
-internal class ConfigurationStartup : IStartupFilter
+internal sealed class ConfigurationStartup : IStartupFilter
 {
     private readonly IConfigurationRoot _root;
+    private readonly IOptions<ConfigurationManagerOptions> _options;
 
-    public ConfigurationStartup(IConfiguration root)
+    public ConfigurationStartup(IConfiguration root, IOptions<ConfigurationManagerOptions> options)
     {
         _root = (IConfigurationRoot)root;
+        _options = options;
     }
 
     public Action<IApplicationBuilder> Configure(Action<IApplicationBuilder> next)
         => builder =>
         {
-            var knownKeys = BuildKnownKeys(_root);
+            var options = _options.Value;
+            var knownKeys = BuildKnownKeys(_root, options);
 
             // Initialize ConfigurationManager instance
             UpdateConfigurationManager(_root, knownKeys);
 
-            // Register for any changes
-            ChangeToken.OnChange(() => _root.GetReloadToken(), () => UpdateConfigurationManager(_root, knownKeys));
+            if (options.HandleReload)
+            {
+                var @lock = new object();
+                ChangeToken.OnChange(() => _root.GetReloadToken(), () =>
+                {
+                    // Ensure updates are done serially
+                    lock (@lock)
+                    {
+                        UpdateConfigurationManager(_root, knownKeys);
+                    }
+                });
+            }
 
             next(builder);
         };
 
-    private static KnownKeys BuildKnownKeys(IConfigurationRoot root)
+    private static KnownKeys BuildKnownKeys(IConfigurationRoot root, ConfigurationManagerOptions options)
     {
         var keys = root.Providers
             .OfType<WebConfigConfigurationProvider>()
             .Select(provider => provider.Keys);
-        var appSettings = new HashSet<string>();
-        var strings = new HashSet<string>();
+        var appSettings = new HashSet<string>(options.KnownAppSettings);
+        var strings = new HashSet<string>(options.KnownConnectionStrings);
 
         foreach (var key in keys)
         {
