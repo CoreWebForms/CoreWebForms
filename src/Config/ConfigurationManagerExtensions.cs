@@ -16,7 +16,7 @@ public static class ConfigurationManagerExtensions
 
     public static IConfigurationBuilder AddAppConfig(this IConfigurationBuilder config, string path = "app.config", bool isOptional = true)
     {
-        config.Sources.Insert(0, new WebConfigSource(path, isOptional)));
+        config.Sources.Insert(0, new WebConfigSource(path, isOptional));
         return config;
     }
 
