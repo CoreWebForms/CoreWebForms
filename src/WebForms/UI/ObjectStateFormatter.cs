@@ -7,6 +7,8 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Runtime.Serialization;
 using System.Web.UI.WebControls;
+using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
+using Microsoft.AspNetCore.DataProtection;
 
 #nullable disable
 
@@ -250,6 +252,34 @@ public sealed class ObjectStateFormatter : IStateFormatter, IStateFormatter2, IF
         // a default value for him.
         Deserialize(inputString, Purpose.User_ObjectStateFormatter_Serialize);
 
+    private IDataProtector _protector = new T();
+
+    private IDataProtector Protector
+    {
+        get
+        {
+            if (_protector is null)
+            {
+                var provider = HttpContext.Current.AsCore().RequestServices.GetDataProtectionProvider();
+                _protector = provider.CreateProtector("SystemWebForms");
+            }
+
+            return _protector;
+        }
+    }
+
+    private class T : IDataProtector
+    {
+        public IDataProtector CreateProtector(string purpose)
+            => this;
+
+        public byte[] Protect(byte[] plaintext)
+            => plaintext;
+
+        public byte[] Unprotect(byte[] protectedData)
+            => protectedData;
+    }
+
     private object Deserialize(string inputString, Purpose purpose)
     {
         if (string.IsNullOrEmpty(inputString))
@@ -258,11 +288,9 @@ public sealed class ObjectStateFormatter : IStateFormatter, IStateFormatter2, IF
         }
 
         var inputBytes = Convert.FromBase64String(inputString);
-        var length = inputBytes.Length;
-        using var objectStream = GetMemoryStream();
+        var unprotected = Protector.Unprotect(inputBytes);
 
-        objectStream.Write(inputBytes, 0, length);
-        objectStream.Position = 0;
+        using var objectStream = new MemoryStream(unprotected);
 
         return Deserialize(objectStream);
     }
@@ -569,11 +597,6 @@ public sealed class ObjectStateFormatter : IStateFormatter, IStateFormatter2, IF
     }
 
     /// <devdoc>
-    /// Retrieves a MemoryStream instance.
-    /// </devdoc>
-    private static MemoryStream GetMemoryStream() => new MemoryStream(2048);
-
-    /// <devdoc>
     /// Initializes this instance to perform deserialization.
     /// </devdoc>
     private void InitializeDeserializer()
@@ -617,14 +640,12 @@ public sealed class ObjectStateFormatter : IStateFormatter, IStateFormatter2, IF
 
     private string Serialize(object stateGraph, Purpose purpose)
     {
-        using var ms = GetMemoryStream();
+        using var ms = new MemoryStream();
         Serialize(ms, stateGraph);
-        ms.SetLength(ms.Position);
 
-        var buffer = ms.GetBuffer();
-        var length = (int)ms.Length;
+        var buffer = Protector.Protect(ms.ToArray());
 
-        return Convert.ToBase64String(buffer, 0, length);
+        return Convert.ToBase64String(buffer);
     }
 
     internal void SerializeWithAssert(Stream outputStream, object stateGraph) => Serialize(outputStream, stateGraph);
