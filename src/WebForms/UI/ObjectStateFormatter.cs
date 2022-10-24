@@ -7,7 +7,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Runtime.Serialization;
 using System.Web.UI.WebControls;
-using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using Microsoft.AspNetCore.DataProtection;
 
 #nullable disable
@@ -266,18 +265,6 @@ public sealed class ObjectStateFormatter : IStateFormatter, IStateFormatter2, IF
 
             return _protector;
         }
-    }
-
-    private class T : IDataProtector
-    {
-        public IDataProtector CreateProtector(string purpose)
-            => this;
-
-        public byte[] Protect(byte[] plaintext)
-            => plaintext;
-
-        public byte[] Unprotect(byte[] protectedData)
-            => protectedData;
     }
 
     private object Deserialize(string inputString, Purpose purpose)
