@@ -251,7 +251,7 @@ public sealed class ObjectStateFormatter : IStateFormatter, IStateFormatter2, IF
         // a default value for him.
         Deserialize(inputString, Purpose.User_ObjectStateFormatter_Serialize);
 
-    private IDataProtector _protector = new T();
+    private IDataProtector _protector; 
 
     private IDataProtector Protector
     {
