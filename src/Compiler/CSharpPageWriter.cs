@@ -206,8 +206,14 @@ public class CSharpPageWriter
                 _writer.Indent--;
                 _writer.WriteLine("};");
             }
-            else
+            else if (property.Type == DataType.String && property.Control is LiteralControl literal)
             {
+                _writer.Write(name);
+                _writer.Write('.');
+                _writer.Write(property.Name);
+                _writer.Write(" = ");
+                WriteString(literal.Text);
+                _writer.WriteLine(";");
             }
         }
     }

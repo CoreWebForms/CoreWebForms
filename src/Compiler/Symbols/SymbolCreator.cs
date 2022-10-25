@@ -156,17 +156,24 @@ internal class SymbolCreator : DepthFirstAspxVisitor<Control?>
             var builder = new CombiningBuilder(removeLiterals: known.ChildrenAsProperties);
             var properties = ImmutableArray.CreateBuilder<Property>();
 
-            var asProperties = known.ChildrenAsProperties;
-
-            foreach (var child in aspxTag.Children)
+            if (!string.IsNullOrEmpty(known.ChildProperty) && aspxTag.Children is { Count: 1 } && aspxTag.Children[0] is AspxNode.Literal literal)
             {
-                if (asProperties && child is AspxNode.HtmlTag html && VisitChildren(html.Children, removeLiterals: true) is { } propertyChildren && known.GetDataType(html.Name) is { } type)
+                properties.Add(new Property(known.ChildProperty, new LiteralControl(literal.Text, Convert(literal.Location)), DataType.String));
+            }
+            else
+            {
+                var asProperties = known.ChildrenAsProperties;
+
+                foreach (var child in aspxTag.Children)
                 {
-                    properties.Add(new Property(html.Name, propertyChildren, type.Item1));
-                }
-                else
-                {
-                    builder.Add(child.Accept(this));
+                    if (asProperties && child is AspxNode.HtmlTag html && VisitChildren(html.Children, removeLiterals: true) is { } propertyChildren && known.GetDataType(html.Name) is { } type)
+                    {
+                        properties.Add(new Property(html.Name, propertyChildren, type.Item1));
+                    }
+                    else
+                    {
+                        builder.Add(child.Accept(this));
+                    }
                 }
             }
 
