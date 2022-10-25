@@ -103,7 +103,11 @@ public class PageCompilationOptions
                     if (attribute is ParseChildrenAttribute parseChildren)
                     {
                         info.ChildrenAsProperties = parseChildren.ChildrenAsProperties;
-                        info.ChildProperty = parseChildren.DefaultProperty;
+
+                        if (parseChildren.DefaultProperty is { } name && type.GetProperty(name) is { } property && property.CanWrite)
+                        {
+                            info.ChildProperty = parseChildren.DefaultProperty;
+                        }
                     }
                 }
 
