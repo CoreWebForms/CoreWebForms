@@ -96,7 +96,7 @@ public class CSharpPageWriter
         var info = _details.Directive;
 
         _writer.Write("[Microsoft.AspNetCore.SystemWebAdapters.UI.AspxPageAttribute(\"");
-        _writer.Write(_details.File.Path);
+        _writer.Write(_details.File.UrlPath);
         _writer.WriteLine("\")]");
         _writer.Write("internal partial class ");
         _writer.Write(_details.File.ClassName);
@@ -206,8 +206,14 @@ public class CSharpPageWriter
                 _writer.Indent--;
                 _writer.WriteLine("};");
             }
-            else
+            else if (property.Type == DataType.String && property.Control is LiteralControl literal)
             {
+                _writer.Write(name);
+                _writer.Write('.');
+                _writer.Write(property.Name);
+                _writer.Write(" = ");
+                WriteString(literal.Text);
+                _writer.WriteLine(";");
             }
         }
     }
@@ -565,7 +571,7 @@ public class CSharpPageWriter
         _writer.Write(", ");
         _writer.Write(end.Column);
         _writer.Write(") \"");
-        _writer.Write(_details.File.Path.Trim('/'));
+        _writer.Write(_details.File.UrlPath.Trim('/'));
         _writer.WriteLine('\"');
     }
 

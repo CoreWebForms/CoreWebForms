@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Immutable;
+using System.IO;
 
 namespace Microsoft.AspNetCore.SystemWebAdapters.Compiler.Symbols;
 
@@ -32,7 +33,7 @@ public record class ParsedPage
 
     public PagePath File { get; init; }
 
-    public PagePath? MasterPage => Directive.MasterPageFile is { } file ? new(file) : default;
+    public PagePath? MasterPage => Directive.MasterPageFile is { } file ? new(Path.GetDirectoryName(File.UrlPath), file) : default;
 
     internal Syntax.DirectiveDetails Directive { get; init; }
 

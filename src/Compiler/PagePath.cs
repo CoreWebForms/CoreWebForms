@@ -1,6 +1,5 @@
 // MIT License.
 
-using System;
 using System.Text;
 
 namespace Microsoft.AspNetCore.SystemWebAdapters.Compiler;
@@ -8,29 +7,59 @@ namespace Microsoft.AspNetCore.SystemWebAdapters.Compiler;
 public readonly struct PagePath
 {
     public PagePath(string path)
+        : this(System.IO.Path.GetDirectoryName(path), System.IO.Path.GetFileName(path))
     {
-        File = path;
+    }
 
-        var trimmed = path.Trim('/', '~', '\\');
-        Path = EnsureStartsWithSlash(trimmed);
+    public PagePath(string directory, string path)
+    {
+        FilePath = path;
+
+        var trimmed = Combine(directory, path);
+        UrlPath = trimmed;
         ClassName = ConvertPathToClassName(trimmed);
     }
 
-    private static string EnsureStartsWithSlash(string path)
+    private static string Combine(string directory, string path)
     {
-        if (!path.StartsWith("/", StringComparison.OrdinalIgnoreCase))
+        if (string.IsNullOrEmpty(path))
         {
-            path = "/" + path;
+            return string.Empty;
         }
 
-        return path;
+        var sb = new StringBuilder(path);
+
+        if (sb[0] == '~')
+        {
+            sb.Remove(0, 1);
+        }
+        else
+        {
+            if (sb[0] != '/')
+            {
+                sb.Insert(0, '/');
+            }
+
+            sb.Insert(0, directory);
+        }
+
+        if (sb[0] != '/')
+        {
+            sb.Insert(0, '/');
+        }
+
+        sb.Replace("\\", "/");
+        sb.Replace("//", "/");
+        sb.Replace("//", "/");
+
+        return sb.ToString();
     }
 
-    public string Path { get; }
+    public string UrlPath { get; }
 
     public string ClassName { get; }
 
-    public string File { get; }
+    public string FilePath { get; }
 
     private static string ConvertPathToClassName(string input)
     {

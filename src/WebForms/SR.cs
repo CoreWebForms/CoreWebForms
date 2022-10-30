@@ -33,6 +33,7 @@ internal static class SR
     public const string Attrib_parse_error = nameof(Attrib_parse_error);
     public const string Attributes_mutually_exclusive = nameof(Attributes_mutually_exclusive);
     public const string AutoPostBackControl_CausesValidation = nameof(AutoPostBackControl_CausesValidation);
+    public const string BaseCompareValidator_CultureInvariantValues = nameof(BaseCompareValidator_CultureInvariantValues);
     public const string BadlyFormattedBind = nameof(BadlyFormattedBind);
     public const string BadlyFormattedBindItem = nameof(BadlyFormattedBindItem);
     public const string Base_type_not_allowed = nameof(Base_type_not_allowed);
@@ -304,6 +305,8 @@ internal static class SR
     public const string GenericModelBinderProvider_TypeArgumentCountMismatch = nameof(GenericModelBinderProvider_TypeArgumentCountMismatch);
     public const string GridView_PagerSettings = nameof(GridView_PagerSettings);
     public const string Head_Needs_Page = nameof(Head_Needs_Page);
+    public const string HiddenField_OnValueChanged = nameof(HiddenField_OnValueChanged);
+    public const string HiddenField_Value = nameof(HiddenField_Value);
     public const string HierarchicalDataBoundControl_InvalidDataSource = nameof(HierarchicalDataBoundControl_InvalidDataSource);
     public const string HierarchicalDataControl_DataSourceDoesntExist = nameof(HierarchicalDataControl_DataSourceDoesntExist);
     public const string HierarchicalDataControl_DataSourceIDMustBeHierarchicalDataControl = nameof(HierarchicalDataControl_DataSourceIDMustBeHierarchicalDataControl);
@@ -606,6 +609,9 @@ internal static class SR
     public const string RadioButtonList_CellPadding = nameof(RadioButtonList_CellPadding);
     public const string RadioButtonList_CellSpacing = nameof(RadioButtonList_CellSpacing);
     public const string RadioButtonList_RepeatColumns = nameof(RadioButtonList_RepeatColumns);
+    public const string RangeValidator_MaximumValue = nameof(RangeValidator_MaximumValue);
+    public const string RangeValidator_MinmumValue = nameof(RangeValidator_MinmumValue);
+    public const string RangeValidator_Type = nameof(RangeValidator_Type);
     public const string ReadOnlyHierarchicalDataSourceView_CantAccessPathInEnumerable = nameof(ReadOnlyHierarchicalDataSourceView_CantAccessPathInEnumerable);
     public const string Reference_not_allowed = nameof(Reference_not_allowed);
     public const string Repeater_AlternatingItemTemplate = nameof(Repeater_AlternatingItemTemplate);
@@ -804,6 +810,8 @@ internal static class SR
     public const string Validator_bad_control_type = nameof(Validator_bad_control_type);
     public const string Validator_control_blank = nameof(Validator_control_blank);
     public const string Validator_control_not_found = nameof(Validator_control_not_found);
+    public const string Validator_range_overalap = nameof(Validator_range_overalap);
+    public const string Validator_value_bad_type = nameof(Validator_value_bad_type);
     public const string Value_Set_Not_Supported = nameof(Value_Set_Not_Supported);
     public const string ValueProviderResult_ConversionThrew = nameof(ValueProviderResult_ConversionThrew);
     public const string ValueProviderResult_NoConverterExists = nameof(ValueProviderResult_NoConverterExists);

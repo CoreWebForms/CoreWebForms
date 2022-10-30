@@ -32,6 +32,8 @@ public class ControlInfo
 
     public bool ChildrenAsProperties { get; set; }
 
+    public string ChildProperty { get; set; }
+
     public bool SupportsEventValidation { get; set; }
 
     public void AddProperty(string name, DataType type)

@@ -17,6 +17,7 @@ using System.Web.Configuration;
 using System.Web.ModelBinding;
 using System.Web.SessionState;
 using System.Web.UI.HtmlControls;
+using System.Web.UI.WebControls;
 using System.Web.Util;
 
 // Uncomment out this line to display rare field statistics at the end of the page
@@ -5943,7 +5944,6 @@ window.onload = WebForm_RestoreScrollPosition;
         }
 
         ValidatorCollection validators = new ValidatorCollection();
-#if PORT_BASEVALIDATOR
         if (_validators != null)
         {
             for (int i = 0; i < Validators.Count; i++)
@@ -5963,7 +5963,6 @@ window.onload = WebForm_RestoreScrollPosition;
                 }
             }
         }
-#endif
         return validators;
     }
 

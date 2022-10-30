@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup Condition="$(EnableRuntimAspxCompilation)">
-    <None Include="@(EnableRuntimAspxCompilation)">
+    <None Include="@(AspxFiles)">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

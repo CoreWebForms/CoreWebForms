@@ -183,10 +183,37 @@ Button clicked: <b><asp:TextBox runat=""server"" /></b>";
         }
     }
 
+    [Fact]
+    public void ChildrenAsPropertiesIgnoresWhitespace()
+    {
+        // Arrange
+        const string PageContents = @"<%@ Page Title=""About"" Language=""C#"" AutoEventWireup=""true"" CodeBehind=""About.aspx.cs"" Inherits=""WebApplication12.About"" %>
+<asp:ListBox runat=""server"">  </asp:ListBox>";
+
+        // Act
+        var result = SymbolCreator.ParsePage(Path, PageContents, GetControls());
+
+        // Assert
+        Assert.Empty(result.Templates);
+        Assert.Empty(result.Scripts);
+        Assert.Empty(result.Errors);
+
+        Assert.True(result.Root is Root
+        {
+            Children: [
+                TypedControl { Type.Name: "ListBox", Children: [] }
+            ]
+        });
+    }
+
     private static IControlLookup GetControls()
         => new Controls
         {
             new ControlInfo("System.Web.UI.WebControls", "TextBox"),
+            new ControlInfo("System.Web.UI.WebControls", "ListBox")
+            {
+                ChildrenAsProperties = true
+            },
         };
 
     private sealed class Controls : Dictionary<string, ControlInfo>, IControlLookup

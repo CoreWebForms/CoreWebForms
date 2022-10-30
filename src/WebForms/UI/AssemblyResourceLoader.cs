@@ -15,6 +15,6 @@ internal class AssemblyResourceLoader
 
     internal static string GetWebResourceUrl(Type type, string resourceName, bool htmlEncoded, IScriptManager scriptManager, bool enableCdn)
     {
-        return "";
+        return $"/__webforms/scripts/{resourceName}";
     }
 }

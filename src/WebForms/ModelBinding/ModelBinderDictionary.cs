@@ -35,9 +35,7 @@ public class ModelBinderDictionary : IDictionary<Type, IModelBinder>
         {
             if (_defaultBinder == null)
             {
-#if PORT_MODELBINDING
                 _defaultBinder = new DefaultModelBinder();
-#endif
             }
             return _defaultBinder;
         }

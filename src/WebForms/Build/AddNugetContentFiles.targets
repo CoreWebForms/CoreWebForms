@@ -1,0 +1,35 @@
+<Project>
+
+  <Target Name="AddNugetContentFiles" BeforeTargets="AssignTargetPaths">
+    <ItemGroup>
+      <!-- Get all PackageReferences that have 'CopyContentFiles' == 'true' -->
+      <_ContentPkgProperties Include="Pkg$([System.String]::Copy('%(Identity)').Replace('.','_'))" Condition="'%(PackageReference.CopyContentFiles)' == 'true'">
+        <PackageName>%(Identity)</PackageName>
+      </_ContentPkgProperties>
+
+      <!-- Get package root if available -->
+      <_ContentPkgProperties Update="@(_ContentPkgProperties)" PackageRootPath="$(%(_ContentPkgProperties.Identity))" />
+
+      <!-- Filter out packages that need GeneratePathProperty -->
+      <_ValidContentPkgProperties Include="@(_ContentPkgProperties)" Condition=" '%(PackageRootPath)' != '' " />
+      <_InvalidContentPkgProperties Include="@(_ContentPkgProperties)" Condition=" '%(PackageRootPath)' == '' " />
+    </ItemGroup>
+
+    <Warning 
+      Condition=" '@(_InvalidContentPkgProperties)' != '' "
+      Text="%(_InvalidContentPkgProperties.PackageName) does not contain a tools directory and thus needs 'GeneratePathProperty' == 'true' " />
+
+    <ItemGroup Condition=" '@(_ValidContentPkgProperties)' != '' ">
+      <_ContentFiles Include="%(_ValidContentPkgProperties.PackageRootPath)\Content\**\*">
+        <BasePath>%(_ValidContentPkgProperties.PackageRootPath)\Content</BasePath>
+        <PackageIdentity>%(_ValidContentPkgProperties.PackageName)</PackageIdentity>
+      </_ContentFiles>
+
+      <Content Include="@(_ContentFiles)">
+        <Link>$([MSBuild]::MakeRelative(%(BasePath),%(Identity)))</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
+
+  </Target>
+</Project>

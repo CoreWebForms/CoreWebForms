@@ -18,7 +18,7 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v2
     - name: Install GitVersion
-      run: dotnet tool install --global GitVersion.Tool
+      run: dotnet tool install --global GitVersion.Tool --ignore-failed-sources
     - name: Run GitVersion
       run: dotnet gitversion /output buildserver /nofetch
     - name: Restore dependencies

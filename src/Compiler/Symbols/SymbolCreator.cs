@@ -5,6 +5,8 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.IO;
+using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.SystemWebAdapters.Compiler.ParserImpl;
 using Microsoft.AspNetCore.SystemWebAdapters.Compiler.Syntax;
 
@@ -25,6 +27,7 @@ internal class SymbolCreator : DepthFirstAspxVisitor<Control?>
     {
         var parser = new AspxParser();
         var source = new AspxSource(path, contents);
+        var dir = Path.GetDirectoryName(path);
         var tree = parser.Parse(source);
 
         var visitor = new SymbolCreator(controls);
@@ -41,19 +44,26 @@ internal class SymbolCreator : DepthFirstAspxVisitor<Control?>
             ContentPlaceholders = visitor._contentPlaceHolders.ToImmutableArray()
         };
 
-        var additional = ImmutableArray.CreateBuilder<string>();
-
-        if (page.Directive.MasterPageFile is { } masterFile)
+        if (visitor._directive is null)
         {
-            additional.Add(new PagePath(masterFile).Path);
+            page = page with { Errors = page.Errors.Insert(0, "No Directive Found") };
         }
-
-        if (page.Directive.CodeBehind is { } codeBehind)
+        else
         {
-            additional.Add(new PagePath(codeBehind).Path);
-        }
+            var additional = ImmutableArray.CreateBuilder<string>();
 
-        page = page with { AdditionalFiles = additional.ToImmutable() };
+            if (page.Directive.MasterPageFile is { } masterFile)
+            {
+                additional.Add(new PagePath(dir, masterFile).UrlPath);
+            }
+
+            if (page.Directive.CodeBehind is { } codeBehind)
+            {
+                additional.Add(new PagePath(dir, codeBehind).UrlPath);
+            }
+
+            page = page with { AdditionalFiles = additional.ToImmutable() };
+        }
 
         return page with
         {
@@ -68,7 +78,7 @@ internal class SymbolCreator : DepthFirstAspxVisitor<Control?>
 
     public override Control? Visit(AspxNode.Root node)
     {
-        var builder = new LiteralCombiningBuilder();
+        var builder = new CombiningBuilder();
 
         foreach (var child in node.Children)
         {
@@ -125,7 +135,7 @@ internal class SymbolCreator : DepthFirstAspxVisitor<Control?>
     {
         if (string.Equals(aspxTag.ControlName, "Content", StringComparison.OrdinalIgnoreCase))
         {
-            var builder = new LiteralCombiningBuilder();
+            var builder = new CombiningBuilder();
 
             foreach (var child in aspxTag.Children)
             {
@@ -143,20 +153,27 @@ internal class SymbolCreator : DepthFirstAspxVisitor<Control?>
         }
         else if (_webControlLookup.TryGetControl(aspxTag.Prefix, aspxTag.ControlName, out var known))
         {
-            var builder = new LiteralCombiningBuilder();
+            var builder = new CombiningBuilder(removeLiterals: known.ChildrenAsProperties);
             var properties = ImmutableArray.CreateBuilder<Property>();
 
-            var asProperties = known.ChildrenAsProperties;
-
-            foreach (var child in aspxTag.Children)
+            if (!string.IsNullOrEmpty(known.ChildProperty) && aspxTag.Children is { Count: 1 } && aspxTag.Children[0] is AspxNode.Literal literal)
             {
-                if (asProperties && child is AspxNode.HtmlTag html && VisitChildren(html.Children, removeLiterals: true) is { } propertyChildren && known.GetDataType(html.Name) is { } type)
+                properties.Add(new Property(known.ChildProperty, new LiteralControl(literal.Text, Convert(literal.Location)), DataType.String));
+            }
+            else
+            {
+                var asProperties = known.ChildrenAsProperties;
+
+                foreach (var child in aspxTag.Children)
                 {
-                    properties.Add(new Property(html.Name, propertyChildren, type.Item1));
-                }
-                else
-                {
-                    builder.Add(child.Accept(this));
+                    if (asProperties && child is AspxNode.HtmlTag html && VisitChildren(html.Children, removeLiterals: true) is { } propertyChildren && known.GetDataType(html.Name) is { } type)
+                    {
+                        properties.Add(new Property(html.Name, propertyChildren, type.Item1));
+                    }
+                    else
+                    {
+                        builder.Add(child.Accept(this));
+                    }
                 }
             }
 
@@ -212,7 +229,7 @@ internal class SymbolCreator : DepthFirstAspxVisitor<Control?>
             else
             {
                 var known = HtmlTagNameToTypeMapper.Instance.GetControlType(htmlTag.Name, htmlTag.Attributes);
-                var builder = new LiteralCombiningBuilder();
+                var builder = new CombiningBuilder();
 
                 foreach (var child in htmlTag.Children)
                 {
@@ -229,7 +246,7 @@ internal class SymbolCreator : DepthFirstAspxVisitor<Control?>
         }
         else
         {
-            var builder = new LiteralCombiningBuilder();
+            var builder = new CombiningBuilder();
 
             builder.Add(new LiteralControl(htmlTag.GetOriginalText(), Convert(htmlTag.Location)));
 
@@ -255,31 +272,42 @@ internal class SymbolCreator : DepthFirstAspxVisitor<Control?>
 
         foreach (var attribute in attributes)
         {
+            Attribute final;
+
             if (control is not null)
             {
                 var (kind, key) = control.GetDataType(attribute.Key);
 
                 if (kind == DataType.Enum)
                 {
-                    builder.Add(new(attribute.Key, $"{key}.{attribute.Value}", kind));
+                    final = new(attribute.Key, $"{key}.{attribute.Value}", kind);
                 }
                 else
                 {
-                    builder.Add(new(key, attribute.Value, kind));
+                    final = new(key, attribute.Value, kind);
                 }
             }
             else
             {
-                builder.Add(new(attribute.Key, attribute.Value, DataType.None));
+                final = new(attribute.Key, attribute.Value, DataType.None);
             }
+
+            if (DatabindExpression.Matches(attribute.Value) is { Count: 1 } matches)
+            {
+                final = final with { Value = matches[0].Groups["code"].Value, Kind = DataType.DataBinding };
+            }
+
+            builder.Add(final);
         }
 
         return builder.ToImmutable();
     }
 
+    private static readonly Regex DatabindExpression = new Regex("\\G<%#(?<encode>:)?(?<code>.*?)?%>", RegexOptions.Multiline | RegexOptions.Singleline);
+
     private Control? VisitChildren(List<AspxNode> children, bool removeLiterals)
     {
-        var builder = new LiteralCombiningBuilder(removeLiterals);
+        var builder = new CombiningBuilder(removeLiterals);
 
         foreach (var child in children)
         {
@@ -298,7 +326,7 @@ internal class SymbolCreator : DepthFirstAspxVisitor<Control?>
             return null;
         }
 
-        var builder = new LiteralCombiningBuilder();
+        var builder = new CombiningBuilder();
 
         foreach (var child in result.Children)
         {
@@ -336,12 +364,12 @@ internal class SymbolCreator : DepthFirstAspxVisitor<Control?>
         }
     }
 
-    private class LiteralCombiningBuilder
+    private class CombiningBuilder
     {
         private readonly ImmutableArray<Control>.Builder _builder;
         private readonly bool _removeLiterals;
 
-        public LiteralCombiningBuilder(bool removeLiterals = false)
+        public CombiningBuilder(bool removeLiterals = false)
         {
             _builder = ImmutableArray.CreateBuilder<Control>();
             _removeLiterals = removeLiterals;
