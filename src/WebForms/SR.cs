@@ -632,6 +632,7 @@ internal static class SR
     public const string RepeatInfo_ListLayoutOnlySupportsVerticalLayout = nameof(RepeatInfo_ListLayoutOnlySupportsVerticalLayout);
     public const string Request_not_available = nameof(Request_not_available);
     public const string RequiredFieldValidator_InitialValue = nameof(RequiredFieldValidator_InitialValue);
+    public const string Resource_problem = nameof(Resource_problem);
     public const string ResourceExpresionBuilder_PageResourceNotFound = nameof(ResourceExpresionBuilder_PageResourceNotFound);
     public const string Response_not_available = nameof(Response_not_available);
     public const string Runat_can_only_be_server = nameof(Runat_can_only_be_server);
