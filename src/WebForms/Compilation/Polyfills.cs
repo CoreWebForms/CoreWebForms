@@ -1,6 +1,7 @@
 // MIT License.
 
 using System.Collections;
+using System.ComponentModel.Design;
 using System.Reflection;
 using System.Text;
 using System.Web.Compilation;
@@ -19,6 +20,11 @@ internal class BuildResult
 internal class ResourceExpressionBuilder
 {
     internal static IResourceProvider GetLocalResourceProvider(VirtualPath virtualPath)
+    {
+        throw new NotImplementedException();
+    }
+
+    internal static object ParseExpression(string fullResourceKey)
     {
         throw new NotImplementedException();
     }
@@ -110,6 +116,10 @@ internal class BaseCodeDomTreeGenerator
 
 internal class ControlBuilderInterceptor
 {
+    internal void PreControlBuilderInit(ControlBuilder controlBuilder, TemplateParser parser, ControlBuilder parentBuilder, Type type, string tagName, string id, IDictionary attribs, IDictionary additionalState)
+    {
+        throw new NotImplementedException();
+    }
 }
 
 internal class BaseResourcesBuildProvider
@@ -122,6 +132,7 @@ internal static class BuildManager
     public static bool PrecompilingForDeployment { get; internal set; }
     public static string UpdatableInheritReplacementToken { get; internal set; }
     public static Assembly AppResourcesAssembly { get; internal set; }
+    public static bool PrecompilingForUpdatableDeployment { get; internal set; }
 
     internal static BuildResult GetBuildResultFromCache(string cacheKey)
     {
@@ -167,8 +178,34 @@ internal static class HttpRuntime2
     }
 }
 
+public class ThemeProvider
+{
+    internal SkinBuilder GetSkinBuilder(Control control)
+    {
+        throw new NotImplementedException();
+    }
+}
+
+public class SkinBuilder
+{
+    internal object ApplyTheme()
+    {
+        throw new NotImplementedException();
+    }
+
+    internal void SetServiceProvider(IServiceProvider serviceProvider)
+    {
+        throw new NotImplementedException();
+    }
+}
+
 public class PageThemeParser : BaseTemplateParser
 {
+    public ControlBuilder CurrentSkinBuilder { get; internal set; }
+
+    internal override Type DefaultBaseType => throw new NotImplementedException();
+
+    internal override string DefaultDirectiveName => throw new NotImplementedException();
 }
 
 internal class BuildResultCompiledAssembly : BuildResult
@@ -176,9 +213,50 @@ internal class BuildResultCompiledAssembly : BuildResult
     public Assembly ResultAssembly { get; internal set; }
 }
 
-public class TemplateBuilder : ControlBuilder
+public class TemplateBuilder : ControlBuilder, ITemplate
 {
     public bool AllowMultipleInstances { get; internal set; }
+
+    public void InstantiateIn(Control container)
+    {
+        throw new NotImplementedException();
+    }
+
+    internal void SetDesignerHost(IDesignerHost designerHost)
+    {
+        throw new NotImplementedException();
+    }
+}
+
+
+public class DataBindingCollection
+{
+    public int Count => 0;
+
+    public void Add(DataBinding binding)
+    {
+    }
+}
+
+public class FastPropertyAccessor
+{
+    internal static object GetProperty(object obj, string name, bool inDesigner)
+    {
+        throw new NotImplementedException();
+    }
+
+    internal static void SetProperty(object obj, string name, object objectValue, bool inDesigner)
+    {
+        throw new NotImplementedException();
+    }
+}
+
+public class ContentPlaceHolderBuilderFactory
+{
+}
+
+public class ContentBuilderInternalFactory
+{
 }
 
 public enum CodeConstructType
@@ -219,17 +297,14 @@ internal class DesignTimePageThemeParser : PageThemeParser
 
 internal class RootBuilder : ControlBuilder, ITemplate
 {
+    public IDictionary BuiltObjects { get; internal set; }
+
     public void InstantiateIn(Control container)
     {
         throw new NotImplementedException();
     }
 
     internal void Init(TemplateParser templateParser, object value1, object value2, object value3, object value4, object value5)
-    {
-        throw new NotImplementedException();
-    }
-
-    internal void ProcessImplicitResources(ParsedAttributeCollection unknownAttributes)
     {
         throw new NotImplementedException();
     }

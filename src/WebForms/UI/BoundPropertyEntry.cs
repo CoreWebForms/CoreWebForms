@@ -20,9 +20,7 @@ namespace System.Web.UI
     public class BoundPropertyEntry : PropertyEntry
     {
         private string _expression;
-#if PORT_EXPRESSIONBUILDER
         private ExpressionBuilder _expressionBuilder;
-#endif
         private string _expressionPrefix;
         private bool _useSetAttribute;
         private object _parsedExpressionData;
@@ -82,7 +80,6 @@ namespace System.Web.UI
             }
         }
 
-#if PORT_EXPRESSIONBUILDER
         public ExpressionBuilder ExpressionBuilder
         {
             get
@@ -94,7 +91,6 @@ namespace System.Web.UI
                 _expressionBuilder = value;
             }
         }
-#endif
 
         public string ExpressionPrefix
         {
@@ -237,7 +233,6 @@ namespace System.Web.UI
             set;
         }
 
-#if PORT_EXPRESSIONBUILDER
         // Parse the expression, and store the resulting object
         internal void ParseExpression(ExpressionBuilderContext context)
         {
@@ -246,7 +241,6 @@ namespace System.Web.UI
 
             _parsedExpressionData = ExpressionBuilder.ParseExpression(Expression, Type, context);
         }
-#endif
     }
 }
 

@@ -1,17 +1,11 @@
-namespace System.Web.UI
+namespace System.Web.UI;
+
+/// <summary>
+/// Summary description for IThemeResolutionService.
+/// </summary>
+public interface IThemeResolutionService
 {
-    using System;
-
-    /// <summary>
-    /// Summary description for IThemeResolutionService.
-    /// </summary>
-    public interface IThemeResolutionService
-    {
-#if PORT_THEMES
-        ThemeProvider[] GetAllThemeProviders();
-
-        ThemeProvider GetThemeProvider();
-        ThemeProvider GetStylesheetThemeProvider();
-#endif
-    }
+    ThemeProvider[] GetAllThemeProviders();
+    ThemeProvider GetThemeProvider();
+    ThemeProvider GetStylesheetThemeProvider();
 }

@@ -8,6 +8,7 @@ using System.Web;
 using System.Web.Compilation;
 using System.Web.Util;
 using System.Reflection;
+using System.Diagnostics;
 
 namespace System.Web.UI
 {
@@ -67,6 +68,41 @@ namespace System.Web.UI
 
 #if PORT_BUILDMANAGER
         private static ClientBuildManagerTypeDescriptionProviderBridge s_cbmTdpBridge;
+#else
+        private static readonly BridgePoly s_cbmTdpBridge;
+
+        private class BridgePoly
+        {
+            internal bool HasProperty(Type typeToUse, string name, BindingFlags bindingAttr, Type returnType, Type[] types)
+            {
+                throw new NotImplementedException();
+            }
+
+            internal bool HasField(Type typeToUse, string name, BindingFlags bindingAttr)
+            {
+                throw new NotImplementedException();
+            }
+
+            internal string[] GetFilteredProperties(Type typeToUse, BindingFlags bindingFlags)
+            {
+                throw new NotImplementedException();
+            }
+
+            internal string[] GetFilteredEvents(Type typeToUse, BindingFlags bindingFlags)
+            {
+                throw new NotImplementedException();
+            }
+
+            internal bool HasMethod(Type typeToUse, string name, BindingFlags bindingAttr)
+            {
+                throw new NotImplementedException();
+            }
+
+            internal bool HasEvent(Type typeToUse, string name)
+            {
+                throw new NotImplementedException();
+            }
+        }
 #endif
 
         private static ConcurrentDictionary<Type, PropertyDescriptorCollection> s_typePropertyDescriptorCollectionDict =
@@ -113,6 +149,7 @@ namespace System.Web.UI
         /// </summary>
         internal static IDesignerHost DesignerHost { get; set; }
 
+#if PORT_CLIENTBUILDMANAGER
         /// <summary>
         /// The CBMTypeDescriptionProviderBridge is only available when building using the ClientBuildManager in VS.
         /// </summary>
@@ -123,6 +160,7 @@ namespace System.Web.UI
                 s_cbmTdpBridge = value;
             }
         }
+#endif
 
         // The provider needs not be cached because the TFP service 
         // returns light-weight providers that delegate to the same 
@@ -577,11 +615,15 @@ namespace System.Web.UI
             bool result;
             if (!s_isFrameworkType.TryGetValue(type, out result))
             {
+#if PORT_SOMETHING
                 Assembly a = type.Assembly;
                 string path;
                 ReferenceAssemblyType referenceAssemblyType = AssemblyResolver.GetPathToReferenceAssembly(a, out path);
                 result = (referenceAssemblyType != ReferenceAssemblyType.NonFrameworkAssembly);
                 s_isFrameworkType.TryAdd(type, result);
+#else
+                throw new NotImplementedException();
+#endif
             }
             return result;
         }

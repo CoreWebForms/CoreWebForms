@@ -3493,6 +3493,16 @@ public partial class Control : IComponent, IParserAccessor, IDataBindingsAccesso
     }
 
     /// <devdoc>
+    /// Used internally to store a ControlBuilder reference for the control.
+    /// The builder will be used at design-time to help persist all the filtered properties
+    /// of the control.
+    /// </devdoc>
+    internal void SetControlBuilder(ControlBuilder controlBuilder)
+    {
+        RareFieldsEnsured.ControlBuilder = controlBuilder;
+    }
+
+    /// <devdoc>
     /// </devdoc>
     protected internal virtual void RemovedControl(Control control)
     {
@@ -3704,6 +3714,7 @@ public partial class Control : IComponent, IParserAccessor, IDataBindingsAccesso
         public ISite Site;
         public RenderMethod RenderMethod;
         // Reference to the ControlBuilder used to build this control
+        public ControlBuilder ControlBuilder;
         public DataBindingCollection DataBindings;
         public Control OwnerControl;
         public bool RequiredControlState;
@@ -3728,6 +3739,7 @@ public partial class Control : IComponent, IParserAccessor, IDataBindingsAccesso
             //OwnerControl = null;
             //ExpressionBindings = null;
             //Adapter = null;
+            ControlBuilder = null;
             if (OwnerControl != null)
             {
                 OwnerControl.Dispose();

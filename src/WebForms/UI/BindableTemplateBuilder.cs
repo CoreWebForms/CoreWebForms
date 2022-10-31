@@ -18,6 +18,7 @@ namespace System.Web.UI
     using System.Collections.Specialized;
     using System.ComponentModel;
     using System.ComponentModel.Design;
+    using System.Diagnostics;
     using System.Globalization;
     using System.Reflection;
     using System.Security.Permissions;
@@ -167,6 +168,8 @@ namespace System.Web.UI
     /// <para>[To be supplied.]</para>
     /// </devdoc>
     public delegate IOrderedDictionary ExtractTemplateValuesMethod(Control control);
+
+    public delegate void BuildTemplateMethod(Control control);
 
     /*
      * This class is the ITemplate implementation that is called from the

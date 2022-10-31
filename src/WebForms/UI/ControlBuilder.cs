@@ -19,8 +19,6 @@ namespace System.Web.UI
     using System.Text.RegularExpressions;
     using System.Web;
     using System.Web.Compilation;
-    using System.Web.Instrumentation;
-    using System.Web.RegularExpressions;
     using System.Web.UI.HtmlControls;
     using System.Web.UI.WebControls;
     using System.Web.Util;
@@ -171,7 +169,9 @@ namespace System.Web.UI
             {
                 // If there are no entries, return a static empty collection
                 if (_eventEntries == null)
+                {
                     return EmptyCollection.Instance;
+                }
 
                 return _eventEntries;
             }
@@ -183,7 +183,9 @@ namespace System.Web.UI
             {
                 // Create the ArrayList on demand
                 if (_eventEntries == null)
+                {
                     _eventEntries = new ArrayList();
+                }
 
                 return _eventEntries;
             }
@@ -195,7 +197,9 @@ namespace System.Web.UI
             {
                 // If there are no entries, return a static empty collection
                 if (_simplePropertyEntries == null)
+                {
                     return EmptyCollection.Instance;
+                }
 
                 return _simplePropertyEntries;
             }
@@ -207,7 +211,9 @@ namespace System.Web.UI
             {
                 // Create the ArrayList on demand
                 if (_simplePropertyEntries == null)
+                {
                     _simplePropertyEntries = new ArrayList();
+                }
 
                 return _simplePropertyEntries;
             }
@@ -219,7 +225,9 @@ namespace System.Web.UI
             {
                 // If there are no entries, return a static empty collection
                 if (_complexPropertyEntries == null)
+                {
                     return EmptyCollection.Instance;
+                }
 
                 return _complexPropertyEntries;
             }
@@ -231,7 +239,9 @@ namespace System.Web.UI
             {
                 // Create the ArrayList on demand
                 if (_complexPropertyEntries == null)
+                {
                     _complexPropertyEntries = new ArrayList();
+                }
 
                 return _complexPropertyEntries;
             }
@@ -243,7 +253,9 @@ namespace System.Web.UI
             {
                 // If there are no entries, return a static empty collection
                 if (_templatePropertyEntries == null)
+                {
                     return EmptyCollection.Instance;
+                }
 
                 return _templatePropertyEntries;
             }
@@ -255,7 +267,9 @@ namespace System.Web.UI
             {
                 // Create the ArrayList on demand
                 if (_templatePropertyEntries == null)
+                {
                     _templatePropertyEntries = new ArrayList();
+                }
 
                 return _templatePropertyEntries;
             }
@@ -267,7 +281,9 @@ namespace System.Web.UI
             {
                 // If there are no entries, return a static empty collection
                 if (_boundPropertyEntries == null)
+                {
                     return EmptyCollection.Instance;
+                }
 
                 return _boundPropertyEntries;
             }
@@ -279,7 +295,9 @@ namespace System.Web.UI
             {
                 // Create the ArrayList on demand
                 if (_boundPropertyEntries == null)
+                {
                     _boundPropertyEntries = new ArrayList();
+                }
 
                 return _boundPropertyEntries;
             }
@@ -527,13 +545,17 @@ namespace System.Web.UI
             {
                 // If  we're in no-compile page mode, return false
                 if (IsNoCompile)
+                {
                     return false;
+                }
 
                 // Simply return null when called without a Parser.
                 // This is in the codepath from TemplateBuilder.NeedsTagInnerText()
                 // to determine designer source code preservation behavior by tools.
                 if (Parser == null)
+                {
                     return false;
+                }
 
                 return Parser.FInDesigner;
             }
@@ -818,7 +840,6 @@ namespace System.Web.UI
             }
         }
 
-#if PORT_EXPRESSIONBUILDER
         private void AddBoundProperty(string filter, string name, string expressionPrefix,
             string expression, ExpressionBuilder expressionBuilder, object parsedExpressionData, string fieldName, string formatString, bool twoWayBound, bool encode, int line = 0, int column = 0)
         {
@@ -918,7 +939,6 @@ namespace System.Web.UI
             // Add these to the bound entries
             AddBoundProperty(entry);
         }
-#endif
 
         private void AddBoundProperty(BoundPropertyEntry entry)
         {
@@ -1288,7 +1308,9 @@ namespace System.Web.UI
                         }
 
                         if (value != null)
+                        {
                             value = value.Trim();
+                        }
 
                         if (String.IsNullOrEmpty(value))
                         {
@@ -1489,7 +1511,9 @@ namespace System.Web.UI
 
             // Ignore literals that are just whitespace if the control does not want them
             if ((AllowWhitespaceLiterals() == false) && Util.IsWhiteSpaceString(s))
+            {
                 return;
+            }
 
             // A builder can specify its strings need to be html decoded
             if (HtmlDecodeLiterals())
@@ -1672,7 +1696,9 @@ namespace System.Web.UI
 
                         dataBoundBuilder.AddDataBindingExpression(codeBlockBuilder);
                         if (!fNewDataBoundLiteralControl)
+                        {
                             return;
+                        }
 
                         subBuilder = dataBoundBuilder;
                     }
@@ -1796,7 +1822,10 @@ namespace System.Web.UI
         internal object BuildObject(bool shouldApplyTheme)
         {
             if (flags[applyTheme] != shouldApplyTheme)
+            {
                 flags[applyTheme] = shouldApplyTheme;
+            }
+
             return BuildObject();
         }
 
@@ -1835,7 +1864,10 @@ namespace System.Web.UI
                 obj = ActivatorUtilities.CreateInstance(HttpContext.Current.AsCore().RequestServices, _controlType);
             }
 
-            if (flags[applyTheme]) obj = GetThemedObject(obj);
+            if (flags[applyTheme])
+            {
+                obj = GetThemedObject(obj);
+            }
 
             AttachTypeDescriptionProvider(obj);
 #if PORT_TRACE
@@ -2184,7 +2216,9 @@ namespace System.Web.UI
             foreach (PropertyEntry entry in entries)
             {
                 if (entry.Filter.Length > 0)
+                {
                     return true;
+                }
             }
 
             // None of the entries are filtered
@@ -2352,7 +2386,9 @@ namespace System.Web.UI
 
                 // If it doesn't have one, use a default as a marker
                 if (pca == null)
+                {
                     pca = s_markerParseChildrenAttribute;
+                }
 
                 // Cache the ParseChildrenAttribute
                 lock (s_parseChildrenAttributeCache.SyncRoot)
@@ -2363,7 +2399,9 @@ namespace System.Web.UI
 
             // If it's the marker one, just return null
             if (pca == s_markerParseChildrenAttribute)
+            {
                 return null;
+            }
 
             return pca;
         }
@@ -2400,7 +2438,10 @@ namespace System.Web.UI
         {
             Control control = obj as Control;
 
-            if (control == null) return obj;
+            if (control == null)
+            {
+                return obj;
+            }
 
             IThemeResolutionService themeService = ThemeResolutionService;
 
@@ -2511,7 +2552,9 @@ namespace System.Web.UI
             InitTemplateProperties(obj);
 
             if (control != null)
+            {
                 BindFieldToControl(control);
+            }
 
             // 
 
@@ -2523,15 +2566,21 @@ namespace System.Web.UI
         {
             // Don't do anything if there are no entries
             if (_simplePropertyEntries == null)
+            {
                 return;
+            }
 
             // If there are no filters in the picture, use the entries as is
             ICollection entries;
 
             if (flags[hasFilteredSimpleProps])
+            {
                 entries = GetFilteredPropertyEntrySet(SimplePropertyEntries);
+            }
             else
+            {
                 entries = SimplePropertyEntries;
+            }
 
             // Now that we have the proper set, set all the entries
             foreach (SimplePropertyEntry entry in entries)
@@ -2563,7 +2612,9 @@ namespace System.Web.UI
         {
             // Don't do anything if there are no entries
             if (_complexPropertyEntries == null)
+            {
                 return;
+            }
 
             foreach (ComplexPropertyEntry entry in ComplexPropertyEntries)
             {
@@ -2604,15 +2655,21 @@ namespace System.Web.UI
         {
             // Don't do anything if there are no entries
             if (_complexPropertyEntries == null)
+            {
                 return;
+            }
 
             // If there are no filters in the picture, use the entries as is
             ICollection entries;
 
             if (flags[hasFilteredComplexProps])
+            {
                 entries = GetFilteredPropertyEntrySet(ComplexPropertyEntries);
+            }
             else
+            {
                 entries = ComplexPropertyEntries;
+            }
 
             foreach (ComplexPropertyEntry entry in entries)
             {
@@ -2678,7 +2735,9 @@ namespace System.Web.UI
         {
             // Don't do anything if there are no entries
             if (_boundPropertyEntries == null)
+            {
                 return;
+            }
 
             DataBindingCollection dataBindings = null;
             IAttributeAccessor attributeAccessor = null;
@@ -2687,9 +2746,13 @@ namespace System.Web.UI
             ICollection entries;
 
             if (flags[hasFilteredBoundProps])
+            {
                 entries = GetFilteredPropertyEntrySet(BoundPropertyEntries);
+            }
             else
+            {
                 entries = BoundPropertyEntries;
+            }
 
             foreach (BoundPropertyEntry entry in entries)
             {
@@ -2842,11 +2905,15 @@ namespace System.Web.UI
                 // Skip two-way entries if it's a BindableTemplateBuilder or the two way entry is read only
                 if ((entry.TwoWayBound && (isBindableTemplateBuilder || entry.ReadOnlyProperty))
                     || (!entry.TwoWayBound && isTemplateBuilder))
+                {
                     continue;
+                }
 
                 // We only care about databinding entries here
                 if (!entry.IsDataBindingEntry)
+                {
                     continue;
+                }
 
                 Debug.Assert(!entry.UseSetAttribute, "Two-way binding is not supported on expandos - this should have been prevented in ControlBuilder");
 
@@ -2901,7 +2968,9 @@ namespace System.Web.UI
         {
             // Don't do anything if there are no entries
             if (_templatePropertyEntries == null)
+            {
                 return;
+            }
 
             object[] parameters = new object[1];
 
@@ -2909,9 +2978,13 @@ namespace System.Web.UI
             ICollection entries;
 
             if (flags[hasFilteredTemplateProps])
+            {
                 entries = GetFilteredPropertyEntrySet(TemplatePropertyEntries);
+            }
             else
+            {
                 entries = TemplatePropertyEntries;
+            }
 
             foreach (TemplatePropertyEntry entry in entries)
             {
@@ -2950,13 +3023,17 @@ namespace System.Web.UI
 
             // If we tried before and did not find a field, don't try again
             if (flags[triedFieldToControlBinding] && !flags[hasFieldToControlBinding])
+            {
                 return;
+            }
 
             flags[triedFieldToControlBinding] = true;
 
             TemplateControl templateControl = TemplateControl;
             if (templateControl == null)
+            {
                 return;
+            }
 
             Type templateControlType = TemplateControl.GetType();
 
@@ -2965,16 +3042,22 @@ namespace System.Web.UI
             {
                 // This doesn't apply to designer scenarios.  It's only for no-compile pages.
                 if (InDesigner)
+                {
                     return;
+                }
 
                 // Nothing to bind if the control doesn't have an ID
                 if (control.ID == null)
+                {
                     return;
+                }
 
                 // If the TemplateControl is a built in class (Page or UserControl),
                 // there is no point in looking for fields.
                 if (templateControlType.Assembly == typeof(HttpRuntime).Assembly)
+                {
                     return;
+                }
             }
 
             // Try to find a field named after the ID in the TemplateControl
@@ -3076,7 +3159,9 @@ namespace System.Web.UI
                     foreach (BuilderPropertyEntry entry in _complexPropertyEntries)
                     {
                         if (entry.Builder != null)
+                        {
                             entry.Builder.PrepareNoCompilePageSupport();
+                        }
                     }
                 }
             }
@@ -3092,7 +3177,9 @@ namespace System.Web.UI
                     foreach (BuilderPropertyEntry entry in _templatePropertyEntries)
                     {
                         if (entry.Builder != null)
+                        {
                             entry.Builder.PrepareNoCompilePageSupport();
+                        }
                     }
                 }
             }
@@ -3111,7 +3198,9 @@ namespace System.Web.UI
                         ControlBuilder builder = builderObj as ControlBuilder;
 
                         if (builder != null)
+                        {
                             builder.PrepareNoCompilePageSupport();
+                        }
                     }
                 }
                 else
@@ -3146,7 +3235,9 @@ namespace System.Web.UI
                 // Don't process databinding expressions during updatable precomp, because we're only
                 // generating the base class, and only need the Type and ID of the controls (VSWhidbey 470549)
                 if (BuildManager.PrecompilingForUpdatableDeployment)
+                {
                     return;
+                }
 
                 Group codeGroup = match.Groups["code"];
                 // Use it to calculate the column where the code starts,
@@ -3250,7 +3341,9 @@ namespace System.Web.UI
                 // Don't process expression builders during updatable precomp, because we're only
                 // generating the base class, and only need the Type and ID of the controls (VSWhidbey 434350)
                 if (BuildManager.PrecompilingForUpdatableDeployment)
+                {
                     return;
+                }
 
                 string code = match.Groups["code"].Value.Trim();
 
@@ -3356,7 +3449,9 @@ namespace System.Web.UI
             attribs.ClearFilter("meta");
 
             if (keyPrefix == null)
+            {
                 return;
+            }
 
             // Depending on the control type, don't allow meta:reskey (e.g. ITemplate case) (VSWhidbey 276398, 454894)
             if (!IsValidForImplicitLocalization())
@@ -3394,7 +3489,9 @@ namespace System.Web.UI
             // If the Page has resources, get the specific ones for this meta:resourcekey
             ICollection tagResources = null;
             if (implicitResourceProvider != null)
+            {
                 tagResources = implicitResourceProvider.GetImplicitResourceKeys(keyPrefix);
+            }
 
             if (tagResources != null)
             {
@@ -3411,7 +3508,9 @@ namespace System.Web.UI
                     // Put together the complete resource key, as would appear in an explicit resource
                     string fullResourceKey = keyPrefix + "." + entry.Property;
                     if (entry.Filter.Length > 0)
+                    {
                         fullResourceKey = entry.Filter + ':' + fullResourceKey;
+                    }
 
                     // Replace '.' with '-', since that's what AddBoundProperty expects
                     string property = entry.Property.Replace('.', '-');
@@ -3731,7 +3830,11 @@ namespace System.Web.UI
 
             object IWebObjectFactory.CreateInstance()
             {
+#if PORT_ACTIVATOR
                 return (ControlBuilder)HttpRuntime.CreateNonPublicInstance(_builderType);
+#else
+                throw new NotImplementedException();
+#endif
             }
         }
 

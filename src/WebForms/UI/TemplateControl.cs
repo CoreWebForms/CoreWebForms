@@ -500,7 +500,17 @@ public abstract class TemplateControl : Control, INamingContainer, IFilterResolu
         return (del != null) ? del.Method : null;
     }
 
-#if PORT_EVAL
+    /// <devdoc>
+    /// Used by simplified databinding methods to ensure they can only be called when the control is on a page.
+    /// </devdoc>
+    private void CheckPageExists()
+    {
+        if (Page == null)
+        {
+            throw new InvalidOperationException(SR.GetString(SR.TemplateControl_DataBindingRequiresPage));
+        }
+    }
+
     /// <devdoc>
     /// Simplified databinding Eval() method. This method uses the current data item to evaluate an expression using DataBinder.Eval().
     /// The data item is retrieved using either the IDataItemContainer interface or by looking for a property called 'DataItem'.
@@ -523,6 +533,7 @@ public abstract class TemplateControl : Control, INamingContainer, IFilterResolu
         return DataBinder.Eval(Page.GetDataItem(), expression, format);
     }
 
+#if PORT_XPATHBINDER
     /// <devdoc>
     /// Simplified databinding XPath() method. This method uses the current data item to evaluate an XPath expression using XPathBinder.Eval().
     /// The data item is retrieved using either the IDataItemContainer interface or by looking for a property called 'DataItem'.

@@ -1,8 +1,6 @@
 // MIT
 
 
-using System.Runtime.Serialization;
-
 namespace System.Web;
 
 internal static class AssemblyRef
@@ -16,7 +14,7 @@ internal static class AssemblyRef
 internal static class SR
 {
     public static string GetString(string name, params object[] args) => name;
-
+    
     public const string Ambiguous_server_tag = nameof(Ambiguous_server_tag);
     public const string Ambiguous_type = nameof(Ambiguous_type);
     public const string App_session_only_valid_in_global_asax = nameof(App_session_only_valid_in_global_asax);
@@ -33,10 +31,10 @@ internal static class SR
     public const string Attrib_parse_error = nameof(Attrib_parse_error);
     public const string Attributes_mutually_exclusive = nameof(Attributes_mutually_exclusive);
     public const string AutoPostBackControl_CausesValidation = nameof(AutoPostBackControl_CausesValidation);
-    public const string BaseCompareValidator_CultureInvariantValues = nameof(BaseCompareValidator_CultureInvariantValues);
     public const string BadlyFormattedBind = nameof(BadlyFormattedBind);
     public const string BadlyFormattedBindItem = nameof(BadlyFormattedBindItem);
     public const string Base_type_not_allowed = nameof(Base_type_not_allowed);
+    public const string BaseCompareValidator_CultureInvariantValues = nameof(BaseCompareValidator_CultureInvariantValues);
     public const string BaseDataBoundControl_DataSource = nameof(BaseDataBoundControl_DataSource);
     public const string BaseDataBoundControl_DataSourceID = nameof(BaseDataBoundControl_DataSourceID);
     public const string BaseDataBoundControl_OnDataBound = nameof(BaseDataBoundControl_OnDataBound);
@@ -88,6 +86,7 @@ internal static class SR
     public const string Cant_Multiselect_In_Single_Mode = nameof(Cant_Multiselect_In_Single_Mode);
     public const string Cant_use_default_items_and_filtered_collection = nameof(Cant_use_default_items_and_filtered_collection);
     public const string Cant_use_nocompile_uc = nameof(Cant_use_nocompile_uc);
+    public const string CantGenPropertySet = nameof(CantGenPropertySet);
     public const string ChangePassword_CreateUserText = nameof(ChangePassword_CreateUserText);
     public const string ChangePassword_HelpPageText = nameof(ChangePassword_HelpPageText);
     public const string ChangePassword_PasswordRecoveryText = nameof(ChangePassword_PasswordRecoveryText);
@@ -268,7 +267,11 @@ internal static class SR
     public const string Event_handler_cant_be_empty = nameof(Event_handler_cant_be_empty);
     public const string Event_not_allowed = nameof(Event_not_allowed);
     public const string Events_cant_be_filtered = nameof(Events_cant_be_filtered);
+    public const string ExpressionBuilder_InvalidType = nameof(ExpressionBuilder_InvalidType);
     public const string ExpressionBuilder_LiteralExpressionsNotAllowed = nameof(ExpressionBuilder_LiteralExpressionsNotAllowed);
+    public const string FactoryGenerator_TypeHasNoParameterlessConstructor = nameof(FactoryGenerator_TypeHasNoParameterlessConstructor);
+    public const string FactoryGenerator_TypeNotPublic = nameof(FactoryGenerator_TypeNotPublic);
+    public const string FactoryInterface = nameof(FactoryInterface);
     public const string Field_Not_Found = nameof(Field_Not_Found);
     public const string FileName_does_not_exist = nameof(FileName_does_not_exist);
     public const string FilteredAttributeDictionary_ArgumentMustBeString = nameof(FilteredAttributeDictionary_ArgumentMustBeString);
@@ -371,6 +374,7 @@ internal static class SR
     public const string Invalid_boolean_attribute = nameof(Invalid_boolean_attribute);
     public const string Invalid_cache_settings_location = nameof(Invalid_cache_settings_location);
     public const string Invalid_clsid = nameof(Invalid_clsid);
+    public const string Invalid_collection_item_type = nameof(Invalid_collection_item_type);
     public const string Invalid_ControlState = nameof(Invalid_ControlState);
     public const string Invalid_culture_attribute = nameof(Invalid_culture_attribute);
     public const string Invalid_DataSource_Type = nameof(Invalid_DataSource_Type);
@@ -395,6 +399,7 @@ internal static class SR
     public const string Invalid_use_of_config_uc = nameof(Invalid_use_of_config_uc);
     public const string Invalid_vpath = nameof(Invalid_vpath);
     public const string InvalidArgumentValue = nameof(InvalidArgumentValue);
+    public const string InvalidExpressionPrefix = nameof(InvalidExpressionPrefix);
     public const string InvalidExpressionSyntax = nameof(InvalidExpressionSyntax);
     public const string InvalidSerializedData = nameof(InvalidSerializedData);
     public const string IRenderOuterTableControl_CannotSetStyleWhenDisableRenderOuterTable = nameof(IRenderOuterTableControl_CannotSetStyleWhenDisableRenderOuterTable);
@@ -688,6 +693,7 @@ internal static class SR
     public const string TableStyle_HorizontalAlign = nameof(TableStyle_HorizontalAlign);
     public const string TableStyle_InvalidCellPadding = nameof(TableStyle_InvalidCellPadding);
     public const string TableStyle_InvalidCellSpacing = nameof(TableStyle_InvalidCellSpacing);
+    public const string TemplateControl_DataBindingRequiresPage = nameof(TemplateControl_DataBindingRequiresPage);
     public const string TemplateField_AlternatingItemTemplate = nameof(TemplateField_AlternatingItemTemplate);
     public const string TemplateField_CallbacksNotSupported = nameof(TemplateField_CallbacksNotSupported);
     public const string TemplateField_EditItemTemplate = nameof(TemplateField_EditItemTemplate);
