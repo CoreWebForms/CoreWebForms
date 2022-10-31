@@ -169,8 +169,6 @@ namespace System.Web.UI
     /// </devdoc>
     public delegate IOrderedDictionary ExtractTemplateValuesMethod(Control control);
 
-    public delegate void BuildTemplateMethod(Control control);
-
     /*
      * This class is the ITemplate implementation that is called from the
      * generated page class code.  It just passes the Initialize call on to a

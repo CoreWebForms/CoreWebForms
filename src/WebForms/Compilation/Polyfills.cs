@@ -213,22 +213,6 @@ internal class BuildResultCompiledAssembly : BuildResult
     public Assembly ResultAssembly { get; internal set; }
 }
 
-public class TemplateBuilder : ControlBuilder, ITemplate
-{
-    public bool AllowMultipleInstances { get; internal set; }
-
-    public void InstantiateIn(Control container)
-    {
-        throw new NotImplementedException();
-    }
-
-    internal void SetDesignerHost(IDesignerHost designerHost)
-    {
-        throw new NotImplementedException();
-    }
-}
-
-
 public class DataBindingCollection
 {
     public int Count => 0;
@@ -295,22 +279,3 @@ internal class DesignTimePageThemeParser : PageThemeParser
     public string ThemePhysicalPath { get; internal set; }
 }
 
-internal class RootBuilder : ControlBuilder, ITemplate
-{
-    public IDictionary BuiltObjects { get; internal set; }
-
-    public void InstantiateIn(Control container)
-    {
-        throw new NotImplementedException();
-    }
-
-    internal void Init(TemplateParser templateParser, object value1, object value2, object value3, object value4, object value5)
-    {
-        throw new NotImplementedException();
-    }
-
-    internal void SetTypeMapper(MainTagNameToTypeMapper typeMapper)
-    {
-        throw new NotImplementedException();
-    }
-}
