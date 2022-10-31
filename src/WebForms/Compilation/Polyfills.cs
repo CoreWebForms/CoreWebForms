@@ -213,15 +213,6 @@ internal class BuildResultCompiledAssembly : BuildResult
     public Assembly ResultAssembly { get; internal set; }
 }
 
-public class DataBindingCollection
-{
-    public int Count => 0;
-
-    public void Add(DataBinding binding)
-    {
-    }
-}
-
 public class FastPropertyAccessor
 {
     internal static object GetProperty(object obj, string name, bool inDesigner)
