@@ -28,80 +28,6 @@ internal class ResourceExpressionBuilder
         throw new NotImplementedException();
     }
 }
-internal class PageParserFilter
-{
-    public bool AllowCode { get; internal set; }
-
-    internal static PageParserFilter Create(PagesSection pagesConfig, VirtualPath currentVirtualPath, TemplateParser templateParser)
-    {
-        throw new NotImplementedException();
-    }
-
-    internal bool AllowBaseType(Type baseType)
-    {
-        throw new NotImplementedException();
-    }
-
-    internal bool AllowControlInternal(Type childType, ControlBuilder subBuilder)
-    {
-        throw new NotImplementedException();
-    }
-
-    internal bool AllowServerSideInclude(string virtualPathString)
-    {
-        throw new NotImplementedException();
-    }
-
-    internal bool AllowVirtualReference(CompilationSection compConfig, VirtualPath virtualPath)
-    {
-        throw new NotImplementedException();
-    }
-
-    internal CompilationMode GetCompilationMode(CompilationMode compilationMode)
-    {
-        throw new NotImplementedException();
-    }
-
-    internal Type GetNoCompileUserControlType()
-    {
-        throw new NotImplementedException();
-    }
-
-    internal void OnDependencyAdded()
-    {
-        throw new NotImplementedException();
-    }
-
-    internal void OnDirectDependencyAdded()
-    {
-        throw new NotImplementedException();
-    }
-
-    internal void ParseComplete(RootBuilder rootBuilder)
-    {
-        throw new NotImplementedException();
-    }
-
-    internal void PreprocessDirective(string directiveName, IDictionary directive)
-    {
-        throw new NotImplementedException();
-    }
-
-    internal bool ProcessCodeConstruct(CodeConstructType codeConstructType, string code)
-    {
-        throw new NotImplementedException();
-    }
-
-    internal bool ProcessDataBindingAttribute(string controlId, string attributeName, string code)
-    {
-        throw new NotImplementedException();
-    }
-
-    internal bool ProcessEventHookup(string controlId, string eventName, string handlerName)
-    {
-        throw new NotImplementedException();
-    }
-}
 
 internal class BaseCodeDomTreeGenerator
 {
@@ -193,15 +119,6 @@ public class FastPropertyAccessor
     {
         throw new NotImplementedException();
     }
-}
-
-public enum CodeConstructType
-{
-    CodeSnippet,            // <% ... %>
-    ExpressionSnippet,      // <%= ... %>
-    DataBindingSnippet,     // <%# ... %>
-    ScriptTag,              // <script runat="server">...</script>
-    EncodedExpressionSnippet // <%: ... %>
 }
 
 internal class BaseTemplateCodeDomTreeGenerator

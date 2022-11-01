@@ -724,6 +724,9 @@ internal static class SR
     public const string TextBox_Wrap = nameof(TextBox_Wrap);
     public const string Too_late_for_RegisterRequiresViewStateEncryption = nameof(Too_late_for_RegisterRequiresViewStateEncryption);
     public const string Too_late_for_ViewStateUserKey = nameof(Too_late_for_ViewStateUserKey);
+    public const string Too_many_controls = nameof(Too_many_controls);
+    public const string Too_many_dependencies = nameof(Too_many_dependencies);
+    public const string Too_many_direct_dependencies = nameof(Too_many_direct_dependencies);
     public const string Too_many_filters = nameof(Too_many_filters);
     public const string TreeNode_Checked = nameof(TreeNode_Checked);
     public const string TreeNode_Expanded = nameof(TreeNode_Expanded);

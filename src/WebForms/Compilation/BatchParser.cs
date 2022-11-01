@@ -81,6 +81,11 @@ internal class PagesSection
     {
         public T this[string input] { get; }
     }
+
+    internal static PageParserFilter CreateControlTypeFilter()
+    {
+        return null;
+    }
 }
 
 internal abstract class DependencyParser : BaseParser
