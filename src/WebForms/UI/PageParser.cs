@@ -28,7 +28,15 @@ public sealed class PageParser : TemplateControlParser
 #if PORT_TRANSACTIONS
     private readonly int _transactionMode;
     internal int TransactionMode { get { return _transactionMode; } }
+#else
+    internal int TransactionMode => 0;
 #endif
+
+    private TraceMode _traceMode = System.Web.TraceMode.Default;
+    internal TraceMode TraceMode { get { return _traceMode; } }
+
+    private TraceEnable _traceEnabled = TraceEnable.Default;
+    internal TraceEnable TraceEnabled { get { return _traceEnabled; } }
 
     private int _codePage;
     private string _responseEncoding;

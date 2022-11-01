@@ -1,4 +1,5 @@
-// MIT License.
+// MIT
+
 
 namespace System.Web;
 
@@ -13,7 +14,7 @@ internal static class AssemblyRef
 internal static class SR
 {
     public static string GetString(string name, params object[] args) => name;
-
+    
     public const string Ambiguous_server_tag = nameof(Ambiguous_server_tag);
     public const string Ambiguous_type = nameof(Ambiguous_type);
     public const string App_session_only_valid_in_global_asax = nameof(App_session_only_valid_in_global_asax);
@@ -572,11 +573,13 @@ internal static class SR
     public const string Page_MustCallBeforeAndDuringPreRender = nameof(Page_MustCallBeforeAndDuringPreRender);
     public const string Page_OnAbortTransaction = nameof(Page_OnAbortTransaction);
     public const string Page_OnCommitTransaction = nameof(Page_OnCommitTransaction);
+    public const string Page_theme_default_theme_already_defined = nameof(Page_theme_default_theme_already_defined);
     public const string Page_theme_invalid_name = nameof(Page_theme_invalid_name);
     public const string Page_theme_not_found = nameof(Page_theme_not_found);
     public const string Page_theme_only_controls_allowed = nameof(Page_theme_only_controls_allowed);
     public const string Page_theme_requires_page_header = nameof(Page_theme_requires_page_header);
     public const string Page_theme_skin_file = nameof(Page_theme_skin_file);
+    public const string Page_theme_skinID_already_defined = nameof(Page_theme_skinID_already_defined);
     public const string Page_Title_Requires_Head = nameof(Page_Title_Requires_Head);
     public const string Page_UnobtrusiveValidationMode = nameof(Page_UnobtrusiveValidationMode);
     public const string Page_UpdateModel_UpdateUnsuccessful = nameof(Page_UpdateModel_UpdateUnsuccessful);

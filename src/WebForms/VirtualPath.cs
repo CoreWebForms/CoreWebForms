@@ -18,6 +18,7 @@ internal sealed class VirtualPath
     public string Extension { get; internal set; }
     public string FileName { get; internal set; }
     public string AppRelativeVirtualPathStringOrNull { get; internal set; }
+    public object AppRelativeVirtualPathString { get; internal set; }
 
     public static implicit operator VirtualPath(string path) => new(path);
     public static implicit operator string(VirtualPath vpath) => vpath.Path;
