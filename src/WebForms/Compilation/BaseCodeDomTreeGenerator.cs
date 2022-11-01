@@ -13,8 +13,6 @@ BaseCodeDomTreeGenerator
     ApplicationFileCodeDomTreeGenerator
 ***********************************************/
 
-using System;
-
 namespace System.Web.Compilation;
 
 using System;

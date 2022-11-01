@@ -22,8 +22,8 @@ internal class UserControlParser : TemplateControlParser
     internal bool FSharedPartialCaching { get { return _fSharedPartialCaching; } }
     internal string Provider { get { return _provider; } }
 #else
-    internal bool FSharedPartialCaching => false;
-    internal string Provider => null;
+    internal static bool FSharedPartialCaching => false;
+    internal static string Provider => null;
 #endif
 
     // Get default settings from config

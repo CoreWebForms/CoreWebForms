@@ -29,13 +29,13 @@ public sealed class PageParser : TemplateControlParser
     private readonly int _transactionMode;
     internal int TransactionMode { get { return _transactionMode; } }
 #else
-    internal int TransactionMode => 0;
+    internal static int TransactionMode => 0;
 #endif
 
-    private TraceMode _traceMode = System.Web.TraceMode.Default;
+    private readonly TraceMode _traceMode = System.Web.TraceMode.Default;
     internal TraceMode TraceMode { get { return _traceMode; } }
 
-    private TraceEnable _traceEnabled = TraceEnable.Default;
+    private readonly TraceEnable _traceEnabled = TraceEnable.Default;
     internal TraceEnable TraceEnabled { get { return _traceEnabled; } }
 
     private int _codePage;
