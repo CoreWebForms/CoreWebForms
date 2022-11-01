@@ -1,136 +1,127 @@
-//------------------------------------------------------------------------------
-// <copyright file="PropertyEntry.cs" company="Microsoft">
-//     Copyright (c) Microsoft Corporation.  All rights reserved.
-// </copyright>
-//------------------------------------------------------------------------------
+// MIT License.
 
-namespace System.Web.UI
+namespace System.Web.UI;
+
+using System.Reflection;
+
+/// <devdoc>
+/// Base class for all PropertyEntries.
+/// 
+/// PropertyEntry
+///     BoundPropertyEntry
+///     BuilderPropertyEntry
+///         ComplexPropertyEntry
+///         TemplatePropertyEntry
+///     SimplePropertyEntry
+/// </devdoc>
+public abstract class PropertyEntry
 {
+    private string _filter;
+    private PropertyInfo _propertyInfo;
+    private string _name;
+    private Type _type;
+    private int _index;
+    private int _order;
 
-    using System.Reflection;
+    internal PropertyEntry()
+    {
+    }
 
     /// <devdoc>
-    /// Base class for all PropertyEntries.
-    /// 
-    /// PropertyEntry
-    ///     BoundPropertyEntry
-    ///     BuilderPropertyEntry
-    ///         ComplexPropertyEntry
-    ///         TemplatePropertyEntry
-    ///     SimplePropertyEntry
     /// </devdoc>
-    public abstract class PropertyEntry
+    public string Filter
     {
-        private string _filter;
-        private PropertyInfo _propertyInfo;
-        private string _name;
-        private Type _type;
-        private int _index;
-        private int _order;
-
-        internal PropertyEntry()
+        get
         {
+            return _filter;
         }
-
-
-        /// <devdoc>
-        /// </devdoc>
-        public string Filter
+        set
         {
-            get
-            {
-                return _filter;
-            }
-            set
-            {
-                _filter = value;
-            }
+            _filter = value;
         }
+    }
 
-        // The order of the entry that needs to be sorted.
-        internal int Order
+    // The order of the entry that needs to be sorted.
+    internal int Order
+    {
+        get
         {
-            get
-            {
-                return _order;
-            }
-            set
-            {
-                _order = value;
-            }
+            return _order;
         }
-
-        // The index of the entry declared in persisted format.
-        internal int Index
+        set
         {
-            get
-            {
-                return _index;
-            }
-            set
-            {
-                _index = value;
-            }
+            _order = value;
         }
+    }
 
-        /// <devdoc>
-        /// </devdoc>
-        public PropertyInfo PropertyInfo
+    // The index of the entry declared in persisted format.
+    internal int Index
+    {
+        get
         {
-            get
-            {
-                return _propertyInfo;
-            }
-            set
-            {
-                _propertyInfo = value;
-            }
+            return _index;
         }
-
-
-        /// <devdoc>
-        /// </devdoc>
-        public string Name
+        set
         {
-            get
-            {
-                return _name;
-            }
-            set
-            {
-                _name = value;
-            }
+            _index = value;
         }
+    }
 
-
-        /// <devdoc>
-        /// </devdoc>
-        public Type Type
+    /// <devdoc>
+    /// </devdoc>
+    public PropertyInfo PropertyInfo
+    {
+        get
         {
-            get
-            {
-                return _type;
-            }
-            set
-            {
-                _type = value;
-            }
+            return _propertyInfo;
         }
-
-
-        /// <devdoc>
-        /// </devdoc>
-        public Type DeclaringType
+        set
         {
-            get
-            {
-                if (_propertyInfo == null)
-                    return null;
+            _propertyInfo = value;
+        }
+    }
 
-                return _propertyInfo.DeclaringType;
+    /// <devdoc>
+    /// </devdoc>
+    public string Name
+    {
+        get
+        {
+            return _name;
+        }
+        set
+        {
+            _name = value;
+        }
+    }
+
+    /// <devdoc>
+    /// </devdoc>
+    public Type Type
+    {
+        get
+        {
+            return _type;
+        }
+        set
+        {
+            _type = value;
+        }
+    }
+
+    /// <devdoc>
+    /// </devdoc>
+    public Type DeclaringType
+    {
+        get
+        {
+            if (_propertyInfo == null)
+            {
+                return null;
             }
+
+            return _propertyInfo.DeclaringType;
         }
     }
 }
-
 

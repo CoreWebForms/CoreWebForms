@@ -1,3 +1,5 @@
+// MIT License.
+
 namespace System.Web.UI;
 
 /// <summary>

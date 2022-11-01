@@ -1,7 +1,6 @@
 // MIT License.
 
 using System.Collections;
-using System.ComponentModel.Design;
 using System.Reflection;
 using System.Text;
 using System.Web.Compilation;

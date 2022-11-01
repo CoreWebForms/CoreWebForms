@@ -1,5 +1,4 @@
-// MIT
-
+// MIT License.
 
 namespace System.Web;
 
@@ -14,7 +13,7 @@ internal static class AssemblyRef
 internal static class SR
 {
     public static string GetString(string name, params object[] args) => name;
-    
+
     public const string Ambiguous_server_tag = nameof(Ambiguous_server_tag);
     public const string Ambiguous_type = nameof(Ambiguous_type);
     public const string App_session_only_valid_in_global_asax = nameof(App_session_only_valid_in_global_asax);

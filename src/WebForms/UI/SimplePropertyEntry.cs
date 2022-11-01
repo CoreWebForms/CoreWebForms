@@ -1,120 +1,106 @@
-//------------------------------------------------------------------------------
-// <copyright file="SimplePropertyEntry.cs" company="Microsoft">
-//     Copyright (c) Microsoft Corporation.  All rights reserved.
-// </copyright>
-//------------------------------------------------------------------------------
+// MIT License.
 
-namespace System.Web.UI
+namespace System.Web.UI;
+/// <devdoc>
+/// PropertyEntry for simple attributes
+/// </devdoc>
+public class SimplePropertyEntry : PropertyEntry
 {
+    private string _persistedValue;
+    private bool _useSetAttribute;
+    private object _value;
 
-    using System.CodeDom;
-    using System.Web.Compilation;
+    internal SimplePropertyEntry()
+    {
+    }
 
     /// <devdoc>
-    /// PropertyEntry for simple attributes
     /// </devdoc>
-    public class SimplePropertyEntry : PropertyEntry
+    // 
+    public string PersistedValue
     {
-        private string _persistedValue;
-        private bool _useSetAttribute;
-        private object _value;
-
-        internal SimplePropertyEntry()
+        get
         {
+            return _persistedValue;
         }
-
-
-        /// <devdoc>
-        /// </devdoc>
-        // 
-        public string PersistedValue
+        set
         {
-            get
-            {
-                return _persistedValue;
-            }
-            set
-            {
-                _persistedValue = value;
-            }
+            _persistedValue = value;
         }
+    }
 
-
-        /// <devdoc>
-        /// </devdoc>
-        public bool UseSetAttribute
+    /// <devdoc>
+    /// </devdoc>
+    public bool UseSetAttribute
+    {
+        get
         {
-            get
-            {
-                return _useSetAttribute;
-            }
-            set
-            {
-                _useSetAttribute = value;
-            }
+            return _useSetAttribute;
         }
-
-
-        /// <devdoc>
-        /// </devdoc>
-        public object Value
+        set
         {
-            get
-            {
-                return _value;
-            }
-            set
-            {
-                _value = value;
-            }
+            _useSetAttribute = value;
         }
+    }
+
+    /// <devdoc>
+    /// </devdoc>
+    public object Value
+    {
+        get
+        {
+            return _value;
+        }
+        set
+        {
+            _value = value;
+        }
+    }
 
 #if PORT_CODEDOM
-        // Build the statement that assigns this property
-        internal CodeStatement GetCodeStatement(BaseTemplateCodeDomTreeGenerator generator,
-            CodeExpression ctrlRefExpr)
+    // Build the statement that assigns this property
+    internal CodeStatement GetCodeStatement(BaseTemplateCodeDomTreeGenerator generator,
+        CodeExpression ctrlRefExpr)
+    {
+
+        // If we don't have a type, use IAttributeAccessor.SetAttribute
+        if (UseSetAttribute)
         {
+            // e.g. ((IAttributeAccessor)__ctrl).SetAttribute("{{_name}}", "{{_value}}");
+            CodeMethodInvokeExpression methCallExpression = new CodeMethodInvokeExpression(
+                new CodeCastExpression(typeof(IAttributeAccessor), ctrlRefExpr),
+                    "SetAttribute");
 
-            // If we don't have a type, use IAttributeAccessor.SetAttribute
-            if (UseSetAttribute)
-            {
-                // e.g. ((IAttributeAccessor)__ctrl).SetAttribute("{{_name}}", "{{_value}}");
-                CodeMethodInvokeExpression methCallExpression = new CodeMethodInvokeExpression(
-                    new CodeCastExpression(typeof(IAttributeAccessor), ctrlRefExpr),
-                        "SetAttribute");
-
-                methCallExpression.Parameters.Add(new CodePrimitiveExpression(Name));
-                methCallExpression.Parameters.Add(new CodePrimitiveExpression(Value));
-                return new CodeExpressionStatement(methCallExpression);
-            }
-
-            CodeExpression leftExpr, rightExpr = null;
-
-            if (PropertyInfo != null)
-            {
-                leftExpr = CodeDomUtility.BuildPropertyReferenceExpression(ctrlRefExpr, Name);
-            }
-            else
-            {
-                // In case of a field, there should only be one (unlike properties)
-                Debug.Assert(Name.IndexOf('.') < 0, "_name.IndexOf('.') < 0");
-                leftExpr = new CodeFieldReferenceExpression(ctrlRefExpr, Name);
-            }
-
-            if (Type == typeof(string))
-            {
-                rightExpr = generator.BuildStringPropertyExpression(this);
-            }
-            else
-            {
-                rightExpr = CodeDomUtility.GenerateExpressionForValue(PropertyInfo, Value, Type);
-            }
-
-            // Now that we have both side, add the assignment
-            return new CodeAssignStatement(leftExpr, rightExpr);
+            methCallExpression.Parameters.Add(new CodePrimitiveExpression(Name));
+            methCallExpression.Parameters.Add(new CodePrimitiveExpression(Value));
+            return new CodeExpressionStatement(methCallExpression);
         }
-#endif
-    }
-}
 
+        CodeExpression leftExpr, rightExpr = null;
+
+        if (PropertyInfo != null)
+        {
+            leftExpr = CodeDomUtility.BuildPropertyReferenceExpression(ctrlRefExpr, Name);
+        }
+        else
+        {
+            // In case of a field, there should only be one (unlike properties)
+            Debug.Assert(Name.IndexOf('.') < 0, "_name.IndexOf('.') < 0");
+            leftExpr = new CodeFieldReferenceExpression(ctrlRefExpr, Name);
+        }
+
+        if (Type == typeof(string))
+        {
+            rightExpr = generator.BuildStringPropertyExpression(this);
+        }
+        else
+        {
+            rightExpr = CodeDomUtility.GenerateExpressionForValue(PropertyInfo, Value, Type);
+        }
+
+        // Now that we have both side, add the assignment
+        return new CodeAssignStatement(leftExpr, rightExpr);
+    }
+#endif
+}
 

@@ -1,69 +1,55 @@
-//------------------------------------------------------------------------------
-// <copyright file="EventEntry.cs" company="Microsoft">
-//     Copyright (c) Microsoft Corporation.  All rights reserved.
-// </copyright>
-//------------------------------------------------------------------------------
+// MIT License.
 
-namespace System.Web.UI
+namespace System.Web.UI;
+/// <devdoc>
+/// PropertyEntry for event handler
+/// </devdoc>
+public class EventEntry
 {
-
-    using System.Security.Permissions;
+    private Type _handlerType;
+    private string _handlerMethodName;
+    private string _name;
 
     /// <devdoc>
-    /// PropertyEntry for event handler
     /// </devdoc>
-    public class EventEntry
+    public string HandlerMethodName
     {
-        private Type _handlerType;
-        private string _handlerMethodName;
-        private string _name;
-
-
-        /// <devdoc>
-        /// </devdoc>
-        public string HandlerMethodName
+        get
         {
-            get
-            {
-                return _handlerMethodName;
-            }
-            set
-            {
-                _handlerMethodName = value;
-            }
+            return _handlerMethodName;
         }
-
-
-        /// <devdoc>
-        /// </devdoc>
-        public Type HandlerType
+        set
         {
-            get
-            {
-                return _handlerType;
-            }
-            set
-            {
-                _handlerType = value;
-            }
-        }
-
-
-        /// <devdoc>
-        /// </devdoc>
-        public string Name
-        {
-            get
-            {
-                return _name;
-            }
-            set
-            {
-                _name = value;
-            }
+            _handlerMethodName = value;
         }
     }
 
-}
+    /// <devdoc>
+    /// </devdoc>
+    public Type HandlerType
+    {
+        get
+        {
+            return _handlerType;
+        }
+        set
+        {
+            _handlerType = value;
+        }
+    }
 
+    /// <devdoc>
+    /// </devdoc>
+    public string Name
+    {
+        get
+        {
+            return _name;
+        }
+        set
+        {
+            _name = value;
+        }
+    }
+}
 

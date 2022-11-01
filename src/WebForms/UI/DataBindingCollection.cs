@@ -1,255 +1,229 @@
-//------------------------------------------------------------------------------
-// <copyright file="DataBindingCollection.cs" company="Microsoft">
-//     Copyright (c) Microsoft Corporation.  All rights reserved.
-// </copyright>
-//------------------------------------------------------------------------------
+// MIT License.
 
-namespace System.Web.UI
+namespace System.Web.UI;
+
+using System;
+using System.Collections;
+
+/// <devdoc>
+/// </devdoc>
+public sealed class DataBindingCollection : ICollection
 {
+    private EventHandler changedEvent;
 
-    using System;
-    using System.Collections;
-    using System.Collections.Specialized;
-    using System.ComponentModel;
-    using System.ComponentModel.Design;
-    using System.Data;
-    using System.Web.Util;
-    using System.Security.Permissions;
-
+    private readonly Hashtable bindings;
+    private Hashtable removedBindings;
 
     /// <devdoc>
     /// </devdoc>
-    public sealed class DataBindingCollection : ICollection
+    public DataBindingCollection()
     {
-        private EventHandler changedEvent;
+        this.bindings = new Hashtable(StringComparer.OrdinalIgnoreCase);
+    }
 
-        private Hashtable bindings;
-        private Hashtable removedBindings;
-
-
-        /// <devdoc>
-        /// </devdoc>
-        public DataBindingCollection()
+    /// <devdoc>
+    /// </devdoc>
+    public int Count
+    {
+        get
         {
-            this.bindings = new Hashtable(StringComparer.OrdinalIgnoreCase);
+            return bindings.Count;
         }
+    }
 
-
-        /// <devdoc>
-        /// </devdoc>
-        public int Count
+    /// <devdoc>
+    /// </devdoc>
+    public bool IsReadOnly
+    {
+        get
         {
-            get
-            {
-                return bindings.Count;
-            }
+            return false;
         }
+    }
 
-
-        /// <devdoc>
-        /// </devdoc>
-        public bool IsReadOnly
+    /// <devdoc>
+    /// </devdoc>
+    public bool IsSynchronized
+    {
+        get
         {
-            get
-            {
-                return false;
-            }
+            return false;
         }
+    }
 
-
-        /// <devdoc>
-        /// </devdoc>
-        public bool IsSynchronized
+    /// <devdoc>
+    /// </devdoc>
+    public string[] RemovedBindings
+    {
+        get
         {
-            get
+            int bindingCount = 0;
+            ICollection keys = null;
+
+            if (removedBindings != null)
             {
-                return false;
-            }
-        }
+                keys = removedBindings.Keys;
+                bindingCount = keys.Count;
 
+                string[] removedNames = new string[bindingCount];
+                int i = 0;
 
-        /// <devdoc>
-        /// </devdoc>
-        public string[] RemovedBindings
-        {
-            get
-            {
-                int bindingCount = 0;
-                ICollection keys = null;
-
-                if (removedBindings != null)
+                foreach (string s in keys)
                 {
-                    keys = removedBindings.Keys;
-                    bindingCount = keys.Count;
-
-                    string[] removedNames = new string[bindingCount];
-                    int i = 0;
-
-                    foreach (string s in keys)
-                    {
-                        removedNames[i++] = s;
-                    }
-
-                    removedBindings.Clear();
-                    return removedNames;
+                    removedNames[i++] = s;
                 }
-                else
-                {
-                    return new string[0];
-                }
+
+                removedBindings.Clear();
+                return removedNames;
+            }
+            else
+            {
+                return Array.Empty<string>();
             }
         }
+    }
 
-
-        /// <devdoc>
-        /// </devdoc>
-        private Hashtable RemovedBindingsTable
+    /// <devdoc>
+    /// </devdoc>
+    private Hashtable RemovedBindingsTable
+    {
+        get
         {
-            get
+            if (removedBindings == null)
             {
-                if (removedBindings == null)
-                {
-                    removedBindings = new Hashtable(StringComparer.OrdinalIgnoreCase);
-                }
-                return removedBindings;
+                removedBindings = new Hashtable(StringComparer.OrdinalIgnoreCase);
             }
+            return removedBindings;
+        }
+    }
+
+    /// <devdoc>
+    /// </devdoc>
+    public object SyncRoot
+    {
+        get
+        {
+            return this;
+        }
+    }
+
+    /// <devdoc>
+    /// </devdoc>
+    public DataBinding this[string propertyName]
+    {
+        get
+        {
+            object o = bindings[propertyName];
+            if (o != null)
+            {
+                return (DataBinding)o;
+            }
+
+            return null;
+        }
+    }
+
+    public event EventHandler Changed
+    {
+        add
+        {
+            changedEvent = (EventHandler)Delegate.Combine(changedEvent, value);
+        }
+        remove
+        {
+            changedEvent = (EventHandler)Delegate.Remove(changedEvent, value);
+        }
+    }
+
+    /// <devdoc>
+    /// </devdoc>
+    public void Add(DataBinding binding)
+    {
+        bindings[binding.PropertyName] = binding;
+        RemovedBindingsTable.Remove(binding.PropertyName);
+
+        OnChanged();
+    }
+
+    /// <devdoc>
+    /// </devdoc>
+    public bool Contains(string propertyName)
+    {
+        return bindings.Contains(propertyName);
+    }
+
+    /// <devdoc>
+    /// </devdoc>
+    public void Clear()
+    {
+        ICollection keys = bindings.Keys;
+        if ((keys.Count != 0) && (removedBindings == null))
+        {
+            // ensure the removedBindings hashtable is created
+            Hashtable h = RemovedBindingsTable;
+        }
+        foreach (string s in keys)
+        {
+            removedBindings[s] = String.Empty;
         }
 
+        bindings.Clear();
 
-        /// <devdoc>
-        /// </devdoc>
-        public object SyncRoot
+        OnChanged();
+    }
+
+    /// <devdoc>
+    /// </devdoc>
+    public void CopyTo(Array array, int index)
+    {
+        for (IEnumerator e = this.GetEnumerator(); e.MoveNext();)
         {
-            get
-            {
-                return this;
-            }
+            array.SetValue(e.Current, index++);
         }
+    }
 
+    /// <devdoc>
+    /// </devdoc>
+    public IEnumerator GetEnumerator()
+    {
+        return bindings.Values.GetEnumerator();
+    }
 
-        /// <devdoc>
-        /// </devdoc>
-        public DataBinding this[string propertyName]
+    private void OnChanged()
+    {
+        if (changedEvent != null)
         {
-            get
-            {
-                object o = bindings[propertyName];
-                if (o != null)
-                    return (DataBinding)o;
-                return null;
-            }
+            changedEvent(this, EventArgs.Empty);
         }
+    }
 
+    /// <devdoc>
+    /// </devdoc>
+    public void Remove(string propertyName)
+    {
+        Remove(propertyName, true);
+    }
 
-        public event EventHandler Changed
+    /// <devdoc>
+    /// </devdoc>
+    public void Remove(DataBinding binding)
+    {
+        Remove(binding.PropertyName, true);
+    }
+
+    /// <devdoc>
+    /// </devdoc>
+    public void Remove(string propertyName, bool addToRemovedList)
+    {
+        if (Contains(propertyName))
         {
-            add
+            bindings.Remove(propertyName);
+            if (addToRemovedList)
             {
-                changedEvent = (EventHandler)Delegate.Combine(changedEvent, value);
+                RemovedBindingsTable[propertyName] = String.Empty;
             }
-            remove
-            {
-                changedEvent = (EventHandler)Delegate.Remove(changedEvent, value);
-            }
-        }
-
-
-
-        /// <devdoc>
-        /// </devdoc>
-        public void Add(DataBinding binding)
-        {
-            bindings[binding.PropertyName] = binding;
-            RemovedBindingsTable.Remove(binding.PropertyName);
 
             OnChanged();
-        }
-
-
-        /// <devdoc>
-        /// </devdoc>
-        public bool Contains(string propertyName)
-        {
-            return bindings.Contains(propertyName);
-        }
-
-
-        /// <devdoc>
-        /// </devdoc>
-        public void Clear()
-        {
-            ICollection keys = bindings.Keys;
-            if ((keys.Count != 0) && (removedBindings == null))
-            {
-                // ensure the removedBindings hashtable is created
-                Hashtable h = RemovedBindingsTable;
-            }
-            foreach (string s in keys)
-            {
-                removedBindings[s] = String.Empty;
-            }
-
-            bindings.Clear();
-
-            OnChanged();
-        }
-
-
-        /// <devdoc>
-        /// </devdoc>
-        public void CopyTo(Array array, int index)
-        {
-            for (IEnumerator e = this.GetEnumerator(); e.MoveNext();)
-                array.SetValue(e.Current, index++);
-        }
-
-
-        /// <devdoc>
-        /// </devdoc>
-        public IEnumerator GetEnumerator()
-        {
-            return bindings.Values.GetEnumerator();
-        }
-
-        private void OnChanged()
-        {
-            if (changedEvent != null)
-            {
-                changedEvent(this, EventArgs.Empty);
-            }
-        }
-
-
-        /// <devdoc>
-        /// </devdoc>
-        public void Remove(string propertyName)
-        {
-            Remove(propertyName, true);
-        }
-
-
-        /// <devdoc>
-        /// </devdoc>
-        public void Remove(DataBinding binding)
-        {
-            Remove(binding.PropertyName, true);
-        }
-
-
-        /// <devdoc>
-        /// </devdoc>
-        public void Remove(string propertyName, bool addToRemovedList)
-        {
-            if (Contains(propertyName))
-            {
-                bindings.Remove(propertyName);
-                if (addToRemovedList)
-                {
-                    RemovedBindingsTable[propertyName] = String.Empty;
-                }
-
-                OnChanged();
-            }
         }
     }
 }

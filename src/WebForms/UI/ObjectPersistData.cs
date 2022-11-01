@@ -1,252 +1,234 @@
-//------------------------------------------------------------------------------
-// <copyright file="ObjectPersistData.cs" company="Microsoft">
-//     Copyright (c) Microsoft Corporation.  All rights reserved.
-// </copyright>
-//------------------------------------------------------------------------------
+// MIT License.
 
-namespace System.Web.UI
+namespace System.Web.UI;
+
+using System.Collections;
+using System.Collections.Specialized;
+using System.Diagnostics;
+
+public class ObjectPersistData
 {
-    using System.Collections;
-    using System.Collections.Specialized;
-    using System.Web.Util;
-    using System.Security.Permissions;
-    using System.Diagnostics;
+    private readonly Type _objectType;
 
-    public class ObjectPersistData
+    private readonly bool _isCollection;
+    private readonly ArrayList _collectionItems;
+
+    private readonly bool _localize;
+    private readonly string _resourceKey;
+
+    private readonly IDictionary _propertyTableByFilter;
+    private readonly IDictionary _propertyTableByProperty;
+    private readonly ArrayList _allPropertyEntries;
+
+    private readonly ArrayList _eventEntries;
+
+    private readonly IDictionary _builtObjects;
+
+    public ObjectPersistData(ControlBuilder builder, IDictionary builtObjects)
     {
-        private Type _objectType;
+        _objectType = builder.ControlType;
+        _localize = builder.Localize;
+        _resourceKey = builder.GetResourceKey();
 
-        private bool _isCollection;
-        private ArrayList _collectionItems;
+        _builtObjects = builtObjects;
 
-        private bool _localize;
-        private string _resourceKey;
-
-        private IDictionary _propertyTableByFilter;
-        private IDictionary _propertyTableByProperty;
-        private ArrayList _allPropertyEntries;
-
-        private ArrayList _eventEntries;
-
-        private IDictionary _builtObjects;
-
-
-        public ObjectPersistData(ControlBuilder builder, IDictionary builtObjects)
+        if (typeof(ICollection).IsAssignableFrom(_objectType))
         {
-            _objectType = builder.ControlType;
-            _localize = builder.Localize;
-            _resourceKey = builder.GetResourceKey();
-
-            _builtObjects = builtObjects;
-
-            if (typeof(ICollection).IsAssignableFrom(_objectType))
-            {
-                _isCollection = true;
-            }
-
-            _collectionItems = new ArrayList();
-            _propertyTableByFilter = new HybridDictionary(true);
-            _propertyTableByProperty = new HybridDictionary(true);
-            _allPropertyEntries = new ArrayList();
-            _eventEntries = new ArrayList();
-
-            foreach (PropertyEntry entry in builder.SimplePropertyEntries)
-            {
-                AddPropertyEntry(entry);
-            }
-
-            foreach (PropertyEntry entry in builder.ComplexPropertyEntries)
-            {
-                AddPropertyEntry(entry);
-            }
-
-            foreach (PropertyEntry entry in builder.TemplatePropertyEntries)
-            {
-                AddPropertyEntry(entry);
-            }
-
-            foreach (PropertyEntry entry in builder.BoundPropertyEntries)
-            {
-                AddPropertyEntry(entry);
-            }
-
-            foreach (EventEntry entry in builder.EventEntries)
-            {
-                AddEventEntry(entry);
-            }
+            _isCollection = true;
         }
 
+        _collectionItems = new ArrayList();
+        _propertyTableByFilter = new HybridDictionary(true);
+        _propertyTableByProperty = new HybridDictionary(true);
+        _allPropertyEntries = new ArrayList();
+        _eventEntries = new ArrayList();
 
-        /// <devdoc>
-        /// Get all property entries
-        /// </devdoc>
-        public ICollection AllPropertyEntries
+        foreach (PropertyEntry entry in builder.SimplePropertyEntries)
         {
-            get
-            {
-                return _allPropertyEntries;
-            }
+            AddPropertyEntry(entry);
         }
 
-        public IDictionary BuiltObjects
+        foreach (PropertyEntry entry in builder.ComplexPropertyEntries)
         {
-            get
-            {
-                return _builtObjects;
-            }
+            AddPropertyEntry(entry);
         }
 
-
-        public ICollection CollectionItems
+        foreach (PropertyEntry entry in builder.TemplatePropertyEntries)
         {
-            get
-            {
-                return _collectionItems;
-            }
+            AddPropertyEntry(entry);
         }
 
-
-        public ICollection EventEntries
+        foreach (PropertyEntry entry in builder.BoundPropertyEntries)
         {
-            get
-            {
-                return _eventEntries;
-            }
+            AddPropertyEntry(entry);
         }
 
-
-        /// <devdoc>
-        /// True if this persistence data is for a collection
-        /// </devdoc>
-        public bool IsCollection
+        foreach (EventEntry entry in builder.EventEntries)
         {
-            get
-            {
-                return _isCollection;
-            }
-        }
-
-        public bool Localize
-        {
-            get
-            {
-                return _localize;
-            }
-        }
-
-
-        /// <devdoc>
-        /// The type of the object with these properties.
-        /// </devdoc>
-        public Type ObjectType
-        {
-            get
-            {
-                return _objectType;
-            }
-        }
-
-        public string ResourceKey
-        {
-            get
-            {
-                return _resourceKey;
-            }
-        }
-
-        /// <devdoc>
-        /// Adds a property to this persistence data, adding it to all necessary
-        /// data structures.
-        /// </devdoc>
-        private void AddPropertyEntry(PropertyEntry entry)
-        {
-            if (_isCollection && (entry is ComplexPropertyEntry && ((ComplexPropertyEntry)entry).IsCollectionItem))
-            {
-                _collectionItems.Add(entry);
-            }
-            else
-            {
-                IDictionary filteredProperties = (IDictionary)_propertyTableByFilter[entry.Filter];
-                if (filteredProperties == null)
-                {
-                    filteredProperties = new HybridDictionary(true);
-                    _propertyTableByFilter[entry.Filter] = filteredProperties;
-                }
-
-                Debug.Assert((entry.Name != null) && (entry.Name.Length > 0));
-                filteredProperties[entry.Name] = entry;
-
-                ArrayList properties = (ArrayList)_propertyTableByProperty[entry.Name];
-                if (properties == null)
-                {
-                    properties = new ArrayList();
-                    _propertyTableByProperty[entry.Name] = properties;
-                }
-
-                properties.Add(entry);
-            }
-
-
-            _allPropertyEntries.Add(entry);
-        }
-
-        private void AddEventEntry(EventEntry entry)
-        {
-            _eventEntries.Add(entry);
-        }
-
-
-        /// <devdov>
-        /// </devdoc>
-        public void AddToObjectControlBuilderTable(IDictionary table)
-        {
-            if (_builtObjects != null)
-            {
-                foreach (DictionaryEntry entry in _builtObjects)
-                {
-                    table[entry.Key] = entry.Value;
-                }
-            }
-        }
-
-
-        /// <devdoc>
-        /// Gets a PropertyEntry for the specified filter and property name
-        /// </devdoc>
-        public PropertyEntry GetFilteredProperty(string filter, string name)
-        {
-            IDictionary filteredProperties = GetFilteredProperties(filter);
-            if (filteredProperties != null)
-            {
-                return (PropertyEntry)filteredProperties[name];
-            }
-
-            return null;
-        }
-
-
-        /// <devdoc>
-        /// Gets all PropertyEntries for the specified filter
-        /// </devdoc>
-        public IDictionary GetFilteredProperties(string filter)
-        {
-            return (IDictionary)_propertyTableByFilter[filter];
-        }
-
-
-        /// <devdoc>
-        /// Gets all filtered PropertiesEntries for a specified property (name uses dot-syntax e.g. Font.Bold)
-        /// </devdoc>
-        public ICollection GetPropertyAllFilters(string name)
-        {
-            ICollection properties = (ICollection)_propertyTableByProperty[name];
-            if (properties == null)
-            {
-                return new ArrayList();
-            }
-
-            return properties;
+            AddEventEntry(entry);
         }
     }
 
+    /// <devdoc>
+    /// Get all property entries
+    /// </devdoc>
+    public ICollection AllPropertyEntries
+    {
+        get
+        {
+            return _allPropertyEntries;
+        }
+    }
+
+    public IDictionary BuiltObjects
+    {
+        get
+        {
+            return _builtObjects;
+        }
+    }
+
+    public ICollection CollectionItems
+    {
+        get
+        {
+            return _collectionItems;
+        }
+    }
+
+    public ICollection EventEntries
+    {
+        get
+        {
+            return _eventEntries;
+        }
+    }
+
+    /// <devdoc>
+    /// True if this persistence data is for a collection
+    /// </devdoc>
+    public bool IsCollection
+    {
+        get
+        {
+            return _isCollection;
+        }
+    }
+
+    public bool Localize
+    {
+        get
+        {
+            return _localize;
+        }
+    }
+
+    /// <devdoc>
+    /// The type of the object with these properties.
+    /// </devdoc>
+    public Type ObjectType
+    {
+        get
+        {
+            return _objectType;
+        }
+    }
+
+    public string ResourceKey
+    {
+        get
+        {
+            return _resourceKey;
+        }
+    }
+
+    /// <devdoc>
+    /// Adds a property to this persistence data, adding it to all necessary
+    /// data structures.
+    /// </devdoc>
+    private void AddPropertyEntry(PropertyEntry entry)
+    {
+        if (_isCollection && (entry is ComplexPropertyEntry && ((ComplexPropertyEntry)entry).IsCollectionItem))
+        {
+            _collectionItems.Add(entry);
+        }
+        else
+        {
+            IDictionary filteredProperties = (IDictionary)_propertyTableByFilter[entry.Filter];
+            if (filteredProperties == null)
+            {
+                filteredProperties = new HybridDictionary(true);
+                _propertyTableByFilter[entry.Filter] = filteredProperties;
+            }
+
+            Debug.Assert((entry.Name != null) && (entry.Name.Length > 0));
+            filteredProperties[entry.Name] = entry;
+
+            ArrayList properties = (ArrayList)_propertyTableByProperty[entry.Name];
+            if (properties == null)
+            {
+                properties = new ArrayList();
+                _propertyTableByProperty[entry.Name] = properties;
+            }
+
+            properties.Add(entry);
+        }
+
+        _allPropertyEntries.Add(entry);
+    }
+
+    private void AddEventEntry(EventEntry entry)
+    {
+        _eventEntries.Add(entry);
+    }
+
+    /// <devdov>
+    /// </devdoc>
+    public void AddToObjectControlBuilderTable(IDictionary table)
+    {
+        if (_builtObjects != null)
+        {
+            foreach (DictionaryEntry entry in _builtObjects)
+            {
+                table[entry.Key] = entry.Value;
+            }
+        }
+    }
+
+    /// <devdoc>
+    /// Gets a PropertyEntry for the specified filter and property name
+    /// </devdoc>
+    public PropertyEntry GetFilteredProperty(string filter, string name)
+    {
+        IDictionary filteredProperties = GetFilteredProperties(filter);
+        if (filteredProperties != null)
+        {
+            return (PropertyEntry)filteredProperties[name];
+        }
+
+        return null;
+    }
+
+    /// <devdoc>
+    /// Gets all PropertyEntries for the specified filter
+    /// </devdoc>
+    public IDictionary GetFilteredProperties(string filter)
+    {
+        return (IDictionary)_propertyTableByFilter[filter];
+    }
+
+    /// <devdoc>
+    /// Gets all filtered PropertiesEntries for a specified property (name uses dot-syntax e.g. Font.Bold)
+    /// </devdoc>
+    public ICollection GetPropertyAllFilters(string name)
+    {
+        ICollection properties = (ICollection)_propertyTableByProperty[name];
+        if (properties == null)
+        {
+            return new ArrayList();
+        }
+
+        return properties;
+    }
 }
+
