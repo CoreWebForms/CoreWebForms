@@ -15,11 +15,10 @@ internal class ContentBuilderInternal : TemplateBuilder
 
     private const string _contentPlaceHolderIDPropName = "ContentPlaceHolderID";
     // This can be an array for now since the set is small so lookup perf is not an issue
-    private static string[] attributesToPreserve = new[] { "ClientIDMode", "ViewStateMode" };
+    private static readonly string[] attributesToPreserve = new[] { "ClientIDMode", "ViewStateMode" };
 
     private string _contentPlaceHolder;
     private string _contentPlaceHolderFilter;
-
 
     /// <devdoc>
     /// </devdoc>
@@ -52,7 +51,9 @@ internal class ContentBuilderInternal : TemplateBuilder
     {
 
         if (InDesigner)
+        {
             return BuildObjectInternal();
+        }
 
         return base.BuildObject();
     }
@@ -112,7 +113,9 @@ internal class ContentBuilderInternal : TemplateBuilder
         if (!parser.FInDesigner)
         {
             if (_contentPlaceHolder == null)
+            {
                 throw new HttpException(SR.GetString(SR.Control_Missing_Attribute, _contentPlaceHolderIDPropName, type.Name));
+            }
 
             attribs.Clear();
             // Add the preserevd attributes back to the control

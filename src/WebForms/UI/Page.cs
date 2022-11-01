@@ -52,7 +52,11 @@ public class FileLevelPageControlBuilder : RootBuilder
             if (!Util.IsWhiteSpaceString(text))
             {
                 int iFirstNonWhiteSpace = Util.FirstNonWhiteSpaceIndex(text);
-                if (iFirstNonWhiteSpace < 0) iFirstNonWhiteSpace = 0;
+                if (iFirstNonWhiteSpace < 0)
+                {
+                    iFirstNonWhiteSpace = 0;
+                }
+
                 _firstLiteralLineNumber = Parser._lineNumber - Util.LineCount(text, iFirstNonWhiteSpace, text.Length);
                 _firstLiteralText = text;
 
@@ -121,7 +125,9 @@ public class FileLevelPageControlBuilder : RootBuilder
         base.InitObject(obj);
 
         if (_contentBuilderEntries == null)
+        {
             return;
+        }
 
         ICollection entries = GetFilteredPropertyEntrySet(_contentBuilderEntries);
 

@@ -45,7 +45,9 @@ internal class ContentPlaceHolderBuilder : ControlBuilder
         base.Init(parser, parentBuilder, type, tagName, ID, attribs);
 
         if (masterPageParser.PlaceHolderList.Contains(Name))
+        {
             throw new HttpException(SR.GetString(SR.ContentPlaceHolder_duplicate_contentPlaceHolderID, Name));
+        }
 
         masterPageParser.PlaceHolderList.Add(Name);
     }
@@ -77,7 +79,9 @@ internal class ContentPlaceHolderBuilder : ControlBuilder
         // If the page is providing content, don't call the base, which would
         // instantiate the default content (which we don't want)
         if (PageProvidesMatchingContent(masterPage))
+        {
             return;
+        }
 
         base.BuildChildren(parentObj);
     }

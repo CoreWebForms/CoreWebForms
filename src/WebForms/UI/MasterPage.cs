@@ -19,7 +19,6 @@ public class MasterPageControlBuilder : UserControlControlBuilder
     internal const String AutoTemplatePrefix = "Template_";
 }
 
-
 /// <devdoc>
 ///    Default ControlBuilder used to parse master page files. Note that this class inherits from FileLevelPageControlBuilder
 ///    to reuse masterpage handling code.
@@ -33,7 +32,6 @@ public class FileLevelMasterPageControlBuilder : FileLevelPageControlBuilder
         master.AddContentTemplate(templateName, template);
     }
 }
-
 
 /// <devdoc>
 ///    <para>This class is not marked as abstract, because the VS designer

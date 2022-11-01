@@ -204,7 +204,6 @@ public enum CodeConstructType
     EncodedExpressionSnippet // <%: ... %>
 }
 
-
 internal class BaseTemplateCodeDomTreeGenerator
 {
     internal static string skinIDPropertyName;

@@ -16,8 +16,6 @@ using System.Web.SessionState;
 
 namespace System.Web.UI;
 
-
-
 /// <devdoc>
 ///   <para>The ControlBuilder associated with a UserControl. If you want a custom ControlBuilder for your
 ///     derived UserControl, you should derive it from UserControlControlBuilder.
@@ -27,7 +25,6 @@ public class UserControlControlBuilder : ControlBuilder
 {
 
     private string _innerText;
-
 
     /// <internalonly/>
     public override object BuildObject()
@@ -47,14 +44,12 @@ public class UserControlControlBuilder : ControlBuilder
         return o;
     }
 
-
     /// <internalonly/>
     public override bool NeedsTagInnerText()
     {
         // in design-mode, we need to hang on to the inner text
         return InDesigner;
     }
-
 
     /// <internalonly/>
     public override void SetTagInnerText(string text)
@@ -64,14 +59,12 @@ public class UserControlControlBuilder : ControlBuilder
     }
 }
 
-
 /// <devdoc>
 ///    Default ControlBuilder used to parse user controls files.
 /// </devdoc>
 public class FileLevelUserControlBuilder : RootBuilder
 {
 }
-
 
 /// <devdoc>
 ///    <para>This class is not marked as abstract, because the VS designer
