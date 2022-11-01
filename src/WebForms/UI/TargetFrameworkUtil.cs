@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Diagnostics;
 using System.Reflection;
+using System.Reflection.Emit;
 
 namespace System.Web.UI;
 
@@ -64,7 +65,9 @@ internal static class TargetFrameworkUtil
 #if PORT_BUILDMANAGER
     private static ClientBuildManagerTypeDescriptionProviderBridge s_cbmTdpBridge;
 #else
+#pragma warning disable CS0649
     private static readonly BridgePoly s_cbmTdpBridge;
+#pragma warning restore CS0649
 
     private class BridgePoly
     {

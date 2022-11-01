@@ -58,7 +58,9 @@ internal class FactoryGenerator
     private readonly Type _factoryInterface;
     private readonly Type _returnedType;
     private readonly MethodInfo _methodToOverride;
+#pragma warning disable CS0649
     private readonly ModuleBuilder _dynamicModule;
+#pragma warning restore CS0649
     private readonly Type[] _interfacesToImplement;
 
     internal FactoryGenerator() : this(typeof(object), typeof(IWebObjectFactory)) { }

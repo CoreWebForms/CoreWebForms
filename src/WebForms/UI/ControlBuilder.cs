@@ -3878,7 +3878,9 @@ public class ControlBuilder
 
         internal PropertyDescriptorCollection PropertyDescriptors;
 
+#pragma warning disable CS0649
         internal StringSet PropertyEntries;
+#pragma warning restore CS0649
 
         internal bool SupportsAttributes
         {
