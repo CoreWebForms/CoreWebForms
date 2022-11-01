@@ -7,7 +7,6 @@ using System.Web.UI.WebControls;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
@@ -78,14 +77,6 @@ public class PageTests
             app.UseRouting();
 
             app.UseSystemWebAdapters();
-
-            // Fix for https://github.com/dotnet/systemweb-adapters/pull/213
-            app.Use((ctx, next) =>
-            {
-                ctx.Features.Set<IRequestBodyPipeFeature>(new FixedRequestBodyPipeFeature(ctx.Features.GetRequiredFeature<IHttpRequestFeature>()));
-
-                return next(ctx);
-            });
 
             app.UseEndpoints(endpoints =>
             {

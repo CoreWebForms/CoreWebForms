@@ -28,6 +28,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		Directory.Build.props = Directory.Build.props
 		Directory.Build.targets = Directory.Build.targets
+		global.json = global.json
 		nuget.config = nuget.config
 		README.md = README.md
 	EndProjectSection
@@ -40,7 +41,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Compiler.Tests", "test\Comp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Extensions", "src\Extensions\Extensions.csproj", "{DA9490DF-5043-46B4-A83E-9B8FC03DC191}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Config", "src\Config\Config.csproj", "{33E6BFE4-8BCD-4349-92D8-367CCCB3B101}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Config", "src\Config\Config.csproj", "{33E6BFE4-8BCD-4349-92D8-367CCCB3B101}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
