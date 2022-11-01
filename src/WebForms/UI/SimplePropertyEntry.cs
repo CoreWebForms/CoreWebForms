@@ -1,5 +1,9 @@
 // MIT License.
 
+using System.CodeDom;
+using System.Diagnostics;
+using System.Web.Compilation;
+
 namespace System.Web.UI;
 /// <devdoc>
 /// PropertyEntry for simple attributes
@@ -57,7 +61,6 @@ public class SimplePropertyEntry : PropertyEntry
         }
     }
 
-#if PORT_CODEDOM
     // Build the statement that assigns this property
     internal CodeStatement GetCodeStatement(BaseTemplateCodeDomTreeGenerator generator,
         CodeExpression ctrlRefExpr)
@@ -101,6 +104,5 @@ public class SimplePropertyEntry : PropertyEntry
         // Now that we have both side, add the assignment
         return new CodeAssignStatement(leftExpr, rightExpr);
     }
-#endif
 }
 

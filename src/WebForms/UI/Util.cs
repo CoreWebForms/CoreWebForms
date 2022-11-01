@@ -20,6 +20,86 @@ using System.Web.Util;
 namespace System.Web.UI;
 internal static class Util
 {
+    internal static Type GetNonPrivatePropertyType(Type classType, string propName)
+    {
+        PropertyInfo propInfo = null;
+
+        BindingFlags flags = BindingFlags.Public | BindingFlags.Instance
+            | BindingFlags.IgnoreCase | BindingFlags.NonPublic;
+
+        try
+        {
+            propInfo = classType.GetProperty(propName, flags);
+        }
+        catch (AmbiguousMatchException)
+        {
+
+            // We could get an AmbiguousMatchException if the property exists on two
+            // different ancestor classes (VSWhidbey 216957).  When that happens, attempt
+            // a lookup on the Type itself, ignoring its ancestors.
+
+            flags |= BindingFlags.DeclaredOnly;
+            propInfo = classType.GetProperty(propName, flags);
+        }
+
+        if (propInfo == null)
+            return null;
+
+        // If it doesn't have a setter, ot if it's private, fail
+        MethodInfo methodInfo = propInfo.GetSetMethod(true /*nonPublic*/);
+        if (methodInfo == null || methodInfo.IsPrivate)
+            return null;
+
+        return propInfo.PropertyType;
+    }
+
+
+    internal static Type GetNonPrivateFieldType(Type classType, string fieldName)
+    {
+        FieldInfo fieldInfo = classType.GetField(fieldName,
+            BindingFlags.IgnoreCase | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
+
+        if (fieldInfo == null || fieldInfo.IsPrivate)
+            return null;
+
+        return fieldInfo.FieldType;
+    }
+
+    /*
+     * Return a full type name from a namespace (could be empty) and a type name
+     */
+    internal static string MakeFullTypeName(string ns, string typeName)
+    {
+        if (String.IsNullOrEmpty(ns))
+            return typeName;
+
+        return ns + "." + typeName;
+    }
+
+    /*
+     * Return a valid type name from a string by changing any character
+     * that's not a letter or a digit to an '_'.
+     */
+    internal static string MakeValidTypeNameFromString(string s)
+    {
+        StringBuilder sb = new StringBuilder();
+
+        for (int i = 0; i < s.Length; i++)
+        {
+            // Make sure it doesn't start with a digit (ASURT 31134)
+            if (i == 0 && Char.IsDigit(s[0]))
+                sb.Append('_');
+
+            if (Char.IsLetterOrDigit(s[i]))
+                sb.Append(s[i]);
+            else
+                sb.Append('_');
+        }
+
+        return sb.ToString();
+    }
+
+
     internal static bool IsMultiInstanceTemplateProperty(PropertyInfo pInfo)
     {
         object[] instanceAttrs = pInfo.GetCustomAttributes(typeof(TemplateInstanceAttribute), /*inherits*/ false);

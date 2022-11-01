@@ -39,6 +39,7 @@ public class CompilationSection
     public int NumRecompilesBeforeAppRestart { get; internal set; }
     public object DefaultLanguage { get; internal set; }
     public bool Debug { get; internal set; }
+    public bool UrlLinePragmas { get; internal set; }
 
     internal CompilerType GetCompilerInfoFromExtension(string extension, bool v)
     {

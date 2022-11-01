@@ -203,17 +203,25 @@ public sealed class ObjectTagBuilder : ControlBuilder
         get { return _type; }
     }
 
-#if PORT_LATEBINDING
     internal bool LateBound
     {
+#if PORT_LATEBINDING
         get { return _lateBound; }
+#else
+        get => false;
+#endif
     }
 
     internal Type DeclaredType
     {
+#if PORT_LATEBINDING
         get { return _lateBound ? typeof(object) : ObjectType; }
+#else
+        get => ObjectType;
+#endif
     }
 
+#if PORT_LATEBINDING
     internal string Progid
     {
         get { return _progid; }

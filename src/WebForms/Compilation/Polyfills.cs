@@ -29,24 +29,6 @@ internal class ResourceExpressionBuilder
     }
 }
 
-internal class BaseCodeDomTreeGenerator
-{
-    internal static string defaultNamespace;
-
-    internal static bool IsAspNetNamespace(string @namespace)
-    {
-        throw new NotImplementedException();
-    }
-}
-
-internal class ControlBuilderInterceptor
-{
-    internal void PreControlBuilderInit(ControlBuilder controlBuilder, TemplateParser parser, ControlBuilder parentBuilder, Type type, string tagName, string id, IDictionary attribs, IDictionary additionalState)
-    {
-        throw new NotImplementedException();
-    }
-}
-
 internal class BaseResourcesBuildProvider
 {
     public static string DefaultResourcesNamespace { get; internal set; }
@@ -120,9 +102,3 @@ public class FastPropertyAccessor
         throw new NotImplementedException();
     }
 }
-
-internal class BaseTemplateCodeDomTreeGenerator
-{
-    internal static string skinIDPropertyName;
-}
-

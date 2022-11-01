@@ -1,4 +1,5 @@
-// MIT License.
+// MIT
+
 
 namespace System.Web;
 
@@ -13,7 +14,7 @@ internal static class AssemblyRef
 internal static class SR
 {
     public static string GetString(string name, params object[] args) => name;
-
+    
     public const string Ambiguous_server_tag = nameof(Ambiguous_server_tag);
     public const string Ambiguous_type = nameof(Ambiguous_type);
     public const string App_session_only_valid_in_global_asax = nameof(App_session_only_valid_in_global_asax);
@@ -32,6 +33,7 @@ internal static class SR
     public const string AutoPostBackControl_CausesValidation = nameof(AutoPostBackControl_CausesValidation);
     public const string BadlyFormattedBind = nameof(BadlyFormattedBind);
     public const string BadlyFormattedBindItem = nameof(BadlyFormattedBindItem);
+    public const string Base_class_field_with_type_different_from_type_of_control = nameof(Base_class_field_with_type_different_from_type_of_control);
     public const string Base_type_not_allowed = nameof(Base_type_not_allowed);
     public const string BaseCompareValidator_CultureInvariantValues = nameof(BaseCompareValidator_CultureInvariantValues);
     public const string BaseDataBoundControl_DataSource = nameof(BaseDataBoundControl_DataSource);
@@ -189,6 +191,7 @@ internal static class SR
     public const string ControlNonVisual = nameof(ControlNonVisual);
     public const string ControlRenderedOutsideServerForm = nameof(ControlRenderedOutsideServerForm);
     public const string Controls_Cant_Change_Between_Posts = nameof(Controls_Cant_Change_Between_Posts);
+    public const string ControlSkin_cannot_contain_controls = nameof(ControlSkin_cannot_contain_controls);
     public const string Ctrl_not_data_handler = nameof(Ctrl_not_data_handler);
     public const string Dangerous_input_detected_descr = nameof(Dangerous_input_detected_descr);
     public const string DataBinder_Invalid_Indexed_Expr = nameof(DataBinder_Invalid_Indexed_Expr);
