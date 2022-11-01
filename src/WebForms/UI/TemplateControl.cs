@@ -195,6 +195,8 @@ public abstract class TemplateControl : Control, INamingContainer, IFilterResolu
         }
     }
 
+    internal bool NoCompile => throw new NotImplementedException();
+
     /*
      * Method sometime overidden by the generated sub classes.  Users
      * should not override.

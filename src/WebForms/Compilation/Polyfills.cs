@@ -177,36 +177,6 @@ internal static class HttpRuntime2
     }
 }
 
-public class ThemeProvider
-{
-    internal SkinBuilder GetSkinBuilder(Control control)
-    {
-        throw new NotImplementedException();
-    }
-}
-
-public class SkinBuilder
-{
-    internal object ApplyTheme()
-    {
-        throw new NotImplementedException();
-    }
-
-    internal void SetServiceProvider(IServiceProvider serviceProvider)
-    {
-        throw new NotImplementedException();
-    }
-}
-
-public class PageThemeParser : BaseTemplateParser
-{
-    public ControlBuilder CurrentSkinBuilder { get; internal set; }
-
-    internal override Type DefaultBaseType => throw new NotImplementedException();
-
-    internal override string DefaultDirectiveName => throw new NotImplementedException();
-}
-
 internal class BuildResultCompiledAssembly : BuildResult
 {
     public Assembly ResultAssembly { get; internal set; }
@@ -225,14 +195,6 @@ public class FastPropertyAccessor
     }
 }
 
-public class ContentPlaceHolderBuilderFactory
-{
-}
-
-public class ContentBuilderInternalFactory
-{
-}
-
 public enum CodeConstructType
 {
     CodeSnippet,            // <% ... %>
@@ -242,30 +204,9 @@ public enum CodeConstructType
     EncodedExpressionSnippet // <%: ... %>
 }
 
-internal class FileLevelPageControlBuilder : RootBuilder
-{
-    public object ContentBuilderEntries { get; internal set; }
-}
-
-internal class FileLevelUserControlBuilder : RootBuilder
-{
-}
-
-internal class FileLevelMasterPageControlBuilder : RootBuilder
-{
-}
-
-internal class FileLevelPageThemeBuilder : ControlBuilder
-{
-}
 
 internal class BaseTemplateCodeDomTreeGenerator
 {
     internal static string skinIDPropertyName;
-}
-
-internal class DesignTimePageThemeParser : PageThemeParser
-{
-    public string ThemePhysicalPath { get; internal set; }
 }
 

@@ -1,4 +1,5 @@
-// MIT License.
+// MIT
+
 
 namespace System.Web;
 
@@ -13,7 +14,7 @@ internal static class AssemblyRef
 internal static class SR
 {
     public static string GetString(string name, params object[] args) => name;
-
+    
     public const string Ambiguous_server_tag = nameof(Ambiguous_server_tag);
     public const string Ambiguous_type = nameof(Ambiguous_type);
     public const string App_session_only_valid_in_global_asax = nameof(App_session_only_valid_in_global_asax);
@@ -143,6 +144,9 @@ internal static class SR
     public const string Compilmode_not_allowed = nameof(Compilmode_not_allowed);
     public const string Content_allowed_in_top_level_only = nameof(Content_allowed_in_top_level_only);
     public const string Content_ContentPlaceHolderID = nameof(Content_ContentPlaceHolderID);
+    public const string Content_only_one_contentPlaceHolderID_allowed = nameof(Content_only_one_contentPlaceHolderID_allowed);
+    public const string ContentPlaceHolder_duplicate_contentPlaceHolderID = nameof(ContentPlaceHolder_duplicate_contentPlaceHolderID);
+    public const string ContentPlaceHolder_only_in_master = nameof(ContentPlaceHolder_only_in_master);
     public const string Control_Cannot_Databind = nameof(Control_Cannot_Databind);
     public const string Control_ClientID = nameof(Control_ClientID);
     public const string Control_ClientIDMode = nameof(Control_ClientIDMode);
@@ -151,6 +155,7 @@ internal static class SR
     public const string Control_EnableTheming = nameof(Control_EnableTheming);
     public const string Control_ID = nameof(Control_ID);
     public const string Control_MaintainState = nameof(Control_MaintainState);
+    public const string Control_Missing_Attribute = nameof(Control_Missing_Attribute);
     public const string Control_NamingContainer = nameof(Control_NamingContainer);
     public const string Control_NotADescendentOfNamingContainer = nameof(Control_NotADescendentOfNamingContainer);
     public const string Control_OnDataBind = nameof(Control_OnDataBind);
@@ -245,6 +250,7 @@ internal static class SR
     public const string DataSourceView_NoRowCount = nameof(DataSourceView_NoRowCount);
     public const string DataSourceView_NoSorting = nameof(DataSourceView_NoSorting);
     public const string Debugging_not_supported_in_low_trust = nameof(Debugging_not_supported_in_low_trust);
+    public const string DesignTimeTemplateParser_ErrorParsingTheme = nameof(DesignTimeTemplateParser_ErrorParsingTheme);
     public const string DetailsViewFormView_ControlMustBeInEditMode = nameof(DetailsViewFormView_ControlMustBeInEditMode);
     public const string DetailsViewFormView_ControlMustBeInInsertMode = nameof(DetailsViewFormView_ControlMustBeInInsertMode);
     public const string Device_unsupported_in_directive = nameof(Device_unsupported_in_directive);
@@ -546,6 +552,7 @@ internal static class SR
     public const string NoThemingSupport = nameof(NoThemingSupport);
     public const string Object_tag_must_have_class_classid_or_progid = nameof(Object_tag_must_have_class_classid_or_progid);
     public const string Object_tag_must_have_id = nameof(Object_tag_must_have_id);
+    public const string Only_Content_supported_on_content_page = nameof(Only_Content_supported_on_content_page);
     public const string Only_file_virtual_supported_on_server_include = nameof(Only_file_virtual_supported_on_server_include);
     public const string Only_one_directive_allowed = nameof(Only_one_directive_allowed);
     public const string Page_CallBackError = nameof(Page_CallBackError);
@@ -566,7 +573,9 @@ internal static class SR
     public const string Page_OnCommitTransaction = nameof(Page_OnCommitTransaction);
     public const string Page_theme_invalid_name = nameof(Page_theme_invalid_name);
     public const string Page_theme_not_found = nameof(Page_theme_not_found);
+    public const string Page_theme_only_controls_allowed = nameof(Page_theme_only_controls_allowed);
     public const string Page_theme_requires_page_header = nameof(Page_theme_requires_page_header);
+    public const string Page_theme_skin_file = nameof(Page_theme_skin_file);
     public const string Page_Title_Requires_Head = nameof(Page_Title_Requires_Head);
     public const string Page_UnobtrusiveValidationMode = nameof(Page_UnobtrusiveValidationMode);
     public const string Page_UpdateModel_UpdateUnsuccessful = nameof(Page_UpdateModel_UpdateUnsuccessful);
@@ -802,6 +811,7 @@ internal static class SR
     public const string Type_doesnt_have_property = nameof(Type_doesnt_have_property);
     public const string Type_doesnt_inherit_from_type = nameof(Type_doesnt_inherit_from_type);
     public const string Type_not_creatable_from_string = nameof(Type_not_creatable_from_string);
+    public const string Type_theme_disabled = nameof(Type_theme_disabled);
     public const string TypeResService_Needed = nameof(TypeResService_Needed);
     public const string Unexpected_Directory = nameof(Unexpected_Directory);
     public const string Unexpected_eof_looking_for_tag = nameof(Unexpected_eof_looking_for_tag);

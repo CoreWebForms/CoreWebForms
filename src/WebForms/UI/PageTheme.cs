@@ -8,6 +8,50 @@ using System.Web.UI.HtmlControls;
 using System.Web.Util;
 
 namespace System.Web.UI;
+
+internal class FileLevelPageThemeBuilder : RootBuilder
+{
+    /// <devdoc>
+    ///    <para>[To be supplied.]</para>
+    /// </devdoc>
+    public override void AppendLiteralString(string s)
+    {
+        // Don't allow any literal contents at theme top level
+        if (s != null)
+        {
+            if (!Util.IsWhiteSpaceString(s))
+            {
+                throw new HttpException(SR.GetString(SR.Literal_content_not_allowed, SR.GetString(SR.Page_theme_skin_file), s.Trim()));
+            }
+        }
+
+        base.AppendLiteralString(s);
+    }
+
+    /// <devdoc>
+    ///    <para>[To be supplied.]</para>
+    /// </devdoc>
+    public override void AppendSubBuilder(ControlBuilder subBuilder)
+    {
+        // Only allow controls at theme top level
+        Type ctrlType = subBuilder.ControlType;
+        if (!typeof(Control).IsAssignableFrom(ctrlType))
+        {
+            throw new HttpException(SR.GetString(SR.Page_theme_only_controls_allowed, ctrlType == null ?
+                String.Empty : ctrlType.ToString()));
+        }
+
+        // Check if the control theme type is themeable.
+        if (InPageTheme && !ThemeableAttribute.IsTypeThemeable(subBuilder.ControlType))
+        {
+            throw new HttpParseException(SR.GetString(SR.Type_theme_disabled, subBuilder.ControlType.FullName),
+                null, subBuilder.VirtualPath, null, subBuilder.Line);
+        }
+
+        base.AppendSubBuilder(subBuilder);
+    }
+}
+
 [EditorBrowsable(EditorBrowsableState.Advanced)]
 public abstract class PageTheme
 {

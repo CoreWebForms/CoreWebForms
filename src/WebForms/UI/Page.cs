@@ -26,6 +26,139 @@ using System.Web.Util;
 namespace System.Web.UI;
 
 /// <devdoc>
+///    Default ControlBuilder used to parse page files.
+/// </devdoc>
+public class FileLevelPageControlBuilder : RootBuilder
+{
+
+    private ArrayList _contentBuilderEntries;
+    private ControlBuilder _firstControlBuilder;
+    private int _firstLiteralLineNumber;
+    private bool _containsContentPage;
+    private string _firstLiteralText;
+
+    internal ICollection ContentBuilderEntries
+    {
+        get
+        {
+            return _contentBuilderEntries;
+        }
+    }
+
+    public override void AppendLiteralString(string text)
+    {
+        if (_firstLiteralText == null)
+        {
+            if (!Util.IsWhiteSpaceString(text))
+            {
+                int iFirstNonWhiteSpace = Util.FirstNonWhiteSpaceIndex(text);
+                if (iFirstNonWhiteSpace < 0) iFirstNonWhiteSpace = 0;
+                _firstLiteralLineNumber = Parser._lineNumber - Util.LineCount(text, iFirstNonWhiteSpace, text.Length);
+                _firstLiteralText = text;
+
+                if (_containsContentPage)
+                {
+                    throw new HttpException(SR.GetString(SR.Only_Content_supported_on_content_page));
+                }
+            }
+        }
+
+        base.AppendLiteralString(text);
+    }
+
+    public override void AppendSubBuilder(ControlBuilder subBuilder)
+    {
+        // Tell the sub builder that it's about to be appended to its parent
+
+        if (subBuilder is ContentBuilderInternal)
+        {
+            ContentBuilderInternal contentBuilder = (ContentBuilderInternal)subBuilder;
+
+            _containsContentPage = true;
+
+            if (_contentBuilderEntries == null)
+            {
+                _contentBuilderEntries = new ArrayList();
+            }
+
+            if (_firstLiteralText != null)
+            {
+                throw new HttpParseException(SR.GetString(SR.Only_Content_supported_on_content_page),
+                    null, Parser.CurrentVirtualPath, _firstLiteralText, _firstLiteralLineNumber);
+            }
+
+            if (_firstControlBuilder != null)
+            {
+                Parser._lineNumber = _firstControlBuilder.Line;
+                throw new HttpException(SR.GetString(SR.Only_Content_supported_on_content_page));
+            }
+
+            TemplatePropertyEntry entry = new TemplatePropertyEntry();
+            entry.Filter = contentBuilder.ContentPlaceHolderFilter;
+            entry.Name = contentBuilder.ContentPlaceHolder;
+            entry.Builder = contentBuilder;
+
+            _contentBuilderEntries.Add(entry);
+        }
+        else
+        {
+            if (_firstControlBuilder == null)
+            {
+                if (_containsContentPage)
+                {
+                    throw new HttpException(SR.GetString(SR.Only_Content_supported_on_content_page));
+                }
+
+                _firstControlBuilder = subBuilder;
+            }
+        }
+
+        base.AppendSubBuilder(subBuilder);
+    }
+
+    internal override void InitObject(object obj)
+    {
+        base.InitObject(obj);
+
+        if (_contentBuilderEntries == null)
+            return;
+
+        ICollection entries = GetFilteredPropertyEntrySet(_contentBuilderEntries);
+
+        foreach (TemplatePropertyEntry entry in entries)
+        {
+            ContentBuilderInternal contentBuilder = (ContentBuilderInternal)entry.Builder;
+            try
+            {
+                contentBuilder.SetServiceProvider(ServiceProvider);
+
+                // Note that 'obj' can be either a Page or a MasterPage,
+                // hence the need for this virtual method.
+                AddContentTemplate(obj, contentBuilder.ContentPlaceHolder, contentBuilder.BuildObject() as ITemplate);
+            }
+            finally
+            {
+                contentBuilder.SetServiceProvider(null);
+            }
+        }
+    }
+
+    internal virtual void AddContentTemplate(object obj, string templateName, ITemplate template)
+    {
+        Page page = (Page)obj;
+        page.AddContentTemplate(templateName, template);
+    }
+
+    internal override void SortEntries()
+    {
+        base.SortEntries();
+
+        FilteredPropertyEntryComparer comparer = null;
+        ProcessAndSortPropertyEntries(_contentBuilderEntries, ref comparer);
+    }
+}
+
+/// <devdoc>
 ///    <para>
 ///       Defines the properties, methods, and events common to
 ///       all pages that are processed on the server by the Web Forms page framework.

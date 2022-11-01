@@ -13,12 +13,35 @@ using System.Globalization;
  */
 
 namespace System.Web.UI;
+
+public class MasterPageControlBuilder : UserControlControlBuilder
+{
+    internal const String AutoTemplatePrefix = "Template_";
+}
+
+
+/// <devdoc>
+///    Default ControlBuilder used to parse master page files. Note that this class inherits from FileLevelPageControlBuilder
+///    to reuse masterpage handling code.
+/// </devdoc>
+public class FileLevelMasterPageControlBuilder : FileLevelPageControlBuilder
+{
+
+    internal override void AddContentTemplate(object obj, string templateName, ITemplate template)
+    {
+        MasterPage master = (MasterPage)obj;
+        master.AddContentTemplate(templateName, template);
+    }
+}
+
+
 /// <devdoc>
 ///    <para>This class is not marked as abstract, because the VS designer
 ///          needs to instantiate it when opening .master files</para>
 /// </devdoc>
 [
 Designer("Microsoft.VisualStudio.Web.WebForms.MasterPageWebFormDesigner, " + AssemblyRef.MicrosoftVisualStudioWeb, typeof(IRootDesigner)),
+ControlBuilder(typeof(MasterPageControlBuilder)),
 ParseChildren(false)
 ]
 public class MasterPage : UserControl

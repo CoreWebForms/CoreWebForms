@@ -3,6 +3,7 @@
 using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.ComponentModel.Design.Serialization;
+using System.Diagnostics;
 using System.Web.Caching;
 using System.Web.ModelBinding;
 using System.Web.SessionState;
@@ -14,11 +15,70 @@ using System.Web.SessionState;
  */
 
 namespace System.Web.UI;
+
+
+
+/// <devdoc>
+///   <para>The ControlBuilder associated with a UserControl. If you want a custom ControlBuilder for your
+///     derived UserControl, you should derive it from UserControlControlBuilder.
+///   </para>
+/// </devdoc>
+public class UserControlControlBuilder : ControlBuilder
+{
+
+    private string _innerText;
+
+
+    /// <internalonly/>
+    public override object BuildObject()
+    {
+        object o = base.BuildObject();
+
+        if (InDesigner)
+        {
+            IUserControlDesignerAccessor designerAccessor = (IUserControlDesignerAccessor)o;
+
+            designerAccessor.TagName = TagName;
+            if (_innerText != null)
+            {
+                designerAccessor.InnerText = _innerText;
+            }
+        }
+        return o;
+    }
+
+
+    /// <internalonly/>
+    public override bool NeedsTagInnerText()
+    {
+        // in design-mode, we need to hang on to the inner text
+        return InDesigner;
+    }
+
+
+    /// <internalonly/>
+    public override void SetTagInnerText(string text)
+    {
+        Debug.Assert(InDesigner == true, "Should only be called in design-mode!");
+        _innerText = text;
+    }
+}
+
+
+/// <devdoc>
+///    Default ControlBuilder used to parse user controls files.
+/// </devdoc>
+public class FileLevelUserControlBuilder : RootBuilder
+{
+}
+
+
 /// <devdoc>
 ///    <para>This class is not marked as abstract, because the VS designer
 ///          needs to instantiate it when opening .ascx files</para> 
 /// </devdoc>
 [
+ControlBuilder(typeof(UserControlControlBuilder)),
 DefaultEvent("Load"),
 Designer("System.Web.UI.Design.UserControlDesigner, " + AssemblyRef.SystemDesign, typeof(IDesigner)),
 Designer("Microsoft.VisualStudio.Web.WebForms.WebFormDesigner, " + AssemblyRef.MicrosoftVisualStudioWeb, typeof(IRootDesigner)),
