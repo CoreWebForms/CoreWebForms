@@ -203,7 +203,7 @@ public sealed class ObjectTagBuilder : ControlBuilder
         get { return _type; }
     }
 
-    internal bool LateBound
+    internal static bool LateBound
     {
 #if PORT_LATEBINDING
         get { return _lateBound; }

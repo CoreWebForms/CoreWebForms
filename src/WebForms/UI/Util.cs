@@ -43,16 +43,19 @@ internal static class Util
         }
 
         if (propInfo == null)
+        {
             return null;
+        }
 
         // If it doesn't have a setter, ot if it's private, fail
         MethodInfo methodInfo = propInfo.GetSetMethod(true /*nonPublic*/);
         if (methodInfo == null || methodInfo.IsPrivate)
+        {
             return null;
+        }
 
         return propInfo.PropertyType;
     }
-
 
     internal static Type GetNonPrivateFieldType(Type classType, string fieldName)
     {
@@ -60,7 +63,9 @@ internal static class Util
             BindingFlags.IgnoreCase | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
 
         if (fieldInfo == null || fieldInfo.IsPrivate)
+        {
             return null;
+        }
 
         return fieldInfo.FieldType;
     }
@@ -71,7 +76,9 @@ internal static class Util
     internal static string MakeFullTypeName(string ns, string typeName)
     {
         if (String.IsNullOrEmpty(ns))
+        {
             return typeName;
+        }
 
         return ns + "." + typeName;
     }
@@ -88,17 +95,22 @@ internal static class Util
         {
             // Make sure it doesn't start with a digit (ASURT 31134)
             if (i == 0 && Char.IsDigit(s[0]))
+            {
                 sb.Append('_');
+            }
 
             if (Char.IsLetterOrDigit(s[i]))
+            {
                 sb.Append(s[i]);
+            }
             else
+            {
                 sb.Append('_');
+            }
         }
 
         return sb.ToString();
     }
-
 
     internal static bool IsMultiInstanceTemplateProperty(PropertyInfo pInfo)
     {
