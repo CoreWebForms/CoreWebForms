@@ -5,8 +5,6 @@ using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Diagnostics;
 using System.Globalization;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 
 /*
  * MasterPage class definition

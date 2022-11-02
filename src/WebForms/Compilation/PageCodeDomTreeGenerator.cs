@@ -14,13 +14,12 @@ internal class PageCodeDomTreeGenerator : TemplateControlCodeDomTreeGenerator
 {
 
     private readonly PageParser _pageParser;
-    PageParser Parser { get { return _pageParser; } }
+    new PageParser Parser { get { return _pageParser; } }
 
     private const string fileDependenciesName = "__fileDependencies";
     private const string dependenciesLocalName = "dependencies";
     private const string outputCacheSettingsLocalName = "outputCacheSettings";
     private const string _previousPagePropertyName = "PreviousPage";
-    private const string _masterPropertyName = "Master";
     private const string _styleSheetThemePropertyName = "StyleSheetTheme";
     private const string outputCacheSettingsFieldName = "__outputCacheSettings";
 

@@ -37,7 +37,7 @@ internal class PagesSection
     public static PagesSection Instance { get; } = new();
     public static IEnumerable<TagNamespaceRegisterEntry> DefaultTagNamespaceRegisterEntries { get; internal set; }
     public IDictionary IgnoreDeviceFilters { get; } = new Hashtable();
-    
+
     public string MasterPageFileInternal { get; internal set; } = string.Empty;
     public TagNamespaceRegisterEntryTable TagNamespaceRegisterEntriesInternal { get; } = new();
     public Hashtable UserControlRegisterEntriesInternal { get; } = new();

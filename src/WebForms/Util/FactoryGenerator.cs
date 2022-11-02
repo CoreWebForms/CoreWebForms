@@ -59,8 +59,6 @@ internal class FactoryGenerator
     private readonly Type _factoryInterface;
     private readonly Type _returnedType;
     private readonly MethodInfo _methodToOverride;
-#pragma warning disable CS0649
-    private readonly ModuleBuilder _dynamicModule;
 #pragma warning restore CS0649
     private readonly Type[] _interfacesToImplement;
 
@@ -111,80 +109,7 @@ internal class FactoryGenerator
         return Guid.NewGuid().ToString().Replace('-', '_');
     }
 
-    Type GetFactoryTypeWithAssert(Type type)
-    {
-        CheckPublicParameterlessConstructor(type);
-
-        // Create the dynamic assembly if needed.
-        Type factoryType;
-
-        if (_dynamicModule == null)
-        {
-            lock (this)
-            {
-                if (_dynamicModule == null)
-                {
-
-                    // Use a unique name for each assembly.
-                    String name = GetUniqueCompilationName();
-
-                    AssemblyName assemblyName = new AssemblyName();
-                    assemblyName.Name = "A_" + name;
-
-#if PORT_DYNAMICASSEMBLY
-                    // Create a new assembly.
-                    AssemblyBuilder newAssembly =
-                       Thread.GetDomain().DefineDynamicAssembly(assemblyName,
-                                                                AssemblyBuilderAccess.Run,
-                                                                null, //directory to persist assembly
-                                                                true, //isSynchronized
-                                                                null  //assembly attributes
-                                                                );
-
-                    // Create a single module in the assembly.
-                    _dynamicModule = newAssembly.DefineDynamicModule("M_" + name);
-#else
-                    throw new NotImplementedException();
-#endif
-                }
-            }
-        }
-
-        // Give the factory a unique name.
-
-        String typeName = GetUniqueCompilationName();
-        TypeBuilder factoryTypeBuilder = _dynamicModule.DefineType("T_" + typeName,
-                                                                   TypeAttributes.Public,
-                                                                   typeof(Object),
-                                                                   _interfacesToImplement);
-
-        // Define the CreateInstance method. It must be virtual to be an interface implementation.
-
-        MethodBuilder method = factoryTypeBuilder.DefineMethod("CreateInstance",
-                                                               MethodAttributes.Public |
-                                                                    MethodAttributes.Virtual,
-                                                               _returnedType,
-                                                               null);
-
-        // Generate IL. The generated IL corresponds to "return new type()"
-        //      newobj <type_constructor>
-        //      ret
-
-        ILGenerator il = method.GetILGenerator();
-        ConstructorInfo cons = type.GetConstructor(Type.EmptyTypes);
-        il.Emit(OpCodes.Newobj, cons);
-        il.Emit(OpCodes.Ret);
-
-        // Specify that this method implements CreateInstance from the inherited interface.
-        factoryTypeBuilder.DefineMethodOverride(method, _methodToOverride);
-
-        // Bake in the type.
-        factoryType = factoryTypeBuilder.CreateType();
-
-        return factoryType;
-    }
-
-    internal IWebObjectFactory CreateFactory(Type type)
+    internal static IWebObjectFactory CreateFactory(Type type)
     {
         //Type factoryType = GetFactoryTypeWithAssert(type);
 

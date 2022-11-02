@@ -46,7 +46,7 @@ internal abstract class BaseTemplateCodeDomTreeGenerator : BaseCodeDomTreeGenera
         _parser = parser;
     }
 
-    private TemplateParser Parser
+    private new TemplateParser Parser
     {
         get
         {

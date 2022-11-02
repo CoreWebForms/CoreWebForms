@@ -1,4 +1,4 @@
-﻿// MIT License.
+// MIT License.
 
 using System.Runtime.Loader;
 using Microsoft.AspNetCore.Http;

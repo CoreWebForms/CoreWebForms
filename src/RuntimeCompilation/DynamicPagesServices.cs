@@ -37,7 +37,7 @@ public static class DynamicPagesServices
         return services;
     }
 
-    private class ParserSetting : IStartupFilter
+    private sealed class ParserSetting : IStartupFilter
     {
         private readonly IOptions<PageCompilationOptions> _options;
 

@@ -1994,7 +1994,7 @@ public class ControlBuilder
                 if (cba.BuilderType.IsPublic)
                 {
                     // If the builder type is public, codegen a fast factory for it
-                    factory = s_controlBuilderFactoryGenerator.CreateFactory(cba.BuilderType);
+                    factory = FactoryGenerator.CreateFactory(cba.BuilderType);
                 }
                 else
                 {

@@ -16,7 +16,8 @@ internal abstract class TemplateControlCodeDomTreeGenerator : BaseTemplateCodeDo
     private const string stringResourcePointerName = "__stringResource";
 
     private readonly TemplateControlParser _tcParser;
-    private TemplateControlParser Parser { get { return _tcParser; } }
+
+    private new TemplateControlParser Parser { get { return _tcParser; } }
 
     // This is used to detect incorrect base class in code beside scenarios.  See usage for details.
     internal const int badBaseClassLineMarker = 912304;
@@ -290,7 +291,7 @@ internal abstract class TemplateControlCodeDomTreeGenerator : BaseTemplateCodeDo
     /*
      * Build the ApplicationInstance property
      */
-    private void BuildApplicationInstanceProperty()
+    private static void BuildApplicationInstanceProperty()
     {
 #if PORT_BUILD
         CodeMemberProperty prop;

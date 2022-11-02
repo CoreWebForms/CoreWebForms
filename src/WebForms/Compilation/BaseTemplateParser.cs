@@ -13,8 +13,6 @@ using System.Collections;
 using System.ComponentModel.Design;
 using System.Diagnostics;
 using System.Web.Util;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using HttpException = System.Web.HttpException;
 
 /*

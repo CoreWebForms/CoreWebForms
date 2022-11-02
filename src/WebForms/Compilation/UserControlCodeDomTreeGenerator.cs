@@ -9,7 +9,8 @@ internal class UserControlCodeDomTreeGenerator : TemplateControlCodeDomTreeGener
 {
 
     protected UserControlParser _ucParser;
-    UserControlParser Parser { get { return _ucParser; } }
+
+    new UserControlParser Parser { get { return _ucParser; } }
 
     internal UserControlCodeDomTreeGenerator(UserControlParser ucParser) : base(ucParser)
     {
