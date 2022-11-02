@@ -47,7 +47,7 @@ internal sealed class VirtualPath
         => vpath.Path;
 
     internal static string GetVirtualPathString(VirtualPath vpath)
-        => vpath.Path;
+        => vpath?.Path;
 
     internal string GetAppRelativeVirtualPathString(VirtualPath templateControlVirtualPath)
     {
@@ -86,7 +86,7 @@ internal static class VirtualPathProvider
             result = Path.Combine(Path.GetDirectoryName(templateControlVirtualPath.Path), masterPageFile.Path);
         }
 
-        return result;
+        return result.TrimStart('/');
     }
 }
 

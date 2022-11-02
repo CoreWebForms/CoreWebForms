@@ -4,6 +4,7 @@
 
 using System.Reflection;
 using System.Reflection.Emit;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace System.Web.Util;
 
@@ -185,11 +186,26 @@ internal class FactoryGenerator
 
     internal IWebObjectFactory CreateFactory(Type type)
     {
-        Type factoryType = GetFactoryTypeWithAssert(type);
+        //Type factoryType = GetFactoryTypeWithAssert(type);
 
         // Create the type. This is the only place where Activator.CreateInstance is used,
         // reducing the calls to it from 1 per instance to 1 per type.
-        return (IWebObjectFactory)Activator.CreateInstance(factoryType);
+        //return (IWebObjectFactory)Activator.CreateInstance(factoryType);
+        return new Factory(type);
+    }
+
+    private class Factory : IWebObjectFactory, IServiceProvider
+    {
+        private readonly ObjectFactory _factory;
+
+        public Factory(Type type) => _factory = ActivatorUtilities.CreateFactory(type, Array.Empty<Type>());
+
+        public object CreateInstance() => _factory(this, null);
+
+        object IServiceProvider.GetService(Type serviceType)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
 

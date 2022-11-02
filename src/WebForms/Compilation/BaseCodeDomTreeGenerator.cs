@@ -19,6 +19,7 @@ using System;
 using System.CodeDom;
 using System.CodeDom.Compiler;
 using System.Collections;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -64,8 +65,7 @@ internal abstract class BaseCodeDomTreeGenerator
 
     private const string InitMethodName = "__Init";
 
-    private readonly TemplateParser _parser;
-    TemplateParser Parser { get { return _parser; } }
+    public TemplateParser Parser { get; }
 
     // We generate different code for the designer
     protected bool _designerMode;
@@ -158,7 +158,7 @@ protected void AppendDebugComment(CodeStatementCollection statements) {
      */
     protected BaseCodeDomTreeGenerator(TemplateParser parser)
     {
-        _parser = parser;
+        Parser = parser;
 
         Debug.Assert(Parser.BaseType != null);
     }
@@ -178,44 +178,7 @@ protected void AppendDebugComment(CodeStatementCollection statements) {
     /// <devdoc>
     ///     Create a name for the generated class
     /// </devdoc>
-    protected virtual string GetGeneratedClassName()
-    {
-        string className;
-
-        // If the user specified the class name, just use that
-        if (Parser.GeneratedClassName != null)
-        {
-            return Parser.GeneratedClassName;
-        }
-
-        // Use the input file name to generate the class name
-
-        className = _virtualPath.FileName;
-
-        // Prepend the class name with the directory path within the app (DevDiv 42063)
-        string appRelVirtualDir = _virtualPath.Parent.AppRelativeVirtualPathStringOrNull;
-        if (appRelVirtualDir != null)
-        {
-            //Debug.Assert(UrlPath.IsAppRelativePath(appRelVirtualDir));
-            className = string.Concat(appRelVirtualDir.AsSpan(2), className);
-        }
-
-        // Change invalid chars to underscores
-        className = Util.MakeValidTypeNameFromString(className);
-
-        // Make it lower case to make it more predictable (VSWhidbey 503369)
-        className = className.ToLowerInvariant();
-
-        // If it's the same as the base type name, prepend it with an underscore to prevent
-        // a compile error.
-        string baseTypeName = Parser.BaseTypeName != null ? Parser.BaseTypeName : Parser.BaseType.Name;
-        if (StringUtil.EqualsIgnoreCase(className, baseTypeName))
-        {
-            className = "_" + className;
-        }
-
-        return className;
-    }
+    protected string GetGeneratedClassName() => System.Web.UI.Util.MakeValidTypeNameFromString(_virtualPath.Path);
 
     internal static bool IsAspNetNamespace(string ns)
     {

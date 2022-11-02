@@ -91,6 +91,8 @@ internal static class Util
     {
         StringBuilder sb = new StringBuilder();
 
+        sb.Append("__");
+
         for (int i = 0; i < s.Length; i++)
         {
             // Make sure it doesn't start with a digit (ASURT 31134)

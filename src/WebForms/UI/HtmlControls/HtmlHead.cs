@@ -7,7 +7,6 @@ using System.Web.UI.WebControls;
 namespace System.Web.UI.HtmlControls;
 public class HtmlHeadBuilder : ControlBuilder
 {
-
     public override Type GetChildControlType(string tagName, IDictionary attribs)
     {
         if (String.Equals(tagName, "title", StringComparison.OrdinalIgnoreCase))

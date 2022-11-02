@@ -5,6 +5,8 @@ using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Diagnostics;
 using System.Globalization;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 /*
  * MasterPage class definition
@@ -159,18 +161,21 @@ public class MasterPage : UserControl
     // NOTE: This was done in the Builder on ASP.NET Framework
     private void SetContentPlaceHolders()
     {
-        var e = ContentTemplates.GetEnumerator();
-
-        while (e.MoveNext())
+        if (Context.Items["Parser"] is string str && str == "Custom")
         {
-            if (e.Key is string id && e.Value is ITemplate template && FindControl(id) is { } control)
-            {
-                InstantiateInContentPlaceHolder(control, template);
+            var e = ContentTemplates.GetEnumerator();
 
-                // TODO: Workaround to handle databinding issue
-                if (template is TemplateControl tControl)
+            while (e.MoveNext())
+            {
+                if (e.Key is string id && e.Value is ITemplate template && FindControl(id) is { } control)
                 {
-                    control.TemplateControl = tControl;
+                    InstantiateInContentPlaceHolder(control, template);
+
+                    // TODO: Workaround to handle databinding issue
+                    if (template is TemplateControl tControl)
+                    {
+                        control.TemplateControl = tControl;
+                    }
                 }
             }
         }

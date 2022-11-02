@@ -335,14 +335,6 @@ internal class PageThemeCodeDomTreeGenerator : BaseTemplateCodeDomTreeGenerator
         return assign;
     }
 
-    protected override string GetGeneratedClassName()
-    {
-        string className = _themeParser.VirtualDirPath.FileName;
-        className = System.Web.UI.Util.MakeValidTypeNameFromString(className);
-
-        return className;
-    }
-
     protected override bool UseResourceLiteralString(string s)
     {
         // never use resource literal string, page theme does not support the required methods.

@@ -30,7 +30,7 @@ internal readonly struct DirectiveDetails
 
     public string Title => GetAttribute();
 
-    public string CodeBehind => GetAttribute();
+    public string CodeBehind => GetAttribute() ?? GetAttribute("CodeFile");
 
     private string GetAttribute([CallerMemberName] string name = null!)
         => _directive.Attributes[name];

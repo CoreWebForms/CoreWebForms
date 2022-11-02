@@ -34,48 +34,99 @@ internal sealed class SystemWebCompilation : IPageCompiler
     }
 
     public Task<ICompiledPage> CompilePageAsync(IFileProvider files, string path, CancellationToken token)
-        => Task.FromResult(CompilePage(files, path, token));
-
+    {
+        try
+        {
+            return Task.FromResult(CompilePage(files, path, token));
+        }
+        catch (Exception e)
+        {
+            throw;
+        }
+    }
     private ICompiledPage CompilePage(IFileProvider files, string path, CancellationToken token)
     {
-        var parser = new PageParser();
-        parser.AddAssemblyDependency("SystemWebUISample", true);
-        parser.Parse(Array.Empty<string>(), path);
+        var queue = new Queue<string>();
+        queue.Enqueue(path);
 
-        var generator = new PageCodeDomTreeGenerator(parser);
         var provider = CodeDomProvider.CreateProvider("CSharp");
-        var cu = generator.GetCodeDomTree(provider, new System.Web.StringResourceBuilder(), path);
+        var embedded = new List<EmbeddedText>();
+        var trees = new List<SyntaxTree>();
+        string typeName = null!;
 
-        var writer = new StringWriter();
-        provider.GenerateCodeFromCompileUnit(cu, writer, new());
-        var source = SourceText.From(writer.ToString(), Encoding.UTF8);
-
-        var sourceTree = CSharpSyntaxTree.ParseText(source, path: "source.cs", cancellationToken: token);
-        var trees = new List<SyntaxTree> { sourceTree };
-        var embedded = new List<EmbeddedText> { EmbeddedText.FromSource("source.cs", source) };
-
-        foreach (var dep in parser.SourceDependencies)
+        static BaseCodeDomTreeGenerator CreateGenerator(string path)
         {
-            if (dep is string p && files.GetFileInfo(p) is { Exists: true, IsDirectory: false } file)
-            {
-                using var stream = file.CreateReadStream();
+            var extension = Path.GetExtension(path).ToLower();
 
-                if (p.EndsWith(".cs", StringComparison.OrdinalIgnoreCase) || p.EndsWith(".vb", StringComparison.OrdinalIgnoreCase))
+            return extension switch
+            {
+                ".aspx" => CreateFromPage(path),
+                ".master" => CreateFromMasterPage(path),
+                _ => throw new NotImplementedException(),
+            };
+
+            static BaseCodeDomTreeGenerator CreateFromPage(string path)
+            {
+                var parser = new PageParser();
+                parser.AddAssemblyDependency(Assembly.GetEntryAssembly(), true);
+                parser.Parse(Array.Empty<string>(), path);
+
+                return new PageCodeDomTreeGenerator(parser);
+            }
+            static BaseCodeDomTreeGenerator CreateFromMasterPage(string path)
+            {
+                var parser = new MasterPageParser();
+                parser.AddAssemblyDependency(Assembly.GetEntryAssembly(), true);
+                parser.Parse(Array.Empty<string>(), path);
+
+                return new MasterPageCodeDomTreeGenerator(parser);
+            }
+        }
+
+        while (queue.Count > 0)
+        {
+            var currentPath = queue.Dequeue();
+            var generator = CreateGenerator(currentPath);
+            var cu = generator.GetCodeDomTree(provider, new System.Web.StringResourceBuilder(), currentPath);
+
+            using var writer = new StringWriter();
+            provider.GenerateCodeFromCompileUnit(cu, writer, new());
+            var source = SourceText.From(writer.ToString(), Encoding.UTF8);
+
+            var sourceTree = CSharpSyntaxTree.ParseText(source, path: "source.cs", cancellationToken: token);
+
+            trees.Add(sourceTree);
+            embedded.Add(EmbeddedText.FromSource("source.cs", source));
+
+            typeName ??= generator.GetInstantiatableFullTypeName();
+
+            foreach (var dep in generator.Parser.SourceDependencies)
+            {
+                if (dep is string p && files.GetFileInfo(p) is { Exists: true, IsDirectory: false } file)
                 {
-                    var sourceText = SourceText.From(stream, canBeEmbedded: true);
-                    trees.Add(CSharpSyntaxTree.ParseText(sourceText, cancellationToken: token));
-                    embedded.Add(EmbeddedText.FromSource(p, sourceText));
+                    using var stream = file.CreateReadStream();
+
+                    if (p.EndsWith(".cs", StringComparison.OrdinalIgnoreCase) || p.EndsWith(".vb", StringComparison.OrdinalIgnoreCase))
+                    {
+                        var sourceText = SourceText.From(stream, canBeEmbedded: true);
+                        trees.Add(CSharpSyntaxTree.ParseText(sourceText, cancellationToken: token));
+                        embedded.Add(EmbeddedText.FromSource(p, sourceText));
+                    }
+                    else
+                    {
+                        embedded.Add(EmbeddedText.FromStream(p, stream));
+                    }
                 }
-                else
-                {
-                    embedded.Add(EmbeddedText.FromStream(p, stream));
-                }
+            }
+
+            if (generator.Parser is PageParser { MasterPage: { } master })
+            {
+                queue.Enqueue(master.Path);
             }
         }
 
         var references = GetMetadataReferences();
 
-        var typeName = generator.GetInstantiatableFullTypeName();
         var compilation = CSharpCompilation.Create($"WebForms.{typeName}",
             options: new CSharpCompilationOptions(
                 outputKind: OutputKind.DynamicallyLinkedLibrary,

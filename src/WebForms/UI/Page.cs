@@ -953,7 +953,8 @@ public class Page : TemplateControl, IHttpAsyncHandler
 
     protected virtual MasterPage CreateMasterPage() => null;
 
-#if PORT_MASTERPAGE_PATH
+    private VirtualPath _masterPageFile;
+
     /// <devdoc>
     ///    <para>Gets and sets the masterPageFile of this Page.</para>
     /// </devdoc>
@@ -987,7 +988,6 @@ public class Page : TemplateControl, IHttpAsyncHandler
             }
         }
     }
-#endif
 
     [
     Browsable(false),

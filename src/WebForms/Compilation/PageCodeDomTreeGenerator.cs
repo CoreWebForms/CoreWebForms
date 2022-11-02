@@ -362,10 +362,15 @@ internal class PageCodeDomTreeGenerator : TemplateControlCodeDomTreeGenerator
             BuildStronglyTypedProperty(_previousPagePropertyName, Parser.PreviousPageType);
         }
 
-        if (Parser.MasterPageType != null)
+        if (Parser.MasterPage is { } master)
         {
-            BuildStronglyTypedProperty(_masterPropertyName, Parser.MasterPageType);
+            BuildMasterPageFactory(master);
         }
+
+        //if (Parser.MasterPage != null)
+        //{
+        //    BuildStronglyTypedProperty(_masterPropertyName, Parser.MasterPage);
+        //}
     }
 
     /*
