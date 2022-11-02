@@ -44,10 +44,10 @@ internal class PagesSection
     public NamespaceCollection Namespaces { get; } = new();
     public TagMappingCollection TagMapping { get; } = new();
     public bool AutoEventWireup { get; internal set; }
-    public bool EnableViewState { get; internal set; }
+    public bool EnableViewState { get; internal set; } = true;
     public CompilationMode CompilationMode { get; internal set; }
     public bool Buffer { get; internal set; }
-    public bool EnableViewStateMac { get; internal set; }
+    public bool EnableViewStateMac { get; internal set; } = true;
     public bool EnableEventValidation { get; internal set; }
     public object ThemeInternal { get; internal set; }
     public string Theme { get; internal set; }

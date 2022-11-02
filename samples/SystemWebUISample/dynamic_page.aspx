@@ -1,4 +1,4 @@
-<%@ Page Title="Home Page" Language="C#" AutoEventWireup="true" MasterPageFile="~/Site.Master" CodeFile="dynamic_page.aspx.cs" EnableViewState="true" Inherits="SystemWebUISample.Pages.DynamicPage" %>
+<%@ Page Title="Home Page" Language="C#" AutoEventWireup="true" MasterPageFile="~/Site.Master" CodeFile="dynamic_page.aspx.cs" Inherits="SystemWebUISample.Pages.DynamicPage" %>
 
 <script runat="server">
     protected void Page_PreInit(object sender, EventArgs e)
