@@ -2718,7 +2718,12 @@ private Match RunTextRegex(string text, int textPos) {
         }
         else
         {
-            _namespaceEntries = new Hashtable();
+            _namespaceEntries = new Hashtable
+            {
+                { "System", new NamespaceEntry { Namespace = "System" } },
+                { "System.Web", new NamespaceEntry { Namespace = "System.Web" } },
+                { "System.Web.UI", new NamespaceEntry { Namespace = "System.Web.UI" } },
+            };
         }
 
         NamespaceEntry namespaceEntry = new NamespaceEntry();

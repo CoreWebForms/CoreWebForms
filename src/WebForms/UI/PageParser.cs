@@ -76,6 +76,7 @@ public sealed class PageParser : TemplateControlParser
         flags[buffer] = Page.BufferDefault;
         flags[requiresSessionState] = true;
         flags[validateRequest] = true;
+        flags[asyncMode] = true;
     }
 
     // Only allowed in full trust (ASURT 123086)

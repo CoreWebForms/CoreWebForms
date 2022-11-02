@@ -10,6 +10,7 @@ using System.Web.Compilation;
 using System.Web.UI;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Text;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -33,9 +34,9 @@ internal sealed class SystemWebCompilation : IPageCompiler
     }
 
     public Task<ICompiledPage> CompilePageAsync(IFileProvider files, string path, CancellationToken token)
-        => Task.FromResult(CompilePage(path, token));
+        => Task.FromResult(CompilePage(files, path, token));
 
-    private ICompiledPage CompilePage(string path, CancellationToken token)
+    private ICompiledPage CompilePage(IFileProvider files, string path, CancellationToken token)
     {
         var parser = new PageParser();
         parser.AddAssemblyDependency("SystemWebUISample", true);
@@ -47,9 +48,31 @@ internal sealed class SystemWebCompilation : IPageCompiler
 
         var writer = new StringWriter();
         provider.GenerateCodeFromCompileUnit(cu, writer, new());
-        var source = writer.ToString();
+        var source = SourceText.From(writer.ToString(), Encoding.UTF8);
 
-        var trees = new[] { CSharpSyntaxTree.ParseText(source, cancellationToken: token) };
+        var sourceTree = CSharpSyntaxTree.ParseText(source, path: "source.cs", cancellationToken: token);
+        var trees = new List<SyntaxTree> { sourceTree };
+        var embedded = new List<EmbeddedText> { EmbeddedText.FromSource("source.cs", source) };
+
+        foreach (var dep in parser.SourceDependencies)
+        {
+            if (dep is string p && files.GetFileInfo(p) is { Exists: true, IsDirectory: false } file)
+            {
+                using var stream = file.CreateReadStream();
+
+                if (p.EndsWith(".cs", StringComparison.OrdinalIgnoreCase) || p.EndsWith(".vb", StringComparison.OrdinalIgnoreCase))
+                {
+                    var sourceText = SourceText.From(stream, canBeEmbedded: true);
+                    trees.Add(CSharpSyntaxTree.ParseText(sourceText, cancellationToken: token));
+                    embedded.Add(EmbeddedText.FromSource(p, sourceText));
+                }
+                else
+                {
+                    embedded.Add(EmbeddedText.FromStream(p, stream));
+                }
+            }
+        }
+
         var references = GetMetadataReferences();
 
         var typeName = generator.GetInstantiatableFullTypeName();
@@ -64,6 +87,7 @@ internal sealed class SystemWebCompilation : IPageCompiler
         using var pdbStream = new MemoryStream();
 
         var result = compilation.Emit(
+            embeddedTexts: embedded,
             peStream: peStream,
             pdbStream: pdbStream,
             cancellationToken: token);

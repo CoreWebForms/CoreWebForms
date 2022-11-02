@@ -54,9 +54,9 @@ internal sealed class VirtualPath
         throw new NotImplementedException();
     }
 
-    internal VirtualPath CreateNonRelative(string value)
+    internal static VirtualPath CreateNonRelative(string value)
     {
-        throw new NotImplementedException();
+        return value;
     }
 
     internal Stream OpenFile() => File.OpenRead(Path);

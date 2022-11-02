@@ -54,7 +54,7 @@ internal class PagesSection
     public string StyleSheetThemeInternal { get; internal set; }
     public ViewStateEncryptionMode ViewStateEncryptionMode { get; internal set; }
     public bool MaintainScrollPositionOnPostBack { get; internal set; }
-    public int MaxPageStateFieldLength { get; internal set; }
+    public int MaxPageStateFieldLength { get; internal set; } = Page.DefaultMaxPageStateFieldLength;
     public PagesEnableSessionState EnableSessionState { get; internal set; }
     public bool ValidateRequest { get; internal set; }
     public Type PageBaseTypeInternal { get; internal set; }

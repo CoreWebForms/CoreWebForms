@@ -4185,6 +4185,7 @@ window.onload = WebForm_RestoreScrollPosition;
     {
         set { Response.AddFileDependencies(value); }
     }
+#endif
 
     /// <internalonly/>
     [EditorBrowsable(EditorBrowsableState.Never)]
@@ -4198,9 +4199,8 @@ window.onload = WebForm_RestoreScrollPosition;
     [EditorBrowsable(EditorBrowsableState.Never)]
     protected internal void AddWrappedFileDependencies(object virtualFileDependencies)
     {
-        Response.AddVirtualPathDependencies((string[])virtualFileDependencies);
+        // TODO: do we need this?
     }
-#endif
 
     internal const bool BufferDefault = true;
 
