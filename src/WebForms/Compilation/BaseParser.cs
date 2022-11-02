@@ -76,7 +76,7 @@ public partial class BaseParser
     }
 
     internal static readonly Regex TagRegex = new("\\G<(?<tagname>[\\w:\\.]+)(\\s+(?<attrname>\\w[-\\w:]*)(\\s*=\\s*\"(?<attrval>[^\"]*)\"|\\s*=\\s*'(?<attrval>[^']*)'|\\s*=\\s*(?<attrval><%#.*?%>)|\\s*=\\s*(?<attrval>[^\\s=\"'/>]*)|(?<attrval>\\s*?)))*\\s*(?<empty>/)?>", RegexOptions.Multiline | RegexOptions.Singleline);
-    internal static readonly Regex directiveRegex = new("\\G<%\\s*@(\\s*(?<attrname>\\w[\\w:]*(?=\\W))(\\s*(?<equal>=)\\s*\"(?< attrval >[^\"]*)\"|\\s*(?<equal>=)\\s*'(?<attrval>[^']*)'|\\s*(?<equal>=)\\s*(?<attrval>[^\\s\"'%>]*)|(?<equal>)(?<attrval>\\s*?)))*\\s*?%>", RegexOptions.Multiline | RegexOptions.Singleline);
+    internal static readonly Regex directiveRegex = new("\\G<%\\s*@(\\s*(?<attrname>\\w[\\w:]*(?=\\W))(\\s*(?<equal>=)\\s*\"(?<attrval>[^\"]*)\"|\\s*(?<equal>=)\\s*'(?<attrval>[^']*)'|\\s*(?<equal>=)\\s*(?<attrval>[^\\s\"'%>]*)|(?<equal>)(?<attrval>\\s*?)))*\\s*?%>", RegexOptions.Multiline | RegexOptions.Singleline);
     internal static readonly Regex endtagRegex = new("\\G</(?<tagname>[\\w:\\.]+)\\s*>", RegexOptions.Multiline | RegexOptions.Singleline);
     internal static readonly Regex aspCodeRegex = new("\\G<%(?!@)(?<code>.*?)%>", RegexOptions.Multiline | RegexOptions.Singleline);
     internal static readonly Regex aspExprRegex = new("\\G<%\\s*?=(?<code>.*?)?%>", RegexOptions.Multiline | RegexOptions.Singleline);

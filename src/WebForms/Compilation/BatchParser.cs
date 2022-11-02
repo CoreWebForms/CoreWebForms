@@ -16,20 +16,13 @@ using HttpException = System.Web.HttpException;
 
 internal static class MTConfigUtil
 {
-    internal static CompilationSection GetCompilationAppConfig()
-    {
-        throw new NotImplementedException();
-    }
+    private static readonly CompilationSection _compilation = new();
 
-    internal static CompilationSection GetCompilationConfig(VirtualPath currentVirtualPath)
-    {
-        throw new NotImplementedException();
-    }
+    internal static CompilationSection GetCompilationAppConfig() => _compilation;
 
-    internal static CompilationSection GetCompilationConfig(HttpContext context)
-    {
-        throw new NotImplementedException();
-    }
+    internal static CompilationSection GetCompilationConfig(VirtualPath currentVirtualPath) => _compilation;
+
+    internal static CompilationSection GetCompilationConfig(HttpContext context) => _compilation;
 
     internal static PagesSection GetPagesConfig()
         => PagesSection.Instance;
@@ -43,13 +36,13 @@ internal class PagesSection
 {
     public static PagesSection Instance { get; } = new();
     public static IEnumerable<TagNamespaceRegisterEntry> DefaultTagNamespaceRegisterEntries { get; internal set; }
-    public IStringIndexCollection<string> IgnoreDeviceFilters { get; }
-
+    public IDictionary IgnoreDeviceFilters { get; } = new Hashtable();
+    
     public string MasterPageFileInternal { get; internal set; } = string.Empty;
-    public TagNamespaceRegisterEntryTable TagNamespaceRegisterEntriesInternal { get; internal set; }
-    public Hashtable UserControlRegisterEntriesInternal { get; internal set; }
-    public NamespaceCollection Namespaces { get; internal set; }
-    public TagMappingCollection TagMapping { get; internal set; }
+    public TagNamespaceRegisterEntryTable TagNamespaceRegisterEntriesInternal { get; } = new();
+    public Hashtable UserControlRegisterEntriesInternal { get; } = new();
+    public NamespaceCollection Namespaces { get; } = new();
+    public TagMappingCollection TagMapping { get; } = new();
     public bool AutoEventWireup { get; internal set; }
     public bool EnableViewState { get; internal set; }
     public CompilationMode CompilationMode { get; internal set; }

@@ -288,7 +288,6 @@ internal abstract class TemplateControlCodeDomTreeGenerator : BaseTemplateCodeDo
             appType, propRef)));
         _intermediateClass.Members.Add(prop);
 #else
-        throw new NotImplementedException("PORT_BUILD");
 #endif
     }
 

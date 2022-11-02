@@ -218,10 +218,12 @@ public sealed class PageParser : TemplateControlParser
             // Check config for various attributes, and if they have non-default values,
             // set them in _mainDirectiveConfigSettings.
 
+#if PORT_BUFFER
             if (PagesConfig.Buffer != Page.BufferDefault)
             {
                 _mainDirectiveConfigSettings["buffer"] = Util.GetStringFromBool(PagesConfig.Buffer);
             }
+#endif
 
             if (PagesConfig.EnableViewStateMac != Page.EnableViewStateMacDefault)
             {

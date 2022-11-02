@@ -303,6 +303,18 @@ internal class MainTagNameToTypeMapper
                 }
             }
         }
+
+        Initialize();
+    }
+
+    private void Initialize()
+    {
+        var builtin = new[]
+        {
+            new TagNamespaceRegisterEntry("asp", "System.Web.UI", typeof(Page).Assembly.FullName),
+            new TagNamespaceRegisterEntry("asp", "System.Web.UI.WebControls", typeof(Page).Assembly.FullName),
+        };
+        ProcessTagNamespaceRegistration(builtin);
     }
 
     internal ICollection UserControlRegisterEntries
@@ -354,7 +366,7 @@ internal class MainTagNameToTypeMapper
         ProcessTagNamespaceRegistrationCore(nsRegisterEntry);
     }
 
-    private void ProcessTagNamespaceRegistration(ArrayList nsRegisterEntries)
+    private void ProcessTagNamespaceRegistration(IEnumerable nsRegisterEntries)
     {
         foreach (TagNamespaceRegisterEntry nsRegisterEntry in nsRegisterEntries)
         {

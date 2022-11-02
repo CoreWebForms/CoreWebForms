@@ -22,12 +22,13 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
+using System.Runtime.Loader;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Web.Compilation;
 using System.Web.Util;
-
+using Microsoft.CSharp;
 using HttpException = System.Web.HttpException;
 
 public class CompilationSection
@@ -43,12 +44,18 @@ public class CompilationSection
 
     internal CompilerType GetCompilerInfoFromExtension(string extension, bool v)
     {
-        throw new NotImplementedException();
+        return new(typeof(CSharpCodeProvider), new()
+        {
+            IncludeDebugInformation = Debug,
+        });
     }
 
     internal CompilerType GetCompilerInfoFromLanguage(object defaultLanguage)
     {
-        throw new NotImplementedException();
+        return new(typeof(CSharpCodeProvider), new()
+        {
+            IncludeDebugInformation = Debug,
+        });
     }
 
     internal Assembly LoadAssembly(string assemblyName, bool throwOnFail)
@@ -2732,7 +2739,7 @@ private Match RunTextRegex(string text, int textPos) {
             return _typeResolutionService.GetAssembly(asmName, throwOnFail);
         }
 
-        return _compConfig.LoadAssembly(assemblyName, throwOnFail);
+        return AssemblyLoadContext.Default.LoadFromAssemblyName(new(assemblyName));
     }
 
     internal Type GetType(string typeName, bool ignoreCase)

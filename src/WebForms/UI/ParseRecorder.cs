@@ -48,24 +48,21 @@ public abstract class ParseRecorder
             }
         }
 
+#if PORT_PARSERECORDER
         // Support depedency injection in control type.
         // Have to replace the codeAssignStatement through a ParseRecorder,
         // because some existing ParseRecorder(e.g. PageInspector) may have hard dependency on the old codedom tree structure
         if (BinaryCompatibility.Current.TargetsAtLeastFramework472)
         {
-#if PORT_PARSERECORDER
             recorders.Add(new WebObjectActivatorParseRecorder());
         }
+#endif
 
         ParseRecorderList list = new ParseRecorderList(recorders);
 
         list.Initialize(parser);
 
         return list;
-#else
-            throw new NotImplementedException();
-        }
-#endif
     }
 
     /// <summary>

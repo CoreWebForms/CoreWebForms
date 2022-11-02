@@ -7,7 +7,6 @@ using System.Reflection;
 using System.Runtime.Loader;
 using System.Text;
 using System.Text.Json;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SystemWebAdapters.Compiler;
 using Microsoft.AspNetCore.SystemWebAdapters.Compiler.Symbols;
 using Microsoft.CodeAnalysis;
@@ -137,79 +136,6 @@ internal sealed class RoslynPageCompiler : IPageCompiler
         }
 
         return new CompiledPage(writingResult.File, dependentFiles) { Error = NotTypeFoundMessage };
-    }
-
-    private sealed class CompiledPage : ICompiledPage
-    {
-        public CompiledPage(PagePath path, string[] dependencies)
-        {
-            Path = path.UrlPath;
-            FileDependencies = dependencies;
-            AspxFile = path.FilePath;
-        }
-
-        public Type? Type { get; set; }
-
-        public Memory<byte> Error { get; set; }
-
-        public PathString Path { get; }
-
-        public IReadOnlyCollection<string> FileDependencies { get; }
-
-        public string AspxFile { get; }
-
-        public void Dispose()
-        {
-            if (Type is not null)
-            {
-                var type = Type;
-                Type = null;
-                RemovePage(type);
-            }
-        }
-
-        private static void RemovePage(Type type)
-        {
-            var alc = AssemblyLoadContext.GetLoadContext(type.Assembly);
-
-            if (alc is not PageAssemblyLoadContext)
-            {
-                throw new InvalidOperationException("Tried to unload something that is not a page");
-            }
-
-            alc.Unload();
-        }
-    }
-
-    private sealed class PageAssemblyLoadContext : AssemblyLoadContext
-    {
-        private readonly ILogger<PageAssemblyLoadContext> _logger;
-
-        private static long _count;
-
-        private static string GetName(string name)
-        {
-            var count = Interlocked.Increment(ref _count);
-
-            return $"WebForms:{name}:{count}";
-        }
-
-        public PageAssemblyLoadContext(string route, ILogger<PageAssemblyLoadContext> logger)
-            : base(GetName(route), isCollectible: true)
-        {
-            _logger = logger;
-
-            logger.LogInformation("Created assembly for {Path}", Name);
-
-            Unloading += PageAssemblyLoadContext_Unloading;
-        }
-
-        private void PageAssemblyLoadContext_Unloading(AssemblyLoadContext obj)
-        {
-            Unloading -= PageAssemblyLoadContext_Unloading;
-
-            _logger.LogInformation("Unloading assembly load context for {Path}", Name);
-        }
     }
 
     private readonly Dictionary<Assembly, MetadataReference> _references = new();

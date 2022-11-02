@@ -13,6 +13,8 @@ using System.Collections;
 using System.ComponentModel.Design;
 using System.Diagnostics;
 using System.Web.Util;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using HttpException = System.Web.HttpException;
 
 /*
@@ -188,7 +190,8 @@ public abstract class BaseTemplateParser : TemplateParser
 
         return t;
 #else
-        throw new NotImplementedException();
+        //.RequestServices.GetRequiredService<ILogger<BaseTemplateParser>>().LogWarning("GetReferenceType {Path}", virtualPath);
+        return null;
 #endif
     }
 

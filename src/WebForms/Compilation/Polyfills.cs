@@ -51,9 +51,17 @@ internal static class BuildManager
         throw new NotImplementedException();
     }
 
+    private static string tempDirectory;
     internal static TextWriter GetUpdatableDeploymentTargetWriter(VirtualPath currentVirtualPath, Encoding fileEncoding)
     {
-        throw new NotImplementedException();
+        if (tempDirectory is null)
+        {
+            tempDirectory = Path.Combine("W:", "temp", Guid.NewGuid().ToString());
+            Directory.CreateDirectory(tempDirectory);
+            Console.WriteLine($"Creating directory {tempDirectory}");
+        }
+
+        return new StreamWriter(File.OpenWrite(Path.Combine(tempDirectory, currentVirtualPath.FileName + ".tmp.cs")));
     }
 
     internal static object GetVPathBuildResult(VirtualPath virtualPath)
@@ -73,7 +81,6 @@ internal static class BuildManager
 
     internal static void ValidateCodeFileVirtualPath(VirtualPath codeFileVirtualPath)
     {
-        throw new NotImplementedException();
     }
 }
 

@@ -35,6 +35,8 @@ public class PageCompilationOptions
 
     internal IControlLookup Info => _controls;
 
+    public bool UseFrameworkParser { get; set; }
+
     private sealed class ControlCollection : IControlLookup
     {
         private readonly Dictionary<string, Dictionary<string, ControlInfo>> _info = new();

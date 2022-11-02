@@ -196,7 +196,7 @@ protected void AppendDebugComment(CodeStatementCollection statements) {
         string appRelVirtualDir = _virtualPath.Parent.AppRelativeVirtualPathStringOrNull;
         if (appRelVirtualDir != null)
         {
-            Debug.Assert(UrlPath.IsAppRelativePath(appRelVirtualDir));
+            //Debug.Assert(UrlPath.IsAppRelativePath(appRelVirtualDir));
             className = string.Concat(appRelVirtualDir.AsSpan(2), className);
         }
 
@@ -1000,11 +1000,11 @@ private void BuildSessionObjectProperties() {
                 }
             }
 #else
-            throw new NotImplementedException("PORT_ERRORFORMATTER");
+            pragmaFile = virtualPath;
 #endif
         }
 
-        return new CodeLinePragma(pragmaFile, lineNumber);
+        return new CodeLinePragma(pragmaFile, lineNumber == 0 ? 1 : lineNumber);
     }
 
     // Adds [DebuggerNonUserCode] to the method to prevent debugger from stepping into generated code
