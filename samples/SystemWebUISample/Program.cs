@@ -15,7 +15,7 @@ builder.Services.AddSystemWebAdapters()
     .AddWebForms()
     .AddDynamicPages(options =>
     {
-        options.UseFrameworkParser = false;
+        options.UseFrameworkParser = true;
         options.AddTypeNamespace(typeof(ScriptManager), "asp");
     });
 
