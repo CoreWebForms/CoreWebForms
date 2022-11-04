@@ -2207,6 +2207,11 @@ private Match RunTextRegex(string text, int textPos) {
     internal virtual bool ProcessMainDirectiveAttribute(string deviceName, string name,
         string value, IDictionary parseData)
     {
+        // TODO: [Porting] Handle this better
+        if (string.Equals(name, "codebehind", StringComparison.OrdinalIgnoreCase))
+        {
+            name = "codefile";
+        }
 
         switch (name)
         {
