@@ -29,11 +29,18 @@ jobs:
       run: dotnet test -c Release --no-build --verbosity normal
     - name: Pack
       run: dotnet pack -c Release --no-build
-    - name: Upload NuGet
-      run: dotnet nuget push --source https://nuget.pkg.github.com/twsouthwick/index.json -k ${{secrets.GITHUB_TOKEN}} bin/Release/packages/shipping/*.nupkg 
     - name: Upload artifact
       uses: actions/upload-artifact@v2.2.0
       with:
         path: |
           bin/Release/packages/shipping/*.nupkg 
           bin/Release/packages/shipping/*.snupkg 
+    - name: Push nuget package to Azure storage
+      env:
+        SLEET_FEED_TYPE: azure
+        SLEET_FEED_CONTAINER: feed
+        SLEET_FEED_CONNECTIONSTRING: ${{secrets.SLEET_CONNECTIONSTRING}}
+      run: |
+        cd $GITHUB_WORKSPACE/bin/Release/packages/shipping/
+        dotnet tool install -g sleet
+        sleet push . --skip-existing
