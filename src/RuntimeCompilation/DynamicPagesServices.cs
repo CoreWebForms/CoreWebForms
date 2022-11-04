@@ -42,6 +42,8 @@ public static class DynamicPagesServices
                 {
                     options.DefaultTagNamespaceRegisterEntries.Add(known);
                 }
+
+                options.EnableSessionState = System.Web.Configuration.PagesEnableSessionState.True;
             });
 
         return services;
