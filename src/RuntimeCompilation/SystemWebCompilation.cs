@@ -29,7 +29,12 @@ internal sealed class SystemWebCompilation : IPageCompiler, IDisposable
     private readonly ICompiler _csharp;
     private readonly ICompiler _vb;
 
-    public SystemWebCompilation(ILoggerFactory factory, IOptions<PageCompilationOptions> options, ILogger<SystemWebCompilation> logger)
+    public SystemWebCompilation(
+        ILoggerFactory factory,
+        IOptions<PageCompilationOptions> options,
+        IOptions<PagesSection> pagesSection,
+        IOptions<CompilationSection> compilationSection,
+        ILogger<SystemWebCompilation> logger)
     {
         _factory = factory;
         _options = options;
@@ -37,6 +42,10 @@ internal sealed class SystemWebCompilation : IPageCompiler, IDisposable
 
         _csharp = new CSharpCompiler();
         _vb = new VisualBasicCompiler();
+
+        // TODO: remove these statics and use DI
+        MTConfigUtil.Compilation = compilationSection.Value;
+        PagesSection.Instance = pagesSection.Value;
     }
 
     public Task<ICompiledPage> CompilePageAsync(IFileProvider files, string path, CancellationToken token)

@@ -167,14 +167,13 @@ internal class NamespaceTagNameToTypeMapper : ITagNameToTypeMapper
 
 internal class TagPrefixTagNameToTypeMapper : ITagNameToTypeMapper
 {
-
     private readonly string _tagPrefix;
-    private readonly ArrayList _mappers;
+    private readonly List<ITagNameToTypeMapper> _mappers;
 
     internal TagPrefixTagNameToTypeMapper(string tagPrefix)
     {
         _tagPrefix = tagPrefix;
-        _mappers = new ArrayList();
+        _mappers = new();
     }
 
     internal void AddNamespaceMapper(NamespaceTagNameToTypeMapper mapper)
@@ -187,9 +186,9 @@ internal class TagPrefixTagNameToTypeMapper : ITagNameToTypeMapper
         Type foundType = null;
         Exception loadException = null;
 
-        foreach (NamespaceTagNameToTypeMapper nsMapper in _mappers)
+        foreach (var nsMapper in _mappers)
         {
-            Type t = ((ITagNameToTypeMapper)nsMapper).GetControlType(tagName, attribs);
+            Type t = nsMapper.GetControlType(tagName, attribs);
             if (t != null)
             {
                 if (foundType == null)
@@ -198,8 +197,7 @@ internal class TagPrefixTagNameToTypeMapper : ITagNameToTypeMapper
                 }
                 else if (foundType != t)
                 {
-                    throw new HttpParseException(SR.GetString(SR.Ambiguous_server_tag, _tagPrefix + ":" + tagName),
-                                                 null, nsMapper.RegisterEntry.VirtualPath, null, nsMapper.RegisterEntry.Line);
+                    throw new HttpParseException(SR.GetString(SR.Ambiguous_server_tag, _tagPrefix + ":" + tagName), null);//, nsMapper.RegisterEntry.VirtualPath, null, nsMapper.RegisterEntry.Line);
                 }
             }
         }
@@ -272,49 +270,38 @@ internal class MainTagNameToTypeMapper
     {
         _parser = parser;
 
-        if (parser != null)
+        if (parser is { PagesConfig: { } pagesConfig })
         {
-            PagesSection pagesConfig = parser.PagesConfig;
-            if (pagesConfig != null)
+            // Clone it so we don't modify the config settings
+            _tagNamespaceRegisterEntries = pagesConfig.TagNamespaceRegisterEntriesInternal;
+            if (_tagNamespaceRegisterEntries != null)
             {
-                // Clone it so we don't modify the config settings
-                _tagNamespaceRegisterEntries = pagesConfig.TagNamespaceRegisterEntriesInternal;
-                if (_tagNamespaceRegisterEntries != null)
-                {
-                    _tagNamespaceRegisterEntries = (TagNamespaceRegisterEntryTable)_tagNamespaceRegisterEntries.Clone();
-                }
-
-                _userControlRegisterEntries = pagesConfig.UserControlRegisterEntriesInternal;
-                if (_userControlRegisterEntries != null)
-                {
-                    _userControlRegisterEntries = (Hashtable)_userControlRegisterEntries.Clone();
-                }
+                _tagNamespaceRegisterEntries = (TagNamespaceRegisterEntryTable)_tagNamespaceRegisterEntries.Clone();
             }
 
-            // 
+            _userControlRegisterEntries = pagesConfig.UserControlRegisterEntriesInternal;
+            if (_userControlRegisterEntries != null)
+            {
+                _userControlRegisterEntries = (Hashtable)_userControlRegisterEntries.Clone();
+            }
+
+            //
+
 
             if (parser.FInDesigner && (_tagNamespaceRegisterEntries == null))
             {
                 _tagNamespaceRegisterEntries = new TagNamespaceRegisterEntryTable();
 
-                foreach (TagNamespaceRegisterEntry entry in PagesSection.DefaultTagNamespaceRegisterEntries)
+                foreach (TagNamespaceRegisterEntry entry in pagesConfig.DefaultTagNamespaceRegisterEntries)
                 {
                     _tagNamespaceRegisterEntries[entry.TagPrefix] = new ArrayList(new object[] { entry });
                 }
             }
+            else
+            {
+                ProcessTagNamespaceRegistration(pagesConfig.DefaultTagNamespaceRegisterEntries);
+            }
         }
-
-        Initialize();
-    }
-
-    private void Initialize()
-    {
-        var builtin = new[]
-        {
-            new TagNamespaceRegisterEntry("asp", "System.Web.UI", typeof(Page).Assembly.FullName),
-            new TagNamespaceRegisterEntry("asp", "System.Web.UI.WebControls", typeof(Page).Assembly.FullName),
-        };
-        ProcessTagNamespaceRegistration(builtin);
     }
 
     internal ICollection UserControlRegisterEntries

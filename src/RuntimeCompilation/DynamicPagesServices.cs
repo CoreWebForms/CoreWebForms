@@ -1,7 +1,9 @@
 // MIT License.
 
+using System.Web.UI;
 using Microsoft.AspNetCore.SystemWebAdapters;
 using Microsoft.AspNetCore.SystemWebAdapters.UI.RuntimeCompilation;
+using Microsoft.Extensions.Options;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -16,6 +18,15 @@ public static class DynamicPagesServices
 
         services.Services.AddOptions<PageCompilationOptions>()
             .Configure(configure);
+
+        services.Services.AddOptions<PagesSection>()
+            .Configure<IOptions<PageCompilationOptions>>((options, compilation) =>
+            {
+                foreach (var known in compilation.Value.KnownTags)
+                {
+                    options.DefaultTagNamespaceRegisterEntries.Add(known);
+                }
+            });
 
         return services;
     }

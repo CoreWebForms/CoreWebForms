@@ -9,8 +9,10 @@ using System.Web.Configuration;
 // This used ConfigurationManager in framework
 internal class PagesSection
 {
-    public static PagesSection Instance { get; } = new();
-    public static IEnumerable<TagNamespaceRegisterEntry> DefaultTagNamespaceRegisterEntries { get; internal set; }
+    public static PagesSection Instance { get; set; }
+
+    public ICollection<TagNamespaceRegisterEntry> DefaultTagNamespaceRegisterEntries { get; } = new List<TagNamespaceRegisterEntry>();
+
     public IDictionary IgnoreDeviceFilters { get; } = new Hashtable();
 
     public string MasterPageFileInternal { get; internal set; } = string.Empty;
@@ -43,11 +45,6 @@ internal class PagesSection
     internal class NamespaceCollection
     {
         public Hashtable NamespaceEntries { get; internal set; }
-    }
-
-    public interface IStringIndexCollection<T> : IList<T>
-    {
-        public T this[string input] { get; }
     }
 
     internal static PageParserFilter CreateControlTypeFilter()

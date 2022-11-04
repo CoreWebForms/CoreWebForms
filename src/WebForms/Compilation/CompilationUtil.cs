@@ -14,24 +14,6 @@ internal static class CompilationUtil
 
     internal const string CodeDomProviderOptionPath = "system.codedom/compilers/compiler/ProviderOption/";
 
-    internal static bool IsDebuggingEnabled(HttpContext context)
-    {
-        CompilationSection compConfig = MTConfigUtil.GetCompilationConfig(context);
-        return compConfig.Debug;
-    }
-
-    internal static bool IsBatchingEnabled(string configPath)
-    {
-        CompilationSection config = MTConfigUtil.GetCompilationConfig(configPath);
-        return config.Batch;
-    }
-
-    internal static int GetRecompilationsBeforeAppRestarts()
-    {
-        CompilationSection config = MTConfigUtil.GetCompilationAppConfig();
-        return config.NumRecompilesBeforeAppRestart;
-    }
-
     internal static CompilerType GetCodeDefaultLanguageCompilerInfo()
     {
         return CompilerType.VisualBasic;

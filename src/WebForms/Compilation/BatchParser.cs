@@ -11,17 +11,13 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Web.Util;
 
-using HttpException = System.Web.HttpException;
-
 internal static class MTConfigUtil
 {
-    private static readonly CompilationSection _compilation = new();
+    public static CompilationSection Compilation { get; set; }
 
-    internal static CompilationSection GetCompilationAppConfig() => _compilation;
+    internal static CompilationSection GetCompilationAppConfig() => Compilation;
 
-    internal static CompilationSection GetCompilationConfig(VirtualPath currentVirtualPath) => _compilation;
-
-    internal static CompilationSection GetCompilationConfig(HttpContext context) => _compilation;
+    internal static CompilationSection GetCompilationConfig(VirtualPath currentVirtualPath) => GetCompilationAppConfig();
 
     internal static PagesSection GetPagesConfig()
         => PagesSection.Instance;
@@ -32,7 +28,6 @@ internal static class MTConfigUtil
 
 internal abstract class DependencyParser : BaseParser
 {
-
     private VirtualPath _virtualPath;
     private StringSet _virtualPathDependencies;
 

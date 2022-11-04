@@ -9,11 +9,14 @@ namespace Microsoft.AspNetCore.SystemWebAdapters.UI.RuntimeCompilation;
 
 public class PageCompilationOptions
 {
-    private readonly ControlCollection _controls;
+    private readonly HashSet<Assembly> _assemblies;
+
+    internal ICollection<TagNamespaceRegisterEntry> KnownTags { get; }
 
     public PageCompilationOptions()
     {
-        _controls = new();
+        _assemblies = new HashSet<Assembly>();
+        KnownTags = new List<TagNamespaceRegisterEntry>();
 
         // Ensure this assembly is loaded
         _ = typeof(HttpUtility).Assembly;
@@ -22,24 +25,15 @@ public class PageCompilationOptions
         AddTypeNamespace(typeof(TextBox), "asp");
     }
 
-    public IReadOnlyCollection<Assembly> Assemblies => _controls.Assemblies;
+    public IEnumerable<Assembly> Assemblies => _assemblies;
 
     public void AddTypeNamespace(Type type, string prefix)
         => AddAssembly(type.Assembly, type.Namespace ?? throw new InvalidOperationException(), prefix);
 
     internal void AddAssembly(Assembly assembly, string ns, string prefix)
-        => _controls.Add(assembly, ns, prefix);
-
-    private sealed class ControlCollection
     {
-        private readonly HashSet<Assembly> _assemblies = new();
-
-        public IReadOnlyCollection<Assembly> Assemblies => _assemblies;
-
-        public void Add(Assembly assembly, string ns, string prefix)
-        {
-            _assemblies.Add(assembly);
-        }
+        KnownTags.Add(new(prefix, ns, assembly.FullName));
+        _assemblies.Add(assembly);
     }
 }
 
