@@ -206,7 +206,7 @@ public sealed class HttpApplicationState : NameObjectCollectionBase
     /// </summary>
     public void UnLock() => _lock.ReleaseWrite();
 
-    private class HttpApplicationStateLock
+    private sealed class HttpApplicationStateLock
     {
         private readonly ReaderWriterLockSlim _lock;
 

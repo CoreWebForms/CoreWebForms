@@ -14,11 +14,12 @@ public static class HandlerServicesExtensions
     {
         services.Services.TryAddSingleton<IHttpHandlerEndpointFactory, HttpHandlerEndpointFactory>();
         services.Services.AddTransient<IStartupFilter, HttpHandlerStartupFilter>();
+        services.Services.AddSingleton(_ => new HttpApplicationState());
 
         return services;
     }
 
-    private class HttpHandlerStartupFilter : IStartupFilter
+    private sealed class HttpHandlerStartupFilter : IStartupFilter
     {
         public Action<IApplicationBuilder> Configure(Action<IApplicationBuilder> next)
             => builder =>

@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Http.Features;
 
 namespace Microsoft.AspNetCore.SystemWebAdapters;
 
-internal class HttpHandlerEndpointFeature : IHttpHandlerFeature, IEndpointFeature
+internal sealed class HttpHandlerEndpointFeature : IHttpHandlerFeature, IEndpointFeature
 {
     private readonly HttpContextCore _context;
 

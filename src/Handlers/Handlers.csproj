@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -11,10 +11,6 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.SystemWebAdapters.CoreServices" Version="1.0.0-rc.2.22503.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <InternalsVisibleTo Include="Microsoft.AspNetCore.SystemWebAdapters.UI" />
   </ItemGroup>
 
   <ItemGroup>

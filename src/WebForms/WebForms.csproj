@@ -1,11 +1,11 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <IsShipped>true</IsShipped>
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>disable</Nullable>
-    <AssemblyName>Microsoft.AspNetCore.SystemWebAdapters.UI</AssemblyName>
+    <AssemblyName>WebForms</AssemblyName>
     <RootNamespace>System.Web</RootNamespace>
   </PropertyGroup>
 
@@ -24,21 +24,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <InternalsVisibleTo Include="WebForms.Compilation" />
+    <InternalsVisibleTo Include="WebForms.Extensions" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="System.CodeDom" Version="6.0.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <InternalsVisibleTo Include="Microsoft.AspNetCore.SystemWebAdapters.UI.DynamicCompilation" />
-    <InternalsVisibleTo Include="Microsoft.AspNetCore.SystemWebAdapters.UI.Compiler2"/>
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.SystemWebAdapters" Version="1.0.0-rc.2.22503.1" />
     <PackageReference Include="Microsoft.AspNetCore.SystemWebAdapters.CoreServices" Version="1.0.0-rc.2.22503.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <InternalsVisibleTo Include="Microsoft.AspNetCore.SystemWebAdapters.UI.Extensions" />
   </ItemGroup>
 
   <ItemGroup>

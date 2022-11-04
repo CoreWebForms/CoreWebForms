@@ -5,7 +5,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>disable</Nullable>
-    <AssemblyName>Microsoft.AspNetCore.SystemWebAdapters.UI.Extensions</AssemblyName>
+    <AssemblyName>WebForms.Extensions</AssemblyName>
     <RootNamespace>System.Web</RootNamespace>
   </PropertyGroup>
 

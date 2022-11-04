@@ -19,6 +19,7 @@ using System.Web.SessionState;
 using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
 using System.Web.Util;
+using Microsoft.Extensions.DependencyInjection;
 
 // Uncomment out this line to display rare field statistics at the end of the page
 //#define DISPLAYRAREFIELDSTATISTICS
@@ -5647,7 +5648,7 @@ window.onload = WebForm_RestoreScrollPosition;
         _context = context;
         _request = context.Request;
         _response = context.Response;
-        _application = new();// context.Application;
+        _application = context.AsCore().RequestServices.GetRequiredService<HttpApplicationState>();// context.Application;
         _cache = context.Cache;
 
 #if PORT_UNKNOWN

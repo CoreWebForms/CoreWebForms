@@ -1,14 +1,14 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <IsShipped>true</IsShipped>
-    <AssemblyName>Microsoft.AspNetCore.SystemWebAdapters.UI.Compiler</AssemblyName>
-    <RootNamespace>Microsoft.AspNetCore.SystemWebAdapters.UI.Compiler</RootNamespace>
+    <AssemblyName>WebForms.Compiler</AssemblyName>
+    <RootNamespace>WebForms.Compiler</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
-    <InternalsVisibleTo Include="Microsoft.AspNetCore.SystemWebAdapters.UI.Compiler.Tests"/>
+    <InternalsVisibleTo Include="WebForms.Compiler.Tests"/>
   </ItemGroup>
 
   <ItemGroup>

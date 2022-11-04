@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.SystemWebAdapters;
 
 namespace System.Web;
 
-internal class HttpHandlerEndpointFactory : IHttpHandlerEndpointFactory
+internal sealed class HttpHandlerEndpointFactory : IHttpHandlerEndpointFactory
 {
     // Used to ensure we only create a single endpoint instance for a given handler. However,
     // we don't have a way to track when a handler ceases to exist, so we use the
@@ -37,7 +37,7 @@ internal class HttpHandlerEndpointFactory : IHttpHandlerEndpointFactory
         .AddHttpHandler(handler)
         .Build();
 
-    private class HandlerEndpointBuilder : EndpointBuilder
+    private sealed class HandlerEndpointBuilder : EndpointBuilder
     {
         public override Endpoint Build() => new(RequestDelegate, new(Metadata), DisplayName);
     }
