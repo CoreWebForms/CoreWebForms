@@ -14,7 +14,6 @@ using System.CodeDom.Compiler;
  */
 public sealed class CompilerType
 {
-
     public CompilerParameters CompilerParameters { get; }
 
     public string Language { get; }
