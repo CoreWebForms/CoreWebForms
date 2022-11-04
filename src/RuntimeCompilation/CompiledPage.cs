@@ -2,6 +2,7 @@
 
 using System.Runtime.Loader;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.SystemWebAdapters.Compiler;
 
 namespace Microsoft.AspNetCore.SystemWebAdapters.UI.RuntimeCompilation;
 

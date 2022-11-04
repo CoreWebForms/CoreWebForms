@@ -2,20 +2,20 @@
 
 using System.Text;
 
-namespace Microsoft.AspNetCore.SystemWebAdapters.UI.RuntimeCompilation;
+namespace Microsoft.AspNetCore.SystemWebAdapters.Compiler;
 
 public readonly struct PagePath
 {
     public PagePath(string path)
-        : this(Path.GetDirectoryName(path), Path.GetFileName(path))
+        : this(System.IO.Path.GetDirectoryName(path), System.IO.Path.GetFileName(path))
     {
     }
 
-    public PagePath(string? directory, string path)
+    public PagePath(string directory, string path)
     {
         FilePath = path;
 
-        var trimmed = directory is null ? path : Combine(directory, path);
+        var trimmed = Combine(directory, path);
         UrlPath = trimmed;
         ClassName = ConvertPathToClassName(trimmed);
     }
