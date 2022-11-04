@@ -4,8 +4,6 @@ namespace System.Web.Compilation;
 
 using System;
 using System.CodeDom.Compiler;
-using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 
 /*
  * This class describes a CodeDom compiler, along with the parameters that it uses.
@@ -17,64 +15,60 @@ using System.Diagnostics.CodeAnalysis;
 public sealed class CompilerType
 {
 
-    private readonly Type _codeDomProviderType;
-    public Type CodeDomProviderType { get { return _codeDomProviderType; } }
+    public CompilerParameters CompilerParameters { get; }
 
-    private readonly CompilerParameters _compilParams;
-    public CompilerParameters CompilerParameters { get { return _compilParams; } }
+    public string Language { get; }
 
-    internal CompilerType(Type codeDomProviderType, CompilerParameters compilParams)
+    public static CompilerType VisualBasic { get; } = new("VB", null);
+
+    public static CompilerType CSharp { get; } = new("C#", null);
+
+    public bool IsCSharp() => string.Equals("C#", Language, StringComparison.OrdinalIgnoreCase);
+
+    public bool IsVisualBasic() => string.Equals("VB", Language, StringComparison.OrdinalIgnoreCase);
+
+    public static CompilerType GetByExtension(string extension)
     {
+        if (string.Equals(".cs", extension, StringComparison.OrdinalIgnoreCase))
+        {
+            return CSharp;
+        }
 
-        Debug.Assert(codeDomProviderType != null);
-        _codeDomProviderType = codeDomProviderType;
+        if (string.Equals(".vb", extension, StringComparison.OrdinalIgnoreCase))
+        {
+            return VisualBasic;
+        }
+
+        throw new NotSupportedException($"Unknown extension: {extension}");
+    }
+
+    internal CompilerType(string language, CompilerParameters compilParams)
+    {
+        Language = language;
 
         if (compilParams == null)
         {
-            _compilParams = new CompilerParameters();
+            CompilerParameters = new CompilerParameters();
         }
         else
         {
-            _compilParams = compilParams;
+            CompilerParameters = compilParams;
         }
     }
 
-    internal CompilerType Clone()
+    public override int GetHashCode() => StringComparer.OrdinalIgnoreCase.GetHashCode(Language);
+
+    public override bool Equals(object o)
     {
-        // Clone the CompilerParameters to make sure the original is untouched
-        return new CompilerType(_codeDomProviderType, CloneCompilerParameters());
-    }
-
-    private CompilerParameters CloneCompilerParameters()
-    {
-
-        CompilerParameters copy = new CompilerParameters();
-        copy.IncludeDebugInformation = _compilParams.IncludeDebugInformation;
-        copy.TreatWarningsAsErrors = _compilParams.TreatWarningsAsErrors;
-        copy.WarningLevel = _compilParams.WarningLevel;
-        copy.CompilerOptions = _compilParams.CompilerOptions;
-
-        return copy;
-    }
-
-    [SuppressMessage("Microsoft.Usage", "CA2303:FlagTypeGetHashCode", Justification = "This is used on codeDomProviderTypes which are not com types.")]
-    public override int GetHashCode()
-    {
-        return _codeDomProviderType.GetHashCode();
-    }
-
-    public override bool Equals(Object o)
-    {
-        CompilerType other = o as CompilerType;
-        if (o == null)
+        if (o is not CompilerType other)
         {
             return false;
         }
 
-        return _codeDomProviderType == other._codeDomProviderType &&
-            _compilParams.WarningLevel == other._compilParams.WarningLevel &&
-            _compilParams.IncludeDebugInformation == other._compilParams.IncludeDebugInformation &&
-            _compilParams.CompilerOptions == other._compilParams.CompilerOptions;
+        return string.Equals(Language, other.Language, StringComparison.OrdinalIgnoreCase) &&
+            CompilerParameters.WarningLevel == other.CompilerParameters.WarningLevel &&
+            CompilerParameters.IncludeDebugInformation == other.CompilerParameters.IncludeDebugInformation &&
+            CompilerParameters.CompilerOptions == other.CompilerParameters.CompilerOptions;
     }
 
 #if PORT_ASSEMBLYBUILDER

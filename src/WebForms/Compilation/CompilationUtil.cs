@@ -34,7 +34,7 @@ internal static class CompilationUtil
 
     internal static CompilerType GetCodeDefaultLanguageCompilerInfo()
     {
-        return new CompilerType(typeof(Microsoft.VisualBasic.VBCodeProvider), null);
+        return CompilerType.VisualBasic;
     }
 
     internal static CompilerType GetDefaultLanguageCompilerInfo(CompilationSection compConfig, VirtualPath configPath)
@@ -80,10 +80,7 @@ internal static class CompilationUtil
      */
     private static CompilerType GetCompilerInfoFromExtension(VirtualPath configPath, string extension)
     {
-        // Get the <compilation> config object
-        CompilationSection config = MTConfigUtil.GetCompilationConfig(configPath);
-
-        return config.GetCompilerInfoFromExtension(extension, true /*throwOnFail*/);
+        return CompilationSection.GetCompilerInfoFromExtension(extension, true /*throwOnFail*/);
     }
 
     /*
@@ -109,7 +106,7 @@ internal static class CompilationUtil
 
         if (compConfig.DefaultLanguage == null)
         {
-            return new CompilerType(typeof(Microsoft.CSharp.CSharpCodeProvider), null);
+            return CompilerType.CSharp;
         }
 
         return compConfig.GetCompilerInfoFromLanguage("c#");

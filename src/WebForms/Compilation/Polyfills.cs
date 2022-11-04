@@ -53,7 +53,7 @@ internal static class BuildManager
 
     internal static TextWriter GetUpdatableDeploymentTargetWriter(VirtualPath currentVirtualPath, Encoding fileEncoding)
         => new StringWriter();
-    
+
     internal static object GetVPathBuildResult(VirtualPath virtualPath)
     {
         throw new NotImplementedException();
@@ -87,7 +87,7 @@ internal class BuildResultCompiledAssembly : BuildResult
     public Assembly ResultAssembly { get; internal set; }
 }
 
-public class FastPropertyAccessor
+internal static class FastPropertyAccessor
 {
     internal static object GetProperty(object obj, string name, bool inDesigner)
     {

@@ -28,8 +28,6 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Web.Compilation;
 using System.Web.Util;
-using Microsoft.CSharp;
-using HttpException = System.Web.HttpException;
 
 public class CompilationSection
 {
@@ -38,25 +36,16 @@ public class CompilationSection
     public bool Strict { get; internal set; }
     public bool Batch { get; internal set; }
     public int NumRecompilesBeforeAppRestart { get; internal set; }
-    public object DefaultLanguage { get; internal set; }
+    public string DefaultLanguage { get; internal set; }
     public bool Debug { get; internal set; }
     public bool UrlLinePragmas { get; internal set; }
 
-    internal CompilerType GetCompilerInfoFromExtension(string extension, bool v)
-    {
-        return new(typeof(CSharpCodeProvider), new()
-        {
-            IncludeDebugInformation = Debug,
-        });
-    }
+    internal static CompilerType GetCompilerInfoFromExtension(string extension, bool v) => CompilerType.GetByExtension(extension);
 
-    internal CompilerType GetCompilerInfoFromLanguage(object defaultLanguage)
+    internal CompilerType GetCompilerInfoFromLanguage(string language) => new(language, new()
     {
-        return new(typeof(CSharpCodeProvider), new()
-        {
-            IncludeDebugInformation = Debug,
-        });
-    }
+        IncludeDebugInformation = Debug,
+    });
 
     internal Assembly LoadAssembly(string assemblyName, bool throwOnFail)
     {
@@ -2546,8 +2535,7 @@ private Match RunTextRegex(string text, int textPos) {
             CurrentVirtualPath, language);
 
         // Make sure we don't get conflicting languages
-        if (_compilerType != null &&
-            _compilerType.CodeDomProviderType != compilerType.CodeDomProviderType)
+        if (_compilerType != null && !Equals(_compilerType, compilerType))
         {
             ProcessError(SR.GetString(SR.Mixed_lang_not_supported, language));
 
@@ -2572,8 +2560,7 @@ private Match RunTextRegex(string text, int textPos) {
             _codeFileVirtualPath);
 
         // Make sure we don't get conflicting languages
-        if (_compilerType != null &&
-            _compilerType.CodeDomProviderType != compilerType.CodeDomProviderType)
+        if (_compilerType != null && !Equals(_compilerType, compilerType))
         {
             ProcessError(SR.GetString(SR.Inconsistent_CodeFile_Language));
 

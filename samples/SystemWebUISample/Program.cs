@@ -1,5 +1,6 @@
 // MIT License.
 
+using System.Runtime.Loader;
 using System.Web.UI;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -37,7 +38,13 @@ app.UseRouting();
 app.UseSession();
 app.UseSystemWebAdapters();
 
+app.MapGet("/acls", () => AssemblyLoadContext.All.Select(acl => new
+{
+    Name = acl.Name,
+    Assemblies = acl.Assemblies.Select(a => a.FullName)
+}));
+
 app.MapAspxPages();
-app.MapDynamicAspxPages(new ExcludeObjBinDirectory(app.Environment.ContentRootFileProvider));
+app.MapDynamicAspxPages(app.Environment.ContentRootFileProvider);
 
 app.Run();

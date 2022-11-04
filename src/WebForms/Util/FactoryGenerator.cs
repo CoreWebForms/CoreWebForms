@@ -3,7 +3,6 @@
 #if !DONTUSEFACTORYGENERATOR
 
 using System.Reflection;
-using System.Reflection.Emit;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace System.Web.Util;
@@ -102,11 +101,6 @@ internal class FactoryGenerator
         {
             throw new InvalidOperationException(SR.GetString(SR.FactoryGenerator_TypeHasNoParameterlessConstructor, type.Name));
         }
-    }
-
-    private static String GetUniqueCompilationName()
-    {
-        return Guid.NewGuid().ToString().Replace('-', '_');
     }
 
     internal static IWebObjectFactory CreateFactory(Type type)
