@@ -2002,11 +2002,13 @@ internal abstract class BaseTemplateCodeDomTreeGenerator : BaseCodeDomTreeGenera
 
     protected virtual bool UseResourceLiteralString(string s)
     {
-
+        return false;
+#if PORT_STRINGRESOURCE
         // If the string is long enough, and the compiler supports it, use a UTF8 resource
         // string for performance
         return PageParser.EnableLongStringsAsResources &&
             s.Length >= minLongLiteralStringLength &&
             _codeDomProvider.Supports(GeneratorSupport.Win32Resources);
+#endif
     }
 }

@@ -237,6 +237,7 @@ internal abstract class TemplateControlCodeDomTreeGenerator : BaseTemplateCodeDo
             new CodeBaseReferenceExpression(), method.Name);
         method.Statements.Add(new CodeExpressionStatement(baseCallExpression));
 
+#if PORT_STRINGRESOURCE
         // No strings: don't do anything
         if (_stringResourceBuilder.HasStrings)
         {
@@ -250,6 +251,7 @@ internal abstract class TemplateControlCodeDomTreeGenerator : BaseTemplateCodeDo
             methCallExpression.Parameters.Add(new CodePrimitiveExpression(0));
             method.Statements.Add(new CodeExpressionStatement(methCallExpression));
         }
+#endif
 
         CodeMethodInvokeExpression call = new CodeMethodInvokeExpression();
         call.Method.TargetObject = new CodeThisReferenceExpression();
