@@ -30,8 +30,8 @@
 
   <ItemGroup>
     <PackageReference Include="System.CodeDom" Version="6.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.SystemWebAdapters" Version="1.0.0-rc.2.22503.1" />
-    <PackageReference Include="Microsoft.AspNetCore.SystemWebAdapters.CoreServices" Version="1.0.0-rc.2.22503.1" />
+    <PackageReference Include="Microsoft.AspNetCore.SystemWebAdapters" Version="1.0.0-rc.2.22551.1" />
+    <PackageReference Include="Microsoft.AspNetCore.SystemWebAdapters.CoreServices" Version="1.0.0-rc.2.22551.1" />
   </ItemGroup>
 
   <ItemGroup>
