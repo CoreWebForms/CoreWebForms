@@ -24,8 +24,8 @@ public class PageCompilationOptions
         // Ensure this assembly is loaded
         _ = typeof(HttpUtility).Assembly;
 
-        AddTypeNamespace(typeof(Page), "asp");
-        AddTypeNamespace(typeof(TextBox), "asp");
+        AddTypeNamespace<Page>("asp");
+        AddTypeNamespace<TextBox>("asp");
     }
 
     public void AddAssembly(Assembly assembly) => _controls.Assemblies.Add(assembly);
@@ -34,8 +34,9 @@ public class PageCompilationOptions
 
     public IEnumerable<Assembly> Assemblies => _controls.Assemblies;
 
-    public void AddTypeNamespace(Type type, string prefix)
-        => AddAssembly(type.Assembly, type.Namespace ?? throw new InvalidOperationException(), prefix);
+    public void AddTypeNamespace<T>(string prefix)
+        where T : Control
+        => AddAssembly(typeof(T).Assembly, typeof(T).Namespace ?? throw new InvalidOperationException(), prefix);
 
     internal void AddAssembly(Assembly assembly, string ns, string prefix)
     {
