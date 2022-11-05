@@ -28,6 +28,10 @@ public class PageCompilationOptions
         AddTypeNamespace(typeof(TextBox), "asp");
     }
 
+    public void AddAssembly(Assembly assembly) => _controls.Assemblies.Add(assembly);
+
+    public void AddAssembly(Type type) => _controls.Assemblies.Add(type.Assembly);
+
     public IEnumerable<Assembly> Assemblies => _controls.Assemblies;
 
     public void AddTypeNamespace(Type type, string prefix)
@@ -46,9 +50,8 @@ public class PageCompilationOptions
     private sealed class ControlCollection : IControlLookup
     {
         private readonly Dictionary<string, Dictionary<string, ControlInfo>> _info = new();
-        private readonly HashSet<Assembly> _assemblies = new();
 
-        public IReadOnlyCollection<Assembly> Assemblies => _assemblies;
+        public HashSet<Assembly> Assemblies { get; } = new();
 
         public bool TryGetControl(string prefix, string name, [MaybeNullWhen(false)] out ControlInfo info)
         {
@@ -63,7 +66,7 @@ public class PageCompilationOptions
 
         public void Add(Assembly assembly, string ns, string prefix)
         {
-            _assemblies.Add(assembly);
+            Assemblies.Add(assembly);
 
             if (_info.TryGetValue(prefix, out var existing))
             {
