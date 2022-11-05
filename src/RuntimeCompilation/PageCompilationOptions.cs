@@ -30,7 +30,7 @@ public class PageCompilationOptions
 
     public void AddAssembly(Assembly assembly) => _controls.Assemblies.Add(assembly);
 
-    public void AddAssembly(Type type) => _controls.Assemblies.Add(type.Assembly);
+    public void AddAssemblyFrom<T>() => _controls.Assemblies.Add(typeof(T).Assembly);
 
     public IEnumerable<Assembly> Assemblies => _controls.Assemblies;
 
