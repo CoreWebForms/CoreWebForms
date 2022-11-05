@@ -1,9 +1,10 @@
-﻿// MIT License.
+// MIT License.
 
+using System.Web.Optimization;
 using Microsoft.AspNetCore.SystemWebAdapters;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace System.Web.Optimization;
+namespace System.Web;
 
 public static class OptimizationExtensions
 {
