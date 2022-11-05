@@ -1,4 +1,4 @@
-﻿// MIT License.
+// MIT License.
 
 namespace System.Web.Optimization;
 
@@ -13,8 +13,11 @@ public class Bundle
 
     public string Name { get; }
 
-    public void Include(params string[] paths)
-        => _paths.AddRange(paths);
+    public Bundle Include(params string[] paths)
+    {
+        _paths.AddRange(paths);
+        return this;
+    }
 
     public IEnumerable<string> Paths => _paths;
 }
