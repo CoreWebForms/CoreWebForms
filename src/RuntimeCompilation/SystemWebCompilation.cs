@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Runtime.Loader;
 using System.Text;
 using System.Text.Json;
+using System.Web;
 using System.Web.Compilation;
 using System.Web.UI;
 using Microsoft.CodeAnalysis;
@@ -49,7 +50,16 @@ internal sealed class SystemWebCompilation : IPageCompiler, IDisposable
     }
 
     public Task<ICompiledPage> CompilePageAsync(IFileProvider files, string path, CancellationToken token)
-        => Task.FromResult(CompilePage(files, path, token));
+    {
+        try
+        {
+            return Task.FromResult(CompilePage(files, path, token));
+        }
+        catch (HttpParseException ex)
+        {
+            return Task.FromResult(CompiledPage.FromError(new(path), ex.Message));
+        }
+    }
 
     private ICompiledPage CompilePage(IFileProvider files, string path, CancellationToken token)
     {

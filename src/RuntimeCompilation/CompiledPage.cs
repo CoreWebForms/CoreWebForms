@@ -1,6 +1,8 @@
 // MIT License.
 
 using System.Runtime.Loader;
+using System.Text;
+using System.Text.Json;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SystemWebAdapters.Compiler;
 
@@ -14,6 +16,12 @@ internal sealed class CompiledPage : ICompiledPage
         FileDependencies = dependencies;
         AspxFile = path.FilePath;
     }
+
+    public static ICompiledPage FromError(PagePath page, string error)
+        => new CompiledPage(page, Array.Empty<string>())
+        {
+            Error = Encoding.UTF8.GetBytes(error),
+        };
 
     public Type? Type { get; set; }
 
