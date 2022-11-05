@@ -1011,10 +1011,7 @@ public class ControlBuilder
         // Make sure we have parsed expression data
         if (entry.ParsedExpressionData == null)
         {
-#if PORT_EXPRESSIONBUILDER
             entry.ParseExpression(new ExpressionBuilderContext(VirtualPath));
-#endif
-            throw new NotImplementedException("Expression builder not implemented");
         }
 
         if (!Parser.IgnoreParseErrors && entry.ParsedExpressionData == null)
