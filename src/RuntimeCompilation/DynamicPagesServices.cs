@@ -13,6 +13,8 @@ public static class DynamicPagesServices
 {
     public static ISystemWebAdapterBuilder AddDynamicPages(this ISystemWebAdapterBuilder services, Action<PageCompilationOptions> configure)
     {
+        services.AddWebForms();
+
         services.Services.AddSingleton<RoslynPageCompiler>();
         services.Services.AddSingleton<SystemWebCompilation>();
         services.Services.AddSingleton<IPageCompiler>(ctx =>
