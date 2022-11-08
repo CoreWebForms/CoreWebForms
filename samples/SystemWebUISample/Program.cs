@@ -13,12 +13,6 @@ builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSystemWebAdapters()
     .AddJsonSessionSerializer()
     .WrapAspNetCoreSession()
-    .AddWebForms()
-    .AddDynamicPages(options =>
-    {
-        options.UseFrameworkParser = true;
-        options.AddTypeNamespace<ScriptManager>("asp");
-    });
 
 var app = builder.Build();
 
