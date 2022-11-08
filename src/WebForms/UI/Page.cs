@@ -20,6 +20,7 @@ using System.Web.SessionState;
 using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
 using System.Web.Util;
+using Microsoft.AspNetCore.SystemWebAdapters;
 using Microsoft.Extensions.DependencyInjection;
 
 // Uncomment out this line to display rare field statistics at the end of the page

@@ -68,7 +68,10 @@ public class PageTests
         services.AddOptions();
         services.AddRouting();
         services.AddSystemWebAdapters()
-            .AddWebForms();
+            .AddHttpHandlers(options =>
+            {
+                options.Routes.Add<TPage>("/path");
+            });
 
         using var provider = services.BuildServiceProvider();
 
@@ -80,7 +83,8 @@ public class PageTests
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapAspxPage<TPage>("/path");
+                endpoints.MapHttpHandlers()
+                    .WithPageSupport();
             });
         });
 

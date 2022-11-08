@@ -1,7 +1,6 @@
 // MIT License.
 
 using System.Runtime.Loader;
-using System.Web.UI;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,11 +12,13 @@ builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSystemWebAdapters()
     .AddJsonSessionSerializer()
     .WrapAspNetCoreSession()
-    .AddWebForms()
+    .AddHttpHandlers(options =>
+    {
+    })
     .AddDynamicPages(options =>
     {
         options.UseFrameworkParser = true;
-        options.AddTypeNamespace<ScriptManager>("asp");
+        options.Files = builder.Environment.ContentRootFileProvider;
     });
 
 var app = builder.Build();
@@ -44,7 +45,7 @@ app.MapGet("/acls", () => AssemblyLoadContext.All.Select(acl => new
     Assemblies = acl.Assemblies.Select(a => a.FullName)
 }));
 
-app.MapAspxPages();
-app.MapDynamicAspxPages(app.Environment.ContentRootFileProvider);
+app.MapHttpHandlers()
+    .WithPageSupport();
 
 app.Run();

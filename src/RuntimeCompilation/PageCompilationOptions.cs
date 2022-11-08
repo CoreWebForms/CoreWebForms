@@ -7,12 +7,15 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using Microsoft.AspNetCore.SystemWebAdapters.Compiler;
+using Microsoft.Extensions.FileProviders;
 
 namespace Microsoft.AspNetCore.SystemWebAdapters.UI.RuntimeCompilation;
 
 public class PageCompilationOptions
 {
     private readonly ControlCollection _controls;
+
+    public IFileProvider? Files { get; set; }
 
     internal ICollection<TagNamespaceRegisterEntry> KnownTags { get; }
 

@@ -40,7 +40,7 @@ public class BundleReference : Control
         }
     }
 
-    private void Write(HtmlTextWriter writer, ScriptBundle bundle)
+    private static void Write(HtmlTextWriter writer, ScriptBundle bundle)
     {
         foreach (var include in bundle.Paths)
         {
@@ -50,7 +50,7 @@ public class BundleReference : Control
         }
     }
 
-    private void Write(HtmlTextWriter writer, StyleBundle bundle)
+    private static void Write(HtmlTextWriter writer, StyleBundle bundle)
     {
         foreach (var include in bundle.Paths)
         {

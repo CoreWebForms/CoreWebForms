@@ -4,7 +4,6 @@ namespace System.Web.Compilation;
 
 using System;
 using System.CodeDom;
-using System.CodeDom.Compiler;
 using System.Collections;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -32,7 +31,7 @@ internal abstract class BaseTemplateCodeDomTreeGenerator : BaseCodeDomTreeGenera
     private int _controlCount;
 
     // Minimum literal string length for it to be placed in the resource
-    private const int minLongLiteralStringLength = 256;
+    //private const int minLongLiteralStringLength = 256;
     private const string renderMethodParameterName = "__w";
 
     // Used in designer mode

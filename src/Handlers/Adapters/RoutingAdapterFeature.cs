@@ -1,8 +1,8 @@
 // MIT License.
 
-namespace System.Web.Routing;
+namespace Microsoft.AspNetCore.SystemWebAdapters;
 
-internal class RoutingAdapterFeature : Microsoft.AspNetCore.Routing.IRoutingFeature, IRoutingAdapterFeature
+internal sealed class RoutingAdapterFeature : Microsoft.AspNetCore.Routing.IRoutingFeature, IRoutingAdapterFeature
 {
     private readonly Microsoft.AspNetCore.Routing.IRoutingFeature _other;
 
