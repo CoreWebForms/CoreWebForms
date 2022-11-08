@@ -36,6 +36,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Handlers\Handlers.csproj" />
+    <ProjectReference Include="..\Routing\Routing.csproj" />
   </ItemGroup>
 
 </Project>

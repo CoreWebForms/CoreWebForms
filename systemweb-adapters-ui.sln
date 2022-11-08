@@ -43,7 +43,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Extensions", "src\Extension
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Config", "src\Config\Config.csproj", "{33E6BFE4-8BCD-4349-92D8-367CCCB3B101}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Optimization", "src\Optimization\Optimization.csproj", "{CBCFE973-D019-4D6C-A5CA-DC935CA41268}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Optimization", "src\Optimization\Optimization.csproj", "{CBCFE973-D019-4D6C-A5CA-DC935CA41268}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Routing", "src\Routing\Routing.csproj", "{FC72A17C-F5F8-400F-95C2-97FB39E6D00D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -103,6 +105,10 @@ Global
 		{CBCFE973-D019-4D6C-A5CA-DC935CA41268}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CBCFE973-D019-4D6C-A5CA-DC935CA41268}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CBCFE973-D019-4D6C-A5CA-DC935CA41268}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FC72A17C-F5F8-400F-95C2-97FB39E6D00D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FC72A17C-F5F8-400F-95C2-97FB39E6D00D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FC72A17C-F5F8-400F-95C2-97FB39E6D00D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FC72A17C-F5F8-400F-95C2-97FB39E6D00D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -121,6 +127,7 @@ Global
 		{DA9490DF-5043-46B4-A83E-9B8FC03DC191} = {D3D2945C-76BA-4DE3-90D2-259E2B1406C5}
 		{33E6BFE4-8BCD-4349-92D8-367CCCB3B101} = {D3D2945C-76BA-4DE3-90D2-259E2B1406C5}
 		{CBCFE973-D019-4D6C-A5CA-DC935CA41268} = {D3D2945C-76BA-4DE3-90D2-259E2B1406C5}
+		{FC72A17C-F5F8-400F-95C2-97FB39E6D00D} = {D3D2945C-76BA-4DE3-90D2-259E2B1406C5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B89024DA-2E51-49B1-8D52-651372AB5C83}

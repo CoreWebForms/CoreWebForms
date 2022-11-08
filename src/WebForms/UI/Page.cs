@@ -15,6 +15,7 @@ using System.Text;
 using System.Web.Caching;
 using System.Web.Configuration;
 using System.Web.ModelBinding;
+using System.Web.Routing;
 using System.Web.SessionState;
 using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
@@ -1202,7 +1203,6 @@ public class Page : TemplateControl, IHttpAsyncHandler
         }
     }
 
-#if PORT_ROUTING
     [
     Browsable(false),
     DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)
@@ -1211,15 +1211,18 @@ public class Page : TemplateControl, IHttpAsyncHandler
     {
         get
         {
+            return Context.AsCore().Features.Get<IRoutingAdapterFeature>()?.RouteData;
+
+#if PORT
             if (Context != null && Context.Request != null)
             {
                 // RequestContext is created on demand if not set so it should never be null
-                return Context.Request.RequestContext.RouteData;
+                //return Context.Request.RequestContext.RouteData;
             }
             return null;
+#endif
         }
     }
-#endif
 
     /// <devdoc>
     /// <para>Gets the <see langword='Server'/> object supplied by the HTTP runtime.</para>
