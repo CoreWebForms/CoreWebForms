@@ -45,7 +45,6 @@ app.MapGet("/acls", () => AssemblyLoadContext.All.Select(acl => new
     Assemblies = acl.Assemblies.Select(a => a.FullName)
 }));
 
-app.MapHttpHandlers()
-    .WithPageSupport();
+app.MapHttpHandlers();
 
 app.Run();

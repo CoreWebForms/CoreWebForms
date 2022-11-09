@@ -83,8 +83,7 @@ public class PageTests
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapHttpHandlers()
-                    .WithPageSupport();
+                endpoints.MapHttpHandlers();
             });
         });
 

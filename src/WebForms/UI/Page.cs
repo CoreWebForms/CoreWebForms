@@ -5837,6 +5837,10 @@ window.onload = WebForm_RestoreScrollPosition;
     // TAP
     private async Task ProcessRequestAsync(HttpContext context)
     {
+        // Set up a few things
+        Features.Set<Page>(this);
+        Features.Set<HttpContext>(context);
+
         // we disallow async operations except during specific portions of the lifecycle
         SynchronizationContext.Current.ProhibitVoidAsyncOperations();
 
