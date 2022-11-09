@@ -48,13 +48,7 @@ public static class HandlerServicesExtensions
             => builder =>
             {
                 builder.UseMiddleware<SetHttpHandlerMiddleware>();
-                builder.UseMiddleware<RoutingAdapterMiddleware>();
                 next(builder);
             };
-    }
-
-    public static void UseSystemWebAdapters2(this IApplicationBuilder builder)
-    {
-        //builder.UseMiddleware<RoutingAdapterMiddleware>();
     }
 }

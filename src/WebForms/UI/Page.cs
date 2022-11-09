@@ -1212,7 +1212,7 @@ public class Page : TemplateControl, IHttpAsyncHandler
     {
         get
         {
-            return Context.AsCore().Features.Get<IRoutingAdapterFeature>()?.RouteData;
+            return Context.Request.GetRouteData();
 
 #if PORT
             if (Context != null && Context.Request != null)
