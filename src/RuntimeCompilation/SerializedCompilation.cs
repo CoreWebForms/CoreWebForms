@@ -78,7 +78,7 @@ internal sealed class SerializedCompilation : BackgroundService
         var changedFiles = GetFileChanges();
         var finalPages = _compiledPages.ToBuilder();
 
-        using (_routes.PauseUpdates())
+        using (_routes.GetWriteLock())
         {
             foreach (var file in changedFiles.Deletions)
             {

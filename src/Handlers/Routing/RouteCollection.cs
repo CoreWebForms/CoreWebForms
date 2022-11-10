@@ -25,35 +25,35 @@ public class RouteCollection
         }
     }
 
-    public IDisposable PauseUpdates() => Token.Pause();
+    public IDisposable GetWriteLock() => Token.GetWriteLock();
+
+    public IDisposable GetReadLock() => Token.GetReadLock();
 
     private RouteItem? GetItem(string path) => _items.FirstOrDefault(i => i.Path == path);
 
     public void Add(string path, Type type)
     {
         _items.Add(RouteItem.Create(path, type));
-        Reset();
+        _changeToken?.OnChange();
     }
 
     public void Add<T>(string path)
         where T : IHttpHandler
     {
         _items.Add(RouteItem.Create<T>(path));
-        Reset();
+        _changeToken?.OnChange();
     }
-
-    private void Reset() => Token.Reset();
 
     public void Add(string path, IHttpHandler handler)
     {
         _items.Add(RouteItem.Create(handler, path));
-        Reset();
+        _changeToken?.OnChange();
     }
 
     public void MapPageRoute(string routeName, string routeUrl, string path)
     {
         AddMapping(path, new(routeName, RoutePatternFactory.Parse(routeUrl)));
-        Reset();
+        _changeToken?.OnChange();
     }
 
     private void AddMapping(string path, MappedRoute route)
