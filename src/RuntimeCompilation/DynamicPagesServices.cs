@@ -27,7 +27,7 @@ public static class DynamicPagesServices
             }
         });
 
-        services.Services.AddHostedService<SerializedCompilation>();
+        services.Services.AddHostedService<WebFormsCompilationService>();
         services.Services.AddTransient<IStartupFilter, ParserSetting>();
 
         services.Services.AddOptions<PageCompilationOptions>()

@@ -1,5 +1,6 @@
 // MIT License.
 
+using System.Collections.Concurrent;
 using System.Runtime.Loader;
 using Microsoft.Extensions.Logging;
 
@@ -9,11 +10,11 @@ internal sealed class PageAssemblyLoadContext : AssemblyLoadContext
 {
     private readonly ILogger<PageAssemblyLoadContext> _logger;
 
-    private static long _count;
+    private static readonly ConcurrentDictionary<string, int> _count = new();
 
     private static string GetName(string name)
     {
-        var count = Interlocked.Increment(ref _count);
+        var count = _count.AddOrUpdate(name, 1, static (key, value) => value + 1);
 
         return $"WebForms:{name}:{count}";
     }

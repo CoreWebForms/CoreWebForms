@@ -12,28 +12,34 @@ using Microsoft.Extensions.Primitives;
 
 namespace Microsoft.AspNetCore.SystemWebAdapters.UI.RuntimeCompilation;
 
-internal sealed class SerializedCompilation : BackgroundService
+internal sealed class WebFormsCompilationService : BackgroundService
 {
-    private readonly ILogger<SerializedCompilation> _logger;
+    private readonly ILogger<WebFormsCompilationService> _logger;
     private readonly RouteCollection _routes;
-    private readonly SemaphoreSlim _event;
+    private readonly ManualResetEventSlim _event;
     private readonly IPageCompiler _compiler;
     private readonly IFileProvider _files;
 
     private ImmutableList<Timed<ICompiledPage>> _compiledPages;
 
-    public SerializedCompilation(
+    public WebFormsCompilationService(
         IPageCompiler compiler,
         IOptions<HttpHandlerOptions> handlerOptions,
         IOptions<PageCompilationOptions> options,
-        ILogger<SerializedCompilation> logger)
+        ILogger<WebFormsCompilationService> logger)
     {
         _compiledPages = ImmutableList<Timed<ICompiledPage>>.Empty;
         _files = options.Value.Files!;
         _compiler = compiler;
         _logger = logger;
         _routes = handlerOptions.Value.Routes;
-        _event = new SemaphoreSlim(1, 2);
+        _event = new ManualResetEventSlim(true);
+    }
+
+    public override void Dispose()
+    {
+        base.Dispose();
+        _event.Dispose();
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -52,14 +58,16 @@ internal sealed class SerializedCompilation : BackgroundService
 
     private void OnFileChange()
     {
-        _event.Release();
+        _event.Set();
+        _logger.LogInformation("File change detected");
     }
 
     private async Task ProcessChanges(CancellationToken token)
     {
         while (true)
         {
-            await _event.WaitAsync(token).ConfigureAwait(false);
+            await WaitAsync(_event.WaitHandle, token).ConfigureAwait(false);
+
             try
             {
                 _logger.LogInformation("Running compilation task");
@@ -70,6 +78,8 @@ internal sealed class SerializedCompilation : BackgroundService
             {
                 _logger.LogError(e, "Unexpected error compiling");
             }
+
+            _event.Reset();
         }
     }
 
@@ -191,5 +201,30 @@ internal sealed class SerializedCompilation : BackgroundService
                 }
             }
         }
+    }
+
+    private static async Task WaitAsync(WaitHandle handle, CancellationToken token)
+    {
+        var tcs = new TaskCompletionSource();
+
+        using (new ThreadPoolRegistration(handle, tcs))
+        using (token.Register(state => ((TaskCompletionSource<bool>)state!).TrySetCanceled(), tcs, useSynchronizationContext: false))
+        {
+            await tcs.Task.ConfigureAwait(false);
+        }
+    }
+
+    private sealed class ThreadPoolRegistration : IDisposable
+    {
+        private readonly RegisteredWaitHandle _registeredWaitHandle;
+
+        public ThreadPoolRegistration(WaitHandle handle, TaskCompletionSource tcs)
+        {
+            _registeredWaitHandle = ThreadPool.RegisterWaitForSingleObject(handle,
+                (state, timedOut) => ((TaskCompletionSource)state!).TrySetResult(), tcs,
+                Timeout.InfiniteTimeSpan, executeOnlyOnce: true);
+        }
+
+        void IDisposable.Dispose() => _registeredWaitHandle.Unregister(null);
     }
 }
