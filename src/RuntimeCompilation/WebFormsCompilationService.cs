@@ -224,7 +224,7 @@ internal sealed class WebFormsCompilationService : BackgroundService
         var tcs = new TaskCompletionSource();
 
         using (new ThreadPoolRegistration(handle, tcs))
-        using (token.Register(state => ((TaskCompletionSource<bool>)state!).TrySetCanceled(), tcs, useSynchronizationContext: false))
+        using (token.Register(state => ((TaskCompletionSource)state!).TrySetCanceled(), tcs, useSynchronizationContext: false))
         {
             await tcs.Task.ConfigureAwait(false);
         }
