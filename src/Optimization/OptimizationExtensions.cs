@@ -2,9 +2,8 @@
 
 using System.Web.Optimization;
 using Microsoft.AspNetCore.SystemWebAdapters;
-using Microsoft.Extensions.DependencyInjection;
 
-namespace System.Web;
+namespace Microsoft.Extensions.DependencyInjection;
 
 public static class OptimizationExtensions
 {
