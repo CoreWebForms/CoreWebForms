@@ -2,6 +2,7 @@
 
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
+using System.Web;
 using System.Web.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
@@ -49,10 +50,25 @@ internal sealed class WebFormsCompilationService : BackgroundService
             return;
         }
 
+        await WaitForHttpRuntimeInitializationAsync(stoppingToken).ConfigureAwait(false);
+
         using (ChangeToken.OnChange(() => _files.Watch("**/*.aspx*"), OnFileChange))
         using (ChangeToken.OnChange(() => _files.Watch("**/*.Master*"), OnFileChange))
         {
             await ProcessChanges(stoppingToken).ConfigureAwait(false);
+        }
+    }
+
+    private async Task WaitForHttpRuntimeInitializationAsync(CancellationToken token)
+    {
+        try
+        {
+            _ = HttpRuntime.AppDomainAppPath;
+        }
+        catch (InvalidOperationException)
+        {
+            _logger.LogDebug("Waiting for HttpRuntime to be initialized");
+            await Task.Delay(TimeSpan.FromMilliseconds(200), token).ConfigureAwait(false);
         }
     }
 
