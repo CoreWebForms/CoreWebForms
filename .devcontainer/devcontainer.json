@@ -9,7 +9,7 @@
 			// Append -bullseye or -focal to pin to an OS version.
 			"VARIANT": "7.0",
 			// Options
-			"NODE_VERSION": "none"
+			//"NODE_VERSION": "none"
 		}
 	},
 
