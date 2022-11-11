@@ -12,7 +12,7 @@ public static class PageExtensions
         var provider = new EmbeddedFileProvider(typeof(Page).Assembly, "System.Web.UI.WebControls.RuntimeScripts");
         var files = new StaticFileOptions
         {
-            RequestPath = "/__webforms/scripts",
+            RequestPath = "/__webforms/scripts/system.web/",
             FileProvider = provider,
         };
 
