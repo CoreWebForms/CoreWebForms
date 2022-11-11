@@ -7,7 +7,7 @@ using Microsoft.Extensions.Primitives;
 
 namespace Microsoft.AspNetCore.SystemWebAdapters;
 
-internal sealed class HttpHandlerEndpointConventionBuilder : EndpointDataSource, IHttpHandlerEndpointConventionBuilder
+internal sealed class HttpHandlerEndpointConventionBuilder : EndpointDataSource, IEndpointConventionBuilder
 {
     private List<Action<EndpointBuilder>> _conventions = new();
 

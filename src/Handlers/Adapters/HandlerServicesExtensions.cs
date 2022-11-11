@@ -28,9 +28,9 @@ public static class HandlerServicesExtensions
         return services;
     }
 
-    public static IHttpHandlerEndpointConventionBuilder MapHttpHandlers(this IEndpointRouteBuilder endpoints)
+    public static IEndpointConventionBuilder MapHttpHandlers(this IEndpointRouteBuilder endpoints)
     {
-        if (endpoints.DataSources.OfType<IHttpHandlerEndpointConventionBuilder>().FirstOrDefault() is { } existing)
+        if (endpoints.DataSources.OfType<IEndpointConventionBuilder>().FirstOrDefault() is { } existing)
         {
             return existing;
         }
