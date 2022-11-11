@@ -67,7 +67,7 @@ internal sealed class WebFormsCompilationService : BackgroundService
     {
         while (true)
         {
-            await WaitAsync(_event.WaitHandle, token).ConfigureAwait(false);
+            await _event.WaitHandle.WaitAsync(token).ConfigureAwait(false);
 
             try
             {
@@ -202,30 +202,5 @@ internal sealed class WebFormsCompilationService : BackgroundService
                 }
             }
         }
-    }
-
-    private static async Task WaitAsync(WaitHandle handle, CancellationToken token)
-    {
-        var tcs = new TaskCompletionSource();
-
-        using (new ThreadPoolRegistration(handle, tcs))
-        using (token.Register(state => ((TaskCompletionSource)state!).TrySetCanceled(), tcs, useSynchronizationContext: false))
-        {
-            await tcs.Task.ConfigureAwait(false);
-        }
-    }
-
-    private sealed class ThreadPoolRegistration : IDisposable
-    {
-        private readonly RegisteredWaitHandle _registeredWaitHandle;
-
-        public ThreadPoolRegistration(WaitHandle handle, TaskCompletionSource tcs)
-        {
-            _registeredWaitHandle = ThreadPool.RegisterWaitForSingleObject(handle,
-                (state, timedOut) => ((TaskCompletionSource)state!).TrySetResult(), tcs,
-                Timeout.InfiniteTimeSpan, executeOnlyOnce: true);
-        }
-
-        void IDisposable.Dispose() => _registeredWaitHandle.Unregister(null);
     }
 }
