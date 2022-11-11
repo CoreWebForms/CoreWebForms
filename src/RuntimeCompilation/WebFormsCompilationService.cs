@@ -50,25 +50,10 @@ internal sealed class WebFormsCompilationService : BackgroundService
             return;
         }
 
-        await WaitForHttpRuntimeInitializationAsync(stoppingToken).ConfigureAwait(false);
-
         using (ChangeToken.OnChange(() => _files.Watch("**/*.aspx*"), OnFileChange))
         using (ChangeToken.OnChange(() => _files.Watch("**/*.Master*"), OnFileChange))
         {
             await ProcessChanges(stoppingToken).ConfigureAwait(false);
-        }
-    }
-
-    private async Task WaitForHttpRuntimeInitializationAsync(CancellationToken token)
-    {
-        try
-        {
-            _ = HttpRuntime.AppDomainAppPath;
-        }
-        catch (InvalidOperationException)
-        {
-            _logger.LogDebug("Waiting for HttpRuntime to be initialized");
-            await Task.Delay(TimeSpan.FromMilliseconds(200), token).ConfigureAwait(false);
         }
     }
 
@@ -118,25 +103,25 @@ internal sealed class WebFormsCompilationService : BackgroundService
             {
                 if (file.Item.CompiledPage is { } existing)
                 {
-                    _logger.LogTrace("Removing {Path}", existing.Item.AspxFile);
+                    _logger.LogTrace("Replacing '{Path}'", existing.Item.AspxFile);
                     _routes.Remove(existing.Item.AspxFile);
                     finalPages.Remove(existing);
                     existing.Item.Dispose();
                 }
                 else
                 {
-                    _logger.LogTrace("Creating page {Path}", file.Item.FullPath);
+                    _logger.LogTrace("Creating page for '{Path}'", file.Item.FullPath);
                 }
 
                 var aspx = file.Item.CompiledPage is { } compiled ? compiled.Item.AspxFile : file.Item.FullPath;
 
                 var compilation = await _compiler.CompilePageAsync(_files, aspx, token).ConfigureAwait(false);
 
-                _logger.LogTrace("Adding page {Path}", compilation.AspxFile);
+                _logger.LogTrace("Adding page {Path}", compilation.Path);
 
                 if (compilation.Type is { } type)
                 {
-                    _routes.Add(compilation.AspxFile, type);
+                    _routes.Add(compilation.Path, type);
                 }
 
                 finalPages.Add(new(compilation, file.LastModified));
