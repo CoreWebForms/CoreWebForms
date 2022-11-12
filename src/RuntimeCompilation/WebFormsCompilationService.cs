@@ -104,7 +104,6 @@ internal sealed class WebFormsCompilationService : BackgroundService
                 if (file.Item.CompiledPage is { } existing)
                 {
                     _logger.LogTrace("Replacing '{Path}'", existing.Item.AspxFile);
-                    _routes.Remove(existing.Item.AspxFile);
                     finalPages.Remove(existing);
                     existing.Item.Dispose();
                 }
@@ -120,12 +119,12 @@ internal sealed class WebFormsCompilationService : BackgroundService
                 if (compilation.Type is { } type)
                 {
                     _logger.LogTrace("Adding page {Path}", compilation.Path);
-                    _routes.Add(compilation.Path, type);
+                    _routes.Replace(compilation.Path, type);
                 }
                 else 
                 {
                     _logger.LogWarning("No type found for {Path}", compilation.Path);
-                    _routes.Add(compilation.Path, new ErrorHandler(compilation.Exception!));
+                    _routes.Replace(compilation.Path, new ErrorHandler(compilation.Exception!));
                 }
 
                 finalPages.Add(new(compilation, file.LastModified));

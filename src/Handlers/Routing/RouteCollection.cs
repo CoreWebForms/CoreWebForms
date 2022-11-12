@@ -1,5 +1,6 @@
 // MIT License.
 
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing.Patterns;
 using Microsoft.Extensions.Primitives;
 
@@ -17,8 +18,6 @@ public class RouteCollection
 
     public void Remove(string path)
     {
-        _mapped.Remove(path);
-
         while (GetItem(path) is { } existing)
         {
             _items.Remove(existing);
@@ -94,6 +93,18 @@ public class RouteCollection
                 yield return item;
             }
         }
+    }
+
+    public void Replace(PathString path, IHttpHandler handler)
+    {
+        Remove(path);
+        Add(path, handler);
+    }
+
+    public void Replace(PathString path, Type type)
+    {
+        Remove(path);
+        Add(path, type);
     }
 
     internal sealed record MappedRoute(string Name, RoutePattern Pattern);

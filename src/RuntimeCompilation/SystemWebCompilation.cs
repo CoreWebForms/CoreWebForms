@@ -156,7 +156,7 @@ internal sealed class SystemWebCompilation : IPageCompiler, IDisposable
         var assembly = context.LoadFromStream(peStream, pdbStream);
         if (assembly.GetType(typeName) is Type type)
         {
-            return new CompiledPage(new(path), Array.Empty<string>()) { Type = type };
+            return new CompiledPage(new(path), embedded.Select(t => t.FilePath).ToArray()) { Type = type };
         }
 
         return new CompiledPage(new(path), Array.Empty<string>()) { Exception = new InvalidOperationException("No type found") };

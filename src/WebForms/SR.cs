@@ -1,6 +1,8 @@
 // MIT
 
 
+using System.Globalization;
+
 namespace System.Web;
 
 internal static class AssemblyRef
@@ -13,8 +15,8 @@ internal static class AssemblyRef
 
 internal static class SR
 {
-    public static string GetString(string name, params object[] args) => name;
-    
+    public static string GetString(string name, params object[] args) => string.Format(CultureInfo.InvariantCulture, name, args);
+
     public const string Ambiguous_server_tag = "The server tag '{0}' is ambiguous. Please modify the associated registration that is causing ambiguity and pick a new tag prefix.";
     public const string Ambiguous_type = "The type '{0}' is ambiguous: it could come from assembly '{1}' or from assembly '{2}'. Please specify the assembly explicitly in the type name.";
     public const string App_session_only_valid_in_global_asax = "The Application and Session scopes are valid only in the global.asax file.";
