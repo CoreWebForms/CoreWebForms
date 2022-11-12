@@ -33,6 +33,12 @@ internal sealed class HttpHandlerEndpointConventionBuilder : EndpointDataSource,
                     convention(builder);
                 }
 
+#if NET7_0_OR_GREATER
+                if (builder.FilterFactories.Count > 0)
+                {
+                    throw new NotSupportedException("Filter factories are not supported for handlers");
+                }
+#endif
                 endpoints.Add(builder.Build());
             }
 
