@@ -49,7 +49,7 @@ public class CompilationSection
 
     internal Assembly LoadAssembly(string assemblyName, bool throwOnFail)
     {
-        throw new NotImplementedException();
+        throw new NotImplementedException("LoadAssembly");
     }
 }
 

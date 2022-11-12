@@ -16,10 +16,10 @@ internal sealed class CompiledPage : ICompiledPage
         AspxFile = path.FilePath;
     }
 
-    public static ICompiledPage FromError(PagePath page, string error)
+    public static ICompiledPage FromError(PagePath page, Exception ex)
         => new CompiledPage(page, Array.Empty<string>())
         {
-            Error = Encoding.UTF8.GetBytes(error),
+            Error = Encoding.UTF8.GetBytes(ex.ToString()),
         };
 
     public Type? Type { get; set; }

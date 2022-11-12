@@ -57,7 +57,7 @@ internal sealed class SystemWebCompilation : IPageCompiler, IDisposable
         }
         catch (HttpParseException ex)
         {
-            return Task.FromResult(CompiledPage.FromError(new(path), ex.Message));
+            return Task.FromResult(CompiledPage.FromError(new(path), ex));
         }
     }
 
@@ -210,7 +210,7 @@ internal sealed class SystemWebCompilation : IPageCompiler, IDisposable
         {
             ".aspx" => CreateFromPage(path),
             ".master" => CreateFromMasterPage(path),
-            _ => throw new NotImplementedException(),
+            _ => throw new NotImplementedException($"Unknown extension for compilation: {extension}"),
         };
 
         static BaseCodeDomTreeGenerator CreateFromPage(string path)

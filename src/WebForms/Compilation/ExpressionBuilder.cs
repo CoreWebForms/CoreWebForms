@@ -95,7 +95,7 @@ public abstract class ExpressionBuilder
 
         return expressionBuilder;
 #else
-        throw new NotImplementedException();
+        throw new NotImplementedException("GetExpressionBuilder");
 #endif
     }
 

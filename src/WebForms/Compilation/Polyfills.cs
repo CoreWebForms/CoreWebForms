@@ -20,12 +20,12 @@ internal class ResourceExpressionBuilder
 {
     internal static IResourceProvider GetLocalResourceProvider(VirtualPath virtualPath)
     {
-        throw new NotImplementedException();
+        throw new NotImplementedException("GetLocalResourceProvider");
     }
 
     internal static object ParseExpression(string fullResourceKey)
     {
-        throw new NotImplementedException();
+        throw new NotImplementedException("ParseExpression");
     }
 }
 
@@ -43,12 +43,12 @@ internal static class BuildManager
 
     internal static BuildResult GetBuildResultFromCache(string cacheKey)
     {
-        throw new NotImplementedException();
+        throw new NotImplementedException("GetBuildResultFromCache");
     }
 
     internal static string GetLocalResourcesAssemblyName(VirtualPath virtualDir)
     {
-        throw new NotImplementedException();
+        throw new NotImplementedException("GetLocalResourcesAssemblyName");
     }
 
     internal static TextWriter GetUpdatableDeploymentTargetWriter(VirtualPath currentVirtualPath, Encoding fileEncoding)
@@ -56,17 +56,17 @@ internal static class BuildManager
 
     internal static object GetVPathBuildResult(VirtualPath virtualPath)
     {
-        throw new NotImplementedException();
+        throw new NotImplementedException("GetVPathBuildResult");
     }
 
     internal static void ReportParseError(ParserError parseError)
     {
-        throw new NotImplementedException();
+        throw new NotImplementedException("ReportParseError");
     }
 
     internal static void ThrowIfPreAppStartNotRunning()
     {
-        throw new NotImplementedException();
+        throw new NotImplementedException("ThrowIfPreAppStartNotRunning");
     }
 
     internal static void ValidateCodeFileVirtualPath(VirtualPath codeFileVirtualPath)
