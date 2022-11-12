@@ -2,8 +2,8 @@
 
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
-using System.Web;
 using System.Web.Routing;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
@@ -125,28 +125,13 @@ internal sealed class WebFormsCompilationService : BackgroundService
                 else
                 {
                     _logger.LogWarning("No type found for {Path}", compilation.Path);
-                    _routes.Add(compilation.Path, new ErrorHandler(compilation.Error));
+                    _routes.Add(compilation.Path, new ErrorHandler(compilation.Exception));
                 }
 
                 finalPages.Add(new(compilation, file.LastModified));
             }
 
             Interlocked.Exchange(ref _compiledPages, finalPages.ToImmutable());
-        }
-    }
-
-    private class ErrorHandler : IHttpHandler
-    {
-        private readonly Memory<byte> _error;
-
-        public ErrorHandler(Memory<byte> bytes) => _error = bytes;
-
-        public bool IsReusable => true;
-
-        public void ProcessRequest(HttpContext context)
-        {
-            context.Response.OutputStream.Write(_error.Span);
-            context.Response.StatusCode = 500;
         }
     }
 

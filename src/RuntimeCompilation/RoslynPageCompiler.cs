@@ -6,7 +6,7 @@ using System.Globalization;
 using System.Reflection;
 using System.Runtime.Loader;
 using System.Text;
-using System.Text.Json;
+using System.Web;
 using Microsoft.AspNetCore.SystemWebAdapters.Compiler;
 using Microsoft.AspNetCore.SystemWebAdapters.Compiler.Symbols;
 using Microsoft.CodeAnalysis;
@@ -21,8 +21,6 @@ namespace Microsoft.AspNetCore.SystemWebAdapters.UI.RuntimeCompilation;
 
 internal sealed class RoslynPageCompiler : IPageCompiler
 {
-    private static readonly Memory<byte> NotTypeFoundMessage = Encoding.UTF8.GetBytes("Could not find class in generated assembly");
-
     private readonly bool _isDebug;
     private readonly ILogger<RoslynPageCompiler> _logger;
     private readonly ILoggerFactory _factory;
@@ -72,12 +70,12 @@ internal sealed class RoslynPageCompiler : IPageCompiler
 
         if (writingResult.ErrorMessage is { } errorMessage)
         {
-            return new CompiledPage(writingResult.File, dependentFiles) { Error = Encoding.UTF8.GetBytes(errorMessage) };
+            return new CompiledPage(writingResult.File, dependentFiles) { Exception = new HttpCompileException(errorMessage) };
         }
 
         if (writingResult is { Errors.IsDefault: false, Errors.IsEmpty: false })
         {
-            return new CompiledPage(writingResult.File, dependentFiles) { Error = JsonSerializer.SerializeToUtf8Bytes(writingResult.Errors) };
+            return new CompiledPage(writingResult.File, dependentFiles) { Exception = new HttpCompileException(string.Join(Environment.NewLine, writingResult.Errors)) };
         }
 
         var trees = writingResult.SourceFiles
@@ -110,19 +108,18 @@ internal sealed class RoslynPageCompiler : IPageCompiler
         {
             _logger.LogWarning("{ErrorCount} error(s) found compiling {Route}", result.Diagnostics.Length, writingResult.File.UrlPath);
 
-            var error = result.Diagnostics
+            var errors = result.Diagnostics
                 .Select(d => new
                 {
                     d.Id,
                     Message = d.GetMessage(CultureInfo.CurrentCulture),
-                    Severity = d.Severity,
+                    Severity = d.Severity.ToString(),
                     Location = d.Location.ToString(),
                 })
-                .OrderByDescending(d => d.Severity);
+                .OrderByDescending(d => d.Severity)
+                .ToList();
 
-            var message = JsonSerializer.SerializeToUtf8Bytes(error, new JsonSerializerOptions() { Converters = { new System.Text.Json.Serialization.JsonStringEnumConverter() } });
-
-            return new CompiledPage(writingResult.File, dependentFiles) { Error = message };
+            return new CompiledPage(writingResult.File, dependentFiles) { Exception = new RoslynCompilationException(errors) };
         }
 
         pdbStream.Position = 0;
@@ -135,7 +132,7 @@ internal sealed class RoslynPageCompiler : IPageCompiler
             return new CompiledPage(writingResult.File, dependentFiles) { Type = type };
         }
 
-        return new CompiledPage(writingResult.File, dependentFiles) { Error = NotTypeFoundMessage };
+        return new CompiledPage(writingResult.File, dependentFiles) { Exception = new InvalidOperationException("No type found") };
     }
 
     private readonly Dictionary<Assembly, MetadataReference> _references = new();

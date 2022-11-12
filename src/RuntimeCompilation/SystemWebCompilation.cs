@@ -11,6 +11,7 @@ using System.Web.Compilation;
 using System.Web.UI;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.CodeAnalysis.VisualBasic;
 using Microsoft.Extensions.FileProviders;
@@ -21,8 +22,6 @@ namespace Microsoft.AspNetCore.SystemWebAdapters.UI.RuntimeCompilation;
 
 internal sealed class SystemWebCompilation : IPageCompiler, IDisposable
 {
-    private static readonly Memory<byte> NotTypeFoundMessage = Encoding.UTF8.GetBytes("Could not find class in generated assembly");
-
     private readonly Dictionary<Assembly, MetadataReference> _references = new();
     private readonly ILoggerFactory _factory;
     private readonly IOptions<PageCompilationOptions> _options;
@@ -138,19 +137,18 @@ internal sealed class SystemWebCompilation : IPageCompiler, IDisposable
         {
             _logger.LogWarning("{ErrorCount} error(s) found compiling {Route}", result.Diagnostics.Length, path);
 
-            var error = result.Diagnostics
+            var errors = result.Diagnostics
                 .Select(d => new
                 {
                     d.Id,
                     Message = d.GetMessage(CultureInfo.CurrentCulture),
-                    Severity = d.Severity,
+                    Severity = d.Severity.ToString(),
                     Location = d.Location.ToString(),
                 })
-                .OrderByDescending(d => d.Severity);
+                .OrderByDescending(d => d.Severity)
+                .ToList();
 
-            var message = JsonSerializer.SerializeToUtf8Bytes(error, new JsonSerializerOptions() { Converters = { new System.Text.Json.Serialization.JsonStringEnumConverter() } });
-
-            return new CompiledPage(new(path), Array.Empty<string>()) { Error = message };
+            return new CompiledPage(new(path), Array.Empty<string>()) { Exception = new RoslynCompilationException(errors) };
         }
 
         pdbStream.Position = 0;
@@ -163,7 +161,7 @@ internal sealed class SystemWebCompilation : IPageCompiler, IDisposable
             return new CompiledPage(new(path), Array.Empty<string>()) { Type = type };
         }
 
-        return new CompiledPage(new(path), Array.Empty<string>()) { Error = NotTypeFoundMessage };
+        return new CompiledPage(new(path), Array.Empty<string>()) { Exception = new InvalidOperationException("No type found") };
     }
 
     private IEnumerable<MetadataReference> GetMetadataReferences()
