@@ -117,17 +117,36 @@ internal sealed class WebFormsCompilationService : BackgroundService
 
                 var compilation = await _compiler.CompilePageAsync(_files, aspx, token).ConfigureAwait(false);
 
-                _logger.LogTrace("Adding page {Path}", compilation.Path);
-
                 if (compilation.Type is { } type)
                 {
+                    _logger.LogTrace("Adding page {Path}", compilation.Path);
                     _routes.Add(compilation.Path, type);
+                }
+                else
+                {
+                    _logger.LogWarning("No type found for {Path}", compilation.Path);
+                    _routes.Add(compilation.Path, new ErrorHandler(compilation.Error));
                 }
 
                 finalPages.Add(new(compilation, file.LastModified));
             }
 
             Interlocked.Exchange(ref _compiledPages, finalPages.ToImmutable());
+        }
+    }
+
+    private class ErrorHandler : IHttpHandler
+    {
+        private readonly Memory<byte> _error;
+
+        public ErrorHandler(Memory<byte> bytes) => _error = bytes;
+
+        public bool IsReusable => true;
+
+        public void ProcessRequest(HttpContext context)
+        {
+            context.Response.OutputStream.Write(_error.Span);
+            context.Response.StatusCode = 500;
         }
     }
 
