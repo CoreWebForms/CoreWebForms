@@ -109,6 +109,7 @@ internal sealed class RoslynPageCompiler : IPageCompiler
             _logger.LogWarning("{ErrorCount} error(s) found compiling {Route}", result.Diagnostics.Length, writingResult.File.UrlPath);
 
             var errors = result.Diagnostics
+                .OrderByDescending(d => d.Severity)
                 .Select(d => new RoslynError()
                 {
                     Id = d.Id,
@@ -116,7 +117,6 @@ internal sealed class RoslynPageCompiler : IPageCompiler
                     Severity = d.Severity.ToString(),
                     Location = d.Location.ToString(),
                 })
-                .OrderByDescending(d => d.Severity)
                 .ToList();
 
             return new CompiledPage(writingResult.File, dependentFiles) { Exception = new RoslynCompilationException(errors) };
