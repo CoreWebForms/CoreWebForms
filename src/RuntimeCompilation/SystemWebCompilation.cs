@@ -5,13 +5,11 @@ using System.Globalization;
 using System.Reflection;
 using System.Runtime.Loader;
 using System.Text;
-using System.Text.Json;
 using System.Web;
 using System.Web.Compilation;
 using System.Web.UI;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.CodeAnalysis.VisualBasic;
 using Microsoft.Extensions.FileProviders;
@@ -138,9 +136,9 @@ internal sealed class SystemWebCompilation : IPageCompiler, IDisposable
             _logger.LogWarning("{ErrorCount} error(s) found compiling {Route}", result.Diagnostics.Length, path);
 
             var errors = result.Diagnostics
-                .Select(d => new
+                .Select(d => new RoslynError()
                 {
-                    d.Id,
+                    Id = d.Id,
                     Message = d.GetMessage(CultureInfo.CurrentCulture),
                     Severity = d.Severity.ToString(),
                     Location = d.Location.ToString(),

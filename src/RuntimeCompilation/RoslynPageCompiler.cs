@@ -109,9 +109,9 @@ internal sealed class RoslynPageCompiler : IPageCompiler
             _logger.LogWarning("{ErrorCount} error(s) found compiling {Route}", result.Diagnostics.Length, writingResult.File.UrlPath);
 
             var errors = result.Diagnostics
-                .Select(d => new
+                .Select(d => new RoslynError()
                 {
-                    d.Id,
+                    Id = d.Id,
                     Message = d.GetMessage(CultureInfo.CurrentCulture),
                     Severity = d.Severity.ToString(),
                     Location = d.Location.ToString(),
