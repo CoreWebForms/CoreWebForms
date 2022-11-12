@@ -58,13 +58,15 @@ public class RouteCollection
 
     private void AddMapping(string path, MappedRoute route)
     {
-        if (_mapped.TryGetValue(path, out var result))
+        var normalized = path.Trim('~');
+
+        if (_mapped.TryGetValue(normalized, out var result))
         {
             result.Add(route);
         }
         else
         {
-            _mapped.Add(path, new() { route });
+            _mapped.Add(normalized, new() { route });
         }
     }
 
