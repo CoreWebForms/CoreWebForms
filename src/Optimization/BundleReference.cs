@@ -40,23 +40,23 @@ public class BundleReference : Control
         }
     }
 
-    private static void Write(HtmlTextWriter writer, ScriptBundle bundle)
+    private void Write(HtmlTextWriter writer, ScriptBundle bundle)
     {
         foreach (var include in bundle.Paths)
         {
             writer.Write("<script type=\"text/json\" src=\"");
-            writer.Write(include);
+            writer.Write(ResolveUrl(include));
             writer.WriteLine("\"></script>");
         }
     }
 
-    private static void Write(HtmlTextWriter writer, StyleBundle bundle)
+    private void Write(HtmlTextWriter writer, StyleBundle bundle)
     {
         foreach (var include in bundle.Paths)
         {
             writer.Write("<link href=\"");
-            writer.Write(include);
-            writer.WriteLine("\" />");
+            writer.Write(ResolveUrl(include));
+            writer.WriteLine("\" rel=\"stylesheet\" />");
         }
     }
 }

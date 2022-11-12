@@ -1,14 +1,52 @@
 // MIT License.
 
+using System.Text;
+
 namespace System.Web;
 
 internal sealed class VirtualPath
 {
-    public VirtualPath Parent => Directory.GetParent(Path)!.FullName;
+    public VirtualPath Parent
+    {
+        get
+        {
+            var idx = Path.LastIndexOfAny(new[] { '/', '\\' });
 
+            if (idx == -1)
+            {
+                return "/";
+            }
+
+            var result = Path.Substring(0, idx);
+
+            return result + "/";
+        }
+    }
     public VirtualPath(string path)
     {
-        Path = path;
+        Path = Resolve(path);
+    }
+
+    public static string Resolve(string url)
+    {
+        if (!url.StartsWith('~'))
+        {
+            return url;
+        }
+
+        var vdir = HttpRuntime.AppDomainAppVirtualPath;
+
+        var sb = new StringBuilder(url, 1, url.Length - 1, url.Length + vdir.Length);
+
+        if (sb.Length == 0 || sb[0] != '/')
+        {
+            sb.Insert(0, '/');
+        }
+
+        sb.Insert(0, vdir);
+        sb.Replace("//", "/");
+
+        return sb.ToString();
     }
 
     public string Path { get; }
@@ -31,8 +69,6 @@ internal sealed class VirtualPath
     public string Extension => IO.Path.GetExtension(Path);
 
     public string FileName => IO.Path.GetFileName(Path);
-
-    public string AppRelativeVirtualPathStringOrNull => IO.Path.GetRelativePath(AppContext.BaseDirectory, Path);
 
     public object AppRelativeVirtualPathString => Path;
 

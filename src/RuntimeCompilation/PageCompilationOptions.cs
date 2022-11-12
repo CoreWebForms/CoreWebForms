@@ -49,7 +49,7 @@ public class PageCompilationOptions
 
     internal IControlLookup Info => _controls;
 
-    public bool UseFrameworkParser { get; set; }
+    public bool UseFrameworkParser { get; set; } = true;
 
     private sealed class ControlCollection : IControlLookup
     {

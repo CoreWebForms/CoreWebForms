@@ -3128,8 +3128,6 @@ public partial class Control : IComponent, IParserAccessor, IDataBindingsAccesso
     ///        client use, and will contain the session cookie if appropriate.</para>
     /// </devdoc>
     public string ResolveUrl(string relativeUrl)
-        => relativeUrl;
-#if PORT_VIRTUALDIRECTORY
     {
         if (relativeUrl == null)
         {
@@ -3185,7 +3183,7 @@ public partial class Control : IComponent, IParserAccessor, IDataBindingsAccesso
             return relativeUrl;
         }
 
-        string baseRequestDir = Context.Request.ClientBaseDir.VirtualPathString;
+        string baseRequestDir = Context.Request.ApplicationPath;
 
         // If the path is app relative (~/...), we cannot take shortcuts, since
         // the ~ is meaningless on the client, and must be resolved
@@ -3215,12 +3213,8 @@ public partial class Control : IComponent, IParserAccessor, IDataBindingsAccesso
         // Now, make it relative to the current request, so that the client will
         // compute the correct path
         url = HttpUtility.UrlPathEncode(UrlPath.MakeRelative(baseRequestDir, url));
-        Debug.Trace("ClientUrl", "*** ResolveClientUrl (" + relativeUrl + ") --> " + url + " ***");
         return url;
     }
-#else
-    public string ResolveClientUrl(string relativeUrl) => relativeUrl;
-#endif
 
     internal void DirtyNameTable()
     {
