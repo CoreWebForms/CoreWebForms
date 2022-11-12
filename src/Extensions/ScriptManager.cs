@@ -41,7 +41,7 @@ public class ScriptManager : Control
 
         foreach (var script in _scripts)
         {
-            if(script.Assembly is { } assembly && script.Path is { } path)
+            if (script.Assembly is { } assembly && script.Path is { } path)
             {
                 writer.Write("<script src=\"__webforms/scripts/");
                 writer.Write(assembly);
@@ -49,7 +49,7 @@ public class ScriptManager : Control
                 writer.Write(script.Name);
                 writer.WriteLine("\" type=\"text/javascript\"></script>");
             }
-            if (_knownScripts.TryGetValue(script.Name, out var knownScript))
+            else if (_knownScripts.TryGetValue(script.Name, out var knownScript))
             {
                 writer.Write("<script src=\"");
                 writer.Write(knownScript);
