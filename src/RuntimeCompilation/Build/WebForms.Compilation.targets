@@ -6,10 +6,17 @@
   <ItemGroup>
     <AspxFiles Include="$(MSBuildProjectDirectory)\**\*.aspx" />
     <AspxFiles Include="$(MSBuildProjectDirectory)\**\*.Master" />
+    <AspxFiles Remove="$(OutDir)\**\*.aspx" />
+    <AspxFiles Remove="$(OutDir)\**\*.Master" />
+
     <__CodeBehindFiles Include="$(MSBuildProjectDirectory)\**\*.aspx.vb" />
     <__CodeBehindFiles Include="$(MSBuildProjectDirectory)\**\*.aspx.cs" />
     <__CodeBehindFiles Include="$(MSBuildProjectDirectory)\**\*.Master.vb" />
     <__CodeBehindFiles Include="$(MSBuildProjectDirectory)\**\*.Master.cs" />
+    <__CodeBehindFiles Remove="$(OutDir)\**\*.aspx.vb" />
+    <__CodeBehindFiles Remove="$(OutDir)\**\*.aspx.cs" />
+    <__CodeBehindFiles Remove="$(OutDir)\**\*.Master.vb" />
+    <__CodeBehindFiles Remove="$(OutDir)\**\*.Master.cs" />
   </ItemGroup>
 
   <ItemGroup Condition="$(EnableRuntimAspxCompilation)">
