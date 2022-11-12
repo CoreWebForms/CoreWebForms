@@ -122,10 +122,10 @@ internal sealed class WebFormsCompilationService : BackgroundService
                     _logger.LogTrace("Adding page {Path}", compilation.Path);
                     _routes.Add(compilation.Path, type);
                 }
-                else
+                else 
                 {
                     _logger.LogWarning("No type found for {Path}", compilation.Path);
-                    _routes.Add(compilation.Path, new ErrorHandler(compilation.Exception));
+                    _routes.Add(compilation.Path, new ErrorHandler(compilation.Exception!));
                 }
 
                 finalPages.Add(new(compilation, file.LastModified));
