@@ -18,7 +18,7 @@ internal sealed record RouteItem(Func<HttpContextCore, IHttpHandler> Handler, Ty
         new BufferResponseStreamAttribute(),
         new PreBufferRequestStreamAttribute(),
         new SetThreadCurrentPrincipalAttribute(),
-        new SingleThreadedRequestAttribute(),
+        //new SingleThreadedRequestAttribute(),
     }.ToImmutableList();
 
     private static readonly ImmutableList<object> _metadataReadonlySession = _metadata.Add(new SessionAttribute { IsReadOnly = true });
