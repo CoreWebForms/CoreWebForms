@@ -1,21 +1,24 @@
 // MIT License.
 
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.Primitives;
 
 namespace System.Web.Routing;
 
-internal sealed class CancellationChangeTokenSource : IChangeToken, IDisposable
+internal sealed class CancellationChangeTokenSource : IDisposable
 {
     private readonly ReaderWriterLockSlim _lock;
     private readonly IDisposable _exitReadLock;
     private readonly IDisposable _exitWriteLock;
 
+    private CancellationChangeToken _token;
     private CancellationTokenSource _cts;
     private State _state;
 
     public CancellationChangeTokenSource()
     {
-        _cts = new();
+        Init();
+
         _lock = new ReaderWriterLockSlim();
         _exitReadLock = new Disposable(() => _lock.ExitReadLock());
         _exitWriteLock = new Disposable(() =>
@@ -36,23 +39,14 @@ internal sealed class CancellationChangeTokenSource : IChangeToken, IDisposable
         });
     }
 
-    public bool ActiveChangeCallbacks { get; private set; }
-
-    bool IChangeToken.HasChanged => _cts.IsCancellationRequested;
-
-    IDisposable IChangeToken.RegisterChangeCallback(Action<object?> callback, object? state)
+    [MemberNotNull(nameof(_token), nameof(_cts))]
+    private void Init()
     {
-        try
-        {
-            return _cts.Token.UnsafeRegister(callback, state);
-        }
-        catch (ObjectDisposedException)
-        {
-            ActiveChangeCallbacks = false;
-        }
-
-        return Disposable.Empty;
+        _cts = new();
+        _token = new(_cts.Token);
     }
+
+    public IChangeToken GetChangeToken() => _token;
 
     public IDisposable GetWriteLock()
     {
@@ -87,7 +81,7 @@ internal sealed class CancellationChangeTokenSource : IChangeToken, IDisposable
     {
         var previous = _cts;
 
-        _cts = new();
+        Init();
 
         previous.Cancel();
         previous.Dispose();

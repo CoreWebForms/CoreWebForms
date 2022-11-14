@@ -71,7 +71,7 @@ public class RouteCollection
 
     private CancellationChangeTokenSource Token => _changeToken ??= new();
 
-    internal IChangeToken GetChangeToken() => Token;
+    internal IChangeToken GetChangeToken() => Token.GetChangeToken();
 
     internal IEnumerable<RouteItem> GetRoutes()
     {
