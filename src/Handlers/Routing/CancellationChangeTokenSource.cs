@@ -40,11 +40,11 @@ internal sealed class CancellationChangeTokenSource : IChangeToken, IDisposable
 
     bool IChangeToken.HasChanged => _cts.IsCancellationRequested;
 
-    IDisposable IChangeToken.RegisterChangeCallback(Action<object> callback, object state)
+    IDisposable IChangeToken.RegisterChangeCallback(Action<object?> callback, object? state)
     {
         try
         {
-            return _cts.Token.UnsafeRegister(callback!, state);
+            return _cts.Token.UnsafeRegister(callback, state);
         }
         catch (ObjectDisposedException)
         {
