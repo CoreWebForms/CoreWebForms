@@ -3183,7 +3183,7 @@ public partial class Control : IComponent, IParserAccessor, IDataBindingsAccesso
             return relativeUrl;
         }
 
-        string baseRequestDir = Context.Request.ApplicationPath;
+        string baseRequestDir = Context.Request.GetClientBaseDir();
 
         // If the path is app relative (~/...), we cannot take shortcuts, since
         // the ~ is meaningless on the client, and must be resolved
@@ -3212,8 +3212,8 @@ public partial class Control : IComponent, IParserAccessor, IDataBindingsAccesso
 
         // Now, make it relative to the current request, so that the client will
         // compute the correct path
-        url = HttpUtility.UrlPathEncode(UrlPath.MakeRelative(baseRequestDir, url));
-        return url;
+        var final = HttpUtility.UrlPathEncode(UrlPath.MakeRelative(baseRequestDir, url));
+        return final;
     }
 
     internal void DirtyNameTable()

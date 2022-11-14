@@ -7,6 +7,11 @@ namespace System.Web;
 
 internal static class Extensions
 {
+    public static string GetClientBaseDir(this HttpRequest request)
+    {
+        return request.CurrentExecutionFilePathObject();
+    }
+
     public static string ApplyAppPathModifier(this HttpResponse response, string url)
     {
         if (string.IsNullOrEmpty(url))
