@@ -287,7 +287,6 @@ internal class MainTagNameToTypeMapper
 
             //
 
-
             if (parser.FInDesigner && (_tagNamespaceRegisterEntries == null))
             {
                 _tagNamespaceRegisterEntries = new TagNamespaceRegisterEntryTable();

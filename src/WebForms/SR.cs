@@ -1,7 +1,4 @@
-// MIT
-
-
-using System.Globalization;
+// MIT License.
 
 namespace System.Web;
 
@@ -15,7 +12,7 @@ internal static class AssemblyRef
 
 internal static class SR
 {
-    public static string GetString(string name, params object[] args) => string.Format(CultureInfo.InvariantCulture, name, args);
+    public static string GetString(string name, params object[] args) => name;
 
     public const string Ambiguous_server_tag = "The server tag '{0}' is ambiguous. Please modify the associated registration that is causing ambiguity and pick a new tag prefix.";
     public const string Ambiguous_type = "The type '{0}' is ambiguous: it could come from assembly '{1}' or from assembly '{2}'. Please specify the assembly explicitly in the type name.";
@@ -41,6 +38,12 @@ internal static class SR
     public const string BaseDataBoundControl_DataSource = "The data source that is used to populate the items in the list.";
     public const string BaseDataBoundControl_DataSourceID = "The control ID of an IDataSource that will be used as the data source.";
     public const string BaseDataBoundControl_OnDataBound = "Fires after the control has been databound.";
+    public const string BaseDataList_CellPadding = "The padding within cells.";
+    public const string BaseDataList_CellSpacing = "The spacing between cells.";
+    public const string BaseDataList_DataKeyField = "The field in the data source used to populate the DataKeys collection.";
+    public const string BaseDataList_DataKeys = "The collection of data keys.";
+    public const string BaseDataList_DataMember = "The table or view used for binding when a DataSet is used as a data source.";
+    public const string BaseDataList_OnSelectedIndexChanged = "Fires when the current selection changes.";
     public const string BaseValidator_ControlToValidate = "ID of the control to validate.";
     public const string BaseValidator_Display = "How the validator is displayed.";
     public const string BaseValidator_EnableClientScript = "Indicates whether to perform validation on the client in up-level browsers.";
@@ -51,6 +54,9 @@ internal static class SR
     public const string BaseValidator_ValidationGroup = "The group to which the validator belongs.";
     public const string Binding_DataMember = "The element or table name that contains the attributes or columns specified by TextField and ValueField.";
     public const string BindingBehavior_ValueNotFound = "A value for '{0}' is required but is not present in the request.";
+    public const string BoundColumn_DataField = "The field to which this column is bound.";
+    public const string BoundColumn_DataFormatString = "The formatting that is applied to the bound value. For example, \"{0:d}\" or \"{0:c}\".";
+    public const string BoundColumn_ReadOnly = "Whether the column does not permit editing of its bound field.";
     public const string BoundField_ApplyFormatInEditMode = "Whether the data should be shown with the DataFormatString formatting applied when in edit mode.  If set to true, the data may have to be unformatted before it is updated in the data source.";
     public const string BoundField_ConvertEmptyStringToNull = "Whether the field treats empty strings as null when the value is extracted from the field.";
     public const string BoundField_DataField = "The field to which this field is bound.";
@@ -237,10 +243,14 @@ internal static class SR
     public const string DataControlFieldCell_ShouldNotSetValidateRequestMode = "DataControlFieldCell gets the value of ValidateRequestMode from its ContainingField. The ValidateRequestMode property cannot be set directly on DataControlFieldCell.";
     public const string DataControlFieldCollection_InvalidType = "Object is not a DataControlField.";
     public const string DataControlFieldCollection_InvalidTypeIndex = "Type index is out of bounds.";
+    public const string DataControls_AutoGenerateColumns = "Whether the columns are generated automatically at runtime based on the associated data source.";
     public const string DataControls_Caption = "The descriptive caption associated with the control.";
+    public const string DataControls_Columns = "The set of columns to be shown in the control.";
     public const string DataControls_DataKeyNames = "A comma-separated list of key fields in the data source.";
     public const string DataControls_DataSourceMustBeCollectionWhenNotDataBinding = nameof(DataControls_DataSourceMustBeCollectionWhenNotDataBinding);
+    public const string DataControls_FooterStyle = "Style applied to the footer.";
     public const string DataControls_GridLines = "Settings for grid lines between cells.";
+    public const string DataControls_HeaderStyle = "Style applied to the header.";
     public const string DataControls_OnItemCreated = "Fires when an item is created.";
     public const string DataControls_OnItemDataBound = "Fires after an item has been databound.";
     public const string DataControls_OnItemDeleted = "Fires after a Delete Command is executed on the data source.";
@@ -249,6 +259,44 @@ internal static class SR
     public const string DataControls_OnItemInserting = "Fires before an Insert Command is executed on the data source.";
     public const string DataControls_OnItemUpdated = "Fires after an Update Command is executed on the data source.";
     public const string DataControls_OnItemUpdating = "Fires before an Update Command is executed on the data source.";
+    public const string DataControls_ShowFooter = "Whether to the show the control's footer.";
+    public const string DataControls_ShowHeader = "Whether to the show the control's header.";
+    public const string DataGrid_AllowCustomPaging = "Whether to turn on support for custom paging.";
+    public const string DataGrid_AllowPaging = "Whether to turn on paging functionality in the DataGrid.";
+    public const string DataGrid_AllowSorting = "Whether the column headers can be used to sort the associated data source.";
+    public const string DataGrid_AlternatingItemStyle = "The style applied to alternating items.";
+    public const string DataGrid_CurrentPageIndex = "The index of the current page.";
+    public const string DataGrid_EditItemIndex = "The index of the item shown in edit mode.";
+    public const string DataGrid_EditItemStyle = "The style applied to items in edit mode.";
+    public const string DataGrid_Items = "The collection of items.";
+    public const string DataGrid_ItemStyle = "The style applied to items.";
+    public const string DataGrid_Missing_VirtualItemCount = "AllowCustomPaging must be true and VirtualItemCount must be set for a DataGrid with ID '{0}' when AllowPaging is set to true and the selected data source does not implement ICollection.";
+    public const string DataGrid_NoAutoGenColumns = "DataGrid with id '{0}' could not automatically generate any columns from the selected data source.";
+    public const string DataGrid_OnCancelCommand = "Fires when a Cancel CommandEvent is generated within the DataGrid.";
+    public const string DataGrid_OnDeleteCommand = "Fires when a Delete CommandEvent is generated within the DataGrid.";
+    public const string DataGrid_OnEditCommand = "Fires when an Edit CommandEvent is generated within the DataGrid.";
+    public const string DataGrid_OnItemCommand = "Fires when an event is generated within the DataGrid.";
+    public const string DataGrid_OnPageIndexChanged = "Fires when the current page index of the DataGrid has changed.";
+    public const string DataGrid_OnSortCommand = "Fires when a Sort CommandEvent is generated within the DataGrid.";
+    public const string DataGrid_OnUpdateCommand = "Fires when an Update CommandEvent is generated within the DataGrid.";
+    public const string DataGrid_PageCount = "The current page count.";
+    public const string DataGrid_PagerStyle = "Controls the paging UI associated with the control.";
+    public const string DataGrid_PageSize = "The number of items from the data source to display per page.";
+    public const string DataGrid_SelectedItem = "The currently selected item.";
+    public const string DataGrid_SelectedItemStyle = "The style applied to selected items.";
+    public const string DataGrid_VisibleItemCount = "The count of visible items.";
+    public const string DataGridColumn_FooterStyle = "The style applied to footer within this column.";
+    public const string DataGridColumn_FooterText = "The text within the footer of this column.";
+    public const string DataGridColumn_HeaderImageUrl = "The URL of the image to be displayed in the header of this column.";
+    public const string DataGridColumn_HeaderStyle = "The style applied to header within this column.";
+    public const string DataGridColumn_HeaderText = "The text within the header of this column.";
+    public const string DataGridColumn_ItemStyle = "The style applied to rows within this column.";
+    public const string DataGridColumn_SortExpression = "The sort expression associated with the column.";
+    public const string DataGridColumn_Visible = "Whether the column is visible or not.";
+    public const string DataGridPagerStyle_Mode = "The type of paging UI to use.";
+    public const string DataGridPagerStyle_PageButtonCount = "Number of pages to show in the paging UI.";
+    public const string DataGridPagerStyle_Position = "The position of the navigation bar.";
+    public const string DataGridPagerStyle_Visible = "Whether the paging UI is visible.";
     public const string DataItem_Not_Found = "A data item was not found in the container. The container must either implement IDataItemContainer, or have a property named DataItem.";
     public const string DataSourceView_NoPaging = "The data source does not support server-side data paging.";
     public const string DataSourceView_NoRowCount = "The data source does not support retrieving the number of rows of data.";
@@ -386,6 +434,7 @@ internal static class SR
     public const string Invalid_collection_item_type = "{0} must have items of type '{1}'. '{2}' is of type '{3}'.";
     public const string Invalid_ControlState = "The state information is invalid for this page and might be corrupted.";
     public const string Invalid_culture_attribute = "The 'Culture' attribute must be set to a non-neutral culture.  Try one of the following: {0}.";
+    public const string Invalid_CurrentPageIndex = nameof(Invalid_CurrentPageIndex);
     public const string Invalid_DataSource_Type = "An invalid data source is being used for {0}. A valid data source must implement either IListSource or IEnumerable.";
     public const string Invalid_enum_attribute = "The '{0}' attribute must be one of the following values: {1}.";
     public const string Invalid_enum_value = "'{0}' is not a valid value for attribute '{1}'. It must be of enum type '{2}'.";
@@ -686,6 +735,7 @@ internal static class SR
     public const string Table_HorizontalAlign = "The horizontal alignment of the table.";
     public const string Table_Rows = "The collection of rows within the table.";
     public const string Table_SectionsMustBeInOrder = "The table {0} must contain row sections in order of header, body, then footer.";
+    public const string Table_UseAccessibleHeader = "Indicates that the control should use accessible header cells in its containing table control.";
     public const string TableCell_AssociatedHeaderCellID = " Lists the header cell IDs associated with the current table cell. This attribute is rendered with the HTML headers attribute.";
     public const string TableCell_AssociatedHeaderCellNotFound = "The cell {0} listed as an associated header cell was not found.";
     public const string TableCell_ColumnSpan = "The number of columns this cell spans.";
