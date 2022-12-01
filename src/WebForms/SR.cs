@@ -1,4 +1,5 @@
-// MIT License.
+// MIT
+
 
 namespace System.Web;
 
@@ -13,7 +14,7 @@ internal static class AssemblyRef
 internal static class SR
 {
     public static string GetString(string name, params object[] args) => name;
-
+    
     public const string Ambiguous_server_tag = "The server tag '{0}' is ambiguous. Please modify the associated registration that is causing ambiguity and pick a new tag prefix.";
     public const string Ambiguous_type = "The type '{0}' is ambiguous: it could come from assembly '{1}' or from assembly '{2}'. Please specify the assembly explicitly in the type name.";
     public const string App_session_only_valid_in_global_asax = "The Application and Session scopes are valid only in the global.asax file.";
@@ -72,6 +73,12 @@ internal static class SR
     public const string Button_PostBackUrl = "The URL to post to when the button is clicked.";
     public const string Button_Text = "The text to be shown on the button.";
     public const string Button_UseSubmitBehavior = "Indicates whether the button render as a submit button.";
+    public const string ButtonColumn_ButtonType = "The type of button contained within the column.";
+    public const string ButtonColumn_CausesValidation = "Whether pressing the button will cause validation to occur.";
+    public const string ButtonColumn_DataTextField = "The field bound to the text property of the button.";
+    public const string ButtonColumn_DataTextFormatString = "The formatting applied to the value bound to the Text property. For example, \"select: {0}\".";
+    public const string ButtonColumn_Text = "The text used for the button.";
+    public const string ButtonColumn_ValidationGroup = "The name of the validation group for which this button should cause validation.";
     public const string ButtonField_DataTextField = "The field bound to the text property of the button.";
     public const string ButtonField_DataTextFormatString = "The formatting applied to the value bound to the Text property. For example, \"select: {0}\".";
     public const string ButtonField_ImageUrl = "The URL of the image if the ButtonType is Image.";
