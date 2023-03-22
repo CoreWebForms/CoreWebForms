@@ -17,7 +17,6 @@ builder.Services.AddSystemWebAdapters()
     })
     .AddDynamicPages(options =>
     {
-        options.UseFrameworkParser = true;
         options.Files = builder.Environment.ContentRootFileProvider;
     });
 

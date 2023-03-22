@@ -149,36 +149,6 @@ public class MasterPage : UserControl
         }
     }
 
-    protected internal override void OnInit(EventArgs ev)
-    {
-        base.OnInit(ev);
-
-        SetContentPlaceHolders();
-    }
-
-    // NOTE: This was done in the Builder on ASP.NET Framework
-    private void SetContentPlaceHolders()
-    {
-        if (Context.Items["Parser"] is string str && str == "Custom")
-        {
-            var e = ContentTemplates.GetEnumerator();
-
-            while (e.MoveNext())
-            {
-                if (e.Key is string id && e.Value is ITemplate template && FindControl(id) is { } control)
-                {
-                    InstantiateInContentPlaceHolder(control, template);
-
-                    // TODO: Workaround to handle databinding issue
-                    if (template is TemplateControl tControl)
-                    {
-                        control.TemplateControl = tControl;
-                    }
-                }
-            }
-        }
-    }
-
     [EditorBrowsable(EditorBrowsableState.Advanced)]
     protected internal void AddContentTemplate(string templateName, ITemplate template)
     {
@@ -197,7 +167,7 @@ public class MasterPage : UserControl
         }
     }
 
-    internal static MasterPage CreateMaster(TemplateControl owner, HttpContext context, MasterPage master, IDictionary contentTemplateCollection)
+    internal static MasterPage CreateMaster(TemplateControl owner, MasterPage master, IDictionary contentTemplateCollection)
     {
         Debug.Assert(owner is MasterPage || owner is Page);
 
