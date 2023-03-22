@@ -11,7 +11,7 @@
     <None Include="Build\*" Pack="true" PackagePath="Build\" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis" Version="4.3.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis" Version="4.5.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Compiler\Compiler.csproj" />
