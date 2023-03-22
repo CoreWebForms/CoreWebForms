@@ -32,7 +32,6 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseWebFormsScripts();
 
 app.UseRouting();
 
@@ -45,6 +44,7 @@ app.MapGet("/acls", () => AssemblyLoadContext.All.Select(acl => new
     Assemblies = acl.Assemblies.Select(a => a.FullName)
 }));
 
+app.MapWebForms();
 app.MapHttpHandlers();
 
 app.Run();
