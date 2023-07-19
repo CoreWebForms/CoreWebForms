@@ -5651,7 +5651,7 @@ window.onload = WebForm_RestoreScrollPosition;
         _context = context;
         _request = context.Request;
         _response = context.Response;
-        _application = context.AsCore().RequestServices.GetRequiredService<HttpApplicationState>();// context.Application;
+        _application = context.Application;
         _cache = context.Cache;
 
 #if PORT_UNKNOWN
