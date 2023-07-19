@@ -382,6 +382,7 @@ public class Style : Component, IStateManager
     public virtual void AddAttributesToRender(HtmlTextWriter writer, WebControl owner)
     {
         string cssClass = string.Empty;
+        bool renderInlineStyle = true;
 
         if (IsSet(PROP_CSSCLASS))
         {
@@ -394,6 +395,7 @@ public class Style : Component, IStateManager
 
         if (!string.IsNullOrEmpty(registeredCssClass))
         {
+            renderInlineStyle = false;
             if (cssClass.Length != 0)
             {
                 cssClass += " " + registeredCssClass;
@@ -409,12 +411,10 @@ public class Style : Component, IStateManager
             writer.AddAttribute(HtmlTextWriterAttribute.Class, cssClass);
         }
 
-#if FALSE
         if (renderInlineStyle) {
             CssStyleCollection styleAttributes = GetStyleAttributes(owner);
             styleAttributes.Render(writer);
         }
-#endif
     }
 
     /// <devdoc>
