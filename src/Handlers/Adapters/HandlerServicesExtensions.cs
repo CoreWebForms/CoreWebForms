@@ -16,7 +16,6 @@ public static class HandlerServicesExtensions
     {
         services.Services.TryAddSingleton<IHttpHandlerEndpointFactory, HttpHandlerEndpointFactory>();
         services.Services.AddTransient<IStartupFilter, HttpHandlerStartupFilter>();
-        services.Services.AddSingleton(_ => new HttpApplicationState());
         services.Services.AddTransient(_ => new System.Web.Routing.RouteCollection());
 
         if (configure is not null)
