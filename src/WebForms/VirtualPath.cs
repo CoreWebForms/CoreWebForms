@@ -34,7 +34,8 @@ internal sealed class VirtualPath
             return url;
         }
 
-        var vdir = HttpRuntime.AppDomainAppVirtualPath;
+        // TODO: Runtime is only available during HttpContext...
+        var vdir = "/";// HttpRuntime.AppDomainAppVirtualPath;
 
         var sb = new StringBuilder(url, 1, url.Length - 1, url.Length + vdir.Length);
 
