@@ -252,7 +252,6 @@ public class Page : TemplateControl, IHttpAsyncHandler
     // Http Intrinsics
     internal HttpRequest _request;
     internal HttpResponse _response;
-    internal HttpApplicationState _application;
     internal Cache _cache;
 
     internal string _errorPage;
@@ -597,7 +596,7 @@ public class Page : TemplateControl, IHttpAsyncHandler
     {
         get
         {
-            return _application;
+            return _context.Application;
         }
     }
 
@@ -5651,7 +5650,6 @@ window.onload = WebForm_RestoreScrollPosition;
         _context = context;
         _request = context.Request;
         _response = context.Response;
-        _application = context.Application;
         _cache = context.Cache;
 
 #if PORT_UNKNOWN
