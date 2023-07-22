@@ -2,7 +2,7 @@
 
 using System.Text;
 
-namespace WebForms.Compiler;
+namespace WebForms.Compiler.Dynamic;
 
 public readonly struct PagePath
 {

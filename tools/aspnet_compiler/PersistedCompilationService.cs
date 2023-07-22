@@ -2,7 +2,7 @@
 
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using WebForms.Compiler;
+using WebForms.Compiler.Dynamic;
 
 internal sealed class PersistedCompilationService : BackgroundService
 {

@@ -7,7 +7,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace WebForms.Compiler;
+namespace WebForms.Compiler.Dynamic;
 
 internal sealed class PersistentSystemWebCompilation : SystemWebCompilation, IWebFormsCompiler
 {

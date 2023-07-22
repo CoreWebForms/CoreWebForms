@@ -1,6 +1,6 @@
 // MIT License.
 
-namespace WebForms.Compiler;
+namespace WebForms.Compiler.Dynamic;
 
 internal sealed class RoslynCompilationException : Exception
 {

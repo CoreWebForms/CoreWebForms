@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
 
-namespace WebForms.Compiler;
+namespace WebForms.Compiler.Dynamic;
 
 internal sealed class WebFormsCompilationService : BackgroundService
 {

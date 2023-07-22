@@ -2,7 +2,7 @@
 
 using Microsoft.AspNetCore.Http;
 
-namespace WebForms.Compiler;
+namespace WebForms.Compiler.Dynamic;
 
 internal interface ICompiledPage : IDisposable
 {

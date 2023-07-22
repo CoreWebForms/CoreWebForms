@@ -3,7 +3,7 @@
 using System.Web.UI;
 using Microsoft.AspNetCore.SystemWebAdapters;
 using Microsoft.Extensions.Options;
-using WebForms.Compiler;
+using WebForms.Compiler.Dynamic;
 
 namespace Microsoft.Extensions.DependencyInjection;
 

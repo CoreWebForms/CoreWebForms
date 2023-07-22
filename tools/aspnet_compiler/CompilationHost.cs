@@ -3,7 +3,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
-using WebForms.Compiler;
+using WebForms.Compiler.Dynamic;
 
 internal sealed class CompilationHost
 {

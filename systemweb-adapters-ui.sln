@@ -39,6 +39,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "aspnet_compiler", "tools\as
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Compiler", "src\Compiler\Compiler.csproj", "{F28F52CB-99B3-4F84-BC78-70408816C412}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compiler.Dynamic", "src\Compiler.Dynamic\Compiler.Dynamic.csproj", "{F5C18E7C-8459-4256-85FD-C1FD37717993}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -85,6 +87,10 @@ Global
 		{F28F52CB-99B3-4F84-BC78-70408816C412}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F28F52CB-99B3-4F84-BC78-70408816C412}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F28F52CB-99B3-4F84-BC78-70408816C412}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F5C18E7C-8459-4256-85FD-C1FD37717993}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F5C18E7C-8459-4256-85FD-C1FD37717993}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F5C18E7C-8459-4256-85FD-C1FD37717993}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F5C18E7C-8459-4256-85FD-C1FD37717993}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -100,6 +106,7 @@ Global
 		{CBCFE973-D019-4D6C-A5CA-DC935CA41268} = {D3D2945C-76BA-4DE3-90D2-259E2B1406C5}
 		{0558DDA6-2E01-4859-ACFF-63AC5DFE96F9} = {23A5C92F-7ED5-43A1-AF04-082FBB0F8AB8}
 		{F28F52CB-99B3-4F84-BC78-70408816C412} = {D3D2945C-76BA-4DE3-90D2-259E2B1406C5}
+		{F5C18E7C-8459-4256-85FD-C1FD37717993} = {D3D2945C-76BA-4DE3-90D2-259E2B1406C5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B89024DA-2E51-49B1-8D52-651372AB5C83}

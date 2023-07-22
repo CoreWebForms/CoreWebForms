@@ -3,7 +3,7 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.CodeAnalysis;
 
-namespace WebForms.Compiler;
+namespace WebForms.Compiler.Dynamic;
 
 public class PersistentCompilationOptions
 {

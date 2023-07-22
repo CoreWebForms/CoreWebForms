@@ -2,7 +2,7 @@
 
 using Microsoft.Extensions.FileProviders;
 
-namespace WebForms.Compiler;
+namespace WebForms.Compiler.Dynamic;
 
 internal static class FileProviderExtensions
 {

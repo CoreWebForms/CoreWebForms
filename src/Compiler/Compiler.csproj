@@ -1,19 +1,17 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
+    <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
+    <!--<IncludeBuildOutput>false</IncludeBuildOutput>-->
+    <IsPackable>true</IsPackable>
+    <NoPackageAnalysis>true</NoPackageAnalysis>
     <IsShipped>true</IsShipped>
     <TargetFramework>net6.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-    <AssemblyName>WebForms.Compiler</AssemblyName>
-    <RootNamespace>WebForms.Compiler</RootNamespace>
+    <NoWarn>NU5017</NoWarn>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <PackageId>WebForms.Compiler</PackageId>
   </PropertyGroup>
   <ItemGroup>
-    <None Include="Build\*" Pack="true" PackagePath="Build\" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis" Version="4.5.0" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\WebForms\WebForms.csproj" />
+
+    <None Include="Build/**/*" CopyToOutputDirectory="Always" Pack="true" PackagePath="Build" />
   </ItemGroup>
 </Project>
