@@ -8,11 +8,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\Compiler\Compiler.csproj" />
     <ProjectReference Include="..\..\src\Extensions\Extensions.csproj" />
-    <ProjectReference Include="..\..\src\RuntimeCompilation\RuntimeCompilation.csproj" />
     <ProjectReference Include="..\..\src\WebForms\WebForms.csproj" />
   </ItemGroup>
 
-  <Import Project="..\..\src\RuntimeCompilation\Build\WebForms.Compilation.targets" />
+  <Import Project="..\..\src\RuntimeCompilation\Build\WebForms.Compiler.targets" />
 
 </Project>

@@ -2,12 +2,12 @@
 
 using System.Text;
 
-namespace Microsoft.AspNetCore.SystemWebAdapters.UI.RuntimeCompilation;
+namespace WebForms.Compiler;
 
 public readonly struct PagePath
 {
     public PagePath(string path)
-        : this(System.IO.Path.GetDirectoryName(path)!, System.IO.Path.GetFileName(path))
+        : this(Path.GetDirectoryName(path)!, Path.GetFileName(path))
     {
     }
 

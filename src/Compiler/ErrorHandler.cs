@@ -3,7 +3,7 @@
 using System.Web;
 using Microsoft.AspNetCore.Http;
 
-namespace Microsoft.AspNetCore.SystemWebAdapters.UI.RuntimeCompilation;
+namespace WebForms.Compiler;
 
 internal sealed class ErrorHandler : HttpTaskAsyncHandler
 {

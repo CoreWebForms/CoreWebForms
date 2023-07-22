@@ -1,6 +1,6 @@
 // MIT License.
 
-namespace Microsoft.AspNetCore.SystemWebAdapters.UI.RuntimeCompilation;
+namespace WebForms.Compiler;
 
 internal sealed class RoslynError
 {

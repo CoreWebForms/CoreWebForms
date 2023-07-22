@@ -3,7 +3,7 @@
 using System.Runtime.Loader;
 using Microsoft.AspNetCore.Http;
 
-namespace Microsoft.AspNetCore.SystemWebAdapters.UI.RuntimeCompilation;
+namespace WebForms.Compiler;
 
 internal sealed class CompiledPage : ICompiledPage
 {

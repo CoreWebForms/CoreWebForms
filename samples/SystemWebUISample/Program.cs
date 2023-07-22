@@ -15,7 +15,7 @@ builder.Services.AddSystemWebAdapters()
     .AddHttpHandlers(options =>
     {
     })
-    .AddDynamicPages(options =>
+    .AddDynamicWebForms(options =>
     {
         options.Files = builder.Environment.ContentRootFileProvider;
     });

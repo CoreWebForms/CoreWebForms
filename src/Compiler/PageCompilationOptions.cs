@@ -6,7 +6,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using Microsoft.Extensions.FileProviders;
 
-namespace Microsoft.AspNetCore.SystemWebAdapters.UI.RuntimeCompilation;
+namespace WebForms.Compiler;
 
 public class PageCompilationOptions
 {
@@ -21,11 +21,12 @@ public class PageCompilationOptions
         _assemblies = new();
         KnownTags = new List<TagNamespaceRegisterEntry>();
 
-        // Ensure this assembly is loaded
-        _ = typeof(HttpUtility).Assembly;
-
         AddTypeNamespace<Page>("asp");
         AddTypeNamespace<TextBox>("asp");
+
+        AddAssembly(typeof(HttpUtility).Assembly);
+        AddAssembly(typeof(IHttpHandler).Assembly);
+        AddAssembly(typeof(HttpContext).Assembly);
     }
 
     public void AddAssembly(Assembly assembly) => _assemblies.Add(assembly);

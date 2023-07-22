@@ -24,7 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <InternalsVisibleTo Include="WebForms.Compilation" />
+    <InternalsVisibleTo Include="WebForms.Compiler" />
     <InternalsVisibleTo Include="WebForms.Extensions" />
   </ItemGroup>
 
