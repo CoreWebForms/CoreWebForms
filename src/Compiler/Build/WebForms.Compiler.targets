@@ -19,14 +19,14 @@
     <__CodeBehindFiles Remove="$(OutDir)\**\*.Master.cs" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Remove="@(__CodeBehindFiles)" />
+  </ItemGroup>
+
   <ItemGroup Condition="$(EnableRuntimAspxCompilation)">
     <None Include="@(AspxFiles)">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
-
-  <ItemGroup Condition="$(EnableRuntimAspxCompilation)">
-    <Compile Remove="@(__CodeBehindFiles)" />
     <None Include="@(__CodeBehindFiles)">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
