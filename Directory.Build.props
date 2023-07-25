@@ -3,7 +3,7 @@
     <LangVersion>10</LangVersion>
   </PropertyGroup>
 
- <PropertyGroup>
+  <PropertyGroup>
     <InformationalVersion>$(GitVersion_InformationalVersion)</InformationalVersion>
     <FileVersion>$(GitVersion_MajorMinorPatch)</FileVersion>
     <AssemblyVersion>$(GitVersion_AssemblySemVer)</AssemblyVersion>
@@ -17,7 +17,7 @@
     <BaseIntermediateOutputPath>$(OutputFullPath)obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
   </PropertyGroup>
 
-   <PropertyGroup>
+  <PropertyGroup>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
@@ -30,6 +30,7 @@
   </ItemGroup>
 
   <PropertyGroup>
+    <!-- Enables building samples with the aspnet_compiler built in this project -->
     <_AspNetCompilerRoot>$(OutputDrop)aspnet_compiler/net7.0/</_AspNetCompilerRoot>
   </PropertyGroup>
 
