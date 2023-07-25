@@ -41,7 +41,7 @@ public static class HandlerServicesExtensions
         {
             var routes = endpoints.ServiceProvider.GetRequiredService<IOptions<HttpHandlerOptions>>().Value.Routes;
             var results = JsonSerializer.Deserialize<WebFormsDetails[]>(file.CreateReadStream());
-            var context = GetLoadContext(env);
+            var context = GetLoadContext();
 
             if (results is not null)
             {
@@ -58,20 +58,13 @@ public static class HandlerServicesExtensions
         return httpHandlers;
     }
 
-    private static AssemblyLoadContext GetLoadContext(IWebHostEnvironment env)
-    {
-        if (!env.IsDevelopment())
-        {
-            return AssemblyLoadContext.Default;
-        }
+    private static AssemblyLoadContext GetLoadContext()
+        => AssemblyLoadContext.All.OfType<WebFormsAssemblyLoadContext>().FirstOrDefault() ?? new WebFormsAssemblyLoadContext();
 
-        return AssemblyLoadContext.All.OfType<DevelopmentAssemblyLoadContext>().FirstOrDefault() ?? new DevelopmentAssemblyLoadContext();
-    }
-
-    private sealed class DevelopmentAssemblyLoadContext : AssemblyLoadContext
+    private sealed class WebFormsAssemblyLoadContext : AssemblyLoadContext
     {
-        public DevelopmentAssemblyLoadContext()
-            : base("Development Aware WebForms Load Context")
+        public WebFormsAssemblyLoadContext()
+            : base("WebForms Load Context")
         {
         }
 

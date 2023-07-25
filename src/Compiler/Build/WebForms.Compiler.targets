@@ -29,8 +29,17 @@
     </None>
   </ItemGroup>
 
-  <Target Name="WebFormsCompilation" Condition="!$(EnableRuntimeAspxCompilation)" BeforeTargets="Build">
-    <Exec Command="dotnet $(AspNetCompilePath) -p $(MSBuildProjectDirectory) $(OutDir)" />
+  <Target Name="WebFormsCompilation" Condition="!$(EnableRuntimeAspxCompilation)" BeforeTargets="Build;AssignTargetPaths">
+    <PropertyGroup>
+      <_WebFormsTempDir>$(IntermediateOutputPath)webforms_compile/</_WebFormsTempDir>
+    </PropertyGroup>
+    <Exec Command="dotnet $(AspNetCompilePath) -p $(MSBuildProjectDirectory) $(_WebFormsTempDir)" />
+    <ItemGroup>
+      <CompiledWebFormsPages Include="$(_WebFormsTempDir)/*.dll" />
+      <CompiledWebFormsPages Include="$(_WebFormsTempDir)/*.pdb" />
+      <CompiledWebFormsPages Include="$(_WebFormsTempDir)/webforms.pages.json" />
+      <Content Include="@(CompiledWebFormsPages)" CopyToOutputDirectory="Always" />
+    </ItemGroup>
   </Target>
 
 </Project>
