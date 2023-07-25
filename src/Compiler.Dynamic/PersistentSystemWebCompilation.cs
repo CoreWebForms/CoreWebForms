@@ -112,5 +112,5 @@ internal sealed class PersistentSystemWebCompilation : SystemWebCompilation, IWe
         File.WriteAllText(dataPath, data);
     }
 
-    private record PageDetails(string Path, string Type, string Assembly);
+    private sealed record PageDetails(string Path, string Type, string Assembly);
 }
