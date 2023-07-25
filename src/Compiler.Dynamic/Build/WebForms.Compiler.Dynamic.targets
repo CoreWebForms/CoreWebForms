@@ -29,8 +29,8 @@
     </None>
   </ItemGroup>
 
-  <Target Name="WebFormsCompilation" Condition="!$(EnableRuntimeAspxCompilation)" BeforeTargets="Build">
-    <Exec Command="dotnet $(AspNetCompilePath) -p $(MSBuildProjectDirectory) $(OutDir)" />
+  <Target Name="WebFormsCompilation" Condition="!$(EnableRuntimeAspxCompilation)" AfterTargets="Build">
+    <Exec Command="dotnet '$(AspNetCompilePath)' -p '$(MSBuildProjectDirectory)' '$(OutDir)'" />
   </Target>
 
 </Project>

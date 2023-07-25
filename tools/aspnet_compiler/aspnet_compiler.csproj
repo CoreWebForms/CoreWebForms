@@ -15,7 +15,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Compiler.Dynamic\Compiler.Dynamic.csproj" />
-    <ProjectReference Include="..\..\src\Compiler\Compiler.csproj" />
   </ItemGroup>
 
 </Project>

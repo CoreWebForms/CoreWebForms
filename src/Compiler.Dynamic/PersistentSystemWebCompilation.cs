@@ -15,6 +15,9 @@ internal sealed class PersistentSystemWebCompilation : SystemWebCompilation, IWe
     private readonly IOptions<PageCompilationOptions> _pageOptions;
     private readonly ILogger _logger;
 
+    // TODO: don't have this as a field
+    private readonly List<PageDetails> _pages = new();
+
     public PersistentSystemWebCompilation(
         IOptions<PersistentCompilationOptions> options,
         IOptions<PageCompilationOptions> pageOptions,
@@ -30,8 +33,9 @@ internal sealed class PersistentSystemWebCompilation : SystemWebCompilation, IWe
 
     protected override ICompiledPage CreateCompiledPage(Compilation compilation, string route, string typeName, IEnumerable<SyntaxTree> trees, IEnumerable<MetadataReference> references, IEnumerable<EmbeddedText> embedded, CancellationToken token)
     {
-        using var peStream = File.OpenWrite(Path.Combine(_options.Value.TargetDirectory, $"{typeName}.dll"));
-        using var pdbStream = File.OpenWrite(Path.Combine(_options.Value.TargetDirectory, $"{typeName}.pdb"));
+        // TODO: Handle output better
+        using var peStream = File.OpenWrite(Path.Combine(_options.Value.TargetDirectory, $"WebForms.{typeName}.dll"));
+        using var pdbStream = File.OpenWrite(Path.Combine(_options.Value.TargetDirectory, $"WebForms.{typeName}.pdb"));
 
         peStream.SetLength(0);
         pdbStream.SetLength(0);
@@ -64,6 +68,7 @@ internal sealed class PersistentSystemWebCompilation : SystemWebCompilation, IWe
             return new CompiledPage(new(route), Array.Empty<string>()) { Exception = new RoslynCompilationException(errors) };
         }
 
+        _pages.Add(new(route, typeName, $"WebForms.{typeName}"));
         return new CompiledPage(new(route), embedded.Select(t => t.FilePath).ToArray());
     }
 
@@ -101,5 +106,11 @@ internal sealed class PersistentSystemWebCompilation : SystemWebCompilation, IWe
                 await CompilePageAsync(files, file.FullPath, token).ConfigureAwait(false);
             }
         }
+
+        var dataPath = Path.Combine(_options.Value.TargetDirectory, "webforms.pages.json");
+        var data = JsonSerializer.Serialize(_pages);
+        File.WriteAllText(dataPath, data);
     }
+
+    private record PageDetails(string Path, string Type, string Assembly);
 }

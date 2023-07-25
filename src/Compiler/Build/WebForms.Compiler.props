@@ -1,1 +1,8 @@
-<Project />
+<Project>
+  <PropertyGroup>
+    <!-- This is settable so local debug builds can point somewhere else -->
+    <_AspNetCompilerRoot Condition=" '$(_AspNetCompilerRoot)' == '' ">$(MSBuildThisFileDirectory)../tools/aspnet_compiler/</_AspNetCompilerRoot>
+    <AspNetCompilePath>$(_AspNetCompilerRoot)aspnet_compiler.dll</AspNetCompilePath>
+    <EnableRuntimeAspxCompilation Condition=" '$(EnableRuntimeAspxCompilation)' == '' ">false</EnableRuntimeAspxCompilation>
+  </PropertyGroup>
+</Project>

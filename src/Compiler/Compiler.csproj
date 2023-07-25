@@ -1,17 +1,40 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
-    <!--<IncludeBuildOutput>false</IncludeBuildOutput>-->
-    <IsPackable>true</IsPackable>
-    <NoPackageAnalysis>true</NoPackageAnalysis>
     <IsShipped>true</IsShipped>
     <TargetFramework>net6.0</TargetFramework>
-    <NoWarn>NU5017</NoWarn>
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <PackageId>WebForms.Compiler</PackageId>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <IncludeSymbols>false</IncludeSymbols>
   </PropertyGroup>
-  <ItemGroup>
 
-    <None Include="Build/**/*" CopyToOutputDirectory="Always" Pack="true" PackagePath="Build" />
+  <PropertyGroup>
+    <PackageId>WebForms.Compiler</PackageId>
+    <DevelopmentDependency>true</DevelopmentDependency>
+    <NoPackageAnalysis>true</NoPackageAnalysis>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Update="Build\*" Pack="true" PackagePath="" />
   </ItemGroup>
+
+  <Target Name="GetWebFormsCompiler" BeforeTargets="AssignTargetPaths">
+    <MSBuild
+      Projects="../../tools/aspnet_compiler/aspnet_compiler.csproj"
+      Properties="%(_MSBuildProjectReferenceExistent.SetConfiguration); %(_MSBuildProjectReferenceExistent.SetPlatform); %(_MSBuildProjectReferenceExistent.SetTargetFramework)"
+      Targets="Publish;PublishItemsOutputGroup ">
+      <Output ItemName="AspNetCompilerOutputs" TaskParameter="TargetOutputs" />
+    </MSBuild>
+    <PropertyGroup>
+      <_AspNetCompilerPrefix>tools/aspnet_compiler/</_AspNetCompilerPrefix>
+    </PropertyGroup>
+    <ItemGroup>
+      <None
+        Include="%(AspNetCompilerOutputs.Identity)"
+        Link="$(_AspNetCompilerPrefix)%(AspNetCompilerOutputs.RelativePath)"
+        PackagePath="$(_AspNetCompilerPrefix)%(AspNetCompilerOutputs.RelativePath)"
+        Pack="true" />
+    </ItemGroup>
+  </Target>
+
 </Project>

@@ -13,8 +13,18 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Compiler\Compiler.csproj" />
     <ProjectReference Include="..\WebForms\WebForms.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Build\WebForms.Compiler.Dynamic.props">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Pack>true</Pack>
+    </None>
+    <None Update="Build\WebForms.Compiler.Dynamic.targets">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Pack>true</Pack>
+    </None>
   </ItemGroup>
 
 </Project>

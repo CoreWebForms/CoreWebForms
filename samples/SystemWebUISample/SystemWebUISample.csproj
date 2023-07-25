@@ -8,7 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Compiler.Dynamic\Compiler.Dynamic.csproj" />
     <ProjectReference Include="..\..\src\Compiler\Compiler.csproj" />
     <ProjectReference Include="..\..\src\Extensions\Extensions.csproj" />
     <ProjectReference Include="..\..\src\WebForms\WebForms.csproj" />

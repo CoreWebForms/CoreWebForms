@@ -1,11 +1,16 @@
 // MIT License.
 
+using System.Reflection;
+using System.Runtime.Loader;
+using System.Text.Json;
 using System.Web;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.SystemWebAdapters;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 
 namespace Microsoft.Extensions.DependencyInjection;
@@ -26,6 +31,84 @@ public static class HandlerServicesExtensions
 
         return services;
     }
+
+    public static IEndpointConventionBuilder MapWebFormsPages(this IEndpointRouteBuilder endpoints)
+    {
+        var env = endpoints.ServiceProvider.GetRequiredService<IWebHostEnvironment>();
+        var httpHandlers = endpoints.MapHttpHandlers();
+
+        if (GetWebFormsFile(env) is { Exists: true } file)
+        {
+            var routes = endpoints.ServiceProvider.GetRequiredService<IOptions<HttpHandlerOptions>>().Value.Routes;
+            var results = JsonSerializer.Deserialize<WebFormsDetails[]>(file.CreateReadStream());
+            var context = GetLoadContext(env);
+
+            if (results is not null)
+            {
+                foreach (var type in results)
+                {
+                    if (context.LoadFromAssemblyName(new AssemblyName($"{type.Assembly}")).GetType(type.Type) is { } pageType)
+                    {
+                        routes.Add(type.Path, pageType);
+                    }
+                }
+            }
+        }
+
+        return httpHandlers;
+    }
+
+    private static AssemblyLoadContext GetLoadContext(IWebHostEnvironment env)
+    {
+        if (!env.IsDevelopment())
+        {
+            return AssemblyLoadContext.Default;
+        }
+
+        return AssemblyLoadContext.All.OfType<DevelopmentAssemblyLoadContext>().FirstOrDefault() ?? new DevelopmentAssemblyLoadContext();
+    }
+
+    private sealed class DevelopmentAssemblyLoadContext : AssemblyLoadContext
+    {
+        public DevelopmentAssemblyLoadContext()
+            : base("Development Aware WebForms Load Context")
+        {
+        }
+
+        protected override Assembly? Load(AssemblyName assemblyName)
+        {
+            if (assemblyName.Name is { } name && name.StartsWith("WebForms.ASP.", StringComparison.OrdinalIgnoreCase))
+            {
+                var path = Path.Combine(AppContext.BaseDirectory, $"{name}.dll");
+
+                if (File.Exists(path))
+                {
+                    return LoadFromAssemblyPath(path);
+                }
+            }
+
+            return null;
+        }
+    }
+
+    private static IFileInfo? GetWebFormsFile(IWebHostEnvironment env)
+    {
+        const string DetailsPath = "webforms.pages.json";
+
+        if (env.ContentRootFileProvider.GetFileInfo(DetailsPath) is { Exists: true } file)
+        {
+            return file;
+        }
+
+        if (env.IsDevelopment() && new PhysicalFileProvider(AppContext.BaseDirectory).GetFileInfo(DetailsPath) is { } debug)
+        {
+            return debug;
+        }
+
+        return null;
+    }
+
+    private sealed record WebFormsDetails(string Path, string Type, string Assembly);
 
     public static IEndpointConventionBuilder MapHttpHandlers(this IEndpointRouteBuilder endpoints)
     {
