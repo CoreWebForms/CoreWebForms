@@ -29,4 +29,8 @@
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
   </ItemGroup>
 
+  <PropertyGroup>
+    <_AspNetCompilerRoot>$(OutputDrop)aspnet_compiler/net7.0/</_AspNetCompilerRoot>
+  </PropertyGroup>
+
 </Project>

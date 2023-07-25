@@ -5,8 +5,4 @@
     <PackageOutputPath Condition="$(IsShipped)">$(PackageOutputPath)shipping\</PackageOutputPath>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <_AspNetCompilerRoot>$(OutputDrop)aspnet_compiler/net7.0/</_AspNetCompilerRoot>
-  </PropertyGroup>
-
 </Project>
