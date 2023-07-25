@@ -26,13 +26,13 @@
       OutputItemType="AspNetCompilerOutputs" />
   </ItemGroup>
 
-  <Target Name="GetWebFormsCompiler" BeforeTargets="AssignTargetPaths">
+  <Target Name="GetWebFormsCompiler" BeforeTargets="AssignTargetPaths" AfterTargets="ResolveProjectReferences">
     <PropertyGroup>
       <_AspNetCompilerPrefix>tools/aspnet_compiler/</_AspNetCompilerPrefix>
     </PropertyGroup>
     <ItemGroup>
       <None
-        Update="%(AspNetCompilerOutputs.Identity)"
+        Include="%(AspNetCompilerOutputs.Identity)"
         Link="$(_AspNetCompilerPrefix)%(AspNetCompilerOutputs.RelativePath)"
         PackagePath="$(_AspNetCompilerPrefix)%(AspNetCompilerOutputs.RelativePath)"
         Pack="true" />
