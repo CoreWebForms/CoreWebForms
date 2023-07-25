@@ -1,6 +1,6 @@
-﻿// MIT License.
+// MIT License.
 
-namespace Microsoft.AspNetCore.SystemWebAdapters.UI.RuntimeCompilation;
+namespace WebForms.Compiler.Dynamic;
 
 internal static class WaitHandleExtensions
 {

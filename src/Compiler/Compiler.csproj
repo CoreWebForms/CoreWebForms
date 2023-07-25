@@ -1,0 +1,42 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <IsShipped>true</IsShipped>
+    <TargetFramework>net6.0</TargetFramework>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
+    <IncludeSymbols>false</IncludeSymbols>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageId>WebForms.Compiler</PackageId>
+    <DevelopmentDependency>true</DevelopmentDependency>
+    <NoPackageAnalysis>true</NoPackageAnalysis>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Update="Build\*" Pack="true" PackagePath="" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference
+      Include="../../tools/aspnet_compiler/aspnet_compiler.csproj"
+      ReferenceOutputAssembly="false"
+      Targets="Publish;PublishItemsOutputGroup"
+      Private="false"
+      OutputItemType="AspNetCompilerOutputs" />
+  </ItemGroup>
+
+  <Target Name="GetWebFormsCompiler" BeforeTargets="AssignTargetPaths">
+    <PropertyGroup>
+      <_AspNetCompilerPrefix>tools/aspnet_compiler/</_AspNetCompilerPrefix>
+    </PropertyGroup>
+    <ItemGroup>
+      <None
+        Update="%(AspNetCompilerOutputs.Identity)"
+        Link="$(_AspNetCompilerPrefix)%(AspNetCompilerOutputs.RelativePath)"
+        PackagePath="$(_AspNetCompilerPrefix)%(AspNetCompilerOutputs.RelativePath)"
+        Pack="true" />
+    </ItemGroup>
+  </Target>
+
+</Project>

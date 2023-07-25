@@ -2,7 +2,7 @@
 
 using Microsoft.Extensions.FileProviders;
 
-namespace Microsoft.AspNetCore.SystemWebAdapters.UI.RuntimeCompilation;
+namespace WebForms.Compiler.Dynamic;
 
 internal interface IPageCompiler
 {

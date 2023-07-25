@@ -14,11 +14,11 @@ builder.Services.AddSystemWebAdapters()
     .WrapAspNetCoreSession()
     .AddHttpHandlers(options =>
     {
-    })
-    .AddDynamicPages(options =>
-    {
-        options.Files = builder.Environment.ContentRootFileProvider;
     });
+//.AddDynamicWebForms(options =>
+//{
+//    options.Files = builder.Environment.ContentRootFileProvider;
+//});
 
 var app = builder.Build();
 
@@ -44,6 +44,7 @@ app.MapGet("/acls", () => AssemblyLoadContext.All.Select(acl => new
 }));
 
 app.MapWebForms();
+app.MapWebFormsPages();
 app.MapHttpHandlers();
 
 app.Run();

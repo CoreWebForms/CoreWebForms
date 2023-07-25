@@ -3,7 +3,6 @@
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Web.Routing;
-using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
@@ -11,7 +10,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
 
-namespace Microsoft.AspNetCore.SystemWebAdapters.UI.RuntimeCompilation;
+namespace WebForms.Compiler.Dynamic;
 
 internal sealed class WebFormsCompilationService : BackgroundService
 {
@@ -121,7 +120,7 @@ internal sealed class WebFormsCompilationService : BackgroundService
                     _logger.LogTrace("Adding page {Path}", compilation.Path);
                     _routes.Replace(compilation.Path, type);
                 }
-                else 
+                else
                 {
                     _logger.LogWarning("No type found for {Path}", compilation.Path);
                     _routes.Replace(compilation.Path, new ErrorHandler(compilation.Exception!));
@@ -154,7 +153,7 @@ internal sealed class WebFormsCompilationService : BackgroundService
 
         var result = _compiledPages;
 
-        foreach (var (file, fullpath) in GetFiles())
+        foreach (var (file, fullpath) in _files.GetFiles())
         {
             if (dependencies.Remove(fullpath, out var existing))
             {
@@ -182,28 +181,4 @@ internal sealed class WebFormsCompilationService : BackgroundService
     private readonly record struct Timed<T>(T Item, DateTimeOffset LastModified);
 
     private readonly record struct ChangedPage(string FullPath, Timed<ICompiledPage>? CompiledPage = null);
-
-    IEnumerable<(IFileInfo File, string FullPath)> GetFiles()
-    {
-        Queue<string> paths = new Queue<string>();
-        paths.Enqueue(string.Empty);
-
-        while (paths.Count > 0)
-        {
-            var subpath = paths.Dequeue();
-            var directory = _files.GetDirectoryContents(subpath);
-
-            foreach (var item in directory)
-            {
-                if (item.IsDirectory)
-                {
-                    paths.Enqueue(Path.Combine(subpath, item.Name));
-                }
-                else
-                {
-                    yield return (item, Path.Combine(subpath, item.Name));
-                }
-            }
-        }
-    }
 }

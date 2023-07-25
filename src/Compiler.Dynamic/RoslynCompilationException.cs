@@ -1,6 +1,6 @@
 // MIT License.
 
-namespace Microsoft.AspNetCore.SystemWebAdapters.UI.RuntimeCompilation;
+namespace WebForms.Compiler.Dynamic;
 
 internal sealed class RoslynCompilationException : Exception
 {

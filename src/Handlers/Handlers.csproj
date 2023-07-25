@@ -5,8 +5,8 @@
     <IsShipped>true</IsShipped>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <AssemblyName>Microsoft.AspNetCore.SystemWebAdapters.HttpHandler</AssemblyName>
-    <RootNamespace>Microsoft.AspNetCore.SystemWebAdapters.HttpHandler</RootNamespace>
+    <AssemblyName>WebForms.HttpHandler</AssemblyName>
+    <RootNamespace>WebForms.HttpHandler</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

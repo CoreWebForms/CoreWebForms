@@ -1,9 +1,7 @@
 // MIT License.
 
 using System.CodeDom.Compiler;
-using System.Globalization;
 using System.Reflection;
-using System.Runtime.Loader;
 using System.Text;
 using System.Web;
 using System.Web.Compilation;
@@ -16,28 +14,18 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace Microsoft.AspNetCore.SystemWebAdapters.UI.RuntimeCompilation;
+namespace WebForms.Compiler.Dynamic;
 
-internal sealed class SystemWebCompilation : IPageCompiler, IDisposable
+internal abstract class SystemWebCompilation : IPageCompiler, IDisposable
 {
-    private readonly Dictionary<Assembly, MetadataReference> _references = new();
-    private readonly ILoggerFactory _factory;
-    private readonly IOptions<PageCompilationOptions> _options;
-    private readonly ILogger<SystemWebCompilation> _logger;
     private readonly ICompiler _csharp;
     private readonly ICompiler _vb;
 
     public SystemWebCompilation(
         ILoggerFactory factory,
-        IOptions<PageCompilationOptions> options,
         IOptions<PagesSection> pagesSection,
-        IOptions<CompilationSection> compilationSection,
-        ILogger<SystemWebCompilation> logger)
+        IOptions<CompilationSection> compilationSection)
     {
-        _factory = factory;
-        _options = options;
-        _logger = logger;
-
         _csharp = new CSharpCompiler();
         _vb = new VisualBasicCompiler();
 
@@ -79,7 +67,7 @@ internal sealed class SystemWebCompilation : IPageCompiler, IDisposable
                 compiler = GetProvider(generator.Parser.CompilerType);
             }
 
-            var cu = generator.GetCodeDomTree(compiler.Provider, new System.Web.StringResourceBuilder(), currentPath);
+            var cu = generator.GetCodeDomTree(compiler.Provider, new StringResourceBuilder(), currentPath);
 
             using var writer = new StringWriter();
             compiler.Provider.GenerateCodeFromCompileUnit(cu, writer, new());
@@ -119,69 +107,21 @@ internal sealed class SystemWebCompilation : IPageCompiler, IDisposable
         }
 
         var references = GetMetadataReferences();
-
         var compilation = compiler.CreateCompilation(typeName, trees, references);
 
-        using var peStream = new MemoryStream();
-        using var pdbStream = new MemoryStream();
-
-        var result = compilation.Emit(
-            embeddedTexts: embedded,
-            peStream: peStream,
-            pdbStream: pdbStream,
-            cancellationToken: token);
-
-        if (!result.Success)
-        {
-            _logger.LogWarning("{ErrorCount} error(s) found compiling {Route}", result.Diagnostics.Length, path);
-
-            var errors = result.Diagnostics
-                .OrderByDescending(d => d.Severity)
-                .Select(d => new RoslynError()
-                {
-                    Id = d.Id,
-                    Message = d.GetMessage(CultureInfo.CurrentCulture),
-                    Severity = d.Severity.ToString(),
-                    Location = d.Location.ToString(),
-                })
-                .ToList();
-
-            return new CompiledPage(new(path), Array.Empty<string>()) { Exception = new RoslynCompilationException(errors) };
-        }
-
-        pdbStream.Position = 0;
-        peStream.Position = 0;
-
-        var context = new PageAssemblyLoadContext(path, _factory.CreateLogger<PageAssemblyLoadContext>());
-        var assembly = context.LoadFromStream(peStream, pdbStream);
-        if (assembly.GetType(typeName) is Type type)
-        {
-            return new CompiledPage(new(path), embedded.Select(t => t.FilePath).ToArray()) { Type = type };
-        }
-
-        return new CompiledPage(new(path), Array.Empty<string>()) { Exception = new InvalidOperationException("No type found") };
+        return CreateCompiledPage(compilation, path, typeName, trees, references, embedded, token);
     }
 
-    private IEnumerable<MetadataReference> GetMetadataReferences()
-    {
-        var references = new List<MetadataReference>();
+    protected abstract ICompiledPage CreateCompiledPage(
+        Compilation compilation,
+        string route,
+        string typeName,
+        IEnumerable<SyntaxTree> trees,
+        IEnumerable<MetadataReference> references,
+        IEnumerable<EmbeddedText> embedded,
+        CancellationToken token);
 
-        foreach (var assembly in AssemblyLoadContext.Default.Assemblies.Concat(_options.Value.Assemblies))
-        {
-            if (!assembly.IsDynamic)
-            {
-                if (!_references.TryGetValue(assembly, out var metadata))
-                {
-                    metadata = MetadataReference.CreateFromFile(assembly.Location);
-                    _references.Add(assembly, metadata);
-                }
-
-                references.Add(metadata);
-            }
-        }
-
-        return references;
-    }
+    protected abstract IEnumerable<MetadataReference> GetMetadataReferences();
 
     private ICompiler GetProvider(CompilerType compiler)
     {

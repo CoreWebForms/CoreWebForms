@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <IsShipped>true</IsShipped>
@@ -24,7 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <InternalsVisibleTo Include="WebForms.Compilation" />
+    <InternalsVisibleTo Include="WebForms.Compiler.Dynamic" />
     <InternalsVisibleTo Include="WebForms.Extensions" />
   </ItemGroup>
 

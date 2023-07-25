@@ -1,8 +1,5 @@
 <Project>
-  <PropertyGroup>
-    <EnableRuntimAspxCompilation Condition=" '$(EnableRuntimAspxCompilation)' == '' ">true</EnableRuntimAspxCompilation>
-  </PropertyGroup>
-
+ 
   <ItemGroup>
     <AspxFiles Include="$(MSBuildProjectDirectory)\**\*.aspx" />
     <AspxFiles Include="$(MSBuildProjectDirectory)\**\*.Master" />
@@ -19,17 +16,30 @@
     <__CodeBehindFiles Remove="$(OutDir)\**\*.Master.cs" />
   </ItemGroup>
 
-  <ItemGroup Condition="$(EnableRuntimAspxCompilation)">
+  <ItemGroup>
+    <Compile Remove="@(__CodeBehindFiles)" />
+  </ItemGroup>
+
+  <ItemGroup Condition="$(EnableRuntimeAspxCompilation)">
     <None Include="@(AspxFiles)">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
-
-  <ItemGroup Condition="$(EnableRuntimAspxCompilation)">
-    <Compile Remove="@(__CodeBehindFiles)" />
     <None Include="@(__CodeBehindFiles)">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+
+  <Target Name="WebFormsCompilation" Condition="!$(EnableRuntimeAspxCompilation)" BeforeTargets="Build;AssignTargetPaths">
+    <PropertyGroup>
+      <_WebFormsTempDir>$(IntermediateOutputPath)webforms_compile/</_WebFormsTempDir>
+    </PropertyGroup>
+    <Exec Command="dotnet $(AspNetCompilePath) -p $(MSBuildProjectDirectory) $(_WebFormsTempDir)" />
+    <ItemGroup>
+      <CompiledWebFormsPages Include="$(_WebFormsTempDir)/*.dll" />
+      <CompiledWebFormsPages Include="$(_WebFormsTempDir)/*.pdb" />
+      <CompiledWebFormsPages Include="$(_WebFormsTempDir)/webforms.pages.json" />
+      <Content Include="@(CompiledWebFormsPages)" CopyToOutputDirectory="Always" />
+    </ItemGroup>
+  </Target>
 
 </Project>

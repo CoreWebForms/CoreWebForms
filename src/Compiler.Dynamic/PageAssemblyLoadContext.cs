@@ -4,7 +4,7 @@ using System.Collections.Concurrent;
 using System.Runtime.Loader;
 using Microsoft.Extensions.Logging;
 
-namespace Microsoft.AspNetCore.SystemWebAdapters.UI.RuntimeCompilation;
+namespace WebForms.Compiler.Dynamic;
 
 internal sealed class PageAssemblyLoadContext : AssemblyLoadContext
 {
