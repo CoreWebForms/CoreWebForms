@@ -1,6 +1,0 @@
-<Project>
-  <PropertyGroup>
-    <EnableRuntimeAspxCompilation>true</EnableRuntimeAspxCompilation>
-    <AspNetCompilePath>$(MSBuildThisFileDirectory)tools\aspnet_compile.dll</AspNetCompilePath>
-  </PropertyGroup>
-</Project>
