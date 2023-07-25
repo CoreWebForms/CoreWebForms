@@ -2,31 +2,33 @@
 
 The goal of this project is to explore building some of the basic building blocks of the WebForms on ASP.NET Core. This will isolate out the actual components needed to build a functional page.
 
-In scope:
+Supported so far:
 
 - `System.Web.IHttpHandler`
 - `System.Web.UI.Page`
 - `System.Web.UI.HtmlTextWriter`
 - `System.Web.UI.HtmlControls.*`
 - `System.Web.UI.WebControls.*`
-- Source compatibility
-
-Stretch goals:
-
-- Compilation of `.aspx` and `.ashx`
-- Runtime compilation of `.aspx` and `.ashx` pages
 - Master pages
+- Compilation of `aspx` pages (both VB and C#)
+- Binary compatibility (via the `WebForms.SystemWebShim` package) - limited support; needs testing
 
-What is *NOT* in scope for this project:
+What is *NOT* supported:
 
-- Binary compatibility (i.e. projects will need to be recompiled)
-    - A separate project could look at bridging this gap, but I'd rather not be constrained by these limitations will prototyping it
 - Designer support
 - `System.Web` hosting model
 - `System.Web` membership model
 - Any `System.Web` concept not called out as in scope
 
 This will make use of `Microsoft.AspNetCore.SystemWebAdapters` to provide the `System.Web.HttpContext` that is at the core of the WebForms pipeline.
+
+## Packages
+
+- `WebForms` - Contains the majority of the page/control/etc methods required for WebForms
+- `WebForms.HttpHandler` - Contains `IHttpHandler` and related helpers to enable hooking them up to ASP.NET Core
+- `WebForms.SystemWebShim` - A package with a `System.Web.dll` assembly that will type forward to the new locations. This is build for .NET 6+ and would help with
+   controls/assemblies/etc that are compiled and cannot be recompiled for some reason. If they use members/types not supported, they will throw at runtime, but can
+   be a helpful step in migrating old projects (see the `TypeDumper` tool to regenerate the available types for the shim)
 
 ## Try it out!
 
