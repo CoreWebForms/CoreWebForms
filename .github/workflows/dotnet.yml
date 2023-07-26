@@ -30,13 +30,13 @@ jobs:
     - name: Test
       run: dotnet test -c Release --no-build --verbosity normal
     - name: Pack
-      run: dotnet pack -c Release --no-build
+      run: dotnet pack -c Release
     - name: Upload artifact
       uses: actions/upload-artifact@v2.2.0
       with:
         path: |
-          bin/Release/packages/shipping/*.nupkg 
-          bin/Release/packages/shipping/*.snupkg 
+          bin/Release/packages/shipping/*.nupkg
+          bin/Release/packages/shipping/*.snupkg
     - name: Push nuget package to Azure storage
       if: github.ref == 'refs/heads/main'
       env:
