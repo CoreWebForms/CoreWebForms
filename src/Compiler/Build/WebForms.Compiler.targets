@@ -33,13 +33,16 @@
     <PropertyGroup>
       <_WebFormsTempDir>$(IntermediateOutputPath)webforms_compile/</_WebFormsTempDir>
       <_WebFormsTempDir Condition="!$([System.IO.Path]::IsPathRooted(_WebFormsTempDir))">$(ProjectDir)$(_WebFormsTempDir)</_WebFormsTempDir>
+      <_WebFormsTempDir>$([MSBuild]::NormalizeDirectory($(_WebFormsTempDir)))</_WebFormsTempDir>
     </PropertyGroup>
     <Exec Command="dotnet $(AspNetCompilePath) -p $(MSBuildProjectDirectory) $(_WebFormsTempDir)" />
     <ItemGroup>
       <CompiledWebFormsPages Include="$(_WebFormsTempDir)/*.dll" />
       <CompiledWebFormsPages Include="$(_WebFormsTempDir)/*.pdb" />
       <CompiledWebFormsPages Include="$(_WebFormsTempDir)/webforms.pages.json" />
-      <Content Include="@(CompiledWebFormsPages)" CopyToOutputDirectory="Always" />
+      <Content Include="@(CompiledWebFormsPages)" CopyToOutputDirectory="Always">
+         <Link>%(Filename)%(Extension)</Link>
+      </Content>
     </ItemGroup>
   </Target>
 
