@@ -3,12 +3,17 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using WebForms.Compiler.Dynamic;
 
 internal sealed class CompilationHost
 {
     public static Task RunAsync(DirectoryInfo path, DirectoryInfo targetDir)
         => Host.CreateDefaultBuilder()
+            .ConfigureLogging(logging =>
+            {
+                logging.ClearProviders();
+            })
             .ConfigureServices(services =>
             {
                 services.AddHostedService<PersistedCompilationService>();
