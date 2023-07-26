@@ -32,6 +32,7 @@
   <Target Name="WebFormsCompilation" Condition="!$(EnableRuntimeAspxCompilation)" BeforeTargets="Build;AssignTargetPaths">
     <PropertyGroup>
       <_WebFormsTempDir>$(IntermediateOutputPath)webforms_compile/</_WebFormsTempDir>
+      <_WebFormsTempDir Condition="!$([System.IO.Path]::IsPathRooted(_WebFormsTempDir))">$(ProjectDir)$(_WebFormsTempDir)</_WebFormsTempDir>
     </PropertyGroup>
     <Exec Command="dotnet $(AspNetCompilePath) -p $(MSBuildProjectDirectory) $(_WebFormsTempDir)" />
     <ItemGroup>
