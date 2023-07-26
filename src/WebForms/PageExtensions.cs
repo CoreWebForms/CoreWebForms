@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.StaticFiles;
+using Microsoft.AspNetCore.SystemWebAdapters;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
@@ -19,6 +20,12 @@ namespace Microsoft.AspNetCore.Builder;
 
 public static class PageExtensions
 {
+    public static ISystemWebAdapterBuilder AddWebForms(this ISystemWebAdapterBuilder builder)
+    {
+        builder.AddHttpHandlers();
+        return builder;
+    }
+
     public static IEndpointConventionBuilder MapWebForms(this IEndpointRouteBuilder endpoints)
     {
         if (endpoints.DataSources.OfType<WebFormsConventionBuilder>().FirstOrDefault() is { } existing)

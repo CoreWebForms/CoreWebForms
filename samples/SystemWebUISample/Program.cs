@@ -12,13 +12,11 @@ builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSystemWebAdapters()
     .AddJsonSessionSerializer()
     .WrapAspNetCoreSession()
-    .AddHttpHandlers(options =>
-    {
-    });
-//.AddDynamicWebForms(options =>
-//{
-//    options.Files = builder.Environment.ContentRootFileProvider;
-//});
+    .AddWebForms();
+    //.AddDynamicWebForms(options =>
+    //{
+    //    options.Files = builder.Environment.ContentRootFileProvider;
+    //});
 
 var app = builder.Build();
 
