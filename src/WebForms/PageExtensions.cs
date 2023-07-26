@@ -38,7 +38,7 @@ public static class PageExtensions
 
         var app = endpoints.CreateApplicationBuilder();
 
-        app.Use(next => context =>
+        app.Use((context, next) =>
         {
             context.SetEndpoint(null);
             return next(context);
