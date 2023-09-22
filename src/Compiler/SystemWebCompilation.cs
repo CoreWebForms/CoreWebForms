@@ -145,6 +145,7 @@ internal abstract class SystemWebCompilation : IPageCompiler, IDisposable
         return extension switch
         {
             ".aspx" => CreateFromPage(path),
+            //".ascx" => CreateFromUserControl(path),
             ".master" => CreateFromMasterPage(path),
             _ => throw new NotImplementedException($"Unknown extension for compilation: {extension}"),
         };
@@ -157,6 +158,7 @@ internal abstract class SystemWebCompilation : IPageCompiler, IDisposable
 
             return new PageCodeDomTreeGenerator(parser);
         }
+
         static BaseCodeDomTreeGenerator CreateFromMasterPage(string path)
         {
             var parser = new MasterPageParser();
@@ -164,6 +166,15 @@ internal abstract class SystemWebCompilation : IPageCompiler, IDisposable
             parser.Parse(Array.Empty<string>(), path);
 
             return new MasterPageCodeDomTreeGenerator(parser);
+        }
+
+        //TODO https://github.com/twsouthwick/systemweb-adapters-ui/issues/19 , keeping the code to tackle in next CR
+        static BaseCodeDomTreeGenerator CreateFromUserControl(string path)
+        {
+            var parser = new UserControlParser();
+            parser.AddAssemblyDependency(Assembly.GetEntryAssembly(), true);
+            parser.Parse(Array.Empty<string>(), path);
+            return new UserControlCodeDomTreeGenerator(parser);
         }
     }
 

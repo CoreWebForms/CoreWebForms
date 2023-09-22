@@ -13,6 +13,12 @@ PersistChildren(false),
 ]
 public class ScriptManager : Control
 {
+
+    static ScriptManager()
+    {
+        ClientScriptManager._scriptResourceMapping = new ScriptResourceMapping();
+    }
+
     private static readonly Dictionary<string, string> _knownScripts = new()
     {
         { "MsAjaxBundle", "https://ajax.aspnetcdn.com/ajax/4.5.1/1/MsAjaxBundle.js" },
@@ -31,6 +37,15 @@ public class ScriptManager : Control
     MergableProperty(false),
     ]
     public ScriptReferenceCollection Scripts => _scripts ??= new ScriptReferenceCollection();
+
+    public static ScriptResourceMapping ScriptResourceMapping
+    {
+        get
+        {
+            return (ScriptResourceMapping)ClientScriptManager._scriptResourceMapping;
+        }
+    }
+
 
     protected internal override void Render(HtmlTextWriter writer)
     {

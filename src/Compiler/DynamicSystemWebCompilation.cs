@@ -1,4 +1,4 @@
-﻿// MIT License.
+// MIT License.
 
 using System.Globalization;
 using System.Reflection;
@@ -57,6 +57,10 @@ internal sealed class DynamicSystemWebCompilation : SystemWebCompilation
                     Location = d.Location.ToString(),
                 })
                 .ToList();
+            foreach(RoslynError er in errors)
+            {
+                _logger.LogError(er.Message);
+            }
 
             return new CompiledPage(new(route), Array.Empty<string>()) { Exception = new RoslynCompilationException(errors) };
         }

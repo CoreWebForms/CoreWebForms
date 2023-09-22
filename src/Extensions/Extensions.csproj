@@ -18,7 +18,7 @@
   <ItemGroup>
     <ProjectReference Include="..\WebForms\WebForms.csproj" />
   </ItemGroup>
-
+  
   <ItemGroup>
     <Compile Update="Resources\AtlasWeb.Designer.cs">
       <DesignTime>True</DesignTime>

@@ -23,6 +23,9 @@ public class PageCompilationOptions
 
         AddTypeNamespace<Page>("asp");
         AddTypeNamespace<TextBox>("asp");
+        AddTypeNamespace<ScriptManager>("asp");
+        AddTypeNamespace<ListView>("asp");
+
 
         AddAssembly(typeof(HttpUtility).Assembly);
         AddAssembly(typeof(IHttpHandler).Assembly);
