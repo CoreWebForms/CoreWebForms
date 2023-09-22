@@ -1,5 +1,6 @@
 // MIT License.
 
+using System.Collections;
 using System.Text;
 
 namespace System.Web;
@@ -106,10 +107,21 @@ internal sealed class VirtualPath
     {
         throw new NotImplementedException();
     }
+
+    internal static VirtualPath CreateTrailingSlash(string virtualPath)
+    {
+        throw new NotImplementedException();
+    }
 }
 
-internal static class VirtualPathProvider
+public class VirtualPathProvider
 {
+    VirtualPath _virtualPath;
+    public VirtualPathProvider(string path)
+    {
+        _virtualPath = new VirtualPath(path);
+    }
+
     internal static VirtualPath CombineVirtualPathsInternal(VirtualPath templateControlVirtualPath, VirtualPath masterPageFile)
     {
         string result;
@@ -125,5 +137,18 @@ internal static class VirtualPathProvider
 
         return result.TrimStart('/');
     }
+
+    public virtual bool FileExists(string virtualPath)
+    {
+        return _virtualPath.FileExists();
+    }
+
+    public virtual Stream Open()
+    {
+        return _virtualPath.OpenFile();
+    }
+
+
+
 }
 

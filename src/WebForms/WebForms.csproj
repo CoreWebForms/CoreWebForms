@@ -36,6 +36,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Handlers\Handlers.csproj" />
+    <ProjectReference Include="..\HtmlTextWriter\HtmlTextWriter.csproj" />
   </ItemGroup>
-
+  
 </Project>

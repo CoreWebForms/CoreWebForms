@@ -16,9 +16,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\WebForms\WebForms.csproj" />
+     <ProjectReference Include="..\Compiler.Dynamic\Compiler.Dynamic.csproj" />
+     <ProjectReference Include="..\WebForms\WebForms.csproj" />
   </ItemGroup>
-
+  
   <ItemGroup>
     <Compile Update="Resources\AtlasWeb.Designer.cs">
       <DesignTime>True</DesignTime>

@@ -17,8 +17,6 @@ jobs:
         fetch-depth: 0
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: '6.x'
     - name: Install GitVersion
       run: dotnet tool install --global GitVersion.Tool --ignore-failed-sources
     - name: Run GitVersion

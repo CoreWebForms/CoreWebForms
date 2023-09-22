@@ -471,6 +471,10 @@ internal static class LoginUtil
             }
         }
 
+        // Keep in sync with HtmlTextWriter.DesignerRegionAttributeName
+        // TODO: do we need this still?
+        private const string DesignerRegionAttributeName = "_designerRegion";
+
         private void RenderContentsInUnitTable(HtmlTextWriter writer)
         {
             // there are two situations in which we need an outer table:
@@ -489,7 +493,7 @@ internal static class LoginUtil
             // Don't render out the child controls if we are using region editing, just output the region attribute
             if (RenderDesignerRegion)
             {
-                table[0, 0].Attributes[HtmlTextWriter.DesignerRegionAttributeName] = _templateDesignerRegion;
+                table[0, 0].Attributes[DesignerRegionAttributeName] = _templateDesignerRegion;
             }
             else
             {
