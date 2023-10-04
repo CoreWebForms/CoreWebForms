@@ -1,91 +1,19 @@
 // MIT License.
 
-using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.IO;
 using System.Text;
-using System.Web.UI.WebControls;
-using System.Web.Util;
-
-// HtmlTextWriter.cs
-//
-
-#nullable disable
 
 namespace System.Web.UI;
+
+[SuppressMessage("Design", "CA1054:URI-like parameters should not be strings", Justification = Constants.ApiFromAspNet)]
+[SuppressMessage("Naming", "CA1721:Property names should not match get methods", Justification = Constants.ApiFromAspNet)]
+[SuppressMessage("Design", "CA1055:URI-like return values should not be strings", Justification = Constants.ApiFromAspNet)]
 public class HtmlTextWriter : TextWriter
 {
-    private readonly Layout _currentLayout = new Layout(HorizontalAlign.NotSet, true /* wrap */);
-    private Layout _currentWrittenLayout;
-
-    internal virtual bool RenderDivAroundHiddenInputs => true;
-
-    public virtual void EnterStyle(Style style, HtmlTextWriterTag tag)
-    {
-        if (!style.IsEmpty || tag != HtmlTextWriterTag.Span)
-        {
-            style.AddAttributesToRender(this);
-            RenderBeginTag(tag);
-        }
-    }
-
-    public virtual void ExitStyle(System.Web.UI.WebControls.Style style, HtmlTextWriterTag tag)
-    {
-        // Review: This requires that the style doesn't change between beginstyle/endstyle.
-        if (!style.IsEmpty || tag != HtmlTextWriterTag.Span)
-        {
-            RenderEndTag();
-        }
-    }
-
-    internal virtual void OpenDiv()
-    {
-        OpenDiv(_currentLayout,
-                (_currentLayout != null) && (_currentLayout.Align != HorizontalAlign.NotSet),
-                (_currentLayout != null) && !_currentLayout.Wrap);
-    }
-
-    private void OpenDiv(Layout layout, bool writeHorizontalAlign, bool writeWrapping)
-    {
-        WriteBeginTag("div");
-        if (writeHorizontalAlign)
-        {
-            string alignment;
-            switch (layout.Align)
-            {
-                case HorizontalAlign.Right:
-                    alignment = "text-align:right";
-                    break;
-
-                case HorizontalAlign.Center:
-                    alignment = "text-align:center";
-                    break;
-
-                default:
-                    alignment = "text-align:left";
-                    break;
-            }
-
-            WriteAttribute("style", alignment);
-        }
-        if (writeWrapping)
-        {
-            WriteAttribute("mode",
-                           layout.Wrap == true ? "wrap" : "nowrap");
-        }
-        Write('>');
-        _currentWrittenLayout = layout;
-    }
-
-    public virtual bool IsValidFormAttribute(string attribute)
-    {
-        return true;
-    }
-
-    private TextWriter writer;
-    private int indentLevel;
-    private bool tabsPending;
-    private readonly string tabString;
     public const char TagLeftChar = '<';
     public const char TagRightChar = '>';
     public const string SelfClosingChars = " /";
@@ -105,31 +33,25 @@ public class HtmlTextWriter : TextWriter
     // System.Web.UI.Design.DesignerRegion.DesignerRegionNameAttribute
     internal const string DesignerRegionAttributeName = "_designerRegion";
 
-    private static readonly Hashtable _tagKeyLookupTable;
-    private static readonly Hashtable _attrKeyLookupTable;
-    private static readonly TagInformation[] _tagNameLookupArray;
-    private static readonly AttributeInformation[] _attrNameLookupArray;
+    private static readonly Dictionary<string, HtmlTextWriterTag> _tagKeyLookupTable = new((int)HtmlTextWriterTag.Xml + 1, StringComparer.OrdinalIgnoreCase);
+    private static readonly TagInformation[] _tagNameLookupArray = new TagInformation[(int)HtmlTextWriterTag.Xml + 1];
+    private static readonly Dictionary<string, HtmlTextWriterAttribute> _attrKeyLookupTable = new((int)HtmlTextWriterAttribute.VCardName + 1);
+    private static readonly AttributeInformation[] _attrNameLookupArray = new AttributeInformation[(int)HtmlTextWriterAttribute.VCardName + 1];
 
-    private RenderAttribute[] _attrList;
-    private int _attrCount;
-    private int _endTagCount;
-    private TagStackEntry[] _endTags;
-    private int _inlineCount;
+    private int _indentLevel;
+    private bool _tabsPending;
     private readonly bool _isDescendant;
-    private RenderStyle[] _styleList;
-    private int _styleCount;
     private int _tagIndex;
     private HtmlTextWriterTag _tagKey;
-    private string _tagName;
+    private string? _tagName;
 
-    [Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1810:Initialize reference type static fields inline", Justification = "<Pending>")]
+    private readonly Stack<TagStackEntry> _endTags = new();
+    private readonly List<RenderStyle> _styleList = new();
+    private readonly List<RenderAttribute> _attrList = new();
+    private readonly string _tabString;
+
     static HtmlTextWriter()
     {
-
-        // register known tags
-        _tagKeyLookupTable = new Hashtable((int)HtmlTextWriterTag.Xml + 1);
-        _tagNameLookupArray = new TagInformation[(int)HtmlTextWriterTag.Xml + 1];
-
         RegisterTag(string.Empty, HtmlTextWriterTag.Unknown, TagType.Other);
         RegisterTag("a", HtmlTextWriterTag.A, TagType.Inline);
         RegisterTag("acronym", HtmlTextWriterTag.Acronym, TagType.Inline);
@@ -228,10 +150,6 @@ public class HtmlTextWriter : TextWriter
         RegisterTag("wbr", HtmlTextWriterTag.Wbr, TagType.NonClosing);
         RegisterTag("xml", HtmlTextWriterTag.Xml, TagType.Other);
 
-        // register known attributes
-        _attrKeyLookupTable = new Hashtable((int)HtmlTextWriterAttribute.VCardName + 1);
-        _attrNameLookupArray = new AttributeInformation[(int)HtmlTextWriterAttribute.VCardName + 1];
-
         RegisterAttribute("abbr", HtmlTextWriterAttribute.Abbr, true);
         RegisterAttribute("accesskey", HtmlTextWriterAttribute.Accesskey, true);
         RegisterAttribute("align", HtmlTextWriterAttribute.Align, false);
@@ -288,28 +206,32 @@ public class HtmlTextWriter : TextWriter
         RegisterAttribute(DesignerRegionAttributeName, HtmlTextWriterAttribute.DesignerRegion, false);
     }
 
-    public override Encoding Encoding => writer.Encoding;
+    public virtual bool IsValidFormAttribute(string attribute)
+    {
+        return true;
+    }
 
-    // Gets or sets the new line character to use.
+    public override Encoding Encoding => InnerWriter.Encoding;
+
+    [AllowNull]
     public override string NewLine
     {
         get
         {
-            return writer.NewLine;
+            return InnerWriter.NewLine;
         }
 
         set
         {
-            writer.NewLine = value;
+            InnerWriter.NewLine = value;
         }
     }
 
-    // Gets or sets the number of spaces to indent.
     public int Indent
     {
         get
         {
-            return indentLevel;
+            return _indentLevel;
         }
         set
         {
@@ -318,37 +240,13 @@ public class HtmlTextWriter : TextWriter
             {
                 value = 0;
             }
-            indentLevel = value;
+            _indentLevel = value;
         }
     }
 
     //Gets or sets the TextWriter to use.
-    public TextWriter InnerWriter
-    {
-        get
-        {
-            return writer;
-        }
-        set
-        {
-            writer = value;
-        }
-    }
-    /*
-            // 
+    public TextWriter InnerWriter { get; set; }
 
-
-
-
-
-
-
-
-
-
-
-
-    */
     public virtual void BeginRender()
     {
     }
@@ -356,342 +254,316 @@ public class HtmlTextWriter : TextWriter
     //Closes the document being written to.
     public override void Close()
     {
-        writer.Close();
+        InnerWriter.Close();
     }
 
     public virtual void EndRender()
     {
     }
 
-    public virtual void EnterStyle(System.Web.UI.WebControls.Style style)
-    {
-        EnterStyle(style, HtmlTextWriterTag.Span);
-    }
-
-    public virtual void ExitStyle(System.Web.UI.WebControls.Style style)
-    {
-        ExitStyle(style, HtmlTextWriterTag.Span);
-    }
-
     public override void Flush()
     {
-        writer.Flush();
+        InnerWriter.Flush();
     }
 
     protected virtual void OutputTabs()
     {
-        if (tabsPending)
+        if (_tabsPending)
         {
-            for (int i = 0; i < indentLevel; i++)
+            for (var i = 0; i < _indentLevel; i++)
             {
-                writer.Write(tabString);
+                InnerWriter.Write(_tabString);
             }
-            tabsPending = false;
+            _tabsPending = false;
         }
     }
 
-    //Writes a string to the text stream.
-    public override void Write(string s)
+    public override void Write(string? value)
     {
-        if (tabsPending)
+        if (_tabsPending)
         {
             OutputTabs();
         }
-        writer.Write(s);
+        InnerWriter.Write(value);
     }
 
-    //Writes the text representation of a Boolean value to the text stream.
     public override void Write(bool value)
     {
-        if (tabsPending)
+        if (_tabsPending)
         {
             OutputTabs();
         }
-        writer.Write(value);
+        InnerWriter.Write(value);
     }
 
-    //Writes a character to the text stream.
     public override void Write(char value)
     {
-        if (tabsPending)
+        if (_tabsPending)
         {
             OutputTabs();
         }
-        writer.Write(value);
+        InnerWriter.Write(value);
     }
 
-    // Writes a character array to the text stream.
-    public override void Write(char[] buffer)
+    public override void Write(char[]? buffer)
     {
-        if (tabsPending)
+        if (_tabsPending)
         {
             OutputTabs();
         }
-        writer.Write(buffer);
+        InnerWriter.Write(buffer);
     }
 
-    // Writes a subarray of characters to the text stream.
     public override void Write(char[] buffer, int index, int count)
     {
-        if (tabsPending)
+        if (_tabsPending)
         {
             OutputTabs();
         }
-        writer.Write(buffer, index, count);
+        InnerWriter.Write(buffer, index, count);
     }
 
-    // Writes the text representation of a Double to the text stream.
     public override void Write(double value)
     {
-        if (tabsPending)
+        if (_tabsPending)
         {
             OutputTabs();
         }
-        writer.Write(value);
+        InnerWriter.Write(value);
     }
 
-    // Writes the text representation of a Single to the text stream.
     public override void Write(float value)
     {
-        if (tabsPending)
+        if (_tabsPending)
         {
             OutputTabs();
         }
-        writer.Write(value);
+        InnerWriter.Write(value);
     }
 
-    // Writes the text representation of an integer to the text stream.
     public override void Write(int value)
     {
-        if (tabsPending)
+        if (_tabsPending)
         {
             OutputTabs();
         }
-        writer.Write(value);
+        InnerWriter.Write(value);
     }
 
-    // Writes the text representation of an 8-byte integer to the text stream.
     public override void Write(long value)
     {
-        if (tabsPending)
+        if (_tabsPending)
         {
             OutputTabs();
         }
-        writer.Write(value);
+        InnerWriter.Write(value);
     }
 
-    // Writes the text representation of an object to the text stream.
-    public override void Write(object value)
+    public override void Write(object? value)
     {
-        if (tabsPending)
+        if (_tabsPending)
         {
             OutputTabs();
         }
-        writer.Write(value);
+        InnerWriter.Write(value);
     }
 
-    // Writes out a formatted string, using the same semantics as specified.
-    public override void Write(string format, object arg0)
+    public override void Write(string format, object? arg0)
     {
-        if (tabsPending)
+        if (_tabsPending)
         {
             OutputTabs();
         }
-        writer.Write(format, arg0);
+        InnerWriter.Write(format, arg0);
     }
 
-    // Writes out a formatted string, using the same semantics as specified.
-    public override void Write(string format, object arg0, object arg1)
+    public override void Write(string format, object? arg0, object? arg1)
     {
-        if (tabsPending)
+        if (_tabsPending)
         {
             OutputTabs();
         }
-        writer.Write(format, arg0, arg1);
+        InnerWriter.Write(format, arg0, arg1);
     }
 
-    // Writes out a formatted string, using the same semantics as specified.
-    public override void Write(string format, params object[] arg)
+    public override void Write(string format, params object?[] arg)
     {
-        if (tabsPending)
+        if (_tabsPending)
         {
             OutputTabs();
         }
-        writer.Write(format, arg);
+        InnerWriter.Write(format, arg);
     }
 
-    // Writes the specified string to a line without tabs.
     public void WriteLineNoTabs(string s)
     {
-        writer.WriteLine(s);
-        tabsPending = true;
+        InnerWriter.WriteLine(s);
+        _tabsPending = true;
     }
 
-    // Writes the specified string followed by a line terminator to the text stream.
-    public override void WriteLine(string s)
+    public override void WriteLine(string? value)
     {
-        if (tabsPending)
+        if (_tabsPending)
         {
             OutputTabs();
         }
-        writer.WriteLine(s);
-        tabsPending = true;
+        InnerWriter.WriteLine(value);
+        _tabsPending = true;
     }
 
-    // Writes a line terminator.
     public override void WriteLine()
     {
-        writer.WriteLine();
-        tabsPending = true;
+        InnerWriter.WriteLine();
+        _tabsPending = true;
     }
 
-    // Writes the text representation of a Boolean followed by a line terminator to the text stream.
     public override void WriteLine(bool value)
     {
-        if (tabsPending)
+        if (_tabsPending)
         {
             OutputTabs();
         }
-        writer.WriteLine(value);
-        tabsPending = true;
+        InnerWriter.WriteLine(value);
+        _tabsPending = true;
     }
 
     public override void WriteLine(char value)
     {
-        if (tabsPending)
+        if (_tabsPending)
         {
             OutputTabs();
         }
-        writer.WriteLine(value);
-        tabsPending = true;
+        InnerWriter.WriteLine(value);
+        _tabsPending = true;
     }
 
-    public override void WriteLine(char[] buffer)
+    public override void WriteLine(char[]? buffer)
     {
-        if (tabsPending)
+        if (_tabsPending)
         {
             OutputTabs();
         }
-        writer.WriteLine(buffer);
-        tabsPending = true;
+        InnerWriter.WriteLine(buffer);
+        _tabsPending = true;
     }
 
     public override void WriteLine(char[] buffer, int index, int count)
     {
-        if (tabsPending)
+        if (_tabsPending)
         {
             OutputTabs();
         }
-        writer.WriteLine(buffer, index, count);
-        tabsPending = true;
+        InnerWriter.WriteLine(buffer, index, count);
+        _tabsPending = true;
     }
 
     public override void WriteLine(double value)
     {
-        if (tabsPending)
+        if (_tabsPending)
         {
             OutputTabs();
         }
-        writer.WriteLine(value);
-        tabsPending = true;
+        InnerWriter.WriteLine(value);
+        _tabsPending = true;
     }
 
     public override void WriteLine(float value)
     {
-        if (tabsPending)
+        if (_tabsPending)
         {
             OutputTabs();
         }
-        writer.WriteLine(value);
-        tabsPending = true;
+        InnerWriter.WriteLine(value);
+        _tabsPending = true;
     }
 
     public override void WriteLine(int value)
     {
-        if (tabsPending)
+        if (_tabsPending)
         {
             OutputTabs();
         }
-        writer.WriteLine(value);
-        tabsPending = true;
+        InnerWriter.WriteLine(value);
+        _tabsPending = true;
     }
 
     public override void WriteLine(long value)
     {
-        if (tabsPending)
+        if (_tabsPending)
         {
             OutputTabs();
         }
-        writer.WriteLine(value);
-        tabsPending = true;
+        InnerWriter.WriteLine(value);
+        _tabsPending = true;
     }
 
-    public override void WriteLine(object value)
+    public override void WriteLine(object? value)
     {
-        if (tabsPending)
+        if (_tabsPending)
         {
             OutputTabs();
         }
-        writer.WriteLine(value);
-        tabsPending = true;
+        InnerWriter.WriteLine(value);
+        _tabsPending = true;
     }
 
-    public override void WriteLine(string format, object arg0)
+    public override void WriteLine(string format, object? arg0)
     {
-        if (tabsPending)
+        if (_tabsPending)
         {
             OutputTabs();
         }
-        writer.WriteLine(format, arg0);
-        tabsPending = true;
+        InnerWriter.WriteLine(format, arg0);
+        _tabsPending = true;
     }
 
-    public override void WriteLine(string format, object arg0, object arg1)
+    public override void WriteLine(string format, object? arg0, object? arg1)
     {
-        if (tabsPending)
+        if (_tabsPending)
         {
             OutputTabs();
         }
-        writer.WriteLine(format, arg0, arg1);
-        tabsPending = true;
+        InnerWriter.WriteLine(format, arg0, arg1);
+        _tabsPending = true;
     }
 
-    public override void WriteLine(string format, params object[] arg)
+    public override void WriteLine(string format, params object?[] arg)
     {
-        if (tabsPending)
+        if (_tabsPending)
         {
             OutputTabs();
         }
-        writer.WriteLine(format, arg);
-        tabsPending = true;
+        InnerWriter.WriteLine(format, arg);
+        _tabsPending = true;
     }
 
     public override void WriteLine(uint value)
     {
-        if (tabsPending)
+        if (_tabsPending)
         {
             OutputTabs();
         }
-        writer.WriteLine(value);
-        tabsPending = true;
+        InnerWriter.WriteLine(value);
+        _tabsPending = true;
     }
 
     protected static void RegisterTag(string name, HtmlTextWriterTag key)
     {
+        ArgumentNullException.ThrowIfNull(name);
+
         RegisterTag(name, key, TagType.Other);
     }
 
+    [SuppressMessage("Globalization", "CA1308:Normalize strings to uppercase", Justification = "Tags should be lower case")]
     private static void RegisterTag(string name, HtmlTextWriterTag key, TagType type)
     {
-        string nameLCase = name.ToLower(CultureInfo.InvariantCulture);
-
-        _tagKeyLookupTable.Add(nameLCase, key);
+        _tagKeyLookupTable[name] = key;
 
         // Pre-resolve the end tag
-        string endTag = null;
+        string? endTag = null;
         if (type != TagType.NonClosing && key != HtmlTextWriterTag.Unknown)
         {
-            endTag = EndTagLeftChars + nameLCase + TagRightChar.ToString(CultureInfo.InvariantCulture);
+            endTag = EndTagLeftChars + name.ToLowerInvariant() + TagRightChar.ToString(CultureInfo.InvariantCulture);
         }
 
         if ((int)key < _tagNameLookupArray.Length)
@@ -712,9 +584,7 @@ public class HtmlTextWriter : TextWriter
 
     private static void RegisterAttribute(string name, HtmlTextWriterAttribute key, bool encode, bool isUrl)
     {
-        string nameLCase = name.ToLower(CultureInfo.InvariantCulture);
-
-        _attrKeyLookupTable.Add(nameLCase, key);
+        _attrKeyLookupTable[name] = key;
 
         if ((int)key < _attrNameLookupArray.Length)
         {
@@ -731,19 +601,15 @@ public class HtmlTextWriter : TextWriter
     {
     }
 
-    public HtmlTextWriter(TextWriter writer, string tabString) : base(CultureInfo.InvariantCulture)
+    public HtmlTextWriter(TextWriter writer, string tabString)
+        : base(CultureInfo.InvariantCulture)
     {
-        this.writer = writer;
-        this.tabString = tabString;
-        indentLevel = 0;
-        tabsPending = false;
+        InnerWriter = writer;
 
+        _tabString = tabString;
+        _indentLevel = 0;
+        _tabsPending = false;
         _isDescendant = GetType() != typeof(HtmlTextWriter);
-
-        _attrCount = 0;
-        _styleCount = 0;
-        _endTagCount = 0;
-        _inlineCount = 0;
     }
 
     protected HtmlTextWriterTag TagKey
@@ -760,16 +626,17 @@ public class HtmlTextWriter : TextWriter
                 throw new ArgumentOutOfRangeException(nameof(value));
             }
             _tagKey = value;
-            // If explicitly setting to uknown, keep the old tag name. This allows a string tag
+
+            // If explicitly setting to unknown, keep the old tag name. This allows a string tag
             // to be set without clobbering it if setting TagKey to itself.
             if (value != HtmlTextWriterTag.Unknown)
             {
-                _tagName = _tagNameLookupArray[_tagIndex].name;
+                _tagName = _tagNameLookupArray[_tagIndex].Name;
             }
         }
     }
 
-    protected string TagName
+    protected string? TagName
     {
         get
         {
@@ -786,7 +653,7 @@ public class HtmlTextWriter : TextWriter
 
     public virtual void AddAttribute(string name, string value)
     {
-        HtmlTextWriterAttribute attributeKey = GetAttributeKey(name);
+        var attributeKey = GetAttributeKey(name);
         value = EncodeAttributeValue(attributeKey, value);
 
         AddAttribute(name, value, attributeKey);
@@ -803,21 +670,21 @@ public class HtmlTextWriter : TextWriter
 
     public virtual void AddAttribute(HtmlTextWriterAttribute key, string value)
     {
-        int attributeIndex = (int)key;
+        var attributeIndex = (int)key;
         if (attributeIndex >= 0 && attributeIndex < _attrNameLookupArray.Length)
         {
-            AttributeInformation info = _attrNameLookupArray[attributeIndex];
-            AddAttribute(info.name, value, key, info.encode, info.isUrl);
+            var info = _attrNameLookupArray[attributeIndex];
+            AddAttribute(info.Name, value, key, info.Encode, info.IsUrl);
         }
     }
 
     public virtual void AddAttribute(HtmlTextWriterAttribute key, string value, bool fEncode)
     {
-        int attributeIndex = (int)key;
+        var attributeIndex = (int)key;
         if (attributeIndex >= 0 && attributeIndex < _attrNameLookupArray.Length)
         {
-            AttributeInformation info = _attrNameLookupArray[attributeIndex];
-            AddAttribute(info.name, value, key, fEncode, info.isUrl);
+            var info = _attrNameLookupArray[attributeIndex];
+            AddAttribute(info.Name, value, key, fEncode, info.IsUrl);
         }
     }
 
@@ -828,24 +695,7 @@ public class HtmlTextWriter : TextWriter
 
     private void AddAttribute(string name, string value, HtmlTextWriterAttribute key, bool encode, bool isUrl)
     {
-        if (_attrList == null)
-        {
-            _attrList = new RenderAttribute[20];
-        }
-        else if (_attrCount >= _attrList.Length)
-        {
-            RenderAttribute[] newArray = new RenderAttribute[_attrList.Length * 2];
-            Array.Copy(_attrList, newArray, _attrList.Length);
-            _attrList = newArray;
-        }
-        RenderAttribute attr;
-        attr.name = name;
-        attr.value = value;
-        attr.key = key;
-        attr.encode = encode;
-        attr.isUrl = isUrl;
-        _attrList[_attrCount] = attr;
-        _attrCount++;
+        _attrList.Add(new RenderAttribute(name, value, key, encode, isUrl));
     }
 
     public virtual void AddStyleAttribute(string name, string value)
@@ -860,37 +710,22 @@ public class HtmlTextWriter : TextWriter
 
     protected virtual void AddStyleAttribute(string name, string value, HtmlTextWriterStyle key)
     {
-        if (_styleList == null)
-        {
-            _styleList = new RenderStyle[20];
-        }
-        else if (_styleCount > _styleList.Length)
-        {
-            RenderStyle[] newArray = new RenderStyle[_styleList.Length * 2];
-            Array.Copy(_styleList, newArray, _styleList.Length);
-            _styleList = newArray;
-        }
+        var style = new RenderStyle(name, value, key);
 
-        RenderStyle style;
-
-        style.name = name;
-        style.key = key;
-
-        string attributeValue = value;
         if (CssTextWriter.IsStyleEncoded(key))
         {
             // note that only css attributes in an inline style value need to be attribute encoded
             // since CssTextWriter is used to render both embedded stylesheets and style attributes
             // the attribute encoding is done here.
-            attributeValue = HttpUtility.HtmlAttributeEncode(value);
+            style = style with { Value = HttpUtility.HtmlAttributeEncode(value) };
         }
-        style.value = attributeValue;
 
-        _styleList[_styleCount] = style;
-        _styleCount++;
+        _styleList.Add(style);
     }
 
-    protected string EncodeAttributeValue(string value, bool fEncode)
+    [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = Constants.ApiFromAspNet)]
+    [return: NotNullIfNotNull(nameof(value))]
+    protected string? EncodeAttributeValue(string value, bool fEncode)
     {
         if (value == null)
         {
@@ -900,63 +735,80 @@ public class HtmlTextWriter : TextWriter
         return !fEncode ? value : HttpUtility.HtmlAttributeEncode(value);
     }
 
-    protected virtual string EncodeAttributeValue(HtmlTextWriterAttribute attrKey, string value)
+    [return: NotNullIfNotNull(nameof(value))]
+    protected virtual string? EncodeAttributeValue(HtmlTextWriterAttribute attrKey, string value)
     {
-        bool encode = true;
+        var encode = true;
 
         if (0 <= (int)attrKey && (int)attrKey < _attrNameLookupArray.Length)
         {
-            encode = _attrNameLookupArray[(int)attrKey].encode;
+            encode = _attrNameLookupArray[(int)attrKey].Encode;
         }
 
         return EncodeAttributeValue(value, encode);
     }
 
     // This does minimal URL encoding by converting spaces in the url to "%20".
+    [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = Constants.ApiFromAspNet)]
     protected string EncodeUrl(string url)
     {
+        ArgumentNullException.ThrowIfNull(url);
+
         // VSWhidbey 454348: escaped spaces in UNC share paths don't work in IE, so
         // we're not going to encode if it's a share.
-        return !UrlPath.IsUncSharePath(url) ? HttpUtility.UrlPathEncode(url) : url;
+        return !IsUncSharePath(url) ? HttpUtility.UrlPathEncode(url) : url;
+
+        static bool IsUncSharePath(string path)
+        {
+            // e.g \\server\share\foo or //server/share/foo
+            return path.Length > 2 && IsDirectorySeparatorChar(path[0]) && IsDirectorySeparatorChar(path[1]);
+        }
+
+        static bool IsDirectorySeparatorChar(char ch)
+        {
+            return (ch == '\\' || ch == '/');
+        }
     }
 
+    [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = Constants.ApiFromAspNet)]
     protected HtmlTextWriterAttribute GetAttributeKey(string attrName)
     {
         if (!string.IsNullOrEmpty(attrName))
         {
-            object key = _attrKeyLookupTable[attrName.ToLower(CultureInfo.InvariantCulture)];
-            if (key != null)
+            if (_attrKeyLookupTable.TryGetValue(attrName, out var key))
             {
-                return (HtmlTextWriterAttribute)key;
+                return key;
             }
         }
 
         return (HtmlTextWriterAttribute)(-1);
     }
 
+    [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = Constants.ApiFromAspNet)]
     protected string GetAttributeName(HtmlTextWriterAttribute attrKey)
     {
-        return (int)attrKey >= 0 && (int)attrKey < _attrNameLookupArray.Length ? _attrNameLookupArray[(int)attrKey].name : string.Empty;
+        return (int)attrKey >= 0 && (int)attrKey < _attrNameLookupArray.Length ? _attrNameLookupArray[(int)attrKey].Name : string.Empty;
     }
 
+    [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = Constants.ApiFromAspNet)]
     protected HtmlTextWriterStyle GetStyleKey(string styleName)
     {
         return CssTextWriter.GetStyleKey(styleName);
     }
 
+    [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = Constants.ApiFromAspNet)]
     protected string GetStyleName(HtmlTextWriterStyle styleKey)
     {
         return CssTextWriter.GetStyleName(styleKey);
     }
 
-    protected virtual HtmlTextWriterTag GetTagKey(string tagName)
+    protected virtual HtmlTextWriterTag GetTagKey(string? tagName)
     {
         if (!string.IsNullOrEmpty(tagName))
         {
-            object key = _tagKeyLookupTable[tagName.ToLower(CultureInfo.InvariantCulture)];
-            if (key != null)
+            if (_tagKeyLookupTable.TryGetValue(tagName, out var key))
             {
-                return (HtmlTextWriterTag)key;
+                return key;
             }
         }
 
@@ -965,15 +817,15 @@ public class HtmlTextWriter : TextWriter
 
     protected virtual string GetTagName(HtmlTextWriterTag tagKey)
     {
-        int tagIndex = (int)tagKey;
-        return tagIndex >= 0 && tagIndex < _tagNameLookupArray.Length ? _tagNameLookupArray[tagIndex].name : string.Empty;
+        var tagIndex = (int)tagKey;
+        return tagIndex >= 0 && tagIndex < _tagNameLookupArray.Length ? _tagNameLookupArray[tagIndex].Name : string.Empty;
     }
 
     protected bool IsAttributeDefined(HtmlTextWriterAttribute key)
     {
-        for (int i = 0; i < _attrCount; i++)
+        foreach (var attr in _attrList)
         {
-            if (_attrList[i].key == key)
+            if (attr.Key == key)
             {
                 return true;
             }
@@ -981,14 +833,14 @@ public class HtmlTextWriter : TextWriter
         return false;
     }
 
-    protected bool IsAttributeDefined(HtmlTextWriterAttribute key, out string value)
+    protected bool IsAttributeDefined(HtmlTextWriterAttribute key, [MaybeNullWhen(false)] out string value)
     {
         value = null;
-        for (int i = 0; i < _attrCount; i++)
+        foreach (var attr in _attrList)
         {
-            if (_attrList[i].key == key)
+            if (attr.Key == key)
             {
-                value = _attrList[i].value;
+                value = attr.Value;
                 return true;
             }
         }
@@ -997,9 +849,9 @@ public class HtmlTextWriter : TextWriter
 
     protected bool IsStyleAttributeDefined(HtmlTextWriterStyle key)
     {
-        for (int i = 0; i < _styleCount; i++)
+        foreach (var style in _styleList)
         {
-            if (_styleList[i].key == key)
+            if (style.Key == key)
             {
                 return true;
             }
@@ -1007,110 +859,70 @@ public class HtmlTextWriter : TextWriter
         return false;
     }
 
-    protected bool IsStyleAttributeDefined(HtmlTextWriterStyle key, out string value)
+    protected bool IsStyleAttributeDefined(HtmlTextWriterStyle key, [MaybeNullWhen(false)] out string value)
     {
         value = null;
-        for (int i = 0; i < _styleCount; i++)
+        foreach (var style in _styleList)
         {
-            if (_styleList[i].key == key)
+            if (style.Key == key)
             {
-                value = _styleList[i].value;
+                value = style.Value;
                 return true;
             }
         }
         return false;
     }
 
-    protected virtual bool OnAttributeRender(string name, string value, HtmlTextWriterAttribute key)
+    protected virtual bool OnAttributeRender(string name, string? value, HtmlTextWriterAttribute key)
     {
         return true;
     }
 
-    protected virtual bool OnStyleAttributeRender(string name, string value, HtmlTextWriterStyle key)
+    protected virtual bool OnStyleAttributeRender(string name, string? value, HtmlTextWriterStyle key)
     {
         return true;
     }
 
-    protected virtual bool OnTagRender(string name, HtmlTextWriterTag key)
+    protected virtual bool OnTagRender(string? name, HtmlTextWriterTag key)
     {
         return true;
     }
 
-    protected string PopEndTag()
+    protected string? PopEndTag()
     {
-        if (_endTagCount <= 0)
+        if (_endTags.Count == 0)
         {
-            throw new InvalidOperationException(SR.GetString(SR.HTMLTextWriterUnbalancedPop));
+            throw new InvalidOperationException("A PopEndTag was called without a corresponding PushEndTag.");
         }
-        _endTagCount--;
-        TagKey = _endTags[_endTagCount].tagKey;
-        return _endTags[_endTagCount].endTagText;
+
+        var endTag = _endTags.Pop();
+
+        TagKey = endTag.Tag;
+
+        return endTag.Text;
     }
 
-    protected void PushEndTag(string endTag)
+    protected void PushEndTag(string? endTag)
     {
-        if (_endTags == null)
-        {
-            _endTags = new TagStackEntry[16];
-        }
-        else if (_endTagCount >= _endTags.Length)
-        {
-            TagStackEntry[] newArray = new TagStackEntry[_endTags.Length * 2];
-            Array.Copy(_endTags, newArray, _endTags.Length);
-            _endTags = newArray;
-        }
-        _endTags[_endTagCount].tagKey = _tagKey;
-        _endTags[_endTagCount].endTagText = endTag;
-        _endTagCount++;
+        _endTags.Push(new TagStackEntry(_tagKey, endTag));
     }
 
-    // This calls filers out all attributes and style attributes by calling OnAttributeRender
-    // and OnStyleAttributeRender on all properites and updates the lists</para>
     protected virtual void FilterAttributes()
     {
-
-        // Create the filtered list of styles
-        int newStyleCount = 0;
-        for (int i = 0; i < _styleCount; i++)
-        {
-            RenderStyle style = _styleList[i];
-            if (OnStyleAttributeRender(style.name, style.value, style.key))
-            {
-                // Update the list. This can be done in place
-                _styleList[newStyleCount] = style;
-                newStyleCount++;
-            }
-        }
-        // Update the count
-        _styleCount = newStyleCount;
-
-        // Create the filtered list of attributes
-        int newAttrCount = 0;
-        for (int i = 0; i < _attrCount; i++)
-        {
-            RenderAttribute attr = _attrList[i];
-            if (OnAttributeRender(attr.name, attr.value, attr.key))
-            {
-                // Update the list. This can be done in place
-                _attrList[newAttrCount] = attr;
-                newAttrCount++;
-            }
-        }
-        // Update the count
-        _attrCount = newAttrCount;
+        _styleList.RemoveAll(style => !OnStyleAttributeRender(style.Name, style.Value, style.Key));
+        _attrList.RemoveAll(attr => !OnAttributeRender(attr.Name, attr.Value, attr.Key));
     }
 
     public virtual void RenderBeginTag(string tagName)
     {
-        this.TagName = tagName;
+        TagName = tagName;
         RenderBeginTag(_tagKey);
     }
 
     public virtual void RenderBeginTag(HtmlTextWriterTag tagKey)
     {
-
-        this.TagKey = tagKey;
-        bool renderTag = true;
+        TagKey = tagKey;
+        var renderTag = true;
 
         if (_isDescendant)
         {
@@ -1120,120 +932,114 @@ public class HtmlTextWriter : TextWriter
             FilterAttributes();
 
             // write text before begin tag
-            string textBeforeTag = RenderBeforeTag();
+            var textBeforeTag = RenderBeforeTag();
             if (textBeforeTag != null)
             {
-                if (tabsPending)
+                if (_tabsPending)
                 {
                     OutputTabs();
                 }
-                writer.Write(textBeforeTag);
+                InnerWriter.Write(textBeforeTag);
             }
         }
 
         // gather information about this tag.
-        TagInformation tagInfo = _tagNameLookupArray[_tagIndex];
-        TagType tagType = tagInfo.tagType;
-        bool renderEndTag = renderTag && (tagType != TagType.NonClosing);
-        string endTag = renderEndTag ? tagInfo.closingTag : null;
+        var tagInfo = _tagNameLookupArray[_tagIndex];
+        var tagType = tagInfo.TagType;
+        var renderEndTag = renderTag && (tagType != TagType.NonClosing);
+        var endTag = renderEndTag ? tagInfo.ClosingTag : null;
 
         // write the begin tag
         if (renderTag)
         {
-            if (tabsPending)
+            if (_tabsPending)
             {
                 OutputTabs();
             }
-            writer.Write(TagLeftChar);
-            writer.Write(_tagName);
+            InnerWriter.Write(TagLeftChar);
+            InnerWriter.Write(_tagName);
 
-            string styleValue = null;
+            string? styleValue = null;
 
-            for (int i = 0; i < _attrCount; i++)
+            foreach (var attr in _attrList)
             {
-                RenderAttribute attr = _attrList[i];
-                if (attr.key == HtmlTextWriterAttribute.Style)
+                if (attr.Key == HtmlTextWriterAttribute.Style)
                 {
                     // append style attribute in with other styles
-                    styleValue = attr.value;
+                    styleValue = attr.Value;
                 }
                 else
                 {
-                    writer.Write(SpaceChar);
-                    writer.Write(attr.name);
-                    if (attr.value != null)
+                    InnerWriter.Write(SpaceChar);
+                    InnerWriter.Write(attr.Name);
+                    if (attr.Value != null)
                     {
-                        writer.Write(EqualsDoubleQuoteString);
+                        InnerWriter.Write(EqualsDoubleQuoteString);
 
-                        string attrValue = attr.value;
-                        if (attr.isUrl)
+                        var attrValue = attr.Value;
+                        if (attr.IsUrl)
                         {
-                            if (attr.key != HtmlTextWriterAttribute.Href || !attrValue.StartsWith("javascript:", StringComparison.Ordinal))
+                            if (attr.Key != HtmlTextWriterAttribute.Href || !attrValue.StartsWith("javascript:", StringComparison.Ordinal))
                             {
                                 attrValue = EncodeUrl(attrValue);
                             }
                         }
-                        if (attr.encode)
+                        if (attr.Encode)
                         {
                             WriteHtmlAttributeEncode(attrValue);
                         }
                         else
                         {
-                            writer.Write(attrValue);
+                            InnerWriter.Write(attrValue);
                         }
-                        writer.Write(DoubleQuoteChar);
+                        InnerWriter.Write(DoubleQuoteChar);
                     }
                 }
             }
 
-            if (_styleCount > 0 || styleValue != null)
+            if (_styleList.Count > 0 || styleValue != null)
             {
-                writer.Write(SpaceChar);
-                writer.Write("style");
-                writer.Write(EqualsDoubleQuoteString);
+                InnerWriter.Write(SpaceChar);
+                InnerWriter.Write("style");
+                InnerWriter.Write(EqualsDoubleQuoteString);
 
-                CssTextWriter.WriteAttributes(writer, _styleList, _styleCount);
+                CssTextWriter.WriteAttributes(InnerWriter, _styleList);
                 if (styleValue != null)
                 {
-                    writer.Write(styleValue);
+                    InnerWriter.Write(styleValue);
                 }
-                writer.Write(DoubleQuoteChar);
+                InnerWriter.Write(DoubleQuoteChar);
             }
 
             if (tagType == TagType.NonClosing)
             {
-                writer.Write(SelfClosingTagEnd);
+                InnerWriter.Write(SelfClosingTagEnd);
             }
             else
             {
-                writer.Write(TagRightChar);
+                InnerWriter.Write(TagRightChar);
             }
         }
 
-        string textBeforeContent = RenderBeforeContent();
+        var textBeforeContent = RenderBeforeContent();
         if (textBeforeContent != null)
         {
-            if (tabsPending)
+            if (_tabsPending)
             {
                 OutputTabs();
             }
-            writer.Write(textBeforeContent);
+            InnerWriter.Write(textBeforeContent);
         }
 
         // write text before the content
         if (renderEndTag)
         {
-
-            if (tagType == TagType.Inline)
+            if (tagType != TagType.Inline)
             {
-                _inlineCount += 1;
-            }
-            else
-            {
-                // writeline and indent before rendering content
                 WriteLine();
                 Indent++;
             }
+
             // Manually build end tags for unknown tag types.
             if (endTag == null)
             {
@@ -1244,7 +1050,7 @@ public class HtmlTextWriter : TextWriter
         if (_isDescendant)
         {
             // append text after the tag
-            string textAfterTag = RenderAfterTag();
+            var textAfterTag = RenderAfterTag();
             if (textAfterTag != null)
             {
                 endTag = (endTag == null) ? textAfterTag : textAfterTag + endTag;
@@ -1252,7 +1058,7 @@ public class HtmlTextWriter : TextWriter
 
             // build end content and push it on stack to write in RenderEndTag
             // prepend text after the content
-            string textAfterContent = RenderAfterContent();
+            var textAfterContent = RenderAfterContent();
             if (textAfterContent != null)
             {
                 endTag = (endTag == null) ? textAfterContent : textAfterContent + endTag;
@@ -1263,20 +1069,18 @@ public class HtmlTextWriter : TextWriter
         PushEndTag(endTag);
 
         // flush attribute and style lists for next tag
-        _attrCount = 0;
-        _styleCount = 0;
-
+        _attrList.Clear();
+        _styleList.Clear();
     }
 
     public virtual void RenderEndTag()
     {
-        string endTag = PopEndTag();
+        var endTag = PopEndTag();
 
         if (endTag != null)
         {
-            if (_tagNameLookupArray[_tagIndex].tagType == TagType.Inline)
+            if (_tagNameLookupArray[_tagIndex].TagType == TagType.Inline)
             {
-                _inlineCount -= 1;
                 // Never inject crlfs at end of inline tags.
                 //
                 Write(endTag);
@@ -1285,28 +1089,28 @@ public class HtmlTextWriter : TextWriter
             {
                 // unindent if not an inline tag
                 WriteLine();
-                this.Indent--;
+                Indent--;
                 Write(endTag);
             }
         }
     }
 
-    protected virtual string RenderBeforeTag()
+    protected virtual string? RenderBeforeTag()
     {
         return null;
     }
 
-    protected virtual string RenderBeforeContent()
+    protected virtual string? RenderBeforeContent()
     {
         return null;
     }
 
-    protected virtual string RenderAfterContent()
+    protected virtual string? RenderAfterContent()
     {
         return null;
     }
 
-    protected virtual string RenderAfterTag()
+    protected virtual string? RenderAfterTag()
     {
         return null;
     }
@@ -1318,31 +1122,31 @@ public class HtmlTextWriter : TextWriter
 
     public virtual void WriteAttribute(string name, string value, bool fEncode)
     {
-        writer.Write(SpaceChar);
-        writer.Write(name);
+        InnerWriter.Write(SpaceChar);
+        InnerWriter.Write(name);
         if (value != null)
         {
-            writer.Write(EqualsDoubleQuoteString);
+            InnerWriter.Write(EqualsDoubleQuoteString);
             if (fEncode)
             {
                 WriteHtmlAttributeEncode(value);
             }
             else
             {
-                writer.Write(value);
+                InnerWriter.Write(value);
             }
-            writer.Write(DoubleQuoteChar);
+            InnerWriter.Write(DoubleQuoteChar);
         }
     }
 
     public virtual void WriteBeginTag(string tagName)
     {
-        if (tabsPending)
+        if (_tabsPending)
         {
             OutputTabs();
         }
-        writer.Write(TagLeftChar);
-        writer.Write(tagName);
+        InnerWriter.Write(TagLeftChar);
+        InnerWriter.Write(tagName);
     }
 
     public virtual void WriteBreak()
@@ -1353,25 +1157,25 @@ public class HtmlTextWriter : TextWriter
 
     public virtual void WriteFullBeginTag(string tagName)
     {
-        if (tabsPending)
+        if (_tabsPending)
         {
             OutputTabs();
         }
-        writer.Write(TagLeftChar);
-        writer.Write(tagName);
-        writer.Write(TagRightChar);
+        InnerWriter.Write(TagLeftChar);
+        InnerWriter.Write(tagName);
+        InnerWriter.Write(TagRightChar);
     }
 
     public virtual void WriteEndTag(string tagName)
     {
-        if (tabsPending)
+        if (_tabsPending)
         {
             OutputTabs();
         }
-        writer.Write(TagLeftChar);
-        writer.Write(SlashChar);
-        writer.Write(tagName);
-        writer.Write(TagRightChar);
+        InnerWriter.Write(TagLeftChar);
+        InnerWriter.Write(SlashChar);
+        InnerWriter.Write(tagName);
+        InnerWriter.Write(TagRightChar);
     }
 
     public virtual void WriteStyleAttribute(string name, string value)
@@ -1381,22 +1185,24 @@ public class HtmlTextWriter : TextWriter
 
     public virtual void WriteStyleAttribute(string name, string value, bool fEncode)
     {
-        writer.Write(name);
-        writer.Write(StyleEqualsChar);
+        InnerWriter.Write(name);
+        InnerWriter.Write(StyleEqualsChar);
         if (fEncode)
         {
             WriteHtmlAttributeEncode(value);
         }
         else
         {
-            writer.Write(value);
+            InnerWriter.Write(value);
         }
-        writer.Write(SemicolonChar);
+        InnerWriter.Write(SemicolonChar);
     }
 
     public virtual void WriteEncodedUrl(string url)
     {
-        int i = url.IndexOf('?');
+        ArgumentNullException.ThrowIfNull(url);
+
+        var i = url.IndexOf('?', StringComparison.OrdinalIgnoreCase);
         if (i != -1)
         {
             WriteUrlEncodedString(url.Substring(0, i), false);
@@ -1415,10 +1221,7 @@ public class HtmlTextWriter : TextWriter
 
     public virtual void WriteEncodedText(string text)
     {
-        if (text == null)
-        {
-            throw new ArgumentNullException(nameof(text));
-        }
+        ArgumentNullException.ThrowIfNull(text);
 
         const char NBSP = '\u00A0';
 
@@ -1426,11 +1229,11 @@ public class HtmlTextWriter : TextWriter
         // decoded to 0x00A0 (code point for nbsp in Unicode).
         // HtmlEncode doesn't encode 0x00A0  to &nbsp;, we need to do it
         // manually here.
-        int length = text.Length;
-        int pos = 0;
+        var length = text.Length;
+        var pos = 0;
         while (pos < length)
         {
-            int nbsp = text.IndexOf(NBSP, pos);
+            var nbsp = text.IndexOf(NBSP, pos);
             if (nbsp < 0)
             {
                 HttpUtility.HtmlEncode(pos == 0 ? text : text.Substring(pos, length - pos), this);
@@ -1450,11 +1253,13 @@ public class HtmlTextWriter : TextWriter
 
     protected void WriteUrlEncodedString(string text, bool argument)
     {
-        int length = text.Length;
-        for (int i = 0; i < length; i++)
+        ArgumentNullException.ThrowIfNull(text);
+
+        var length = text.Length;
+        for (var i = 0; i < length; i++)
         {
-            char ch = text[i];
-            if (HttpEncoderUtility.IsUrlSafeChar(ch))
+            var ch = text[i];
+            if (IsUrlSafeChar(ch))
             {
                 Write(ch);
             }
@@ -1477,8 +1282,8 @@ public class HtmlTextWriter : TextWriter
             else if ((ch & 0xff80) == 0)
             {
                 Write('%');
-                Write(HttpEncoderUtility.IntToHex((ch >> 4) & 0xf));
-                Write(HttpEncoderUtility.IntToHex((ch) & 0xf));
+                Write(IntToHex((ch >> 4) & 0xf));
+                Write(IntToHex((ch) & 0xf));
             }
             else
             {
@@ -1487,119 +1292,42 @@ public class HtmlTextWriter : TextWriter
                 Write(HttpUtility.UrlEncode(char.ToString(ch), Encoding.UTF8));
             }
         }
+
+        // Set of safe chars, from RFC 1738.4 minus '+'
+        static bool IsUrlSafeChar(char ch) => ch switch
+        {
+            >= 'a' and <= 'z' => true,
+            >= 'A' and <= 'Z' => true,
+            >= '0' and <= '9' => true,
+            '-' or '_' or '.' or '!' or '*' or '(' or ')' => true,
+            _ => false,
+        };
     }
 
     internal void WriteHtmlAttributeEncode(string s)
     {
-        HttpUtility.HtmlAttributeEncode(s, writer);
+        HttpUtility.HtmlAttributeEncode(s, InnerWriter);
     }
 
-    internal sealed class Layout
+    private static char IntToHex(int n)
     {
-        private bool _wrap;
-        private HorizontalAlign _align;
+        Debug.Assert(n < 0x10);
 
-        /*
-        public Layout(Layout currentLayout) {
-            Align = currentLayout.Align;
-            Wrap = currentLayout.Wrap;
-        }
-			 */
-
-        public Layout(HorizontalAlign alignment, bool wrapping)
-        {
-            Align = alignment;
-            Wrap = wrapping;
-        }
-
-        public bool Wrap
-        {
-            get
-            {
-                return _wrap;
-            }
-            set
-            {
-                _wrap = value;
-            }
-        }
-
-        public HorizontalAlign Align
-        {
-            get
-            {
-                return _align;
-            }
-            set
-            {
-                _align = value;
-            }
-        }
-
-        /*
-        public bool Compare(Layout layout) {
-            return Wrap == layout.Wrap && Align == layout.Align;
-        }
-			 
-
-        public void MergeWith(Layout layout) {
-            if (Align == HorizontalAlign.NotSet) {
-                Align = layout.Align;
-            }
-            if (Wrap) {
-                Wrap = layout.Wrap;
-            }
-        }
-			 */
+        return n <= 9 ? (char)(n + '0') : (char)(n - 10 + 'a');
     }
 
-    private struct TagStackEntry
-    {
-        public HtmlTextWriterTag tagKey;
-        public string endTagText;
-    }
+    private readonly record struct TagStackEntry(HtmlTextWriterTag Tag, string? Text);
 
-    private struct RenderAttribute
-    {
-        public string name;
-        public string value;
-        public HtmlTextWriterAttribute key;
-        public bool encode;
-        public bool isUrl;
-    }
+    private readonly record struct RenderAttribute(string Name, string Value, HtmlTextWriterAttribute Key, bool Encode, bool IsUrl);
 
-    private struct AttributeInformation
-    {
-        public string name;
-        public bool isUrl;
-        public bool encode;
+    private readonly record struct AttributeInformation(string Name, bool Encode, bool IsUrl);
 
-        public AttributeInformation(string name, bool encode, bool isUrl)
-        {
-            this.name = name;
-            this.encode = encode;
-            this.isUrl = isUrl;
-        }
-    }
+    private readonly record struct TagInformation(string Name, TagType TagType, string? ClosingTag);
 
     private enum TagType
     {
         Inline,
         NonClosing,
         Other,
-    }
-
-    private struct TagInformation
-    {
-        public string name;
-        public TagType tagType;
-        public string closingTag;
-
-        public TagInformation(string name, TagType tagType, string closingTag)
-        {
-            this.name = name;
-            this.tagType = tagType;
-            this.closingTag = closingTag;
-        }
     }
 }

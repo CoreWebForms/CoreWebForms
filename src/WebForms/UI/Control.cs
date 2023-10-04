@@ -3236,7 +3236,7 @@ public partial class Control : IComponent, IParserAccessor, IDataBindingsAccesso
         FillNamedControlsTable(this, _controls);
     }
 
-    private void FillNamedControlsTable(Control namingContainer, ControlCollection controls)
+    private static void FillNamedControlsTable(Control namingContainer, ControlCollection controls)
     {
         Debug.Assert(namingContainer._occasionalFields != null);
         Debug.Assert(namingContainer._occasionalFields.NamedControls != null);
