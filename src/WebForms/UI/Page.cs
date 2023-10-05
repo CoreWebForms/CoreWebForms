@@ -5512,7 +5512,8 @@ window.onload = WebForm_RestoreScrollPosition;
 
     private bool RenderDivAroundHiddenInputs(HtmlTextWriter writer)
     {
-        return writer.RenderDivAroundHiddenInputs && (!EnableLegacyRendering || (RenderingCompatibility >= VersionUtil.Framework40));
+        const bool RenderDivAroundHiddenInputs = true;
+        return RenderDivAroundHiddenInputs && (!EnableLegacyRendering || (RenderingCompatibility >= VersionUtil.Framework40));
     }
 
     internal void SetForm(HtmlForm form)

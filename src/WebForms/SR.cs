@@ -1,4 +1,4 @@
-// MIT
+// MIT License.
 
 using System.Globalization;
 
