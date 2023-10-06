@@ -96,7 +96,7 @@ internal sealed class VirtualPath
         return value;
     }
 
-    internal Stream OpenFile() => File.OpenRead(Path);
+    internal Stream OpenFile() => new FileStream(Path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
 
     internal static VirtualPath Create(string filename) => filename;
 

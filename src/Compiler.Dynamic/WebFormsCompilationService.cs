@@ -14,6 +14,8 @@ namespace WebForms.Compiler.Dynamic;
 
 internal sealed class WebFormsCompilationService : BackgroundService
 {
+    private static readonly List<string> _aspxProcessedList = new();
+
     private readonly ILogger<WebFormsCompilationService> _logger;
     private readonly RouteCollection _routes;
     private readonly ManualResetEventSlim _event;
@@ -165,13 +167,14 @@ internal sealed class WebFormsCompilationService : BackgroundService
                     }
                 }
             }
-            else if (file.Name.EndsWith(".aspx"))
+            else if (file.Name.EndsWith(".aspx") && !_aspxProcessedList.Contains(fullpath))
             {
+                _aspxProcessedList.Add(fullpath);
                 changes.Add(new(new(fullpath), file.LastModified));
             }
         }
 
-        var deletions = dependencies.SelectMany(s => s.Value).Distinct();
+        var deletions = Enumerable.Empty<Timed<ICompiledPage>>(); // dependencies.SelectMany(s => s.Value).Distinct();
 
         return new TrackedFiles(changes, deletions);
     }

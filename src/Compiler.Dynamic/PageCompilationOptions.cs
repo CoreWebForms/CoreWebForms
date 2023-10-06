@@ -3,6 +3,7 @@
 using System.Reflection;
 using System.Web;
 using System.Web.UI;
+using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
 using Microsoft.Extensions.FileProviders;
 
@@ -22,6 +23,7 @@ public class PageCompilationOptions
         KnownTags = new List<TagNamespaceRegisterEntry>();
 
         AddTypeNamespace<Page>("asp");
+        AddTypeNamespace<HtmlElement>("asp");
         AddTypeNamespace<TextBox>("asp");
 
         AddAssembly(typeof(HttpUtility).Assembly);
