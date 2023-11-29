@@ -1,5 +1,4 @@
 // MIT License.
-
 using System.Globalization;
 namespace System.Web;
 
