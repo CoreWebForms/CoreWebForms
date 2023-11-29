@@ -11,7 +11,7 @@ builder.Services.AddDistributedMemoryCache();
 
 builder.Services.AddSystemWebAdapters()
     .AddJsonSessionSerializer()
-    .WrapAspNetCoreSession()
+    .AddWrappedAspNetCoreSession()
     .AddWebForms();
     //.AddDynamicWebForms(options =>
     //{
