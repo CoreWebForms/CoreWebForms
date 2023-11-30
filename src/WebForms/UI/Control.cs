@@ -8,6 +8,8 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Runtime.CompilerServices;
+using System.Web.Routing;
+using System.Web.UI.Adapters;
 using System.Web.UI.WebControls;
 using System.Web.Util;
 using Microsoft.AspNetCore.SystemWebAdapters;
@@ -460,6 +462,36 @@ public partial class Control : IComponent, IParserAccessor, IDataBindingsAccesso
         }
     }
 
+    internal ControlAdapter AdapterInternal
+    {
+        get
+        {
+            if (_occasionalFields == null ||
+                _occasionalFields.RareFields == null ||
+                _occasionalFields.RareFields.Adapter == null)
+            {
+                return null;
+            }
+            return _occasionalFields.RareFields.Adapter;
+        }
+        set
+        {
+            if (value != null)
+            {
+                RareFieldsEnsured.Adapter = value;
+            }
+            else
+            {
+                if (_occasionalFields != null &&
+                    _occasionalFields.RareFields != null &&
+                    _occasionalFields.RareFields.Adapter != null)
+                {
+                    _occasionalFields.RareFields.Adapter = null;
+                }
+            }
+        }
+    }
+
     protected bool HasEvents()
     {
         return (_events != null);
@@ -886,7 +918,7 @@ public partial class Control : IComponent, IParserAccessor, IDataBindingsAccesso
 
     private Page page;
 
-#if PORT_ROUTING
+//#if PORT_ROUTING
     internal RouteCollection RouteCollection
     {
         get
@@ -916,7 +948,7 @@ public partial class Control : IComponent, IParserAccessor, IDataBindingsAccesso
             }
         }
     }
-#endif
+//#endif
 
     // VSWhidbey 244999
     internal virtual bool IsReloadable => false;
@@ -958,7 +990,7 @@ public partial class Control : IComponent, IParserAccessor, IDataBindingsAccesso
         }
     }
 
-#if PORT_ROUTING
+//#if PORT_ROUTING
     [SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings",
         Justification = "Consistent with other URL properties in ASP.NET.")]
     public string GetRouteUrl(object routeParameters)
@@ -984,14 +1016,15 @@ public partial class Control : IComponent, IParserAccessor, IDataBindingsAccesso
         Justification = "Consistent with other URL properties in ASP.NET.")]
     public string GetRouteUrl(string routeName, RouteValueDictionary routeParameters)
     {
-        VirtualPathData data = RouteCollection.GetVirtualPath(Context.Request.RequestContext, routeName, routeParameters);
+        //TODO fix https://github.com/twsouthwick/systemweb-adapters-ui/issues/21
+        /*VirtualPathData data = RouteCollection.GetVirtualPath(Context.Request.RequestContext, routeName, routeParameters);
         if (data != null)
         {
             return data.VirtualPath;
-        }
+        }*/
         return null;
     }
-#endif
+//#endif
 
     /// <devdoc>
     ///    <para>Gets the reference to the <see cref='System.Web.UI.TemplateControl'/>
@@ -3719,10 +3752,11 @@ public partial class Control : IComponent, IParserAccessor, IDataBindingsAccesso
         public IDictionary DesignModeState;
 
         public Version RenderingCompatibility;
+        public ControlAdapter Adapter;
 
-#if PORT_ROUTING
+//#if PORT_ROUTING
         public RouteCollection RouteCollection;
-#endif
+//#endif
 
         public void Dispose()
         {
@@ -3741,9 +3775,9 @@ public partial class Control : IComponent, IParserAccessor, IDataBindingsAccesso
             ControlDesignerAccessorUserData = null;
             DesignModeState = null;
             RenderingCompatibility = null;
-#if PORT_ROUTING
+//#if PORT_ROUTING
             RouteCollection = null;
-#endif
+//#endif
         }
     }
 

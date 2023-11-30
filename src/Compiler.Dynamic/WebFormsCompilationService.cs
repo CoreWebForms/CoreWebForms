@@ -168,6 +168,8 @@ internal sealed class WebFormsCompilationService : BackgroundService
                 }
             }
             else if (file.Name.EndsWith(".aspx") && !_aspxProcessedList.Contains(fullpath))
+            //TODO https://github.com/twsouthwick/systemweb-adapters-ui/issues/27 // next PR
+            //|| file.Name.EndsWith(".ascx"))
             {
                 _aspxProcessedList.Add(fullpath);
                 changes.Add(new(new(fullpath), file.LastModified));

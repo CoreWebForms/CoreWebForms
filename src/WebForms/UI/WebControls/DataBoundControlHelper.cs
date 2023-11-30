@@ -138,7 +138,9 @@ internal static class DataBoundControlHelper
 
     internal static void EnableDynamicData(INamingContainer control, string entityTypeName)
     {
-        throw new NotImplementedException();
+        //TODO instead of throwing just returning, TBD https://github.com/twsouthwick/systemweb-adapters-ui/issues/24
+        return;
+       // throw new NotImplementedException();
 #if PORT_DYNAMICDATA
         if (control == null) {
             throw new ArgumentNullException("control");
