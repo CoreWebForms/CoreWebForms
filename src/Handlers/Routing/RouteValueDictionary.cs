@@ -1,6 +1,7 @@
-﻿// MIT License.
+// MIT License.
 
 using System.Collections;
+using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 
 namespace System.Web.Routing;
@@ -14,6 +15,18 @@ public class RouteValueDictionary : IDictionary<string, object?>
         _other = other;
     }
 
+    public RouteValueDictionary()
+    {
+        _other = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
+    }
+
+    public RouteValueDictionary(object values)
+    {
+        _other = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
+
+        AddValues(values);
+    }
+
     public object? this[string key] { get => _other[key]; set => _other[key] = value; }
 
     public ICollection<string> Keys => _other.Keys;
@@ -23,6 +36,19 @@ public class RouteValueDictionary : IDictionary<string, object?>
     public int Count => _other.Count;
 
     public bool IsReadOnly => _other.IsReadOnly;
+
+    private void AddValues(object values)
+    {
+        if (values != null)
+        {
+            PropertyDescriptorCollection props = TypeDescriptor.GetProperties(values);
+            foreach (PropertyDescriptor prop in props)
+            {
+                object val = prop.GetValue(values);
+                Add(prop.Name, val);
+            }
+        }
+    }
 
     public void Add(string key, object? value)
     {

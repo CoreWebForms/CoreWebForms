@@ -1,6 +1,7 @@
 // MIT License.
 
 using System.Runtime.Loader;
+using System.Web.UI;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,11 +13,12 @@ builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSystemWebAdapters()
     .AddJsonSessionSerializer()
     .AddWrappedAspNetCoreSession()
-    .AddWebForms();
-    //.AddDynamicWebForms(options =>
-    //{
-    //    options.Files = builder.Environment.ContentRootFileProvider;
-    //});
+    .AddWebForms()
+    .AddWebFormsExtensions();
+//.AddDynamicWebForms(options =>
+//{
+//    options.Files = builder.Environment.ContentRootFileProvider;
+//});
 
 var app = builder.Build();
 
