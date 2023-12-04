@@ -15,11 +15,12 @@ internal sealed class CssTextWriter : TextWriter
     private readonly TextWriter _writer;
 
     private static readonly Dictionary<string, HtmlTextWriterStyle> attrKeyLookupTable = new(StringComparer.OrdinalIgnoreCase);
-    private static readonly List<AttributeInformation> attrNameLookupArray = new();
+    private static readonly AttributeInformation[] attrNameLookupArray; 
 
     [Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1810:Initialize reference type static fields inline", Justification = "<Pending>")]
     static CssTextWriter()
     {
+        attrNameLookupArray  = new AttributeInformation[(int)HtmlTextWriterStyle.ZIndex + 1];
         // register known style attributes, HtmlTextWriterStyle.Length
         RegisterAttribute("background-color", HtmlTextWriterStyle.BackgroundColor);
         RegisterAttribute("background-image", HtmlTextWriterStyle.BackgroundImage, true, true);
@@ -124,7 +125,7 @@ internal sealed class CssTextWriter : TextWriter
     /// </summary>
     public static string GetStyleName(HtmlTextWriterStyle styleKey)
     {
-        return (int)styleKey >= 0 && (int)styleKey < attrNameLookupArray.Count ? attrNameLookupArray[(int)styleKey].Name : string.Empty;
+        return (int)styleKey >= 0 && (int)styleKey < attrNameLookupArray.Length ? attrNameLookupArray[(int)styleKey].Name : string.Empty;
     }
 
     /// <summary>
@@ -133,7 +134,7 @@ internal sealed class CssTextWriter : TextWriter
     /// </summary>
     public static bool IsStyleEncoded(HtmlTextWriterStyle styleKey)
     {
-        return (int)styleKey >= 0 && (int)styleKey < attrNameLookupArray.Count ? attrNameLookupArray[(int)styleKey].Encode : true;
+        return (int)styleKey >= 0 && (int)styleKey < attrNameLookupArray.Length ? attrNameLookupArray[(int)styleKey].Encode : true;
     }
 
     /// <internalonly/>
@@ -167,7 +168,7 @@ internal sealed class CssTextWriter : TextWriter
     {
         attrKeyLookupTable[name] = key;
 
-        if ((int)key < attrNameLookupArray.Count)
+        if ((int)key < attrNameLookupArray.Length)
         {
             attrNameLookupArray[(int)key] = new AttributeInformation(name, encode, isUrl);
         }
