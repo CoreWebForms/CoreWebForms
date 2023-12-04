@@ -2419,7 +2419,7 @@ public class ListView : DataBoundControl, INamingContainer, IPageableItemContain
         return container.FindControl(containerID);
     }
 
-    private static DataPager FindDataPager(Control control)
+    private DataPager FindDataPager(Control control)
     {
         foreach (Control c in control.Controls)
         {
