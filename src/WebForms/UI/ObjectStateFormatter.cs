@@ -8,7 +8,6 @@ using System.Drawing;
 using System.Runtime.Serialization;
 using System.Web.UI.WebControls;
 using Microsoft.AspNetCore.DataProtection;
-using Microsoft.AspNetCore.SystemWebAdapters;
 
 #nullable disable
 
@@ -260,7 +259,7 @@ public sealed class ObjectStateFormatter : IStateFormatter, IStateFormatter2, IF
         {
             if (_protector is null)
             {
-                var provider = HttpContext.Current.AsAspNetCore().RequestServices.GetDataProtectionProvider();
+                var provider = HttpContext.Current.AsCore().RequestServices.GetDataProtectionProvider();
                 _protector = provider.CreateProtector("SystemWebForms");
             }
 

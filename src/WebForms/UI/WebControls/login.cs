@@ -4,7 +4,6 @@ using System.Collections;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Web.Services;
-using Microsoft.AspNetCore.SystemWebAdapters;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace System.Web.UI.WebControls;
@@ -1196,7 +1195,7 @@ public class Login : CompositeControl, IBorderPaddingControl, IRenderOuterTableC
         if (authenticateEventArgs.Authenticated)
         {
             OnLoggedIn(EventArgs.Empty);
-            Context.AsAspNetCore().RequestServices.GetRequiredService<ILoginProvider>().OnAuthenticated(UserNameInternal, RememberMeSet, GetRedirectUrl());
+            Context.AsCore().RequestServices.GetRequiredService<ILoginProvider>().OnAuthenticated(UserNameInternal, RememberMeSet, GetRedirectUrl());
 
 #if PORT_FORMSAUTH
             System.Web.Security.FormsAuthentication.SetAuthCookie(UserNameInternal, RememberMeSet);
@@ -1210,7 +1209,7 @@ public class Login : CompositeControl, IBorderPaddingControl, IRenderOuterTableC
 
             if (FailureAction == LoginFailureAction.RedirectToLoginPage)
             {
-                Context.AsAspNetCore().RequestServices.GetRequiredService<ILoginProvider>().RedirectToLoginPage(_failureParameterName + "=1");
+                Context.AsCore().RequestServices.GetRequiredService<ILoginProvider>().RedirectToLoginPage(_failureParameterName + "=1");
 #if PORT_FORMSAUTH
                 System.Web.Security.FormsAuthentication.RedirectToLoginPage(_failureParameterName + "=1");
 #endif

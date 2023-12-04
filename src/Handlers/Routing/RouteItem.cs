@@ -21,8 +21,8 @@ internal sealed record RouteItem(Func<HttpContextCore, IHttpHandler> Handler, Ty
         //new SingleThreadedRequestAttribute(),
     }.ToImmutableList();
 
-    private static readonly ImmutableList<object> _metadataReadonlySession = _metadata.Add(new SessionAttribute { SessionBehavior = SessionStateBehavior.ReadOnly });
-    private static readonly ImmutableList<object> _metadataSession = _metadata.Add(new SessionAttribute { SessionBehavior = SessionStateBehavior.Required });
+    private static readonly ImmutableList<object> _metadataReadonlySession = _metadata.Add(new SessionAttribute { IsReadOnly = true });
+    private static readonly ImmutableList<object> _metadataSession = _metadata.Add(new SessionAttribute { IsReadOnly = false });
 
     public RoutePattern? Pattern { get; init; }
 

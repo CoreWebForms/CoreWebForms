@@ -1148,7 +1148,7 @@ public class Page : TemplateControl, IHttpAsyncHandler
     {
         get
         {
-            return _context.Trace;
+            return TraceContext.Instance;
         }
     }
 
