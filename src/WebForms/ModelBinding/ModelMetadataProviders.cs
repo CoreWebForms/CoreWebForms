@@ -4,7 +4,6 @@ namespace System.Web.ModelBinding;
 
 public static class ModelMetadataProviders
 {
-#if PORT_MODELBINDING
     private static ModelMetadataProvider _current = new DataAnnotationsModelMetadataProvider();
 
     public static ModelMetadataProvider Current
@@ -15,10 +14,8 @@ public static class ModelMetadataProviders
         }
         set
         {
-            _current = value ?? new EmptyModelMetadataProvider();
+            _current = (value == null ? new EmptyModelMetadataProvider() : value);
         }
     }
-#else
-    public static ModelMetadataProvider Current => throw new NotImplementedException();
-#endif
+
 }

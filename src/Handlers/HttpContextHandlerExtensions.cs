@@ -1,5 +1,6 @@
 // MIT License.
 
+using System.Web.Routing;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.SystemWebAdapters;
 
@@ -29,6 +30,20 @@ public static class HttpContextHandlerExtensions
         coreRequest.HttpContext.Features.Set<RouteData>(data);
 
         return data;
+    }
+
+    public static RequestContext GetRequestContext(this HttpContextCore httpContext)
+    {
+        if (httpContext.Features.Get<RequestContext>() is { } existing)
+        {
+            return existing;
+        }
+
+        var routeData = GetRouteData(httpContext.Request);
+        var requestContext = new RequestContext(new HttpContextWrapper(httpContext), routeData);
+        httpContext.Features.Set<RequestContext>(requestContext);
+
+        return requestContext;
     }
 }
 

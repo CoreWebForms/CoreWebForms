@@ -128,6 +128,8 @@ internal static class SR
     public const string Codefile_without_inherits = "The 'CodeFile' attribute cannot be used without an 'Inherits' attribute.";
     public const string CodeFileBaseClass_Without_Codefile = "The 'CodeFileBaseClass' attribute cannot be used without a 'CodeFile' attribute.";
     public const string Collection_readonly_Codeblocks = "The Controls collection cannot be modified because the control contains code blocks (i.e. <% ... %>).";
+    public const string Common_PropertyNotFound = "The property {0}.{1} could not be found.";
+    public const string Common_NullOrEmpty= "Value cannot be null or empty.";
     public const string CommandField_CallbacksNotSupported = "Callbacks are not supported on CommandField when the select button is enabled because other controls on your page that are dependent on the selected value of '{0}' for their rendering will not update in a callback.  Turn callbacks off on '{0}'.";
     public const string CommandField_CancelImageUrl = "The URL of the image to be displayed as the cancel button.";
     public const string CommandField_CancelText = "The text to be displayed on the cancel button.";
@@ -208,6 +210,8 @@ internal static class SR
     public const string ControlSkin_cannot_contain_controls = "Control skins cannot contain child controls.";
     public const string Ctrl_not_data_handler = "Page.RegisterRequiresPostBack can only be called on controls that implement IPostBackDataHandler.";
     public const string Dangerous_input_detected_descr = nameof(Dangerous_input_detected_descr);
+    public const string DataAnnotationsModelMetadataProvider_UnknownProperty = "{0} has a DisplayColumn attribute for {1}, but property {1} does not exist.";
+    public const string DataAnnotationsModelMetadataProvider_UnreadableProperty = "0} has a DisplayColumn attribute for {1}, but property {1} does not have a public getter.";
     public const string DataBinder_Invalid_Indexed_Expr = "DataBinding: '{0}' is not a valid indexed expression.";
     public const string DataBinder_No_Indexed_Accessor = "DataBinding: '{0}' does not allow indexed access.";
     public const string DataBinder_Prop_Not_Found = "DataBinding: '{0}' does not contain a property with the name '{1}'.";

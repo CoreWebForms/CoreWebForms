@@ -24,7 +24,6 @@ public sealed class QueryStringAttribute : ValueProviderSourceAttribute, IUnvali
         if (modelBindingExecutionContext == null) {
             throw new ArgumentNullException("modelBindingExecutionContext");
         }
-
         return new QueryStringValueProvider(modelBindingExecutionContext);
     }
 
