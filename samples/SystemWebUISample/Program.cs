@@ -14,11 +14,11 @@ builder.Services.AddSystemWebAdapters()
     .AddJsonSessionSerializer()
     .AddWrappedAspNetCoreSession()
     .AddWebForms()
-    .AddWebFormsExtensions();
-//.AddDynamicWebForms(options =>
-//{
-//    options.Files = builder.Environment.ContentRootFileProvider;
-//});
+    .AddWebFormsExtensions()
+    .AddDynamicWebForms(options =>
+    {
+        options.Files = builder.Environment.ContentRootFileProvider;
+    });
 
 var app = builder.Build();
 
