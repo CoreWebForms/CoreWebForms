@@ -6,10 +6,13 @@ using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
+using Moq;
 using Xunit;
 
 namespace Microsoft.AspNetCore.SystemWebAdapters.UI.Tests;
@@ -62,6 +65,10 @@ public class PageTests
         // Arrange
         var services = new ServiceCollection();
 
+        var server = new Mock<IServer>();
+        server.Setup(s => s.Features).Returns(new FeatureCollection());
+
+        services.AddSingleton(server.Object);
         services.AddSingleton<IHostEnvironment>(new Env());
         services.AddSingleton(new DiagnosticListener(Guid.NewGuid().ToString()));
         services.AddLogging();
