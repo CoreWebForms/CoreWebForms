@@ -19,6 +19,7 @@ using System.Web.Compilation;
 using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
 using System.Web.Util;
+using Microsoft.AspNetCore.SystemWebAdapters;
 using Microsoft.Extensions.DependencyInjection;
 
 /// <devdoc>
@@ -808,7 +809,7 @@ public class ControlBuilder
                 return null;
             }
 
-            return context.AsCore().Features.Get<TemplateControl>();
+            return context.AsAspNetCore().Features.Get<TemplateControl>();
         }
     }
 
@@ -1819,12 +1820,12 @@ public class ControlBuilder
             // Create the object, using its ctor that takes the tag name
             Object[] args = new Object[] { TagName };
 
-            obj = ActivatorUtilities.CreateInstance(HttpContext.Current.AsCore().RequestServices, _controlType, args);
+            obj = ActivatorUtilities.CreateInstance(HttpContext.Current.AsAspNetCore().RequestServices, _controlType, args);
         }
         else
         {
             // Create the object
-            obj = ActivatorUtilities.CreateInstance(HttpContext.Current.AsCore().RequestServices, _controlType);
+            obj = ActivatorUtilities.CreateInstance(HttpContext.Current.AsAspNetCore().RequestServices, _controlType);
         }
 
         if (flags[applyTheme])
