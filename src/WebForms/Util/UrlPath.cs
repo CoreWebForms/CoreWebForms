@@ -8,7 +8,7 @@ namespace System.Web.Util;
 
 internal static class UrlPath
 {
-    private static string AppDomainAppVirtualPathString => VirtualPath.GetVirtualPathString("/");
+    private static string AppDomainAppVirtualPathString => VirtualPath.GetVirtualPathString(HttpRuntime.AppDomainAppVirtualPath);
 
     internal const char appRelativeCharacter = '~';
     internal const string appRelativeCharacterString = "~/";
