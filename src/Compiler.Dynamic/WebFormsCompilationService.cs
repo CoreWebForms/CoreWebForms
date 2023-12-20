@@ -3,6 +3,7 @@
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Web.Routing;
+using Microsoft.CodeAnalysis.VisualBasic.Syntax;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
@@ -87,6 +88,7 @@ internal sealed class WebFormsCompilationService : BackgroundService
     {
         var changedFiles = GetFileChanges();
         var finalPages = _compiledPages.ToBuilder();
+        //We should sort files based on ascx first, but later.
 
         using (_routes.GetWriteLock())
         {
@@ -97,7 +99,7 @@ internal sealed class WebFormsCompilationService : BackgroundService
                 finalPages.Remove(file);
                 file.Item.Dispose();
             }
-
+           // var allChanges = changedFiles.Changes.OrderBy(fl => fl.Item.FullPath.EndsWith("ascx") ? 100 : 10).ThenBy(fl => fl);
             foreach (var file in changedFiles.Changes)
             {
                 if (file.Item.CompiledPage is { } existing)
@@ -115,15 +117,18 @@ internal sealed class WebFormsCompilationService : BackgroundService
 
                 var compilation = await _compiler.CompilePageAsync(_files, aspx, token).ConfigureAwait(false);
 
-                if (compilation.Type is { } type)
+                if (!aspx.EndsWith("ascx"))
                 {
-                    _logger.LogTrace("Adding page {Path}", compilation.Path);
-                    _routes.Replace(compilation.Path, type);
-                }
-                else
-                {
-                    _logger.LogWarning("No type found for {Path}", compilation.Path);
-                    _routes.Replace(compilation.Path, new ErrorHandler(compilation.Exception!));
+                    if (compilation.Type is { } type)
+                    {
+                        _logger.LogTrace("Adding page {Path}", compilation.Path);
+                        _routes.Replace(compilation.Path, type);
+                    }
+                    else
+                    {
+                        _logger.LogWarning("No type found for {Path}", compilation.Path);
+                        _routes.Replace(compilation.Path, new ErrorHandler(compilation.Exception!));
+                    }
                 }
 
                 finalPages.Add(new(compilation, file.LastModified));
@@ -165,9 +170,9 @@ internal sealed class WebFormsCompilationService : BackgroundService
                     }
                 }
             }
-            else if (file.Name.EndsWith(".aspx"))
-            //TODO https://github.com/twsouthwick/systemweb-adapters-ui/issues/27 // next PR
-            //|| file.Name.EndsWith(".ascx"))
+            else if (file.Name.EndsWith(".aspx")
+                || file.Name.EndsWith(".ascx")
+                )
             {
                 changes.Add(new(new(fullpath), file.LastModified));
             }

@@ -37,6 +37,10 @@ internal class PagesSection
     public Type PageBaseTypeInternal { get; internal set; }
     public Type UserControlBaseTypeInternal { get; internal set; }
 
+    //Added Dict to keep user control types
+    //Should we keep Virtual path and override the equal(looks more appropriate)?
+    public Dictionary<string, Type> UserControlTypesDict { get; } = new Dictionary<string, Type>();
+
     internal class TagMappingCollection
     {
         public Hashtable TagTypeMappingInternal { get; internal set; }

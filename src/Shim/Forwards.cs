@@ -108,7 +108,7 @@ using System.Runtime.CompilerServices;
 [assembly: TypeForwardedTo(typeof(System.Web.SessionState.IRequiresSessionState))]
 [assembly: TypeForwardedTo(typeof(System.Web.SessionState.SessionStateMode))]
 [assembly: TypeForwardedTo(typeof(System.Web.TaskEventHandler))]
-[assembly: TypeForwardedTo(typeof(System.Web.TraceContext))]
+//[assembly: TypeForwardedTo(typeof(System.Web.TraceContext))]
 [assembly: TypeForwardedTo(typeof(System.Web.TraceMode))]
 [assembly: TypeForwardedTo(typeof(System.Web.UI.AttributeCollection))]
 [assembly: TypeForwardedTo(typeof(System.Web.UI.BaseParser))]

@@ -31,6 +31,7 @@ internal abstract class SystemWebCompilation : IPageCompiler, IDisposable
 
         // TODO: remove these statics and use DI
         MTConfigUtil.Compilation = compilationSection.Value;
+        var section = pagesSection.Value;
         PagesSection.Instance = pagesSection.Value;
     }
 
@@ -103,13 +104,30 @@ internal abstract class SystemWebCompilation : IPageCompiler, IDisposable
             if (generator.Parser is PageParser { MasterPage: { } master })
             {
                 queue.Enqueue(master.Path);
+
+                //Temporarily hardcoding
+                //This is not needed,
+               // if (currentPath.Contains("dynamic_page"))
+               // {
+               //    queue.Enqueue("ABTestUserControl.ascx");
+               // }
             }
         }
 
         var references = GetMetadataReferences();
         var compilation = compiler.CreateCompilation(typeName, trees, references);
 
-        return CreateCompiledPage(compilation, path, typeName, trees, references, embedded, token);
+        //TODO the issue is User control inside UserControl
+
+        //User Control related changes (before sending the page, added to PagesSection)
+        var compilePage = CreateCompiledPage(compilation, path, typeName, trees, references, embedded, token);
+        if (path.EndsWith(".ascx"))
+        {
+            PagesSection.Instance.UserControlTypesDict.Add(path, compilePage.Type);
+        }
+        // User Control changes ended
+
+        return compilePage;
     }
 
     protected abstract ICompiledPage CreateCompiledPage(
@@ -145,7 +163,7 @@ internal abstract class SystemWebCompilation : IPageCompiler, IDisposable
         return extension switch
         {
             ".aspx" => CreateFromPage(path),
-            //".ascx" => CreateFromUserControl(path),
+            ".ascx" => CreateFromUserControl(path),
             ".master" => CreateFromMasterPage(path),
             _ => throw new NotImplementedException($"Unknown extension for compilation: {extension}"),
         };

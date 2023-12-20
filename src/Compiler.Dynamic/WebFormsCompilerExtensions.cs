@@ -38,7 +38,6 @@ public static class WebFormsCompilerExtensions
                 {
                     options.DefaultTagNamespaceRegisterEntries.Add(known);
                 }
-
                 options.EnableSessionState = System.Web.Configuration.PagesEnableSessionState.True;
             });
     }

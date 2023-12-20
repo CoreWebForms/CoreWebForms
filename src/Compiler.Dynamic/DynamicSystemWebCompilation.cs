@@ -7,6 +7,7 @@ using System.Web.UI;
 using Microsoft.CodeAnalysis;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System.Linq;
 
 namespace WebForms.Compiler.Dynamic;
 
@@ -70,6 +71,16 @@ internal sealed class DynamicSystemWebCompilation : SystemWebCompilation
 
         var context = new PageAssemblyLoadContext(route, _factory.CreateLogger<PageAssemblyLoadContext>());
         var assembly = context.LoadFromStream(peStream, pdbStream);
+
+        //Added for UserControl
+        if (route.EndsWith(".ascx"))
+        {
+            peStream.Position = 0;
+            var md = MetadataReference.CreateFromStream(peStream);
+            _references.Add(assembly, md);
+        }
+        //End of add
+
         if (assembly.GetType(typeName) is Type type)
         {
             return new CompiledPage(new(route), embedded.Select(t => t.FilePath).ToArray()) { Type = type };
@@ -82,7 +93,9 @@ internal sealed class DynamicSystemWebCompilation : SystemWebCompilation
     {
         var references = new List<MetadataReference>();
 
-        foreach (var assembly in AssemblyLoadContext.Default.Assemblies.Concat(_options.Value.Assemblies))
+        foreach (var assembly in AssemblyLoadContext.Default.Assemblies
+            .Concat(_options.Value.Assemblies)
+            .Concat(GetAssemblisFromUserControl()))
         {
             if (!assembly.IsDynamic)
             {
@@ -98,4 +111,11 @@ internal sealed class DynamicSystemWebCompilation : SystemWebCompilation
 
         return references;
     }
+
+    static List<Assembly> GetAssemblisFromUserControl()
+    {
+        return (from Type t in PagesSection.Instance.UserControlTypesDict.Values
+                select t.Assembly).ToList();
+    }
+
 }

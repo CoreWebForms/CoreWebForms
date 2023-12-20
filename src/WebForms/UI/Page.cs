@@ -1134,6 +1134,7 @@ public class Page : TemplateControl, IHttpAsyncHandler
         }
     }
 
+    /*
     /// <devdoc>
     /// <para>Gets the <see cref='System.Web.TraceContext'/> object for the current Web
     ///    request. Tracing tracks and presents the execution details about a Web request. </para>
@@ -1150,7 +1151,7 @@ public class Page : TemplateControl, IHttpAsyncHandler
         {
             return _context.Trace;
         }
-    }
+    }*/
 
     /// <devdoc>
     /// <para>Gets the <see langword='Request'/> object provided by the HTTP Runtime, which

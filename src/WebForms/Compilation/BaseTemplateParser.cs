@@ -69,6 +69,18 @@ public abstract class BaseTemplateParser : TemplateParser
     {
         Type t = GetReferencedType(virtualPath, false /*allowNoCompile*/);
 
+        // Logic specific to UserControl
+        if(PagesConfig.UserControlTypesDict.ContainsKey(virtualPath.FileName))
+        {
+            t = PagesConfig.UserControlTypesDict[virtualPath.FileName];
+            AddTypeDependency(t);
+            BuildResult br = new BuildResult();
+            br.VirtualPathDependencies = new List<String>() {  virtualPath.FileName, virtualPath.FileName+".cs" };
+            // Add a dependency on the BuildResult
+            AddBuildResultDependency(br);
+        }
+        // end of logic for Usercontrol
+
         // Fail if it's a no compile uc, since it doesn't have a Type we can use
         if (t == null)
         {

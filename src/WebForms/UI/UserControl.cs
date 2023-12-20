@@ -132,6 +132,7 @@ public class UserControl : TemplateControl, IAttributeAccessor, INonBindingConta
      * Trace context for output of useful information to page during development
      */
 
+    /*
     /// <devdoc>
     /// <para>Indicates the <see cref='System.Web.TraceContext'/> object for the current Web 
     ///    request. Tracing tracks and presents the execution details about a Web request.
@@ -143,7 +144,7 @@ public class UserControl : TemplateControl, IAttributeAccessor, INonBindingConta
     DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)
     ]
     public TraceContext Trace { get { return Page.Trace; } }
-
+    */
     /// <devdoc>
     ///    <para>
     ///       Gets the <see langword='Request'/> object provided by the HTTP Runtime, which

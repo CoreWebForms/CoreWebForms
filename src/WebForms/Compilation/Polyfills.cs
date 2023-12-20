@@ -13,7 +13,7 @@ internal class BuildManagerHost
 }
 internal class BuildResult
 {
-    public IEnumerable VirtualPathDependencies { get; internal set; }
+    public IEnumerable VirtualPathDependencies { get;  set; }
 }
 
 internal class ResourceExpressionBuilder

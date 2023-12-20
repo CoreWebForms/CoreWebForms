@@ -141,6 +141,18 @@ internal abstract class TemplateControlCodeDomTreeGenerator : BaseTemplateCodeDo
         prop.Statements.Add(new CodeMethodReturnStatement(new CodeObjectCreateExpression(type.Name)));
 
         _sourceDataClass.Members.Add(prop);
+
+      /*  var propnext = new CodeMemberMethod();
+        propnext.Attributes &= ~MemberAttributes.AccessMask;
+        propnext.Attributes &= ~MemberAttributes.ScopeMask;
+        propnext.Attributes |= MemberAttributes.Override | MemberAttributes.Family;
+        propnext.Name = "CreateHeader";
+        propnext.ReturnType = new CodeTypeReference(typeof(UserControl));
+        propnext.Statements.Add(new CodeMethodReturnStatement(new CodeObjectCreateExpression("ASP.__ABTestUserControl_ascx")));
+
+        _sourceDataClass.Members.Add(propnext);*/
+
+
     }
 
     internal void BuildStronglyTypedProperty(string propertyName, Type propertyType)
