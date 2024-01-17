@@ -10,10 +10,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="assets\**\*.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="6.0.13" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.6.0" />
     <PackageReference Include="xunit" Version="2.4.2" />
@@ -29,16 +25,11 @@
 
   <ItemGroup>
     <Content Include="assets/**/*" CopyToOutputDirectory="PreserveNewest" />
+    <Compile Remove="assets/**/*" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Compiler.Dynamic\Compiler.Dynamic.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="assets\test02\code_behind.aspx.cs">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 
 </Project>
