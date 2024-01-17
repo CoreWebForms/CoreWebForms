@@ -45,7 +45,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TypeDumper", "tools\TypeDum
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shim", "src\Shim\Shim.csproj", "{6BF8D296-2C69-4385-9D95-F28F32BFAF9D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HtmlTextWriter", "src\HtmlTextWriter\HtmlTextWriter.csproj", "{524EE349-51CA-4C4B-B397-97FCBDF7AB25}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HtmlTextWriter", "src\HtmlTextWriter\HtmlTextWriter.csproj", "{524EE349-51CA-4C4B-B397-97FCBDF7AB25}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Compiler.Dynamic.Tests", "test\Compiler.Dynamic.Tests\Compiler.Dynamic.Tests.csproj", "{8392406E-4A1D-4312-9984-949F06F48C2A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -109,6 +111,10 @@ Global
 		{524EE349-51CA-4C4B-B397-97FCBDF7AB25}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{524EE349-51CA-4C4B-B397-97FCBDF7AB25}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{524EE349-51CA-4C4B-B397-97FCBDF7AB25}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8392406E-4A1D-4312-9984-949F06F48C2A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8392406E-4A1D-4312-9984-949F06F48C2A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8392406E-4A1D-4312-9984-949F06F48C2A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8392406E-4A1D-4312-9984-949F06F48C2A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -127,6 +133,7 @@ Global
 		{F5C18E7C-8459-4256-85FD-C1FD37717993} = {D3D2945C-76BA-4DE3-90D2-259E2B1406C5}
 		{6BF8D296-2C69-4385-9D95-F28F32BFAF9D} = {D3D2945C-76BA-4DE3-90D2-259E2B1406C5}
 		{524EE349-51CA-4C4B-B397-97FCBDF7AB25} = {D3D2945C-76BA-4DE3-90D2-259E2B1406C5}
+		{8392406E-4A1D-4312-9984-949F06F48C2A} = {0E3C5885-15E6-4F5F-8D2C-088A0E255666}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B89024DA-2E51-49B1-8D52-651372AB5C83}

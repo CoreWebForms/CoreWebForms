@@ -1,6 +1,5 @@
 // MIT License.
 
-using System.Collections;
 using System.Text;
 
 namespace System.Web;
@@ -96,11 +95,11 @@ internal sealed class VirtualPath
         return value;
     }
 
-    internal Stream OpenFile() => File.OpenRead(Path);
+    internal Stream OpenFile() => File.OpenRead(System.IO.Path.Combine(HttpRuntime.AppDomainAppPath, Path));
 
     internal static VirtualPath Create(string filename) => filename;
 
-    internal bool FileExists() => File.Exists(Path);
+    internal bool FileExists() => File.Exists(IO.Path.Combine(HttpRuntime.AppDomainAppPath, Path));
 
     internal string MapPath()
     {
