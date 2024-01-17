@@ -10,8 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="assets\test02\dynamic_page.aspx.cs" />
-    <Compile Remove="assets\test01\dynamic_page.aspx.cs" />
+    <Compile Remove="assets\**\*.cs" />
   </ItemGroup>
 
   <ItemGroup>
