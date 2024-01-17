@@ -2,6 +2,7 @@
 
 using System.Web.UI;
 using Microsoft.AspNetCore.SystemWebAdapters;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using WebForms.Compiler.Dynamic;
 
@@ -17,6 +18,9 @@ public static class WebFormsCompilerExtensions
         services.AddSingleton<IWebFormsCompiler>(ctx => ctx.GetRequiredService<PersistentSystemWebCompilation>());
     }
 
+    public static ISystemWebAdapterBuilder AddDynamicWebForms(this ISystemWebAdapterBuilder services)
+        => services.AddDynamicWebForms(options => { });
+
     public static ISystemWebAdapterBuilder AddDynamicWebForms(this ISystemWebAdapterBuilder services, Action<PageCompilationOptions> configure)
     {
         services.Services.AddWebFormsCompilationCore(configure);
@@ -29,6 +33,10 @@ public static class WebFormsCompilerExtensions
     private static void AddWebFormsCompilationCore(this IServiceCollection services, Action<PageCompilationOptions> configure)
     {
         services.AddOptions<PageCompilationOptions>()
+            .Configure<IHostEnvironment>((options, env) =>
+            {
+                options.Files = env.ContentRootFileProvider;
+            })
             .Configure(configure);
 
         services.AddOptions<PagesSection>()

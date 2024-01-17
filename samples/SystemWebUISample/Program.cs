@@ -15,10 +15,7 @@ builder.Services.AddSystemWebAdapters()
     .AddWrappedAspNetCoreSession()
     .AddWebForms()
     .AddWebFormsExtensions()
-    .AddDynamicWebForms(options =>
-    {
-        options.Files = builder.Environment.ContentRootFileProvider;
-    });
+    .AddDynamicWebForms();
 
 var app = builder.Build();
 
