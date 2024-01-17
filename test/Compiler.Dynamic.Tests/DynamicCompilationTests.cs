@@ -13,11 +13,11 @@ using Xunit.Abstractions;
 namespace Compiler.Dynamic.Tests;
 
 [Collection(nameof(SelfHostedTests))]
-public class DynamicTests
+public class DynamicCompilationTests
 {
     private readonly ITestOutputHelper _output;
 
-    public DynamicTests(ITestOutputHelper output)
+    public DynamicCompilationTests(ITestOutputHelper output)
     {
         _output = output;
     }
@@ -30,8 +30,8 @@ public class DynamicTests
         // Arrange
         using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
         var contentRoot = Path.Combine(AppContext.BaseDirectory, "assets", test);
-        var html = Path.Combine(contentRoot, $"{page}.html");
-        var expected = File.Exists(html) ? File.ReadAllText(html) : string.Empty;
+        var expectedHtmlPath = Path.Combine(contentRoot, $"{page}.html");
+        var expectedHtml = File.Exists(expectedHtmlPath) ? File.ReadAllText(expectedHtmlPath) : string.Empty;
 
         using var contentProvider = new PhysicalFileProvider(contentRoot);
         using var host = Host.CreateDefaultBuilder()
@@ -88,11 +88,10 @@ public class DynamicTests
             }
         } while (result is null);
 
-        var tempPath = Path.Combine(Path.GetTempPath(), page);
+        var tempPath = Path.Combine(Path.GetTempPath(), page + ".html");
         File.WriteAllText(tempPath, result);
-        _output.WriteLine($"Wrote result to {tempPath}. To update test, run the following command:");
-        _output.WriteLine($"cp {tempPath} {html}");
+        _output.WriteLine($"Wrote result to {tempPath}");
 
-        Assert.Equal(expected, result);
+        Assert.Equal(expectedHtml, result);
     }
 }
