@@ -11,15 +11,12 @@ public class GridViewRowEventArgs : EventArgs {
 
     private GridViewRow _row;
 
-
     /// <devdoc>
     /// <para>Initializes a new instance of <see cref='System.Web.UI.WebControls.GridViewRowEventArgs'/> class.</para>
     /// </devdoc>
     public GridViewRowEventArgs(GridViewRow row) {
         this._row = row;
     }
-
-
 
     /// <devdoc>
     /// <para>Gets an row in the <see cref='System.Web.UI.WebControls.GridView'/>. This property is read-only.</para>

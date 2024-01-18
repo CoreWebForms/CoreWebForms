@@ -16,7 +16,6 @@ ToolboxData("<{0}:RegularExpressionValidator runat=\"server\" ErrorMessage=\"Reg
 ]
 public class RegularExpressionValidator : BaseValidator {
 
-
     /// <devdoc>
     ///    <para>Indicates the regular expression assigned to be the validation criteria.</para>
     /// </devdoc>
@@ -62,7 +61,6 @@ public class RegularExpressionValidator : BaseValidator {
             }
         }
     }            
-
 
     /// <internalonly/>
     /// <devdoc>

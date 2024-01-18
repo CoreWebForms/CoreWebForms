@@ -13,7 +13,6 @@ public class GridViewSortEventArgs : CancelEventArgs {
     private string _sortExpression;
     private SortDirection _sortDirection;
 
-
     /// <devdoc>
     /// <para>Initializes a new instance of the <see cref='System.Web.UI.WebControls.GridViewSortEventArgs'/> class.</para>
     /// </devdoc>
@@ -33,7 +32,6 @@ public class GridViewSortEventArgs : CancelEventArgs {
             _sortDirection = value;
         }
     }
-
 
     /// <devdoc>
     ///    <para>Gets the expression used to sort.</para>

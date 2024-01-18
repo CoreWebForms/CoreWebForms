@@ -16,7 +16,6 @@ public class DetailsViewInsertedEventArgs : EventArgs {
     private bool _keepInInsertMode;
     private IOrderedDictionary _values;
 
-
     /// <devdoc>
     /// <para>Initializes a new instance of the <see cref='System.Web.UI.WebControls.DetailsViewInsertedEventArgs'/>
     /// class.</para>
@@ -28,7 +27,6 @@ public class DetailsViewInsertedEventArgs : EventArgs {
         this._keepInInsertMode = false;
     }
 
-
     /// <devdoc>
     ///    <para>Gets the source of the command. This property is read-only.</para>
     /// </devdoc>
@@ -38,7 +36,6 @@ public class DetailsViewInsertedEventArgs : EventArgs {
         }
     }
 
-
     /// <devdoc>
     ///    <para>Gets the exception (if any) that occurred during the operation. This property is read-only.</para>
     /// </devdoc>
@@ -47,7 +44,6 @@ public class DetailsViewInsertedEventArgs : EventArgs {
             return _exception;
         }
     }
-
 
     /// <devdoc>
     ///    <para>Gets a flag telling whether the exception was handled.</para>

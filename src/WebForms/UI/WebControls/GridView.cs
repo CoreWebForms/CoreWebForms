@@ -45,7 +45,6 @@ public class GridView : CompositeDataBoundControl, IPostBackContainer, IPostBack
     private static readonly object EventSorted = new object();
     private static readonly object EventSorting = new object();
 
-
     private IEnumerator _storedData;
     private object _firstDataRow;
     private bool _storedDataValid;
@@ -107,7 +106,7 @@ public class GridView : CompositeDataBoundControl, IPostBackContainer, IPostBack
     private int _deletedRowIndex;
 
     private bool _renderClientScript;
-    private bool _renderClientScriptValid = false;
+    private bool _renderClientScriptValid;
 
     IStateFormatter2 _stateFormatter;
 
@@ -122,7 +121,6 @@ public class GridView : CompositeDataBoundControl, IPostBackContainer, IPostBack
     internal GridView(IStateFormatter2 stateFormatter) {
         _stateFormatter = stateFormatter;
     }
-
 
     /// <summary>
     /// The name of the method on the page which is called when this Control does an update operation.
@@ -441,12 +439,11 @@ public class GridView : CompositeDataBoundControl, IPostBackContainer, IPostBack
         set {
             if ((value < TableCaptionAlign.NotSet) ||
                 (value > TableCaptionAlign.Right)) {
-                throw new ArgumentOutOfRangeException("value");
+                throw new ArgumentOutOfRangeException(nameof(value));
             }
             ViewState["CaptionAlign"] = value;
         }
     }
-
 
     /// <devdoc>
     ///    <para>Indicates the amount of space between cells.</para>
@@ -597,7 +594,7 @@ public class GridView : CompositeDataBoundControl, IPostBackContainer, IPostBack
             if (o != null) {
                 return (string[])((string[])o).Clone();
             }
-            return new string[0];
+            return [];
         }
         set {
             if (!DataBoundControlHelper.CompareStringArrays(value, DataKeyNamesInternal)) {
@@ -623,10 +620,9 @@ public class GridView : CompositeDataBoundControl, IPostBackContainer, IPostBack
             if (o != null) {
                 return (string[])o;
             }
-            return new string[0];
+            return [];
         }
     }
-
 
     /// <devdoc>
     ///    <para>Gets or sets the ordinal index of the row to be edited.</para>
@@ -642,7 +638,7 @@ public class GridView : CompositeDataBoundControl, IPostBackContainer, IPostBack
         }
         set {
             if (value < -1) {
-                throw new ArgumentOutOfRangeException("value");
+                throw new ArgumentOutOfRangeException(nameof(value));
             }
 
             int oldValue = EditIndex;
@@ -963,7 +959,7 @@ public class GridView : CompositeDataBoundControl, IPostBackContainer, IPostBack
         }
         set {
             if (value < 0) {
-                throw new ArgumentOutOfRangeException("value");
+                throw new ArgumentOutOfRangeException(nameof(value));
             }
 
             int oldValue = PageIndex;
@@ -1060,7 +1056,7 @@ public class GridView : CompositeDataBoundControl, IPostBackContainer, IPostBack
         }
         set {
             if (value < 1) {
-                throw new ArgumentOutOfRangeException("value");
+                throw new ArgumentOutOfRangeException(nameof(value));
             }
             int oldValue = PageSize;
             if (oldValue != value) {
@@ -1084,7 +1080,7 @@ public class GridView : CompositeDataBoundControl, IPostBackContainer, IPostBack
             if (o != null) {
                 return (string[])((string[])o).Clone();
             }
-            return new string[0];
+            return [];
         }
         set {
             if (!DataBoundControlHelper.CompareStringArrays(value, ClientIDRowSuffixInternal)) {
@@ -1108,7 +1104,7 @@ public class GridView : CompositeDataBoundControl, IPostBackContainer, IPostBack
             if (o != null) {
                 return (string[])o;
             }
-            return new string[0];
+            return [];
         }
     }
 
@@ -1210,7 +1206,7 @@ public class GridView : CompositeDataBoundControl, IPostBackContainer, IPostBack
         }
         set {
             if (value < -1) {
-                throw new ArgumentOutOfRangeException("value");
+                throw new ArgumentOutOfRangeException(nameof(value));
             }
             int oldSelectedIndex = _selectedIndex;
             _selectedIndex = value;
@@ -1393,7 +1389,7 @@ public class GridView : CompositeDataBoundControl, IPostBackContainer, IPostBack
         }
         set {
             if (value < SortDirection.Ascending || value > SortDirection.Descending) {
-                throw new ArgumentOutOfRangeException("value");
+                throw new ArgumentOutOfRangeException(nameof(value));
             }
             if (_sortDirection != value) {
                 _sortDirection = value;
@@ -1435,7 +1431,6 @@ public class GridView : CompositeDataBoundControl, IPostBackContainer, IPostBack
             }
         }
     }
-
 
     [
     WebCategory("Styles"),
@@ -1509,7 +1504,6 @@ public class GridView : CompositeDataBoundControl, IPostBackContainer, IPostBack
         }
     }
 
-
     private IStateFormatter2 StateFormatter {
         get {
             if (_stateFormatter == null) {
@@ -1562,7 +1556,6 @@ public class GridView : CompositeDataBoundControl, IPostBackContainer, IPostBack
         }
     }
 
-
     /// <devdoc>
     ///    Gets or sets the number of rows to display in the
     /// <see cref='System.Web.UI.WebControls.DataGrid'/>.
@@ -1581,7 +1574,7 @@ public class GridView : CompositeDataBoundControl, IPostBackContainer, IPostBack
         }
         set {
             if (value < 0) {
-                throw new ArgumentOutOfRangeException("value");
+                throw new ArgumentOutOfRangeException(nameof(value));
             }
             ViewState["VirtualItemCount"] = value;
         }
@@ -1821,7 +1814,6 @@ public class GridView : CompositeDataBoundControl, IPostBackContainer, IPostBack
         }
     }
 
-
     /// <devdoc>
     ///    <para>Occurs on the server when a control a created.</para>
     /// </devdoc>
@@ -2027,7 +2019,7 @@ public class GridView : CompositeDataBoundControl, IPostBackContainer, IPostBack
         // 
         if (dataSource == null) {
             if (EmptyDataTemplate != null || EmptyDataText.Length > 0) {
-                CreateRow(-1, -1, DataControlRowType.EmptyDataRow, DataControlRowState.Normal, dataBinding, null, new DataControlField[0], rows, null);
+                CreateRow(-1, -1, DataControlRowType.EmptyDataRow, DataControlRowState.Normal, dataBinding, null, [], rows, null);
             }
             else {
                 Controls.Clear();
@@ -2307,7 +2299,6 @@ public class GridView : CompositeDataBoundControl, IPostBackContainer, IPostBack
         return new ChildTable(String.IsNullOrEmpty(ID) ? null : ClientID);
     }
 
-
     /// <internalonly/>
     /// <devdoc>
     ///    <para>Creates new control style.</para>
@@ -2335,7 +2326,6 @@ public class GridView : CompositeDataBoundControl, IPostBackContainer, IPostBack
         bool autoGenDeleteButton = AutoGenerateDeleteButton;
         bool autoGenSelectButton = AutoGenerateSelectButton;
 
-
         if (autoGenEditButton || autoGenDeleteButton || autoGenSelectButton) {
             CommandField commandField = new CommandField();
             commandField.ButtonType = ButtonType.Link;
@@ -2352,7 +2342,6 @@ public class GridView : CompositeDataBoundControl, IPostBackContainer, IPostBack
 
             fieldsArray.Add(commandField);
         }
-
 
         foreach (DataControlField f in Columns) {
             fieldsArray.Add(f);
@@ -2394,7 +2383,6 @@ public class GridView : CompositeDataBoundControl, IPostBackContainer, IPostBack
         }
         return arguments;
     }
-
 
     /// <devdoc>
     /// Creates the pager for NextPrev and NextPrev with First and Last styles
@@ -2796,14 +2784,14 @@ public class GridView : CompositeDataBoundControl, IPostBackContainer, IPostBack
         return null;
     }
 
-    private int GetRowIndex(GridViewRow row, string commandArgument) {
+    private static int GetRowIndex(GridViewRow row, string commandArgument) {
         if (row != null) {
             return row.RowIndex;
         }
         return Convert.ToInt32(commandArgument, CultureInfo.InvariantCulture);
     }
 
-    private bool TryGetRowIndex(GridViewRow row, string commandArgument, out int rowIndex) {
+    private static bool TryGetRowIndex(GridViewRow row, string commandArgument, out int rowIndex) {
         if (row != null) {
             rowIndex = row.RowIndex;
             return true;
@@ -2856,7 +2844,6 @@ public class GridView : CompositeDataBoundControl, IPostBackContainer, IPostBack
                 }
             }
         }
-
 
         OnRowDeleting(e);
 
@@ -3405,7 +3392,7 @@ public class GridView : CompositeDataBoundControl, IPostBackContainer, IPostBack
         _selectedIndex = -1;
         _sortExpression = String.Empty;
         _sortDirection = SortDirection.Ascending;
-        _dataKeyNames = new string[0];
+        _dataKeyNames = [];
         _pageCount = -1;
 
         object[] state = savedState as object[];
@@ -3515,7 +3502,6 @@ public class GridView : CompositeDataBoundControl, IPostBackContainer, IPostBack
                 dataKeys = StateFormatter.Deserialize(dataKeysSerialized, Purpose.WebForms_GridView_DataKeys);
             }
         }
-
 
         if (_pageIndex != oldPageIndex || _sortDirection != oldSortDirection || _sortExpression != oldSortExpression) {
             propertiesChanged = true;
@@ -4434,7 +4420,7 @@ var {0} = new GridView();
     /// <internalonly/>
     PostBackOptions IPostBackContainer.GetPostBackOptions(IButtonControl buttonControl) {
         if (buttonControl == null) {
-            throw new ArgumentNullException("buttonControl");
+            throw new ArgumentNullException(nameof(buttonControl));
         }
 
         if (buttonControl.CausesValidation) {

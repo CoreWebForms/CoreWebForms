@@ -17,7 +17,6 @@ public class DetailsViewUpdatedEventArgs : EventArgs {
     private IOrderedDictionary _keys;
     private IOrderedDictionary _oldValues;
 
-
     /// <devdoc>
     /// <para>Initializes a new instance of the <see cref='System.Web.UI.WebControls.DetailsViewUpdatedEventArgs'/>
     /// class.</para>
@@ -29,7 +28,6 @@ public class DetailsViewUpdatedEventArgs : EventArgs {
         this._keepInEditMode = false;
     }
 
-
     /// <devdoc>
     ///    <para>Gets the source of the command. This property is read-only.</para>
     /// </devdoc>
@@ -39,7 +37,6 @@ public class DetailsViewUpdatedEventArgs : EventArgs {
         }
     }
 
-
     /// <devdoc>
     ///    <para>Gets the exception (if any) that occurred during the operation. This property is read-only.</para>
     /// </devdoc>
@@ -48,7 +45,6 @@ public class DetailsViewUpdatedEventArgs : EventArgs {
             return _exception;
         }
     }
-
 
     /// <devdoc>
     ///    <para>Gets a flag telling whether the exception was handled.</para>

@@ -15,7 +15,7 @@ namespace System.Web.UI.Adapters {
      * adapters in the Web Forms page framework.
     */
     public abstract class ControlAdapter {
-        private HttpBrowserCapabilities _browser = null;
+        private HttpBrowserCapabilities _browser;
 
         internal Control _control; //control associated with this adapter
 

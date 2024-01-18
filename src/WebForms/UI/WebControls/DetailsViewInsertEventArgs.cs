@@ -32,7 +32,6 @@ public class DetailsViewInsertEventArgs : CancelEventArgs {
         }
     }
 
-
     /// <devdoc>
     /// <para>Gets a OrderedDictionary to populate with inserted row values.  This property is read-only.</para>
     /// </devdoc>

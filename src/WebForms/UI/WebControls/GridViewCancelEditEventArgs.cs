@@ -10,7 +10,6 @@ public class GridViewCancelEditEventArgs : CancelEventArgs {
 
     private int _rowIndex;
 
-
     /// <devdoc>
     /// <para>Initializes a new instance of the <see cref='System.Web.UI.WebControls.GridViewCancelEditEventArgs'/>
     /// class.</para>
@@ -18,7 +17,6 @@ public class GridViewCancelEditEventArgs : CancelEventArgs {
     public GridViewCancelEditEventArgs(int rowIndex) {
         this._rowIndex = rowIndex;
     }
-
 
     public int RowIndex {
         get {

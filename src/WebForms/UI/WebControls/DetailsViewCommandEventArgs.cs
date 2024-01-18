@@ -21,7 +21,6 @@ public class DetailsViewCommandEventArgs : CommandEventArgs {
         this._commandSource = commandSource;
     }
 
-
     /// <devdoc>
     ///    <para>Gets the source of the command. This property is read-only.</para>
     /// </devdoc>

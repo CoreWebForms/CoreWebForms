@@ -97,7 +97,7 @@ public static class PageExtensions
     {
         private readonly List<IEndpointConventionBuilder> _builders = new();
 
-        public override IReadOnlyList<Endpoint> Endpoints => Array.Empty<Endpoint>();
+        public override IReadOnlyList<Endpoint> Endpoints => [];
 
         public void Add(IEndpointConventionBuilder builder)
         {

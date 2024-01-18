@@ -14,7 +14,7 @@ namespace System.Web.UI.WebControls;
 [Designer("System.Web.UI.Design.WebControls.PreviewControlDesigner, " + AssemblyRef.SystemDesign)]
 public class FileUpload : WebControl {
 
-    private static readonly IList<HttpPostedFile> _emptyFileCollection = new HttpPostedFile[0];
+    private static readonly IList<HttpPostedFile> _emptyFileCollection = [];
     private IList<HttpPostedFile> _postedFiles;
 
     public FileUpload() : base(HtmlTextWriterTag.Input) {
@@ -78,10 +78,9 @@ public class FileUpload : WebControl {
                 }
                 return completeImage;
             }
-            return new byte[0];
+            return [];
         }
     }
-
 
     /// <devdoc>
     /// Gets the contents of the uploaded file.
@@ -100,7 +99,6 @@ public class FileUpload : WebControl {
             return Stream.Null;
         }
     }
-
 
     /// <devdoc>
     /// The name of the file on the client's computer, not including the path.
@@ -131,7 +129,6 @@ public class FileUpload : WebControl {
             return fileName;
         }
     }
-
 
     /// <devdoc>
     /// Whether or not a file was uploaded.
@@ -165,7 +162,6 @@ public class FileUpload : WebControl {
             return PostedFiles.Any(f => f.ContentLength > 0);
         }
     }
-
 
     /// <devdoc>
     /// Provides access to the underlying HttpPostedFile.
@@ -225,7 +221,6 @@ public class FileUpload : WebControl {
         }
     }
 
-
     protected internal override void Render(HtmlTextWriter writer) {
         // Make sure we are in a form tag with runat=server.
         if (Page != null) {
@@ -234,7 +229,6 @@ public class FileUpload : WebControl {
 
         base.Render(writer);
     }
-
 
     /// <devdoc>
     /// Initiates a utility method to save an uploaded file to disk.

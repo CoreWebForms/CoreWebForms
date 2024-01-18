@@ -375,7 +375,7 @@ public class ListView : DataBoundControl, INamingContainer, IPageableItemContain
             {
                 return (string[])((string[])o).Clone();
             }
-            return Array.Empty<string>();
+            return [];
         }
         set
         {
@@ -406,7 +406,7 @@ public class ListView : DataBoundControl, INamingContainer, IPageableItemContain
             {
                 return (string[])o;
             }
-            return Array.Empty<string>();
+            return [];
         }
     }
 
@@ -872,7 +872,7 @@ public class ListView : DataBoundControl, INamingContainer, IPageableItemContain
             {
                 return (string[])((string[])o).Clone();
             }
-            return Array.Empty<string>();
+            return [];
         }
         set
         {
@@ -904,7 +904,7 @@ public class ListView : DataBoundControl, INamingContainer, IPageableItemContain
             {
                 return (string[])o;
             }
-            return Array.Empty<string>();
+            return [];
         }
     }
 
@@ -3155,7 +3155,7 @@ public class ListView : DataBoundControl, INamingContainer, IPageableItemContain
         _groupItemCount = 1;
         _sortExpression = String.Empty;
         _sortDirection = SortDirection.Ascending;
-        _dataKeyNames = Array.Empty<string>();
+        _dataKeyNames = [];
         object[] state = savedState as object[];
 
         if (state != null)

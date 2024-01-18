@@ -15,7 +15,6 @@ public class DetailsViewDeletedEventArgs : EventArgs {
     private IOrderedDictionary _keys;
     private IOrderedDictionary _values;
 
-
     /// <devdoc>
     /// <para>Initializes a new instance of the <see cref='System.Web.UI.WebControls.DetailsViewDeletedEventArgs'/>
     /// class.</para>
@@ -26,7 +25,6 @@ public class DetailsViewDeletedEventArgs : EventArgs {
         this._exception = e;
     }
 
-
     /// <devdoc>
     ///    <para>Gets the source of the command. This property is read-only.</para>
     /// </devdoc>
@@ -36,7 +34,6 @@ public class DetailsViewDeletedEventArgs : EventArgs {
         }
     }
 
-
     /// <devdoc>
     ///    <para>Gets the exception (if any) that occurred during the operation. This property is read-only.</para>
     /// </devdoc>
@@ -45,7 +42,6 @@ public class DetailsViewDeletedEventArgs : EventArgs {
             return _exception;
         }
     }
-
 
     /// <devdoc>
     ///    <para>Gets a flag telling whether the exception was handled.</para>

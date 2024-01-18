@@ -14,6 +14,7 @@ PersistChildren(false),
 public class ScriptManager : Control
 {
 
+    [Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1810:Initialize reference type static fields inline", Justification = "Initialize something in a different. Should move to DI")]
     static ScriptManager()
     {
         ClientScriptManager._scriptResourceMapping = new ScriptResourceMapping();
@@ -46,7 +47,6 @@ public class ScriptManager : Control
         }
     }
 
-
     protected internal override void Render(HtmlTextWriter writer)
     {
         if (_scripts is null)
@@ -56,7 +56,7 @@ public class ScriptManager : Control
 
         foreach (var script in _scripts)
         {
-            if (script.Assembly is { } assembly && script.Path is { } path)
+            if (script.Assembly is { } assembly && script.Path is { })
             {
                 writer.Write("<script src=\"__webforms/scripts/");
                 writer.Write(assembly);

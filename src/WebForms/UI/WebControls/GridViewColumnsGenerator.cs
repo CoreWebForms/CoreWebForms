@@ -32,7 +32,7 @@ public class GridViewColumnsGenerator : AutoFieldsGenerator {
         // try ITypedList first
         // A PagedDataSource implements this, but returns null, if the underlying data source
         // does not implement it.
-        propDescs = ((ITypedList)dataSource).GetItemProperties(new PropertyDescriptor[0]);
+        propDescs = ((ITypedList)dataSource).GetItemProperties([]);
 
         if (propDescs == null) {
             Type sampleItemType = null;

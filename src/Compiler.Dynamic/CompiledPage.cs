@@ -15,7 +15,7 @@ internal sealed class CompiledPage : ICompiledPage
     }
 
     public static ICompiledPage FromError(PagePath page, Exception ex)
-        => new CompiledPage(page, Array.Empty<string>())
+        => new CompiledPage(page, [])
         {
             Exception = ex,
         };

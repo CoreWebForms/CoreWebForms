@@ -12,7 +12,6 @@ public class DetailsViewRow : TableRow {
     private DataControlRowState _rowState;
     
 
-
     /// <devdoc>
     /// <para>Initializes a new instance of the <see cref='System.Web.UI.WebControls.DetailsViewRow'/> class.</para>
     /// </devdoc>
@@ -21,7 +20,6 @@ public class DetailsViewRow : TableRow {
         this._rowType = rowType;
         this._rowState = rowState;
     }
-
 
     /// <devdoc>
     /// <para>Indicates the index of the item in the <see cref='System.Web.UI.WebControls.DetailsView'/>. This property is 
@@ -33,7 +31,6 @@ public class DetailsViewRow : TableRow {
         }
     }
 
-
     /// <devdoc>
     /// <para>Indicates the type of the row in the <see cref='System.Web.UI.WebControls.DetailsView'/>.</para>
     /// </devdoc>
@@ -43,7 +40,6 @@ public class DetailsViewRow : TableRow {
         }
     }
 
-
     /// <devdoc>
     /// <para>Indicates the type of the row in the <see cref='System.Web.UI.WebControls.DetailsView'/>.</para>
     /// </devdoc>
@@ -52,7 +48,6 @@ public class DetailsViewRow : TableRow {
             return _rowType;
         }
     }
-
 
     /// <internalonly/>
     /// <devdoc>

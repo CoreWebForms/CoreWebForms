@@ -15,7 +15,6 @@ public class DetailsViewUpdateEventArgs : CancelEventArgs {
     private OrderedDictionary _keys;
     private OrderedDictionary _oldValues;
 
-
     /// <devdoc>
     /// <para>Initializes a new instance of the <see cref='System.Web.UI.WebControls.DetailsViewUpdateEventArgs'/>
     /// class.</para>
@@ -34,7 +33,6 @@ public class DetailsViewUpdateEventArgs : CancelEventArgs {
         }
     }
 
-
     /// <devdoc>
     /// <para>Gets a keyed list to populate with updated row values.  This property is read-only.</para>
     /// </devdoc>
@@ -47,7 +45,6 @@ public class DetailsViewUpdateEventArgs : CancelEventArgs {
         }
     }
 
-
     /// <devdoc>
     /// <para>Gets a OrderedDictionary to populate with updated row values.  This property is read-only.</para>
     /// </devdoc>
@@ -59,7 +56,6 @@ public class DetailsViewUpdateEventArgs : CancelEventArgs {
             return _values;
         }
     }
-
 
     /// <devdoc>
     /// <para>Gets a OrderedDictionary to populate with pre-edit row values.  This property is read-only.</para>

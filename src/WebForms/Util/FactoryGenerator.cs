@@ -71,7 +71,7 @@ internal class FactoryGenerator
         // Get the CreateInstance method, and make sure it has
         // the correct signature.
 
-        _methodToOverride = factoryInterface.GetMethod("CreateInstance", Array.Empty<Type>());
+        _methodToOverride = factoryInterface.GetMethod("CreateInstance", []);
         if (_methodToOverride.ReturnType != _returnedType)
         {
             throw new ArgumentException(SR.GetString(SR.FactoryInterface));
@@ -117,7 +117,7 @@ internal class FactoryGenerator
     {
         private readonly ObjectFactory _factory;
 
-        public Factory(Type type) => _factory = ActivatorUtilities.CreateFactory(type, Array.Empty<Type>());
+        public Factory(Type type) => _factory = ActivatorUtilities.CreateFactory(type, []);
 
         public object CreateInstance() => _factory(this, null);
 

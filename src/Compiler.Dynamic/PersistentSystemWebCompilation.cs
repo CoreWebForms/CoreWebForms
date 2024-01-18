@@ -65,7 +65,7 @@ internal sealed class PersistentSystemWebCompilation : SystemWebCompilation, IWe
 
             File.WriteAllText(Path.Combine(_options.Value.TargetDirectory, $"{typeName}.errors.json"), errorResult);
 
-            return new CompiledPage(new(route), Array.Empty<string>()) { Exception = new RoslynCompilationException(errors) };
+            return new CompiledPage(new(route), []) { Exception = new RoslynCompilationException(errors) };
         }
 
         _pages.Add(new(route, typeName, $"WebForms.{typeName}"));

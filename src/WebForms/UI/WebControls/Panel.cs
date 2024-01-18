@@ -2,7 +2,6 @@
 
 using System.ComponentModel;
 
-
 namespace System.Web.UI.WebControls;
 
 /// <devdoc>
@@ -16,8 +15,7 @@ PersistChildren(true),
 ]
 public class Panel : WebControl {
     private string _defaultButton;
-    private bool _renderedFieldSet = false;
-
+    private bool _renderedFieldSet; 
 
     /// <devdoc>
     ///    Initializes a new instance of the <see cref='System.Web.UI.WebControls.Panel'/> class.
@@ -25,7 +23,6 @@ public class Panel : WebControl {
     public Panel()
         : base(HtmlTextWriterTag.Div) {
     }
-
 
     /// <devdoc>
     ///    <para>Gets or sets the URL of the background image for the panel control.</para>
@@ -59,7 +56,6 @@ public class Panel : WebControl {
             }
         }
     }
-
 
     /// <devdoc>
     ///     Gets or sets default button for the panel
@@ -113,7 +109,6 @@ public class Panel : WebControl {
         }
     }
 
-
     [
     Localizable(true),
     DefaultValue(""),
@@ -129,7 +124,6 @@ public class Panel : WebControl {
             ViewState["GroupingText"] = value;
         }
     }
-
 
     /// <devdoc>
     ///    <para>Gets or sets the horizontal alignment of the contents within the panel.</para>
@@ -158,7 +152,7 @@ public class Panel : WebControl {
             }
             else {
                 if (value < HorizontalAlign.NotSet || value > HorizontalAlign.Justify) {
-                    throw new ArgumentOutOfRangeException("value");
+                    throw new ArgumentOutOfRangeException(nameof(value));
                 }
                 ViewState["HorizontalAlign"] = value;
             }
@@ -202,7 +196,6 @@ public class Panel : WebControl {
         }
     }
 
-
     /// <devdoc>
     ///    <para>Gets or sets a value
     ///       indicating whether the content wraps within the panel.</para>
@@ -234,7 +227,6 @@ public class Panel : WebControl {
             }
         }
     }
-
 
     /// <internalonly/>
     /// <devdoc>
@@ -301,7 +293,7 @@ public class Panel : WebControl {
     /// <devdoc>
     ///    [To be supplied.]
     /// </devdoc>
-    private void AddScrollingAttribute(ScrollBars scrollBars, HtmlTextWriter writer) {
+    private static void AddScrollingAttribute(ScrollBars scrollBars, HtmlTextWriter writer) {
         switch (scrollBars) {
             case ScrollBars.Horizontal:
                 writer.AddStyleAttribute(HtmlTextWriterStyle.OverflowX, "scroll");
@@ -320,7 +312,6 @@ public class Panel : WebControl {
         }
     }
 
-
     /// <internalonly/>
     /// <devdoc>
     ///    <para>A protected method. Creates a panel control style.</para>
@@ -328,7 +319,6 @@ public class Panel : WebControl {
     protected override Style CreateControlStyle() {
         return new PanelStyle(ViewState);
     }
-
 
     /// <internalonly/>
     public override void RenderBeginTag(HtmlTextWriter writer) {

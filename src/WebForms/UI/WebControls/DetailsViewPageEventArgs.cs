@@ -13,7 +13,6 @@ public class DetailsViewPageEventArgs : CancelEventArgs {
 
     private int _newPageIndex;
 
-
     /// <devdoc>
     /// <para>Initializes a new instance of the <see cref='System.Web.UI.WebControls.DetailsViewPageEventArgs'/> class.</para>
     /// </devdoc>

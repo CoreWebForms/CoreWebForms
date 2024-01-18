@@ -15,8 +15,6 @@ public class GridViewRow : TableRow, IDataItemContainer {
     private DataControlRowState _rowState;
     private object _dataItem;
 
-
-
     /// <devdoc>
     /// <para>Initializes a new instance of the <see cref='System.Web.UI.WebControls.GridViewRow'/> class.</para>
     /// </devdoc>
@@ -26,8 +24,6 @@ public class GridViewRow : TableRow, IDataItemContainer {
         this._rowType = rowType;
         this._rowState = rowState;
     }
-
-
 
     /// <devdoc>
     /// <para>Represents an item in the <see cref='System.Web.UI.WebControls.GridView'/>. </para>
@@ -41,7 +37,6 @@ public class GridViewRow : TableRow, IDataItemContainer {
         }
     }
 
-
     /// <devdoc>
     ///    <para>Indicates the data set index number. This property is read-only.</para>
     /// </devdoc>
@@ -50,7 +45,6 @@ public class GridViewRow : TableRow, IDataItemContainer {
             return _dataItemIndex;
         }
     }
-
 
     /// <devdoc>
     /// <para>Indicates the index of the row in the <see cref='System.Web.UI.WebControls.GridView'/>. This property is 
@@ -61,7 +55,6 @@ public class GridViewRow : TableRow, IDataItemContainer {
             return _rowIndex;
         }
     }
-
 
     /// <devdoc>
     /// <para>Indicates the type of the row in the <see cref='System.Web.UI.WebControls.GridView'/>.</para>
@@ -75,7 +68,6 @@ public class GridViewRow : TableRow, IDataItemContainer {
         }
     }
 
-
     /// <devdoc>
     /// <para>Indicates the type of the row in the <see cref='System.Web.UI.WebControls.GridView'/>.</para>
     /// </devdoc>
@@ -87,7 +79,6 @@ public class GridViewRow : TableRow, IDataItemContainer {
             _rowType = value;
         }
     }
-
 
     /// <internalonly/>
     /// <devdoc>
@@ -101,7 +92,6 @@ public class GridViewRow : TableRow, IDataItemContainer {
         }
         return false;
     }
-
 
     /// <internalonly/>
     /// <devdoc>

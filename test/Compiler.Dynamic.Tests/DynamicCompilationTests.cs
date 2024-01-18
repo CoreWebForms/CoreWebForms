@@ -77,15 +77,15 @@ public class DynamicCompilationTests
 
         do
         {
-            using var response = await client.GetAsync(page, cts.Token).ConfigureAwait(false);
+            using var response = await client.GetAsync(page, cts.Token);
 
             if (response.IsSuccessStatusCode)
             {
-                result = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                result = await response.Content.ReadAsStringAsync();
             }
             else
             {
-                await Task.Delay(250, cts.Token).ConfigureAwait(false);
+                await Task.Delay(250, cts.Token);
             }
         } while (result is null);
 

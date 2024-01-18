@@ -4,7 +4,6 @@ using System.Collections.Specialized;
 
 namespace System.Web;
 
-
 // Abstract base class for wrapping the request's unvalidated values.
 
 public abstract class UnvalidatedRequestValuesBase {

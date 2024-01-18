@@ -19,7 +19,7 @@ public class NameValueCollectionValueProvider : IValueProvider, IUnvalidatedValu
 
     public NameValueCollectionValueProvider(NameValueCollection collection, NameValueCollection unvalidatedCollection, CultureInfo culture) {
         if (collection == null) {
-            throw new ArgumentNullException("collection");
+            throw new ArgumentNullException(nameof(collection));
         }
 
         _culture = culture;
@@ -38,7 +38,7 @@ public class NameValueCollectionValueProvider : IValueProvider, IUnvalidatedValu
 
     public virtual bool ContainsPrefix(string prefix) {
         if (prefix == null) {
-            throw new ArgumentNullException("prefix");
+            throw new ArgumentNullException(nameof(prefix));
         }
 
         return _prefixes.ContainsPrefix(prefix);
@@ -50,7 +50,7 @@ public class NameValueCollectionValueProvider : IValueProvider, IUnvalidatedValu
 
     public virtual ValueProviderResult GetValue(string key, bool skipValidation) {
         if (key == null) {
-            throw new ArgumentNullException("key");
+            throw new ArgumentNullException(nameof(key));
         }
 
         ValueProviderResultPlaceholder placeholder;

@@ -20,7 +20,7 @@
                     PropertyInfo displayColumnProperty = ModelType.GetProperty(_displayColumnAttribute.DisplayColumn, BindingFlags.Public | BindingFlags.IgnoreCase | BindingFlags.Instance);
                     ValidateDisplayColumnAttribute(_displayColumnAttribute, displayColumnProperty, ModelType);
 
-                    object simpleDisplayTextValue = displayColumnProperty.GetValue(Model, new object[0]);
+                    object simpleDisplayTextValue = displayColumnProperty.GetValue(Model, []);
                     if (simpleDisplayTextValue != null) {
                         return simpleDisplayTextValue.ToString();
                     }

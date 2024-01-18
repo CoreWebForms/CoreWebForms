@@ -17,11 +17,11 @@ public class RequestContext
     {
         if (httpContext == null)
         {
-            throw new ArgumentNullException("httpContext");
+            throw new ArgumentNullException(nameof(httpContext));
         }
         if (routeData == null)
         {
-            throw new ArgumentNullException("routeData");
+            throw new ArgumentNullException(nameof(routeData));
         }
         HttpContext = httpContext;
         RouteData = routeData;

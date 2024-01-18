@@ -14,10 +14,12 @@ using Microsoft.Extensions.Hosting;
 using Moq;
 
 namespace WebForms.Tests;
-internal class TestUtil
+
+internal sealed class TestUtil
 {
-    internal static async Task<string> RunPage<TPage>(Action<HttpHandlerOptions> configureRoute = null,
-    HttpContext defaultContext = null)
+    internal static async Task<string> RunPage<TPage>(
+        Action<HttpHandlerOptions>? configureRoute = null,
+        HttpContext? defaultContext = null)
         where TPage : Page
     {
         var services = new ServiceCollection();
@@ -25,7 +27,7 @@ internal class TestUtil
         server.Setup(s => s.Features).Returns(new FeatureCollection());
         services.AddSingleton(new Mock<IConfiguration>().Object);
         services.AddSingleton(server.Object);
-       services.AddSingleton<IHostEnvironment>(new Env());
+        services.AddSingleton<IHostEnvironment>(new Env());
         services.AddSingleton(new DiagnosticListener(Guid.NewGuid().ToString()));
         services.AddLogging();
         services.AddOptions();

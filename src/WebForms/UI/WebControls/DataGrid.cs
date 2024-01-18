@@ -978,7 +978,7 @@ public class DataGrid : BaseDataList, INamingContainer
         // try ITypedList first
         // A PagedDataSource implements this, but returns null, if the underlying data source
         // does not implement it.
-        propDescs = ((ITypedList)dataSource).GetItemProperties(Array.Empty<PropertyDescriptor>());
+        propDescs = ((ITypedList)dataSource).GetItemProperties([]);
 
         if (propDescs == null)
         {

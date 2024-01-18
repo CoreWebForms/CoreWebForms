@@ -127,7 +127,7 @@ public sealed class FontInfo
                     return names;
                 }
             }
-            return Array.Empty<string>();
+            return [];
         }
         set
         {
