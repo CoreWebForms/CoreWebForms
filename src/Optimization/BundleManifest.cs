@@ -20,12 +20,12 @@ public sealed class BundleManifest
     /// <summary>
     /// Gets the <see cref="StyleBundle"/> objects specified by the manifest file.
     /// </summary>
-    public IList<BundleDefinition> StyleBundles { get; private set; }
+    public IList<BundleDefinition> StyleBundles { get; private set; } = [];
 
     /// <summary>
     /// Gets the <see cref="ScriptBundle"/> objects specified by the manifest file.
     /// </summary>
-    public IList<BundleDefinition> ScriptBundles { get; private set; }
+    public IList<BundleDefinition> ScriptBundles { get; private set; } = [];
 
     /// <summary>
     /// Creates a bundle manifest object from a bundle manifest.
@@ -36,14 +36,15 @@ public sealed class BundleManifest
     {
         var document = GetXmlDocument(bundleStream);
         var manifest = new BundleManifest();
+
         manifest.StyleBundles = document.SelectNodes(@"bundles/styleBundle")
-                                    .Cast<XmlElement>()
+                                    ?.Cast<XmlElement>()
                                     .Select(ReadBundle)
-                                    .ToList();
+                                    .ToList() ?? [];
         manifest.ScriptBundles = document.SelectNodes(@"bundles/scriptBundle")
-                                    .Cast<XmlElement>()
+                                    ?.Cast<XmlElement>()
                                     .Select(ReadBundle)
-                                    .ToList();
+                                    .ToList() ?? [];
         return manifest;
     }
 
@@ -110,19 +111,26 @@ public sealed class BundleManifest
     private static XmlDocument GetXmlDocument(Stream bundleStream)
     {
         var document = new XmlDocument();
-        using (Stream xsdStream = typeof(BundleManifest).Assembly.GetManifestResourceStream(XsdResourceName))
-        using (var reader = XmlReader.Create(xsdStream))
+
+        using (var xsdStream = typeof(BundleManifest).Assembly.GetManifestResourceStream(XsdResourceName))
         {
-            document.Schemas.Add(targetNamespace: null, schemaDocument: reader);
+            if (xsdStream is not null)
+            {
+                using var reader = XmlReader.Create(xsdStream);
+                document.Schemas.Add(targetNamespace: null, schemaDocument: reader);
+            }
         }
+
         document.Load(bundleStream);
-        document.Validate((sender, e) => {
+        document.Validate((sender, e) =>
+        {
             if (e.Severity == XmlSeverityType.Error)
             {
                 // Throw an exception if there is a validation error
                 throw new InvalidOperationException(e.Message);
             }
         });
+
         return document;
     }
 
@@ -141,15 +149,21 @@ public sealed class BundleManifest
     {
         foreach (var bundleData in StyleBundles)
         {
-            var styleBundle = new StyleBundle(bundleData.Path);
-            styleBundle.Include(bundleData.Includes.ToArray());
-            collection.Add(styleBundle);
+            if (bundleData.Path is not null)
+            {
+                var styleBundle = new StyleBundle(bundleData.Path);
+                styleBundle.Include(bundleData.Includes.ToArray());
+                collection.Add(styleBundle);
+            }
         }
         foreach (var bundleData in ScriptBundles)
         {
-            var styleBundle = new ScriptBundle(bundleData.Path);
-            styleBundle.Include(bundleData.Includes.ToArray());
-            collection.Add(styleBundle);
+            if (bundleData.Path is not null)
+            {
+                var styleBundle = new ScriptBundle(bundleData.Path);
+                styleBundle.Include(bundleData.Includes.ToArray());
+                collection.Add(styleBundle);
+            }
         }
     }
 }

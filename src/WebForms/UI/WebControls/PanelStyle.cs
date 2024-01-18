@@ -24,7 +24,6 @@ public class PanelStyle : Style {
     private const string STR_SCROLLBARS = "ScrollBars";
     private const string STR_WRAP = "Wrap";
 
-
     /// <devdoc>
     ///    <para>
     ///       Initializes a new instance of the <see cref='System.Web.UI.WebControls.PanelStyle'/> 
@@ -33,7 +32,6 @@ public class PanelStyle : Style {
     /// </devdoc>
     public PanelStyle(StateBag bag) : base (bag) {
     }
-
 
     /// <devdoc>
     ///    <para>Gets or sets the URL of the background image for the panel.</para>
@@ -53,13 +51,12 @@ public class PanelStyle : Style {
         }
         set {
             if (value == null) {
-                throw new ArgumentNullException("value");
+                throw new ArgumentNullException(nameof(value));
             }
             ViewState[STR_BACKIMAGEURL] = value;
             SetBit(PROP_BACKIMAGEURL);
         }
     }
-
 
     /// <devdoc>
     ///    <para>Gets or sets content direction for the panel.</para>
@@ -78,7 +75,7 @@ public class PanelStyle : Style {
         }
         set {
             if (value < ContentDirection.NotSet || value > ContentDirection.RightToLeft) {
-                throw new ArgumentOutOfRangeException("value");
+                throw new ArgumentOutOfRangeException(nameof(value));
             }
             ViewState[STR_DIRECTION] = value;
             SetBit(PROP_DIRECTION);
@@ -103,13 +100,12 @@ public class PanelStyle : Style {
         }
         set {
             if (value < HorizontalAlign.NotSet || value > HorizontalAlign.Justify) {
-                throw new ArgumentOutOfRangeException("value");
+                throw new ArgumentOutOfRangeException(nameof(value));
             }
             ViewState[STR_HORIZONTALALIGN] = value;
             SetBit(PROP_HORIZONTALALIGN);
         }
     }
-
 
     /// <devdoc>
     ///     <para>Gets or sets the scrollbar behavior of the panel.</para>
@@ -128,13 +124,12 @@ public class PanelStyle : Style {
         }
         set {
             if (value < ScrollBars.None || value > ScrollBars.Auto) {
-                throw new ArgumentOutOfRangeException("value");
+                throw new ArgumentOutOfRangeException(nameof(value));
             }
             ViewState[STR_SCROLLBARS] = value;
             SetBit(PROP_SCROLLBARS);
         }
     }
-
 
     /// <devdoc>
     ///    <para>Gets or sets a value
@@ -157,7 +152,6 @@ public class PanelStyle : Style {
             SetBit(PROP_WRAP);
         }
     }
-
 
     /// <internalonly/>
     /// <devdoc>
@@ -202,7 +196,6 @@ public class PanelStyle : Style {
         }
     }
 
-
     /// <internalonly/>
     /// <devdoc>
     ///    <para>Copies non-blank elements from the specified style, but will not overwrite
@@ -240,7 +233,6 @@ public class PanelStyle : Style {
             }
         }
     }
-
 
     /// <internalonly/>
     /// <devdoc>

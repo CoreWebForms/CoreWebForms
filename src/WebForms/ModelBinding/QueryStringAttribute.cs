@@ -22,7 +22,7 @@ public sealed class QueryStringAttribute : ValueProviderSourceAttribute, IUnvali
 
     public override IValueProvider GetValueProvider(ModelBindingExecutionContext modelBindingExecutionContext) {
         if (modelBindingExecutionContext == null) {
-            throw new ArgumentNullException("modelBindingExecutionContext");
+            throw new ArgumentNullException(nameof(modelBindingExecutionContext));
         }
         return new QueryStringValueProvider(modelBindingExecutionContext);
     }

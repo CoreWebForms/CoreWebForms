@@ -146,10 +146,10 @@ public class RouteCollection
             {
                 throw new ArgumentException(
                     string.Format(
-                        CultureInfo.CurrentUICulture,
+                        CultureInfo.InvariantCulture,
                         "A route named '{0}' could not be found in the route collection.",
                         name),
-                    "name");
+                    nameof(name));
             }
         }
         else

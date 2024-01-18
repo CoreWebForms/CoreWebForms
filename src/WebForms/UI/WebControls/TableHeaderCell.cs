@@ -88,7 +88,7 @@ public class TableHeaderCell : TableCell
         get
         {
             object x = ViewState["CategoryText"];
-            return (x != null) ? (string[])((string[])x).Clone() : Array.Empty<string>();
+            return (x != null) ? (string[])((string[])x).Clone() : [];
         }
         set
         {

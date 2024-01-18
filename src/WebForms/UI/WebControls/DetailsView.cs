@@ -84,7 +84,7 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
     private string _modelValidationGroup;
 
     private bool _renderClientScript;
-    private bool _renderClientScriptValid = false;
+    private bool _renderClientScriptValid; 
 
     private IAutoFieldGenerator _rowsGenerator;
     private DetailsViewRowsGenerator _defaultRowsGenerator = new DetailsViewRowsGenerator();
@@ -176,7 +176,6 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
         }
     }
 
-
     /// <devdoc>
     /// <para>Indicates the style properties of alternating rows.</para>
     /// </devdoc>
@@ -198,7 +197,6 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
             return _alternatingRowStyle;
         }
     }
-
 
     /// <devdoc>
     /// <para>Gets or sets a value that indicates whether a button field for deleting will automatically
@@ -227,7 +225,6 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
         }
     }
 
-
     /// <devdoc>
     /// <para>Gets or sets a value that indicates whether an edit field will automatically
     /// be created.</para>
@@ -254,7 +251,6 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
             }
         }
     }
-
 
     /// <devdoc>
     /// <para>Gets or sets a value that indicates whether an insert field will automatically
@@ -283,7 +279,6 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
         }
     }
 
-
     /// <devdoc>
     /// <para>Gets or sets a value that indicates whether fields will automatically
     /// be created for each bound data field.</para>
@@ -311,7 +306,6 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
         }
     }
 
-
     /// <devdoc>
     /// <para>Gets or sets the URL of an image to display in the
     /// background of the <see cref='System.Web.UI.WebControls.DetailsView'/>.</para>
@@ -334,7 +328,6 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
             ((TableStyle)ControlStyle).BackImageUrl = value;
         }
     }
-
 
     [
     Browsable(false),
@@ -362,7 +355,6 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
         }
     }
 
-
     [
     Localizable(true),
     DefaultValue(""),
@@ -379,7 +371,6 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
         }
     }
 
-
     [
     DefaultValue(TableCaptionAlign.NotSet),
     WebCategory("Accessibility"),
@@ -393,13 +384,11 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
         set {
             if ((value < TableCaptionAlign.NotSet) ||
                 (value > TableCaptionAlign.Right)) {
-                throw new ArgumentOutOfRangeException("value");
+                throw new ArgumentOutOfRangeException(nameof(value));
             }
             ViewState["CaptionAlign"] = value;
         }
     }
-
-
 
     /// <devdoc>
     /// <para>Indicates the amount of space between cells.</para>
@@ -420,7 +409,6 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
             ((TableStyle)ControlStyle).CellPadding = value;
         }
     }
-
 
     /// <devdoc>
     /// <para>Gets or sets the amount of space between the contents of
@@ -443,7 +431,6 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
         }
     }
 
-
     /// <devdoc>
     /// <para>Indicates the style properties of command rows.</para>
     /// </devdoc>
@@ -465,7 +452,6 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
             return _commandRowStyle;
         }
     }
-
 
     [
     Browsable(false),
@@ -514,7 +500,6 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
         }
     }
 
-
     [
     DefaultValue(null),
     Editor("System.Web.UI.Design.WebControls.DataFieldEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
@@ -528,7 +513,7 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
             if (o != null) {
                 return(string[])((string[])o).Clone();
             }
-            return new string[0];
+            return [];
         }
         set {
             if (!DataBoundControlHelper.CompareStringArrays(value, DataKeyNamesInternal)) {
@@ -554,7 +539,7 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
             if (o != null) {
                 return (string[])o;
             }
-            return new string[0];
+            return [];
         }
     }
 
@@ -574,7 +559,6 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
         }
     }
 
-
     [
     WebCategory("Behavior"),
     DefaultValue(DetailsViewMode.ReadOnly),
@@ -586,12 +570,11 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
         }
         set {
             if (value < DetailsViewMode.ReadOnly || value > DetailsViewMode.Insert) {
-                throw new ArgumentOutOfRangeException("value");
+                throw new ArgumentOutOfRangeException(nameof(value));
             }
             _defaultMode = value;
         }
     }
-
 
     /// <devdoc>
     /// <para>Indicates the style properties of each row when in edit mode.</para>
@@ -615,7 +598,6 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
         }
     }
 
-
     /// <devdoc>
     /// <para>Indicates the style properties of null rows.</para>
     /// </devdoc>
@@ -638,7 +620,6 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
         }
     }
 
-
     /// <devdoc>
     /// <para>Indicates the template to use when no records are returned from the datasource within the DetailsView.
     /// </devdoc>
@@ -657,7 +638,6 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
             _emptyDataTemplate = value;
         }
     }
-
 
     /// <devdoc>
     /// <para>The header text displayed if no EmptyDataTemplate is defined.
@@ -717,7 +697,6 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
         }
     }
 
-
     /// <devdoc>
     /// <para>Indicates the style properties of the header column.</para>
     /// </devdoc>
@@ -739,7 +718,6 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
             return _fieldHeaderStyle;
         }
     }
-
 
     /// <devdoc>
     /// <para>Gets a collection of <see cref='System.Web.UI.WebControls.DataControlField'/> controls in the <see cref='System.Web.UI.WebControls.DetailsView'/>. This property is read-only.</para>
@@ -777,7 +755,6 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
         }
     }
 
-
     [
     Browsable(false),
     DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden),
@@ -790,7 +767,6 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
             return _footerRow;
         }
     }
-
 
     /// <devdoc>
     /// <para>Indicates the style properties of the footer row.</para>
@@ -814,7 +790,6 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
         }
     }
 
-
     /// <devdoc>
     /// <para>Indicates the template to use for a footer item within the DetailsView.
     /// </devdoc>
@@ -833,7 +808,6 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
             _footerTemplate = value;
         }
     }
-
 
     /// <devdoc>
     /// <para>The header text displayed if no FooterTemplate is defined.
@@ -857,7 +831,6 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
         }
     }
 
-
     /// <devdoc>
     /// <para>Gets or sets a value that specifies the grid line style.</para>
     /// </devdoc>
@@ -878,7 +851,6 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
         }
     }
 
-
     [
     Browsable(false),
     DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden),
@@ -891,7 +863,6 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
             return _headerRow;
         }
     }
-
 
     /// <devdoc>
     /// <para>Indicates the style properties of the header row.</para>
@@ -915,7 +886,6 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
         }
     }
 
-
     /// <devdoc>
     /// <para>Indicates the template to use for a header item within the DetailsView.
     /// </devdoc>
@@ -934,7 +904,6 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
             _headerTemplate = value;
         }
     }
-
 
     /// <devdoc>
     /// <para>The header text displayed if no HeaderTemplate is defined.
@@ -958,7 +927,6 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
         }
     }
 
-
     /// <devdoc>
     /// <para>Gets or sets a value that specifies the alignment of a rows with respect
     /// surrounding text.</para>
@@ -979,7 +947,6 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
             ((TableStyle)ControlStyle).HorizontalAlign = value;
         }
     }
-
 
     /// <devdoc>
     /// <para>Indicates the style properties of each row when in insert mode.</para>
@@ -1012,7 +979,6 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
         }
     }
 
-
     private DetailsViewMode Mode {
         get {
             // if the mode wasn't explicitly set by LoadControlState or by the user, the mode is the DefaultMode.
@@ -1024,7 +990,7 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
         }
         set {
             if (value < DetailsViewMode.ReadOnly || value > DetailsViewMode.Insert) {
-                throw new ArgumentOutOfRangeException("value");
+                throw new ArgumentOutOfRangeException(nameof(value));
             }
 
             _modeSet = true;
@@ -1036,7 +1002,6 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
             }
         }
     }
-
 
     [
     Browsable(false),
@@ -1068,7 +1033,6 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
         }
     }
 
-
     /// <devdoc>
     /// <para>Gets or sets the index of the currently displayed record.</para>
     /// </devdoc>
@@ -1090,7 +1054,7 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
             // since we don't know at property set time how many DataItems we'll have,
             // don't throw if we're above PageCount
             if (value < -1) {
-                throw new ArgumentOutOfRangeException("value");
+                throw new ArgumentOutOfRangeException(nameof(value));
             }
             if (value >= 0) {
                 PageIndexInternal = value;
@@ -1124,7 +1088,6 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
         }
     }
 
-
     /// <devdoc>
     /// <para>Gets the style properties of the pager rows for the
     /// <see cref='System.Web.UI.WebControls.DetailsView'/>. This
@@ -1148,7 +1111,6 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
         }
     }
 
-
     /// <devdoc>
     /// <para>Indicates the template to use for a pager item within the DetailsView.
     /// </devdoc>
@@ -1167,7 +1129,6 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
             _pagerTemplate = value;
         }
     }
-
 
     /// <devdoc>
     /// <para>Gets a collection of <see cref='System.Web.UI.WebControls.DetailsViewRow'/> objects representing the individual
@@ -1194,7 +1155,6 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
         }
     }
 
-
     [
     Browsable(false),
     DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)
@@ -1213,7 +1173,6 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
             return RowsGenerator ?? _defaultRowsGenerator;
         }
     }
-
 
     /// <devdoc>
     /// <para>Indicates the style properties of each row.</para>
@@ -1237,7 +1196,6 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
         }
     }
 
-
     [
     Browsable(false),
     DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)
@@ -1255,7 +1213,6 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
         }
     }
 
-
     [
     Browsable(false),
     DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden),
@@ -1268,7 +1225,6 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
             return _topPagerRow;
         }
     }
-
 
     /// <devdoc>
     /// <para>Occurs when a command is issued from the DetailsView.</para>
@@ -1286,7 +1242,6 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
         }
     }
 
-
     /// <devdoc>
     /// <para>Occurs when a row is created.</para>
     /// </devdoc>
@@ -1302,7 +1257,6 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
             Events.RemoveHandler(EventItemCreated, value);
         }
     }
-
 
     /// <devdoc>
     /// <para>Occurs when the DetailsView item has been deleted.</para>
@@ -1320,7 +1274,6 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
         }
     }
 
-
     /// <devdoc>
     /// <para>Occurs when the DetailsView item is being deleted.</para>
     /// </devdoc>
@@ -1336,7 +1289,6 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
             Events.RemoveHandler(EventItemDeleting, value);
         }
     }
-
 
     /// <devdoc>
     /// <para>Occurs when the DetailsView item has been inserted.</para>
@@ -1354,7 +1306,6 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
         }
     }
 
-
     /// <devdoc>
     /// <para>Occurs when the DetailsView item is being inserted.</para>
     /// </devdoc>
@@ -1370,7 +1321,6 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
             Events.RemoveHandler(EventItemInserting, value);
         }
     }
-
 
     /// <devdoc>
     /// <para>Occurs when the DetailsView item has been updated.</para>
@@ -1388,7 +1338,6 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
         }
     }
 
-
     /// <devdoc>
     /// <para>Occurs when the DetailsView item is being updated.</para>
     /// </devdoc>
@@ -1404,7 +1353,6 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
             Events.RemoveHandler(EventItemUpdating, value);
         }
     }
-
 
     /// <devdoc>
     /// <para>Occurs when the ViewMode has changed.</para>
@@ -1422,7 +1370,6 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
         }
     }
 
-
     /// <devdoc>
     /// <para>Occurs when the ViewMode is changing.</para>
     /// </devdoc>
@@ -1439,7 +1386,6 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
         }
     }
 
-
     /// <devdoc>
     /// <para>Occurs when the DetailsView PageIndex has been changed.</para>
     /// </devdoc>
@@ -1455,7 +1401,6 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
             Events.RemoveHandler(EventPageIndexChanged, value);
         }
     }
-
 
     /// <devdoc>
     /// <para>Occurs when the DetailsView PageIndex is changing.</para>
@@ -1476,10 +1421,9 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
     /// <devdoc>
     /// <para>Builds the callback argument used in DataControlLinkButtons.</para>
     /// </devdoc>
-    private string BuildCallbackArgument(int pageIndex) {
+    private static string BuildCallbackArgument(int pageIndex) {
         return "\"" + Convert.ToString(pageIndex, CultureInfo.InvariantCulture) + "|\"";
     }
-
 
     public void ChangeMode(DetailsViewMode newMode) {
         Mode = newMode;
@@ -1501,7 +1445,6 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
         return field;
     }
 
-
     /// <summary>
     /// Creates the set of AutoGenerated rows.  This function cannot be overridden because then if someone
     /// overrides it to add another type of DataControlField to the control, we have to manage the states of those
@@ -1511,7 +1454,6 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
     protected virtual ICollection CreateAutoGeneratedRows(object dataItem) {
         return _defaultRowsGenerator.CreateAutoGeneratedFields(dataItem, this);
     }
-
 
     /// <devdoc>
     /// <para>Creates the control hierarchy that is used to render the DetailsView.
@@ -1654,7 +1596,6 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
                 _dataItem = lastItem;   // if we broke out of the above loop, the current item will be invalid
             }
 
-
             // If we're not using server paging and this isn't a collection, or server paging doesn't return a page count, our _pageCount isn't accurate.
             // Loop through the rest of the enumeration to figure out how many items are in it.
             if ((!_useServerPaging && !(dataSource is ICollection)) || (_useServerPaging && itemCount < 0)) {
@@ -1712,7 +1653,6 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
 
         return itemCount;
     }
-
 
     /// <devdoc>
     /// <para>Creates new control style.</para>
@@ -1797,7 +1737,6 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
         return arguments;
     }
 
-
     /// <devdoc>
     /// Creates the set of fields to be used to build up the control
     /// hierarchy.
@@ -1851,7 +1790,6 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
         bool isFirstPage = pagedDataSource.IsFirstPage;
         bool isLastPage = pagedDataSource.IsLastPage;
 
-
         if (addFirstLastPageButtons && !isFirstPage) {
             string firstPageImageUrl = pagerSettings.FirstPageImageUrl;
             TableCell cell = new TableCell();
@@ -1890,7 +1828,6 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
             prevButton.CommandArgument = DataControlCommands.PreviousPageCommandArgument;
             cell.Controls.Add((Control)prevButton);
         }
-
 
         if (!isLastPage) {
             IButtonControl nextButton;
@@ -2107,7 +2044,6 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
         return row;
     }
 
-
     /// <devdoc>
     /// <para>[To be supplied.]</para>
     /// </devdoc>
@@ -2117,7 +2053,6 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
         }
         return new DetailsViewRow(rowIndex, rowType, rowState);
     }
-
 
     /// <devdoc>
     /// Creates a new Table, which is the containing table
@@ -2305,7 +2240,6 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
         }
 
         DetailsViewDeleteEventArgs e = new DetailsViewDeleteEventArgs(pageIndex);
-
 
         ExtractRowValues(e.Values, true/*includeReadOnlyFields*/, false/*includePrimaryKey*/);
         foreach (DictionaryEntry entry in DataKey.Values) {
@@ -2500,7 +2434,6 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
 
         DetailsViewInsertEventArgs e = new DetailsViewInsertEventArgs(commandArg);
 
-
         ExtractRowValues(e.Values, false/*includeReadOnlyFields*/, true/*includePrimaryKey*/);
         
 
@@ -2624,7 +2557,6 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
 
         DetailsViewUpdateEventArgs e = new DetailsViewUpdateEventArgs(commandArg);
 
-
         foreach (DictionaryEntry entry in BoundFieldValues) {
             e.OldValues.Add(entry.Key, entry.Value);
         }
@@ -2689,7 +2621,6 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
         return true;
     }
 
-
     /// <devdoc>
     /// <para>
     /// Creates a DetailsViewRow that contains the paging UI.
@@ -2728,8 +2659,6 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
         cell.ColumnSpan = 2;
         row.Cells.Add(cell);
     }
-
-
 
     /// <devdoc>
     /// <para>[To be supplied.]</para>
@@ -2789,7 +2718,6 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
         HandleInsert(String.Empty, causesValidation);
     }
 
-
     /// <summary>
     /// Determines if the specified data type can be bound to.
     /// Note : Staring from 4.5, This method is no more being used as a criteria for generating rows when AutoGenerateRows=true.
@@ -2798,7 +2726,6 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
     public virtual bool IsBindableType(Type type) {
         return DataBoundControlHelper.IsBindableType(type, enableEnums: RenderingCompatibility >= VersionUtil.Framework45);
     }
-
 
     /// <devdoc>
     /// <para>Loads the control state for those properties that should persist across postbacks
@@ -2810,7 +2737,7 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
         // be restored to their persisted state instead of their empty state.
         _pageIndex = 0;
         _defaultMode = DetailsViewMode.ReadOnly;
-        _dataKeyNames = new string[0];
+        _dataKeyNames = [];
         _pageCount = 0;
 
         object[] state = savedState as object[];
@@ -2875,7 +2802,6 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
         return propertyChanged;
     }
 
-
     /// <devdoc>
     /// <para>Loads a saved state of the <see cref='System.Web.UI.WebControls.DetailsView'/>.</para>
     /// </devdoc>
@@ -2920,7 +2846,6 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
         }
     }
 
-
     /// <devdoc>
     /// </devdoc>
     protected override bool OnBubbleEvent(object source, EventArgs e) {
@@ -2949,7 +2874,6 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
         }
     }
 
-
     /// <devdoc>
     /// DetailsView initialization.
     /// </devdoc>
@@ -2968,7 +2892,6 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
         }
     }
 
-
     /// <devdoc>
     /// <para>Raises the <see langword='ItemCommand'/> event.</para>
     /// </devdoc>
@@ -2978,7 +2901,6 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
             handler(this, e);
         }
     }
-
 
     /// <devdoc>
     /// <para>Raises the <see langword='ItemCreated'/> event.</para>
@@ -2990,7 +2912,6 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
         }
     }
 
-
     /// <devdoc>
     /// <para>Raises the <see langword='ItemDeleted '/>event.</para>
     /// </devdoc>
@@ -2998,7 +2919,6 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
         DetailsViewDeletedEventHandler handler = (DetailsViewDeletedEventHandler)Events[EventItemDeleted];
         if (handler != null) handler(this, e);
     }
-
 
     /// <devdoc>
     /// <para>Raises the <see langword='Delete'/> event.</para>
@@ -3016,7 +2936,6 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
         }
     }
 
-
     /// <devdoc>
     /// <para>Raises the <see langword='ItemInserted '/>event.</para>
     /// </devdoc>
@@ -3024,7 +2943,6 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
         DetailsViewInsertedEventHandler handler = (DetailsViewInsertedEventHandler)Events[EventItemInserted];
         if (handler != null) handler(this, e);
     }
-
 
     /// <devdoc>
     /// <para>Raises the <see langword='Insert'/> event.</para>
@@ -3042,7 +2960,6 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
         }
     }
 
-
     /// <devdoc>
     /// <para>Raises the <see langword='ItemUpdated '/>event.</para>
     /// </devdoc>
@@ -3050,7 +2967,6 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
         DetailsViewUpdatedEventHandler handler = (DetailsViewUpdatedEventHandler)Events[EventItemUpdated];
         if (handler != null) handler(this, e);
     }
-
 
     /// <devdoc>
     /// <para>Raises the <see langword='Update'/> event.</para>
@@ -3068,7 +2984,6 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
         }
     }
 
-
     /// <devdoc>
     /// <para>Raises the <see langword='ModeChanged'/>event.</para>
     /// </devdoc>
@@ -3076,7 +2991,6 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
         EventHandler handler = (EventHandler)Events[EventModeChanged];
         if (handler != null) handler(this, e);
     }
-
 
     /// <devdoc>
     /// <para>Raises the <see langword='ModeChanging'/> event.</para>
@@ -3101,7 +3015,6 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
         EventHandler handler = (EventHandler)Events[EventPageIndexChanged];
         if (handler != null) handler(this, e);
     }
-
 
     /// <devdoc>
     /// <para>Raises the <see langword='ModeChanging'/> event.</para>
@@ -3197,7 +3110,6 @@ var {0} = new DetailsView();
         return false;
     }
 
-
     protected internal override void PerformDataBinding(IEnumerable data) {
         base.PerformDataBinding(data);
         if (IsDataBindingAutomatic && Mode == DetailsViewMode.Edit && IsViewStateEnabled) {
@@ -3267,7 +3179,6 @@ var {0} = new DetailsView();
 
                 case DataControlRowType.DataRow:
                     compositeStyle.CopyFrom(_rowStyle);
-
 
                     if ((rowState & DataControlRowState.Alternate) != 0) {
                         compositeStyle.CopyFrom(altRowStyle);
@@ -3359,7 +3270,6 @@ var {0} = new DetailsView();
         DetailsViewCommandEventArgs dvcea = new DetailsViewCommandEventArgs(this, cea);
         HandleEvent(dvcea, false, String.Empty);
 		}
-
 
     /// <devdoc>
     /// <para>Displays the control on the client.</para>
@@ -3471,7 +3381,6 @@ var {0} = new DetailsView();
         return true;    // return a dummy that ensures LoadControlState gets called but minimizes persisted size.
     }
 
-
     /// <devdoc>
     /// <para>Saves the current state of the <see cref='System.Web.UI.WebControls.DetailsView'/>.</para>
     /// </devdoc>
@@ -3575,7 +3484,7 @@ var {0} = new DetailsView();
     #region IPostBackContainer implementation
     PostBackOptions IPostBackContainer.GetPostBackOptions(IButtonControl buttonControl) {
         if (buttonControl == null) {
-            throw new ArgumentNullException("buttonControl");
+            throw new ArgumentNullException(nameof(buttonControl));
         }
 
         if (buttonControl.CausesValidation) {

@@ -27,7 +27,7 @@ public sealed class SkinBuilder : ControlBuilder
     private readonly Control _control;
     private readonly ControlBuilder _skinBuilder;
     private readonly string _themePath;
-    internal static readonly Object[] EmptyParams = Array.Empty<object>();
+    internal static readonly Object[] EmptyParams = [];
 
     public SkinBuilder(ThemeProvider provider, Control control, ControlBuilder skinBuilder, string themePath)
     {

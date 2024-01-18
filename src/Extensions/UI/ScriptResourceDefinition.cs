@@ -113,7 +113,7 @@ public class ScriptResourceDefinition : IScriptResourceDefinition {
             if (_cdnSupportsSecureConnection) {
                 // convert 'http' to 'https'
                 if (unsecurePath.StartsWith("http://", StringComparison.OrdinalIgnoreCase)) {
-                    cdnPath = "https" + unsecurePath.Substring(4);
+                    cdnPath = string.Concat("https", unsecurePath.AsSpan(4));
                 }
                 else {
                     // cdnPath is not 'http' so we cannot determine the secure path

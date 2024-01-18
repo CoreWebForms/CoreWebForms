@@ -11,7 +11,6 @@ public class GridViewEditEventArgs : CancelEventArgs {
 
     private int _newEditIndex;
 
-
     /// <devdoc>
     /// <para>Initializes a new instance of the <see cref='System.Web.UI.WebControls.GridViewEditEventArgs'/>
     /// class.</para>
@@ -19,8 +18,6 @@ public class GridViewEditEventArgs : CancelEventArgs {
     public GridViewEditEventArgs(int newEditIndex) {
         this._newEditIndex = newEditIndex;
     }
-
-
 
     /// <devdoc>
     ///    <para>Gets the index of the row to be edited. This property is read-only.</para>

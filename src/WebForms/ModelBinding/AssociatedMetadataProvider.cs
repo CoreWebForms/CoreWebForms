@@ -24,7 +24,7 @@ public abstract class AssociatedMetadataProvider : ModelMetadataProvider {
 
     public override IEnumerable<ModelMetadata> GetMetadataForProperties(object container, Type containerType) {
         if (containerType == null) {
-            throw new ArgumentNullException("containerType");
+            throw new ArgumentNullException(nameof(containerType));
         }
 
         return GetMetadataForPropertiesImpl(container, containerType);
@@ -39,10 +39,10 @@ public abstract class AssociatedMetadataProvider : ModelMetadataProvider {
 
     public override ModelMetadata GetMetadataForProperty(Func<object> modelAccessor, Type containerType, string propertyName) {
         if (containerType == null) {
-            throw new ArgumentNullException("containerType");
+            throw new ArgumentNullException(nameof(containerType));
         }
         if (String.IsNullOrEmpty(propertyName)) {
-            throw new ArgumentException(SR.GetString(SR.Common_NullOrEmpty), "propertyName");
+            throw new ArgumentException(SR.GetString(SR.Common_NullOrEmpty), nameof(propertyName));
         }
 
         ICustomTypeDescriptor typeDescriptor = GetTypeDescriptor(containerType);
@@ -67,7 +67,7 @@ public abstract class AssociatedMetadataProvider : ModelMetadataProvider {
 
     public override ModelMetadata GetMetadataForType(Func<object> modelAccessor, Type modelType) {
         if (modelType == null) {
-            throw new ArgumentNullException("modelType");
+            throw new ArgumentNullException(nameof(modelType));
         }
 
         IEnumerable<Attribute> attributes = GetTypeDescriptor(modelType).GetAttributes().Cast<Attribute>();

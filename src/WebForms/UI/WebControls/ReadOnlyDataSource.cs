@@ -14,7 +14,7 @@ namespace System.Web.UI.WebControls;
 internal sealed class ReadOnlyDataSource : IDataSource
 {
 
-    private static readonly string[] ViewNames = Array.Empty<string>();
+    private static readonly string[] ViewNames = [];
 
     private readonly string _dataMember;
     private readonly object _dataSource;

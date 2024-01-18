@@ -4,7 +4,6 @@ using System.ComponentModel;
 
 namespace System.Web.UI.WebControls;
 
-
 /// <devdoc>
 /// <para>Provides data for the <see langword='DetailsViewMode'/> event.</para>
 /// </devdoc>
@@ -13,7 +12,6 @@ public class DetailsViewModeEventArgs : CancelEventArgs {
     private DetailsViewMode _mode;
     private bool _cancelingEdit;
 
-
     /// <devdoc>
     /// <para>Initializes a new instance of <see cref='System.Web.UI.WebControls.DetailsViewModeEventArgs'/> class.</para>
     /// </devdoc>
@@ -21,7 +19,6 @@ public class DetailsViewModeEventArgs : CancelEventArgs {
         this._mode = mode;
         this._cancelingEdit = cancelingEdit;
     }
-
 
     /// <devdoc>
     /// <para>Gets a bool in the <see cref='System.Web.UI.WebControls.DetailsView'/> indicating whether the mode change is the result of a cancel command.

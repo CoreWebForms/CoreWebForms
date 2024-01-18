@@ -146,7 +146,5 @@ public class VirtualPathProvider
         return _virtualPath.OpenFile();
     }
 
-
-
 }
 

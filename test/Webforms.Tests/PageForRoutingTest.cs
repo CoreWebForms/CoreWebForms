@@ -17,7 +17,7 @@ public class PageForRoutingTest
             {
                 options.Routes.MapPageRoute("ProductsByCategoryRoute",
                     "Category/{categoryName}", "~/ProductList.aspx");
-            }).ConfigureAwait(false);
+            });
 
         //Assert
 

@@ -104,7 +104,7 @@ internal sealed record RouteItem(Func<HttpContextCore, IHttpHandler> Handler, Ty
 
     private static Func<HttpContextCore, IHttpHandler> CreateActivator(Type type)
     {
-        var factory = ActivatorUtilities.CreateFactory(type, Array.Empty<Type>());
+        var factory = ActivatorUtilities.CreateFactory(type, []);
 
         return CreateActivator(factory);
 

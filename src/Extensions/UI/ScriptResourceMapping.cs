@@ -22,15 +22,15 @@ public class ScriptResourceMapping : IScriptResourceMapping
         // dictionary indexer will update the value if it already exists
         if (string.IsNullOrEmpty(name))
         {
-            throw new ArgumentException(AtlasWeb.Common_NullOrEmpty, "name");
+            throw new ArgumentException(AtlasWeb.Common_NullOrEmpty, nameof(name));
         }
         if (definition == null)
         {
-            throw new ArgumentNullException("definition");
+            throw new ArgumentNullException(nameof(definition));
         }
         if (string.IsNullOrEmpty(definition.ResourceName) && string.IsNullOrEmpty(definition.Path))
         {
-            throw new ArgumentException(AtlasWeb.ScriptResourceDefinition_NameAndPathCannotBeEmpty, "definition");
+            throw new ArgumentException(AtlasWeb.ScriptResourceDefinition_NameAndPathCannotBeEmpty, nameof(definition));
         }
         EnsureAbsoluteOrAppRelative(definition.Path);
         EnsureAbsoluteOrAppRelative(definition.DebugPath);
@@ -45,7 +45,7 @@ public class ScriptResourceMapping : IScriptResourceMapping
         _definitions.Clear();
     }
 
-    private void EnsureAbsoluteOrAppRelative(string path)
+    private static void EnsureAbsoluteOrAppRelative(string path)
     {
         if (!string.IsNullOrEmpty(path) &&
             !UrlPath.IsAppRelativePath(path) && // ~/foo..
@@ -66,7 +66,7 @@ public class ScriptResourceMapping : IScriptResourceMapping
     {
         if (string.IsNullOrEmpty(name))
         {
-            throw new ArgumentException(AtlasWeb.Common_NullOrEmpty, "name");
+            throw new ArgumentException(AtlasWeb.Common_NullOrEmpty, nameof(name));
         }
         ScriptResourceDefinition definition;
         assembly = NormalizeAssembly(assembly);
@@ -78,7 +78,7 @@ public class ScriptResourceMapping : IScriptResourceMapping
     {
         if (scriptReference == null)
         {
-            throw new ArgumentNullException("scriptReference");
+            throw new ArgumentNullException(nameof(scriptReference));
         }
         string name = scriptReference.Name;
         Assembly assembly = null;
@@ -100,7 +100,7 @@ public class ScriptResourceMapping : IScriptResourceMapping
     {
         if (string.IsNullOrEmpty(name))
         {
-            throw new ArgumentException(AtlasWeb.Common_NullOrEmpty, "name");
+            throw new ArgumentException(AtlasWeb.Common_NullOrEmpty, nameof(name));
         }
         ScriptResourceDefinition definition;
         assembly = NormalizeAssembly(assembly);

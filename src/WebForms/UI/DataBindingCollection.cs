@@ -78,7 +78,7 @@ public sealed class DataBindingCollection : ICollection
             }
             else
             {
-                return Array.Empty<string>();
+                return [];
             }
         }
     }

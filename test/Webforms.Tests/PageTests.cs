@@ -15,7 +15,7 @@ public class PageTests
     public async Task EmptyPage()
     {
         // Arrange/Act
-        var result = await TestUtil.RunPage<Page1>().ConfigureAwait(false);
+        var result = await TestUtil.RunPage<Page1>();
 
         // Assert
         Assert.Empty(result);
@@ -25,7 +25,7 @@ public class PageTests
     public async Task CustomRender()
     {
         // Arrange/Act
-        var result = await TestUtil.RunPage<Page2>().ConfigureAwait(false);
+        var result = await TestUtil.RunPage<Page2>();
 
         // Assert
         Assert.Equal("hello", result);
@@ -35,7 +35,7 @@ public class PageTests
     public async Task PageLoadAddControl()
     {
         // Arrange/Act
-        var result = await TestUtil.RunPage<Page3>().ConfigureAwait(false);
+        var result = await TestUtil.RunPage<Page3>();
 
         // Assert
         Assert.Equal("hello", result);
@@ -45,7 +45,7 @@ public class PageTests
     public async Task PageWithForm()
     {
         // Arrange/Act
-        var result = await TestUtil.RunPage<Page4>().ConfigureAwait(false);
+        var result = await TestUtil.RunPage<Page4>();
 
         // Assert
         Assert.Equal("<form method=\"post\" action=\"/path\"><div class=\"aspNetHidden\"</div></form>", result);

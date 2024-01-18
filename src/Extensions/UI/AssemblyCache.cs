@@ -15,7 +15,6 @@ internal static class AssemblyCache {
     public static readonly Assembly SystemWebExtensions = typeof(ScriptManager).Assembly;
     public static readonly Assembly SystemWeb = typeof(Page).Assembly;
 
-    private static CompilationSection _compilationSection;
     internal static bool _useCompilationSection = true;
 
     // Maps string (assembly name) to Assembly

@@ -9,7 +9,7 @@ namespace System.Web.ModelBinding
 
         public DisplayAttributeAdapter(DisplayAttribute displayAttribute) {
             if (displayAttribute == null) {
-                throw new ArgumentNullException("displayAttribute");
+                throw new ArgumentNullException(nameof(displayAttribute));
             }
 
             _displayAttribute = displayAttribute;

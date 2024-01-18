@@ -10,7 +10,7 @@ namespace Microsoft.Extensions.Configuration;
 
 internal sealed class WebConfigConfigurationProvider : FileConfigurationProvider
 {
-    internal KnownKeys Keys { get; private set; } = new(Enumerable.Empty<string>(), Enumerable.Empty<string>());
+    internal KnownKeys Keys { get; private set; } = new([], []);
 
     public WebConfigConfigurationProvider(FileConfigurationSource source)
         : base(source)

@@ -37,7 +37,7 @@ internal sealed class DataSourceHelper
             {
                 ITypedList typedMemberList = (ITypedList)memberList;
 
-                PropertyDescriptorCollection propDescs = typedMemberList.GetItemProperties(Array.Empty<PropertyDescriptor>());
+                PropertyDescriptorCollection propDescs = typedMemberList.GetItemProperties([]);
                 if ((propDescs != null) && (propDescs.Count != 0))
                 {
                     PropertyDescriptor listProperty = null;

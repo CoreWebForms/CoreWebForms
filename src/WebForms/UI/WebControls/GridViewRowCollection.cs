@@ -28,7 +28,6 @@ public class GridViewRowCollection : ICollection {
         }
     }
 
-
     /// <devdoc>
     /// <para>Gets a value that specifies whether rows in the <see cref='System.Web.UI.WebControls.GridViewRowCollection'/> can be 
     ///    modified. This property is read-only.</para>
@@ -38,7 +37,6 @@ public class GridViewRowCollection : ICollection {
             return false;
         }
     }
-
 
     /// <devdoc>
     /// <para>Gets a value that indicates whether the <see cref='System.Web.UI.WebControls.GridViewRowCollection'/> is 
@@ -50,7 +48,6 @@ public class GridViewRowCollection : ICollection {
         }
     }
 
-
     /// <devdoc>
     ///    <para>Gets the object used to synchronize access to the collection. This property is read-only. </para>
     /// </devdoc>
@@ -59,7 +56,6 @@ public class GridViewRowCollection : ICollection {
             return this;
         }
     }
-
 
     /// <devdoc>
     /// <para>Gets a <see cref='System.Web.UI.WebControls.GridViewRow'/> at the specified index in the 
@@ -71,8 +67,6 @@ public class GridViewRowCollection : ICollection {
         }
     }
 
-
-
     /// <devdoc>
     /// <para>Copies the contents of the entire collection into an <see cref='System.Array' qualify='true'/> appending 
     ///    at the specified index of the <see cref='System.Array' qualify='true'/>.</para>
@@ -81,13 +75,11 @@ public class GridViewRowCollection : ICollection {
         ((ICollection)this).CopyTo(array, index);
     }
 
-
     /// <internalonly/>
     void ICollection.CopyTo(Array array, int index) {
         for (IEnumerator e = this.GetEnumerator(); e.MoveNext();)
             array.SetValue(e.Current, index++);
     }
-
 
     /// <devdoc>
     /// <para>Creates an enumerator for the <see cref='System.Web.UI.WebControls.GridViewRowCollection'/> used to 

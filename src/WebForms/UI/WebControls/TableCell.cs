@@ -53,7 +53,7 @@ public class TableCell : WebControl
         get
         {
             object x = ViewState["AssociatedHeaderCellID"];
-            return (x != null) ? (string[])((string[])x).Clone() : Array.Empty<string>();
+            return (x != null) ? (string[])((string[])x).Clone() : [];
         }
         set
         {

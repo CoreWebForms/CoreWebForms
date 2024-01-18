@@ -62,7 +62,7 @@ internal sealed class DynamicSystemWebCompilation : SystemWebCompilation
                 _logger.LogError(er.Message);
             }
 
-            return new CompiledPage(new(route), Array.Empty<string>()) { Exception = new RoslynCompilationException(errors) };
+            return new CompiledPage(new(route), []) { Exception = new RoslynCompilationException(errors) };
         }
 
         pdbStream.Position = 0;
@@ -75,7 +75,7 @@ internal sealed class DynamicSystemWebCompilation : SystemWebCompilation
             return new CompiledPage(new(route), embedded.Select(t => t.FilePath).ToArray()) { Type = type };
         }
 
-        return new CompiledPage(new(route), Array.Empty<string>()) { Exception = new InvalidOperationException("No type found") };
+        return new CompiledPage(new(route), []) { Exception = new InvalidOperationException("No type found") };
     }
 
     protected override IEnumerable<MetadataReference> GetMetadataReferences()

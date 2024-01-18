@@ -169,6 +169,7 @@ internal abstract class SystemWebCompilation : IPageCompiler, IDisposable
         }
 
         //TODO https://github.com/twsouthwick/systemweb-adapters-ui/issues/19 , keeping the code to tackle in next CR
+#pragma warning disable CS8321 // Local function is declared but never used
         static BaseCodeDomTreeGenerator CreateFromUserControl(string path)
         {
             var parser = new UserControlParser();
@@ -176,6 +177,7 @@ internal abstract class SystemWebCompilation : IPageCompiler, IDisposable
             parser.Parse(Array.Empty<string>(), path);
             return new UserControlCodeDomTreeGenerator(parser);
         }
+#pragma warning restore CS8321 // Local function is declared but never used
     }
 
     public void Dispose()

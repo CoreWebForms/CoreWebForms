@@ -22,7 +22,6 @@ public class GridViewCommandEventArgs : CommandEventArgs {
         this._commandSource = commandSource;
     }
 
-
     /// <devdoc>
     /// <para>Initializes a new instance of the <see cref='System.Web.UI.WebControls.GridViewCommandEventArgs'/>
     /// class.</para>
@@ -31,7 +30,6 @@ public class GridViewCommandEventArgs : CommandEventArgs {
     public GridViewCommandEventArgs(object commandSource, CommandEventArgs originalArgs) : base(originalArgs) {
         this._commandSource = commandSource;
     }
-
 
     /// <devdoc>
     ///    <para>Gets the source of the command. This property is read-only.</para>

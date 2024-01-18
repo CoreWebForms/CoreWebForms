@@ -42,7 +42,7 @@ public class HyperLinkField : DataControlField
                 return (string[])((string[])o).Clone();
             }
 
-            return Array.Empty<string>();
+            return [];
         }
         set
         {

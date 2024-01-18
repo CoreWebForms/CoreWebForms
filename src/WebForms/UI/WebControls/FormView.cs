@@ -403,7 +403,7 @@ public class FormView : CompositeDataBoundControl, IDataItemContainer, IPostBack
             {
                 return (string[])((string[])o).Clone();
             }
-            return Array.Empty<string>();
+            return [];
         }
         set
         {
@@ -437,7 +437,7 @@ public class FormView : CompositeDataBoundControl, IDataItemContainer, IPostBack
             {
                 return (string[])o;
             }
-            return Array.Empty<string>();
+            return [];
         }
     }
 
@@ -2864,7 +2864,7 @@ public class FormView : CompositeDataBoundControl, IDataItemContainer, IPostBack
         // be restored to their persisted state instead of their empty state.
         _pageIndex = 0;
         _defaultMode = FormViewMode.ReadOnly;
-        _dataKeyNames = Array.Empty<string>();
+        _dataKeyNames = [];
         _pageCount = 0;
 
         object[] state = savedState as object[];

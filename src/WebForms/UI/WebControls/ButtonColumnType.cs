@@ -4,7 +4,6 @@ namespace System.Web.UI.WebControls;
 
 public enum ButtonColumnType {
 
-
     /// <devdoc>
     ///    <para>
     ///       A
@@ -12,7 +11,6 @@ public enum ButtonColumnType {
     ///    </para>
     /// </devdoc>
     LinkButton = 0,
-
 
     /// <devdoc>
     ///    <para> A column of push buttons.</para>
