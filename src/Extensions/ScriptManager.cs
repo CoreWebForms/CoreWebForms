@@ -13,7 +13,7 @@ PersistChildren(false),
 ]
 public class ScriptManager : Control
 {
-
+    // TODO: use di here instead of static initialization
     [Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1810:Initialize reference type static fields inline", Justification = "Initialize something in a different. Should move to DI")]
     static ScriptManager()
     {
