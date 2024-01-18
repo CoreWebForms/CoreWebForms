@@ -13,6 +13,8 @@ using System.Web.UI.Adapters;
 using System.Web.UI.WebControls;
 using System.Web.Util;
 using Microsoft.AspNetCore.SystemWebAdapters;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 #nullable disable
 
@@ -57,6 +59,7 @@ public partial class Control : IComponent, IParserAccessor, IDataBindingsAccesso
 
     private EventHandlerList _events;
     private ControlCollection _controls;
+    private RouteCollection _routes;
 
     // The naming container that this control leaves in.  Note that even if
     // this ctrl is a naming container, it will not point to itself, but to
@@ -927,7 +930,16 @@ public partial class Control : IComponent, IParserAccessor, IDataBindingsAccesso
                 _occasionalFields.RareFields == null ||
                 _occasionalFields.RareFields.RouteCollection == null)
             {
-                return RouteTable.Routes;
+                
+               if (Context != null)
+                {
+                    _routes ??= Context.AsAspNetCore().RequestServices.GetRequiredService<IOptions<HttpHandlerOptions>>().Value.Routes;
+                    return _routes;
+                }
+                else
+                {
+                    return null;
+                }
             }
             return _occasionalFields.RareFields.RouteCollection;
         }
@@ -990,7 +1002,6 @@ public partial class Control : IComponent, IParserAccessor, IDataBindingsAccesso
         }
     }
 
-//#if PORT_ROUTING
     [SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings",
         Justification = "Consistent with other URL properties in ASP.NET.")]
     public string GetRouteUrl(object routeParameters)
@@ -1016,15 +1027,14 @@ public partial class Control : IComponent, IParserAccessor, IDataBindingsAccesso
         Justification = "Consistent with other URL properties in ASP.NET.")]
     public string GetRouteUrl(string routeName, RouteValueDictionary routeParameters)
     {
-        //TODO fix https://github.com/twsouthwick/systemweb-adapters-ui/issues/21
-        /*VirtualPathData data = RouteCollection.GetVirtualPath(Context.Request.RequestContext, routeName, routeParameters);
+        var requestContext = Context.AsAspNetCore().GetRequestContext();
+        VirtualPathData data = RouteCollection.GetVirtualPath(requestContext, routeName, routeParameters);
         if (data != null)
         {
             return data.VirtualPath;
-        }*/
+        }
         return null;
     }
-//#endif
 
     /// <devdoc>
     ///    <para>Gets the reference to the <see cref='System.Web.UI.TemplateControl'/>

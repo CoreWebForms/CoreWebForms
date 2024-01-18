@@ -23,7 +23,9 @@ public class NameValueCollectionValueProvider : IValueProvider, IUnvalidatedValu
         }
 
         _culture = culture;
-        _prefixes = new PrefixContainer(collection.Keys.Cast<string>());
+        _prefixes = collection == null || collection.AllKeys == null || collection.AllKeys.Length == 0 ?
+            new PrefixContainer(new List<string>()):
+            new PrefixContainer(collection.AllKeys);
         _validatedCollection = collection;
         _unvalidatedCollection = unvalidatedCollection ?? collection;
 

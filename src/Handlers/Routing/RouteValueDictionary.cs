@@ -17,12 +17,12 @@ public class RouteValueDictionary : IDictionary<string, object?>
 
     public RouteValueDictionary()
     {
-        _other = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
+        _other = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase);
     }
 
     public RouteValueDictionary(object values)
     {
-        _other = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
+        _other = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase);
 
         AddValues(values);
     }
@@ -44,10 +44,22 @@ public class RouteValueDictionary : IDictionary<string, object?>
             PropertyDescriptorCollection props = TypeDescriptor.GetProperties(values);
             foreach (PropertyDescriptor prop in props)
             {
-                object val = prop.GetValue(values);
+                object? val = prop.GetValue(values);
                 Add(prop.Name, val);
             }
         }
+    }
+
+    public static implicit operator Microsoft.AspNetCore.Routing.RouteValueDictionary(RouteValueDictionary routeDictioNary)
+    {
+        Microsoft.AspNetCore.Routing.RouteValueDictionary routeValueDictionaryCore =
+             new Microsoft.AspNetCore.Routing.RouteValueDictionary();
+        foreach(string key in routeDictioNary.Keys)
+        {
+            routeValueDictionaryCore.Add(key, routeDictioNary[key]);
+        }
+
+        return routeValueDictionaryCore;
     }
 
     public void Add(string key, object? value)
