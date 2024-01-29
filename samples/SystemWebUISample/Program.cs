@@ -5,7 +5,7 @@ using System.Web.UI;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.ConfigureWebConfig(isOptional: false, eagerUpdateAppSettings: true);
+builder.UseWebConfig(isOptional: false);
 
 builder.Services.AddDataProtection();
 
