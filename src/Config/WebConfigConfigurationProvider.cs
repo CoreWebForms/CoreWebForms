@@ -3,7 +3,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Xml;
 
 namespace Microsoft.Extensions.Configuration;
@@ -29,9 +28,9 @@ internal sealed class WebConfigConfigurationProvider : FileConfigurationProvider
         }
     }
 
-    private static (Dictionary<string, string>, KnownKeys) ReadSettings(Stream stream)
+    private static (Dictionary<string, string?>, KnownKeys) ReadSettings(Stream stream)
     {
-        var data = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        var data = new Dictionary<string, string?>(StringComparer.OrdinalIgnoreCase);
 
         var doc = new XmlDocument();
         doc.Load(stream);
@@ -42,7 +41,7 @@ internal sealed class WebConfigConfigurationProvider : FileConfigurationProvider
         return (data, new KnownKeys(settings, strings));
     }
 
-    private static HashSet<string> ReadAppSettings(XmlDocument doc, Dictionary<string, string> data)
+    private static HashSet<string> ReadAppSettings(XmlDocument doc, Dictionary<string, string?> data)
     {
         var keys = new HashSet<string>();
         var appSettings = doc.SelectNodes("/configuration/appSettings/add");
@@ -64,7 +63,7 @@ internal sealed class WebConfigConfigurationProvider : FileConfigurationProvider
         return keys;
     }
 
-    private static HashSet<string> ReadConnectionStrings(XmlDocument doc, Dictionary<string, string> data)
+    private static HashSet<string> ReadConnectionStrings(XmlDocument doc, Dictionary<string, string?> data)
     {
         var keys = new HashSet<string>();
         var connectionStrings = doc.SelectNodes("/configuration/connectionStrings/add");

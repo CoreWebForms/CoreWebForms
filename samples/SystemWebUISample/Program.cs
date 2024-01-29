@@ -5,6 +5,8 @@ using System.Web.UI;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.ConfigureWebConfig(isOptional: false, eagerUpdateAppSettings: true);
+
 builder.Services.AddDataProtection();
 
 builder.Services.AddSession();
