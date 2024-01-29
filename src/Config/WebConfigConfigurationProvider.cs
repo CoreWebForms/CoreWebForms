@@ -9,8 +9,6 @@ namespace Microsoft.Extensions.Configuration;
 
 internal sealed class WebConfigConfigurationProvider : FileConfigurationProvider
 {
-    internal KnownKeys Keys { get; private set; } = new([], []);
-
     public WebConfigConfigurationProvider(FileConfigurationSource source)
         : base(source)
     {
@@ -20,7 +18,7 @@ internal sealed class WebConfigConfigurationProvider : FileConfigurationProvider
     {
         try
         {
-            (Data, Keys) = ReadSettings(stream);
+            Data = ReadSettings(stream);
         }
         catch (Exception e)
         {
@@ -28,22 +26,21 @@ internal sealed class WebConfigConfigurationProvider : FileConfigurationProvider
         }
     }
 
-    private static (Dictionary<string, string?>, KnownKeys) ReadSettings(Stream stream)
+    private static Dictionary<string, string?> ReadSettings(Stream stream)
     {
         var data = new Dictionary<string, string?>(StringComparer.OrdinalIgnoreCase);
 
         var doc = new XmlDocument();
         doc.Load(stream);
 
-        var settings = ReadAppSettings(doc, data);
-        var strings = ReadConnectionStrings(doc, data);
+        ReadAppSettings(doc, data);
+        ReadConnectionStrings(doc, data);
 
-        return (data, new KnownKeys(settings, strings));
+        return data;
     }
 
-    private static HashSet<string> ReadAppSettings(XmlDocument doc, Dictionary<string, string?> data)
+    private static void ReadAppSettings(XmlDocument doc, Dictionary<string, string?> data)
     {
-        var keys = new HashSet<string>();
         var appSettings = doc.SelectNodes("/configuration/appSettings/add");
 
         if (appSettings is not null)
@@ -54,18 +51,14 @@ internal sealed class WebConfigConfigurationProvider : FileConfigurationProvider
                     attributes["key"] is { Value: { } key } &&
                     attributes["value"] is { Value: { } value })
                 {
-                    keys.Add(key);
                     data[key] = value;
                 }
             }
         }
-
-        return keys;
     }
 
-    private static HashSet<string> ReadConnectionStrings(XmlDocument doc, Dictionary<string, string?> data)
+    private static void ReadConnectionStrings(XmlDocument doc, Dictionary<string, string?> data)
     {
-        var keys = new HashSet<string>();
         var connectionStrings = doc.SelectNodes("/configuration/connectionStrings/add");
 
         if (connectionStrings is not null)
@@ -76,8 +69,6 @@ internal sealed class WebConfigConfigurationProvider : FileConfigurationProvider
                     attributes["connectionString"] is { Value: { } connectionString } &&
                     attributes["name"] is { Value: { } name })
                 {
-                    keys.Add(name);
-
                     data[$"ConnectionStrings:{name}"] = connectionString;
 
                     if (attributes["providerName"] is { Value: { } providerName })
@@ -87,7 +78,5 @@ internal sealed class WebConfigConfigurationProvider : FileConfigurationProvider
                 }
             }
         }
-
-        return keys;
     }
 }
