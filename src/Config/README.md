@@ -43,14 +43,8 @@ An example of how this could work is available in this repo. The user then would
 ```csharp
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Configuration.AddWebConfig();
-builder.Services.AddConfigurationManager();
+builder.ConfigureWebConfig();
 ```
-
-There are two APIs that users would need to add:
-
-- `IConfigurationBuilder.AddWebConfig()`: This would add `web.config` as a source for `IConfiguration`
-- `IServiceCollection.AddConfigurationManager()`: This would add an `IStartupFilter` that would take the `IConfiguration` and update values in `ConfigurationManager` and optionally reload the values if `IConfiguration` is reloaded
 
 ## Challenges
 

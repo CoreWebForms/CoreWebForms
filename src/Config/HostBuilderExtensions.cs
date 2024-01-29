@@ -17,7 +17,7 @@ public static class HostBuilderExtensions
     /// <param name="isOptional">Sets if the config source is optional or not.</param>
     /// <param name="eagerUpdateAppSettings">Flag to initiate loading values into <see cref="System.Configuration.ConfigurationManager.AppSettings"/> early for scenarios that these values before the host itself is build.</param>
     /// <returns></returns>
-    public static IHostApplicationBuilder AddWebConfig(this IHostApplicationBuilder host, string path = "web.config", bool isOptional = true, bool eagerUpdateAppSettings = false)
+    public static IHostApplicationBuilder ConfigureWebConfig(this IHostApplicationBuilder host, string path = "web.config", bool isOptional = true, bool eagerUpdateAppSettings = false)
     {
         host.Configuration.Sources.Insert(0, new WebConfigSource(path, isOptional));
 
@@ -42,7 +42,7 @@ public static class HostBuilderExtensions
     /// <param name="isOptional">Sets if the config source is optional or not.</param>
     /// <param name="eagerUpdateAppSettings">Flag to initiate loading values into <see cref="System.Configuration.ConfigurationManager.AppSettings"/> early for scenarios that these values before the host itself is build.</param>
     /// <returns></returns>
-    public static IHostBuilder AddWebConfig(this IHostBuilder host, string path = "web.config", bool isOptional = true, bool eagerUpdateAppSettings = false) => host
+    public static IHostBuilder ConfigureWebConfig(this IHostBuilder host, string path = "web.config", bool isOptional = true, bool eagerUpdateAppSettings = false) => host
         .ConfigureAppConfiguration(config =>
         {
             config.Sources.Insert(0, new WebConfigSource(path, isOptional));
