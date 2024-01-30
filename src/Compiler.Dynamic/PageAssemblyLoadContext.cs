@@ -24,7 +24,7 @@ internal sealed class PageAssemblyLoadContext : AssemblyLoadContext
     public PageAssemblyLoadContext(string route, IEnumerable<Assembly> assemblies, ILogger<PageAssemblyLoadContext> logger)
         : base(GetName(route), isCollectible: true)
     {
-        _map = assemblies.ToDictionary(a => a.FullName)!;
+        _map = assemblies.ToDictionary(a => a.FullName!);
         _logger = logger;
 
         logger.LogInformation("Created assembly for {Path}", Name);

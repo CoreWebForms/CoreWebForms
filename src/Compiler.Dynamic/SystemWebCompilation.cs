@@ -59,7 +59,7 @@ internal abstract class SystemWebCompilation : IPageCompiler, IDisposable
 
         public IReadOnlyCollection<string> FileDependencies => other.FileDependencies;
 
-        public MetadataReference MetadataReference => other.MetadataReference;
+        public MetadataReference? MetadataReference => other.MetadataReference;
 
         public void Dispose()
         {
