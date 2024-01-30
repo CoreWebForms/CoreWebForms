@@ -2,6 +2,7 @@
 
 using System.Runtime.Loader;
 using Microsoft.AspNetCore.Http;
+using Microsoft.CodeAnalysis;
 
 namespace WebForms.Compiler.Dynamic;
 
@@ -29,6 +30,8 @@ internal sealed class CompiledPage : ICompiledPage
     public IReadOnlyCollection<string> FileDependencies { get; }
 
     public string AspxFile { get; }
+
+    public MetadataReference? MetadataReference { get; set; }
 
     public void Dispose()
     {

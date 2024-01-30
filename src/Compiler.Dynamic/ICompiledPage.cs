@@ -1,6 +1,7 @@
 // MIT License.
 
 using Microsoft.AspNetCore.Http;
+using Microsoft.CodeAnalysis;
 
 namespace WebForms.Compiler.Dynamic;
 
@@ -15,4 +16,6 @@ internal interface ICompiledPage : IDisposable
     Exception? Exception { get; }
 
     IReadOnlyCollection<string> FileDependencies { get; }
+
+    MetadataReference? MetadataReference { get; }
 }
