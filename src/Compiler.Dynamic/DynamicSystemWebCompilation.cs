@@ -32,6 +32,7 @@ internal sealed class DynamicSystemWebCompilation : SystemWebCompilation
       IEnumerable<SyntaxTree> trees,
       IEnumerable<MetadataReference> references,
       IEnumerable<EmbeddedText> embedded,
+      IEnumerable<Assembly> assemblies,
       CancellationToken token)
     {
         using var peStream = new MemoryStream();
@@ -57,7 +58,7 @@ internal sealed class DynamicSystemWebCompilation : SystemWebCompilation
                     Location = d.Location.ToString(),
                 })
                 .ToList();
-            foreach(RoslynError er in errors)
+            foreach (RoslynError er in errors)
             {
                 _logger.LogError(er.Message);
             }
@@ -68,11 +69,11 @@ internal sealed class DynamicSystemWebCompilation : SystemWebCompilation
         pdbStream.Position = 0;
         peStream.Position = 0;
 
-        var context = new PageAssemblyLoadContext(route, _factory.CreateLogger<PageAssemblyLoadContext>());
+        var context = new PageAssemblyLoadContext(route, assemblies, _factory.CreateLogger<PageAssemblyLoadContext>());
         var assembly = context.LoadFromStream(peStream, pdbStream);
         if (assembly.GetType(typeName) is Type type)
         {
-            return new CompiledPage(new(route), embedded.Select(t => t.FilePath).ToArray()) { Type = type };
+            return new CompiledPage(new(route), embedded.Select(t => t.FilePath).ToArray()) { Type = type, MetadataReference = compilation.ToMetadataReference() };
         }
 
         return new CompiledPage(new(route), []) { Exception = new InvalidOperationException("No type found") };

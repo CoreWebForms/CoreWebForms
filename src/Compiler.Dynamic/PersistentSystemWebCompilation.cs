@@ -1,6 +1,7 @@
 // MIT License.
 
 using System.Globalization;
+using System.Reflection;
 using System.Text.Json;
 using System.Web.UI;
 using Microsoft.CodeAnalysis;
@@ -31,7 +32,15 @@ internal sealed class PersistentSystemWebCompilation : SystemWebCompilation, IWe
         _pageOptions = pageOptions;
     }
 
-    protected override ICompiledPage CreateCompiledPage(Compilation compilation, string route, string typeName, IEnumerable<SyntaxTree> trees, IEnumerable<MetadataReference> references, IEnumerable<EmbeddedText> embedded, CancellationToken token)
+    protected override ICompiledPage CreateCompiledPage(
+        Compilation compilation,
+        string route,
+        string typeName,
+        IEnumerable<SyntaxTree> trees,
+        IEnumerable<MetadataReference> references,
+        IEnumerable<EmbeddedText> embedded,
+        IEnumerable<Assembly> assemblies,
+        CancellationToken token)
     {
         // TODO: Handle output better
         using var peStream = File.OpenWrite(Path.Combine(_options.Value.TargetDirectory, $"WebForms.{typeName}.dll"));

@@ -6,6 +6,7 @@ using System.Text;
 using System.Web;
 using System.Web.Compilation;
 using System.Web.UI;
+using Microsoft.AspNetCore.Http;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Text;
@@ -34,19 +35,56 @@ internal abstract class SystemWebCompilation : IPageCompiler, IDisposable
         PagesSection.Instance = pagesSection.Value;
     }
 
-    public Task<ICompiledPage> CompilePageAsync(IFileProvider files, string path, CancellationToken token)
+    public async Task<ICompiledPage> CompilePageAsync(IFileProvider files, string path, CancellationToken token)
     {
         try
         {
-            return Task.FromResult(CompilePage(files, path, token));
+            if (_compiled.TryGetValue(path, out var existing))
+            {
+                return await existing.ConfigureAwait(false);
+            }
+            else
+            {
+                var task = InvokeAndWrap(files, path, token);
+                _compiled.Add(path, task);
+                return await task.ConfigureAwait(false);
+            }
         }
         catch (HttpParseException ex)
         {
-            return Task.FromResult(CompiledPage.FromError(new(path), ex));
+            return CompiledPage.FromError(new(path), ex);
         }
     }
 
-    private ICompiledPage CompilePage(IFileProvider files, string path, CancellationToken token)
+    private async Task<ICompiledPage> InvokeAndWrap(IFileProvider files, string path, CancellationToken token)
+    {
+        return new TrackedCompiledPage(this, await InternalCompilePageAsync(files, path, token).ConfigureAwait(false));
+    }
+
+    private sealed class TrackedCompiledPage(SystemWebCompilation c, ICompiledPage other) : ICompiledPage
+    {
+        public PathString Path => other.Path;
+
+        public string AspxFile => other.AspxFile;
+
+        public Type? Type => other.Type;
+
+        public Exception? Exception => other.Exception;
+
+        public IReadOnlyCollection<string> FileDependencies => other.FileDependencies;
+
+        public MetadataReference? MetadataReference => other.MetadataReference;
+
+        public void Dispose()
+        {
+            c._compiled.Remove(AspxFile);
+            other.Dispose();
+        }
+    }
+
+    private readonly Dictionary<string, Task<ICompiledPage>> _compiled = new();
+
+    private async Task<ICompiledPage> InternalCompilePageAsync(IFileProvider files, string path, CancellationToken token)
     {
         var queue = new Queue<string>();
         queue.Enqueue(path);
@@ -57,10 +95,14 @@ internal abstract class SystemWebCompilation : IPageCompiler, IDisposable
 
         ICompiler compiler = null!;
 
+        var dependencies = new List<ICompiledPage>();
+
         while (queue.Count > 0)
         {
             var currentPath = queue.Dequeue();
             var generator = CreateGenerator(currentPath);
+
+            dependencies.AddRange(await GetDependencyPages(files, generator.Parser, token).ConfigureAwait(false));
 
             if (compiler is null)
             {
@@ -99,17 +141,33 @@ internal abstract class SystemWebCompilation : IPageCompiler, IDisposable
                     }
                 }
             }
-
-            if (generator.Parser is PageParser { MasterPage: { } master })
-            {
-                queue.Enqueue(master.Path);
-            }
         }
 
-        var references = GetMetadataReferences();
-        var compilation = compiler.CreateCompilation(typeName, trees, references);
+        var assemblies = dependencies.Select(d => d.Type?.Assembly).Where(a => a is not null);
+        var references = GetMetadataReferences().Concat(dependencies.Select(d => d.MetadataReference).Where(d => d is not null));
+        var compilation = compiler.CreateCompilation(typeName, trees, references!);
 
-        return CreateCompiledPage(compilation, path, typeName, trees, references, embedded, token);
+        return CreateCompiledPage(compilation, path, typeName, trees, references!, embedded, assemblies!, token);
+    }
+
+    private async Task<ICompiledPage[]> GetDependencyPages(IFileProvider files, TemplateParser parser, CancellationToken token)
+    {
+        var p = new List<Task<ICompiledPage>>();
+
+        foreach (var path in GetDependencyPaths(parser))
+        {
+            p.Add(CompilePageAsync(files, path, token));
+        }
+
+        return await Task.WhenAll(p).ConfigureAwait(false);
+
+        static IEnumerable<string> GetDependencyPaths(TemplateParser parser)
+        {
+            if (parser is PageParser { MasterPage.Path: { } masterPage })
+            {
+                yield return masterPage;
+            }
+        }
     }
 
     protected abstract ICompiledPage CreateCompiledPage(
@@ -119,6 +177,7 @@ internal abstract class SystemWebCompilation : IPageCompiler, IDisposable
         IEnumerable<SyntaxTree> trees,
         IEnumerable<MetadataReference> references,
         IEnumerable<EmbeddedText> embedded,
+        IEnumerable<Assembly> assemblies,
         CancellationToken token);
 
     protected abstract IEnumerable<MetadataReference> GetMetadataReferences();

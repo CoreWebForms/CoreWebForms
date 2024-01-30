@@ -1,5 +1,6 @@
 // MIT License.
 
+using System.Diagnostics;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SystemWebAdapters;
@@ -25,14 +26,16 @@ public class DynamicCompilationTests
     [InlineData("test01", "basic_page.aspx")]
     [InlineData("test02", "code_behind.aspx")]
     [InlineData("test03", "page_with_master.aspx")]
+    [InlineData("test04", "page_with_master.aspx", "other_page_with_master.aspx", "page_with_master.aspx")]
     [Theory]
-    public async Task Test1(string test, string page)
+    public async Task CompiledPageRuns(string test, params string[] pages)
     {
         // Arrange
-        using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+        using var cts = Debugger.IsAttached ? new CancellationTokenSource() : new CancellationTokenSource(TimeSpan.FromSeconds(30));
         var contentRoot = Path.Combine(AppContext.BaseDirectory, "assets", test);
-        var expectedHtmlPath = Path.Combine(contentRoot, $"{page}.html");
-        var expectedHtml = File.Exists(expectedHtmlPath) ? File.ReadAllText(expectedHtmlPath) : string.Empty;
+        var expectedHtmls = pages
+            .Select((page, index) => Path.Combine(contentRoot, $"{page}._{index}.html"))
+            .Select(expectedHtmlPath => File.Exists(expectedHtmlPath) ? File.ReadAllText(expectedHtmlPath) : string.Empty).ToArray();
 
         using var contentProvider = new PhysicalFileProvider(contentRoot);
         using var host = Host.CreateDefaultBuilder()
@@ -73,26 +76,33 @@ public class DynamicCompilationTests
 
         // Act
         var client = host.GetTestClient();
-        string? result = null;
 
-        do
+        for (int i = 0; i < pages.Length; i++)
         {
-            using var response = await client.GetAsync(page, cts.Token);
+            var expectedHtml = expectedHtmls[i];
+            var page = pages[i];
 
-            if (response.IsSuccessStatusCode)
+            string? result = null;
+
+            do
             {
-                result = await response.Content.ReadAsStringAsync();
-            }
-            else
-            {
-                await Task.Delay(250, cts.Token);
-            }
-        } while (result is null);
+                using var response = await client.GetAsync(page, cts.Token);
 
-        var tempPath = Path.Combine(Path.GetTempPath(), page + ".html");
-        File.WriteAllText(tempPath, result);
-        _output.WriteLine($"Wrote result to {tempPath}");
+                if (response.IsSuccessStatusCode)
+                {
+                    result = await response.Content.ReadAsStringAsync();
+                }
+                else
+                {
+                    await Task.Delay(250, cts.Token);
+                }
+            } while (result is null);
 
-        Assert.Equal(expectedHtml, result);
+            var tempPath = Path.Combine(Path.GetTempPath(), $"{page}._{i}.html");
+            File.WriteAllText(tempPath, result);
+            _output.WriteLine($"Wrote result to {tempPath}");
+
+            Assert.Equal(expectedHtml, result);
+        }
     }
 }

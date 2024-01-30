@@ -29,6 +29,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="assets\test04\other_page_with_master.aspx" />
+    <None Remove="assets\test04\page_with_master.aspx" />
+    <None Remove="assets\test04\page_with_master.aspx._0.html" />
+    <None Remove="assets\test04\page_with_master.aspx._2.html" />
+    <None Remove="assets\test04\Site.Master" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\src\Compiler.Dynamic\Compiler.Dynamic.csproj" />
   </ItemGroup>
 
