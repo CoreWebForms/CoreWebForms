@@ -28,7 +28,7 @@ public class DynamicCompilationTests
     [InlineData("test03", "page_with_master.aspx")]
     [InlineData("test04", "page_with_master.aspx", "other_page_with_master.aspx", "page_with_master.aspx")]
     [Theory]
-    public async Task Test1(string test, params string[] pages)
+    public async Task CompiledPageRuns(string test, params string[] pages)
     {
         // Arrange
         using var cts = Debugger.IsAttached ? new CancellationTokenSource() : new CancellationTokenSource(TimeSpan.FromSeconds(30));
