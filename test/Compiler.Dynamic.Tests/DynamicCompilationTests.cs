@@ -98,7 +98,7 @@ public class DynamicCompilationTests
                 }
             } while (result is null);
 
-            var tempPath = Path.Combine(Path.GetTempPath(), page + ".html");
+            var tempPath = Path.Combine(Path.GetTempPath(), $"{page}._{i}.html");
             File.WriteAllText(tempPath, result);
             _output.WriteLine($"Wrote result to {tempPath}");
 
