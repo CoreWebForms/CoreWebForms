@@ -26,7 +26,7 @@ public class DynamicCompilationTests
     [InlineData("test01", "basic_page.aspx")]
     [InlineData("test02", "code_behind.aspx")]
     [InlineData("test03", "page_with_master.aspx")]
-    [InlineData("test04", "page_with_master.aspx", "other_page_with_master.aspx")]
+    [InlineData("test04", "page_with_master.aspx", "other_page_with_master.aspx", "page_with_master.aspx")]
     [Theory]
     public async Task Test1(string test, params string[] pages)
     {
@@ -34,7 +34,7 @@ public class DynamicCompilationTests
         using var cts = Debugger.IsAttached ? new CancellationTokenSource() : new CancellationTokenSource(TimeSpan.FromSeconds(30));
         var contentRoot = Path.Combine(AppContext.BaseDirectory, "assets", test);
         var expectedHtmls = pages
-            .Select(page => Path.Combine(contentRoot, $"{page}.html"))
+            .Select((page, index) => Path.Combine(contentRoot, $"{page}._{index}.html"))
             .Select(expectedHtmlPath => File.Exists(expectedHtmlPath) ? File.ReadAllText(expectedHtmlPath) : string.Empty).ToArray();
 
         using var contentProvider = new PhysicalFileProvider(contentRoot);
