@@ -39,12 +39,26 @@ internal abstract class SystemWebCompilation : IPageCompiler, IDisposable
     {
         try
         {
-            return new TrackedCompiledPage(this, await InternalCompilePageAsync(files, path, token).ConfigureAwait(false));
+            if (_compiled.TryGetValue(path, out var existing))
+            {
+                return await existing.ConfigureAwait(false);
+            }
+            else
+            {
+                var task = InvokeAndWrap(files, path, token);
+                _compiled.Add(path, task);
+                return await task.ConfigureAwait(false);
+            }
         }
         catch (HttpParseException ex)
         {
             return CompiledPage.FromError(new(path), ex);
         }
+    }
+
+    private async Task<ICompiledPage> InvokeAndWrap(IFileProvider files, string path, CancellationToken token)
+    {
+        return new TrackedCompiledPage(this, await InternalCompilePageAsync(files, path, token).ConfigureAwait(false));
     }
 
     private sealed class TrackedCompiledPage(SystemWebCompilation c, ICompiledPage other) : ICompiledPage
@@ -63,7 +77,7 @@ internal abstract class SystemWebCompilation : IPageCompiler, IDisposable
 
         public void Dispose()
         {
-            c._compiled.Remove(Path);
+            c._compiled.Remove(AspxFile);
             other.Dispose();
         }
     }
@@ -142,16 +156,7 @@ internal abstract class SystemWebCompilation : IPageCompiler, IDisposable
 
         foreach (var path in GetDependencyPaths(parser))
         {
-            if (_compiled.TryGetValue(path, out var existing))
-            {
-                p.Add(existing);
-            }
-            else
-            {
-                var task = CompilePageAsync(files, path, token);
-                _compiled.Add(path, task);
-                p.Add(task);
-            }
+            p.Add(CompilePageAsync(files, path, token));
         }
 
         return await Task.WhenAll(p).ConfigureAwait(false);
