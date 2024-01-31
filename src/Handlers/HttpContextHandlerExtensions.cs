@@ -1,5 +1,6 @@
 // MIT License.
 
+using System.Runtime.CompilerServices;
 using System.Web.Routing;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
@@ -50,33 +51,34 @@ public static class HttpContextHandlerExtensions
         return requestContext;
     }
 
-    public static ISystemWebAdapterBuilder AddHandlers(this ISystemWebAdapterBuilder builder, Action<IHttpHandlerBuilder> configure)
+    public static IEndpointConventionBuilder MapHttpHandler<T>(this IEndpointRouteBuilder endpoints, string path)
+       where T : IHttpHandler
     {
-        var manager = new HttpHandlerManager();
+        if (endpoints.DataSources.OfType<HttpHandlerManagerBuilder>().FirstOrDefault() is not { } existing)
+        {
+            existing = new HttpHandlerManagerBuilder();
+            endpoints.DataSources.Add(existing);
+        }
 
-        configure(manager);
+        existing.Add<T>(path);
 
-        builder.Services.AddSingleton<IHttpHandlerManager>(manager);
-
-        return builder;
+        return existing;
     }
 
-    private sealed class HttpHandlerManager : IHttpHandlerManager, IHttpHandlerBuilder
+    private sealed class HttpHandlerManagerBuilder() : HttpHandlerEndpointConventionBuilder(new HttpHandlerManager())
     {
-        private readonly List<(string, IHttpHandler)> _handlers = new();
+        public void Add<T>(string path) => ((HttpHandlerManager)Manager).Add(HandlerEndpointBuilder.Create(path, typeof(T)));
+    }
 
-        public IEnumerable<EndpointBuilder> GetBuilders()
-        {
-            foreach (var (path, handler) in _handlers)
-            {
-                yield return HandlerEndpointBuilder.Create(path, handler);
-            }
-        }
+    private sealed class HttpHandlerManager : IHttpHandlerManager
+    {
+        private readonly List<EndpointBuilder> _handlers = new();
+
+        public IEnumerable<EndpointBuilder> GetBuilders() => _handlers;
 
         public IChangeToken GetChangeToken() => NullChangeToken.Singleton;
 
-        void IHttpHandlerBuilder.Add(string path, IHttpHandler handler)
-            => _handlers.Add((path, handler));
+        public void Add(EndpointBuilder builder) => _handlers.Add(builder);
     }
 }
 

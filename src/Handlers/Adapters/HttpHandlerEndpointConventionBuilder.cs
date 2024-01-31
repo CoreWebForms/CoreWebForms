@@ -14,15 +14,16 @@ public interface IHttpHandlerManager
     IEnumerable<EndpointBuilder> GetBuilders();
 }
 
-internal sealed class HttpHandlerEndpointConventionBuilder : EndpointDataSource, IEndpointConventionBuilder
+internal abstract class HttpHandlerEndpointConventionBuilder : EndpointDataSource, IEndpointConventionBuilder
 {
-    private readonly IHttpHandlerManager _handlers;
     private List<Action<EndpointBuilder>> _conventions = [];
 
     internal HttpHandlerEndpointConventionBuilder(IHttpHandlerManager handlers)
     {
-        _handlers = handlers;
+        Manager = handlers;
     }
+
+    protected IHttpHandlerManager Manager { get; }
 
     public override IReadOnlyList<Endpoint> Endpoints
     {
@@ -30,7 +31,7 @@ internal sealed class HttpHandlerEndpointConventionBuilder : EndpointDataSource,
         {
             var endpoints = new List<Endpoint>();
 
-            foreach (var builder in _handlers.GetBuilders())
+            foreach (var builder in Manager.GetBuilders())
             {
                 foreach (var convention in _conventions)
                 {
@@ -53,5 +54,5 @@ internal sealed class HttpHandlerEndpointConventionBuilder : EndpointDataSource,
     public void Add(Action<EndpointBuilder> convention)
         => (_conventions ??= []).Add(convention);
 
-    public override IChangeToken GetChangeToken() => _handlers.GetChangeToken();
+    public override IChangeToken GetChangeToken() => Manager.GetChangeToken();
 }

@@ -1,9 +1,9 @@
 // MIT License.
 
+using System.Web;
 using System.Web.UI;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.SystemWebAdapters;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -16,9 +16,6 @@ internal sealed class TestUtil
         where TPage : Page, new()
     {
         using var host = await Host.CreateDefaultBuilder()
-            .ConfigureAppConfiguration((ctx, _) =>
-            {
-            })
             .ConfigureWebHost(app =>
             {
                 app.UseTestServer();
@@ -29,7 +26,7 @@ internal sealed class TestUtil
                     app.UseSystemWebAdapters();
                     app.UseEndpoints(endpoints =>
                     {
-                        endpoints.MapWebForms();
+                        endpoints.MapHttpHandler<TPage>("/");
                     });
                 });
                 app.ConfigureServices(services =>
@@ -38,11 +35,7 @@ internal sealed class TestUtil
                     services.AddRouting();
                     services.AddSystemWebAdapters()
                         .AddWrappedAspNetCoreSession()
-                        .AddWebForms()
-                        .AddHandlers(builder =>
-                        {
-                            builder.Add("/", new TPage());
-                        });
+                        .AddWebForms();
 
                     servicesConfigure?.Invoke(services);
 

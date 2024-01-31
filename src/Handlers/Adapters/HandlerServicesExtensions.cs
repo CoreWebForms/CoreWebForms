@@ -28,17 +28,20 @@ public static class HandlerServicesExtensions
 
     public static IEndpointConventionBuilder MapHttpHandlers(this IEndpointRouteBuilder endpoints)
     {
-        if (endpoints.DataSources.OfType<HttpHandlerEndpointConventionBuilder>().FirstOrDefault() is { } existing)
+        if (endpoints.DataSources.OfType<ServiceHttpHandlerEndpointConventionBuilder>().FirstOrDefault() is { } existing)
         {
             return existing;
         }
 
-        var source = new HttpHandlerEndpointConventionBuilder(endpoints.ServiceProvider.GetRequiredService<IHttpHandlerManager>());
+        var source = new ServiceHttpHandlerEndpointConventionBuilder(endpoints.ServiceProvider);
 
         endpoints.DataSources.Add(source);
 
         return source;
     }
+
+    private sealed class ServiceHttpHandlerEndpointConventionBuilder(IServiceProvider services)
+        : HttpHandlerEndpointConventionBuilder(services.GetRequiredService<IHttpHandlerManager>());
 
     private sealed class HttpHandlerStartupFilter : IStartupFilter
     {
