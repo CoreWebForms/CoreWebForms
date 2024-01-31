@@ -8,16 +8,15 @@ using Microsoft.CodeAnalysis;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
+using static WebForms.Compiler.Dynamic.PersistentSystemWebCompilation;
+
 namespace WebForms.Compiler.Dynamic;
 
-internal sealed class PersistentSystemWebCompilation : SystemWebCompilation, IWebFormsCompiler
+internal sealed class PersistentSystemWebCompilation : SystemWebCompilation<PersistedCompiledPage>, IWebFormsCompiler
 {
     private readonly IOptions<PersistentCompilationOptions> _options;
     private readonly IOptions<PageCompilationOptions> _pageOptions;
     private readonly ILogger _logger;
-
-    // TODO: don't have this as a field
-    private readonly List<PageDetails> _pages = new();
 
     public PersistentSystemWebCompilation(
         IOptions<PersistentCompilationOptions> options,
@@ -25,14 +24,14 @@ internal sealed class PersistentSystemWebCompilation : SystemWebCompilation, IWe
         IOptions<PagesSection> pagesSection,
         IOptions<CompilationSection> compilationSection,
         ILoggerFactory factory)
-        : base(factory, pagesSection, compilationSection)
+        : base(pageOptions, pagesSection, compilationSection)
     {
         _logger = factory.CreateLogger<PersistentSystemWebCompilation>();
         _options = options;
         _pageOptions = pageOptions;
     }
 
-    protected override ICompiledPage CreateCompiledPage(
+    protected override PersistedCompiledPage CreateCompiledPage(
         Compilation compilation,
         string route,
         string typeName,
@@ -74,11 +73,14 @@ internal sealed class PersistentSystemWebCompilation : SystemWebCompilation, IWe
 
             File.WriteAllText(Path.Combine(_options.Value.TargetDirectory, $"{typeName}.errors.json"), errorResult);
 
-            return new CompiledPage(new(route), []) { Exception = new RoslynCompilationException(errors) };
+            throw new RoslynCompilationException(route, errors);
         }
 
-        _pages.Add(new(route, typeName, $"WebForms.{typeName}"));
-        return new CompiledPage(new(route), embedded.Select(t => t.FilePath).ToArray());
+        return new PersistedCompiledPage(new(route), embedded.Select(t => t.FilePath).ToArray())
+        {
+            TypeName = typeName,
+            Assembly = $"WebForms.{typeName}",
+        };
     }
 
     protected override IEnumerable<MetadataReference> GetMetadataReferences()
@@ -112,14 +114,36 @@ internal sealed class PersistentSystemWebCompilation : SystemWebCompilation, IWe
         {
             if (file.FullPath.EndsWith(".aspx", StringComparison.OrdinalIgnoreCase))
             {
-                await CompilePageAsync(files, file.FullPath, token).ConfigureAwait(false);
+                await CompilePageAsync(file.FullPath, token).ConfigureAwait(false);
             }
         }
 
         var dataPath = Path.Combine(_options.Value.TargetDirectory, "webforms.pages.json");
-        var data = JsonSerializer.Serialize(_pages);
-        File.WriteAllText(dataPath, data);
+        using var fs = File.OpenWrite(dataPath);
+        fs.SetLength(0);
+
+        await JsonSerializer.SerializeAsync(fs, GetDetailsAsync(), cancellationToken: token).ConfigureAwait(false);
+    }
+
+    private IEnumerable<PageDetails> GetDetailsAsync()
+    {
+        foreach (var page in GetPages())
+        {
+            yield return new PageDetails(page.Path, page.TypeName, page.Assembly);
+        }
     }
 
     private sealed record PageDetails(string Path, string Type, string Assembly);
+
+    internal sealed class PersistedCompiledPage : CompiledPage
+    {
+        public PersistedCompiledPage(PagePath path, string[] dependencies)
+            : base(path, dependencies)
+        {
+        }
+
+        public string TypeName { get; init; } = null!;
+
+        public string Assembly { get; init; } = null!;
+    }
 }

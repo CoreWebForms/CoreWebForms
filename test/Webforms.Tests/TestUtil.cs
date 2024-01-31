@@ -1,114 +1,57 @@
 // MIT License.
 
-using System.Diagnostics;
 using System.Web.UI;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Hosting.Server;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Features;
-using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.SystemWebAdapters;
+using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
-using Moq;
 
 namespace WebForms.Tests;
 
 internal sealed class TestUtil
 {
-    internal static async Task<string> RunPage<TPage>(
-        Action<HttpHandlerOptions>? configureRoute = null,
-        HttpContext? defaultContext = null)
-        where TPage : Page
+    internal static async Task<string> RunPage<TPage>(Action<IServiceCollection>? servicesConfigure = null)
+        where TPage : Page, new()
     {
-        var services = new ServiceCollection();
-        var server = new Mock<IServer>();
-        server.Setup(s => s.Features).Returns(new FeatureCollection());
-        services.AddSingleton(new Mock<IConfiguration>().Object);
-        services.AddSingleton(server.Object);
-        services.AddSingleton<IHostEnvironment>(new Env());
-        services.AddSingleton(new DiagnosticListener(Guid.NewGuid().ToString()));
-        services.AddLogging();
-        services.AddOptions();
-        services.AddRouting();
-        services.AddSystemWebAdapters()
-            .AddHttpHandlers(options =>
+        using var host = await Host.CreateDefaultBuilder()
+            .ConfigureAppConfiguration((ctx, _) =>
             {
-                options.Routes.Add<TPage>("/path"); // Always default.
-                if (configureRoute is not null)
-                {
-                    configureRoute(options);
-                }
-            });
-
-        var provider = services.BuildServiceProvider();
-        using (provider)
-        {
-            var pipeline = CreatePipeline(provider, app =>
+            })
+            .ConfigureWebHost(app =>
             {
-                app.UseRouting();
-
-                app.UseSystemWebAdapters();
-                app.UseEndpoints(endpoints =>
+                app.UseTestServer();
+                app.Configure(app =>
                 {
-                    endpoints.MapHttpHandlers();
+                    app.UseRouting();
+                    app.UseSession();
+                    app.UseSystemWebAdapters();
+                    app.UseEndpoints(endpoints =>
+                    {
+                        endpoints.MapWebForms();
+                    });
                 });
+                app.ConfigureServices(services =>
+                {
+                    services.AddDistributedMemoryCache();
+                    services.AddRouting();
+                    services.AddSystemWebAdapters()
+                        .AddWrappedAspNetCoreSession()
+                        .AddWebForms()
+                        .AddHandlers(builder =>
+                        {
+                            builder.Add("/", new TPage());
+                        });
 
-            });
-            var body = new MemoryStream();
+                    servicesConfigure?.Invoke(services);
 
-            if (defaultContext == null)
-            {
-                var httpContext = new DefaultHttpContext();
-                httpContext.Request.Path = "/path";
-                httpContext.Response.Body = body;
-                httpContext.RequestServices = provider;
-                defaultContext = httpContext;
-            }
-            else
-            {
-                defaultContext.RequestServices = provider;
-                defaultContext.Response.Body = body;
-            }
-            await pipeline(defaultContext).ConfigureAwait(false);
+                });
+            })
+            .StartAsync();
 
-            body.Position = 0;
-            using var reader = new StreamReader(body);
-            return reader.ReadToEnd();
-        }
+        using var client = host.GetTestClient();
 
-    }
-
-    private static RequestDelegate CreatePipeline(IServiceProvider provider, Action<IApplicationBuilder> configure)
-    {
-        var startupFilters = provider.GetService<IEnumerable<IStartupFilter>>();
-
-        if (startupFilters is not null)
-        {
-            foreach (var filter in startupFilters.Reverse())
-            {
-                configure = filter.Configure(configure);
-            }
-        }
-
-        var builder = new ApplicationBuilder(provider);
-        configure(builder);
-        return builder.Build();
-    }
-
-    private sealed class Env : IHostEnvironment
-    {
-        public Env()
-        {
-            ContentRootPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
-            Directory.CreateDirectory(ContentRootPath);
-            ContentRootFileProvider = new PhysicalFileProvider(ContentRootPath);
-        }
-
-        public string ApplicationName { get; set; } = nameof(ApplicationName);
-        public IFileProvider ContentRootFileProvider { get; set; }
-        public string ContentRootPath { get; set; }
-        public string EnvironmentName { get; set; } = string.Empty;
+        return await client.GetStringAsync("/");
     }
 }

@@ -27,6 +27,7 @@ public class DynamicCompilationTests
     [InlineData("test02", "code_behind.aspx")]
     [InlineData("test03", "page_with_master.aspx")]
     [InlineData("test04", "page_with_master.aspx", "other_page_with_master.aspx", "page_with_master.aspx")]
+    [InlineData("test05", "error_page.aspx")]
     [Theory]
     public async Task CompiledPageRuns(string test, params string[] pages)
     {

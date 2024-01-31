@@ -14,7 +14,6 @@ public static class WebFormsCompilerExtensions
     {
         services.AddWebFormsCompilationCore(configure);
         services.AddSingleton<PersistentSystemWebCompilation>();
-        services.AddSingleton<IPageCompiler>(ctx => ctx.GetRequiredService<PersistentSystemWebCompilation>());
         services.AddSingleton<IWebFormsCompiler>(ctx => ctx.GetRequiredService<PersistentSystemWebCompilation>());
     }
 
@@ -25,7 +24,9 @@ public static class WebFormsCompilerExtensions
     {
         services.Services.AddWebFormsCompilationCore(configure);
         services.Services.AddHostedService<WebFormsCompilationService>();
-        services.Services.AddSingleton<IPageCompiler, DynamicSystemWebCompilation>();
+        services.Services.AddSingleton<DynamicSystemWebCompilation>();
+        services.Services.AddSingleton<IWebFormsCompiler>(ctx => ctx.GetRequiredService<DynamicSystemWebCompilation>());
+        services.Services.AddSingleton<IHttpHandlerManager>(ctx => ctx.GetRequiredService<DynamicSystemWebCompilation>());
 
         return services;
     }

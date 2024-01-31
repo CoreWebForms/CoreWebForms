@@ -1,15 +1,12 @@
 // MIT License.
 
 using System.Globalization;
-using System.Net.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Routing.Patterns;
 using Microsoft.AspNetCore.Routing.Template;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using Microsoft.Extensions.Primitives;
-using VirtualPathData = System.Web.Routing.VirtualPathData;
 
 namespace System.Web.Routing;
 
@@ -78,8 +75,6 @@ public class RouteCollection
     }
 
     private CancellationChangeTokenSource Token => _changeToken ??= new();
-
-    internal IChangeToken GetChangeToken() => Token.GetChangeToken();
 
     internal IEnumerable<RouteItem> GetRoutes()
     {

@@ -11,7 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace System.Web.Routing;
 
-internal sealed record RouteItem(Func<HttpContextCore, IHttpHandler> Handler, Type Type)
+internal sealed record RouteItem(IHttpHandlerMetadata Handler, SessionStateBehavior SessionState)
 {
     private static readonly ImmutableList<object> _metadata = new object[]
     {
@@ -30,7 +30,10 @@ internal sealed record RouteItem(Func<HttpContextCore, IHttpHandler> Handler, Ty
 
     public static RouteItem Create<T>(string path)
         where T : IHttpHandler
-        => new(CreateActivator(typeof(T)), typeof(T)) { Path = path };
+        => new(new HandlerMetadata(typeof(T)), GetSessionStateBehavior(typeof(T))) { Path = path };
+
+    public static RouteItem Create(IHttpHandler handler)
+        => Create(handler, string.Empty);
 
     public static RouteItem Create(string path, Type type)
     {
@@ -39,11 +42,20 @@ internal sealed record RouteItem(Func<HttpContextCore, IHttpHandler> Handler, Ty
             throw new InvalidOperationException("Must be of type IHttpHandler");
         }
 
-        return new(CreateActivator(type), type) { Path = path };
+        return new(new HandlerMetadata(type), GetSessionStateBehavior(type)) { Path = path };
     }
 
     public static RouteItem Create(IHttpHandler handler, string path)
-       => new(_ => handler, handler.GetType()) { Path = path };
+    {
+        var behavior = handler switch
+        {
+            IReadOnlySessionState => SessionStateBehavior.ReadOnly,
+            IRequiresSessionState => SessionStateBehavior.Required,
+            _ => SessionStateBehavior.Default,
+        };
+
+        return new(new SingletonHandlerMetadata(handler), behavior) { Path = path };
+    }
 
     private RoutePattern? GetPattern()
     {
@@ -76,58 +88,59 @@ internal sealed record RouteItem(Func<HttpContextCore, IHttpHandler> Handler, Ty
         return builder;
     }
 
-    private ImmutableList<object> GetMetadataCollection()
+    private static SessionStateBehavior GetSessionStateBehavior(Type type)
     {
-        if (Type.IsAssignableTo(typeof(IReadOnlySessionState)))
+        if (type.IsAssignableTo(typeof(IReadOnlySessionState)))
         {
-            return _metadataReadonlySession;
+            return SessionStateBehavior.ReadOnly;
         }
 
-        if (Type.IsAssignableTo(typeof(IRequiresSessionState)))
+        if (type.IsAssignableTo(typeof(IRequiresSessionState)))
         {
-            return _metadataSession;
+            return SessionStateBehavior.Required;
         }
 
-        return _metadata;
+        return SessionStateBehavior.Default;
     }
+
+    private ImmutableList<object> GetMetadataCollection() => SessionState switch
+    {
+        SessionStateBehavior.ReadOnly => _metadataReadonlySession,
+        SessionStateBehavior.Required => _metadataSession,
+        _ => _metadata
+    };
 
     private static Task DefaultHandler(HttpContextCore context)
     {
         if (context.Features.GetRequired<IHttpHandlerFeature>().Current is { } handler)
         {
-            return handler.RunHandlerAsync(context);
+            return handler.RunHandlerAsync(context).AsTask();
         }
 
         context.Response.StatusCode = 500;
         return context.Response.WriteAsync("Invalid handler");
     }
 
-    private static Func<HttpContextCore, IHttpHandler> CreateActivator(Type type)
+    sealed class HandlerMetadata(Type type) : IHttpHandlerMetadata
     {
-        var factory = ActivatorUtilities.CreateFactory(type, []);
+        private IHttpHandler? _handler;
+        private readonly ObjectFactory _factory = ActivatorUtilities.CreateFactory(type, []);
 
-        return CreateActivator(factory);
-
-        static Func<HttpContextCore, IHttpHandler> CreateActivator(ObjectFactory factory)
+        public ValueTask<IHttpHandler> Create(HttpContextCore context)
         {
-            IHttpHandler? handler = null;
-
-            return (HttpContextCore context) =>
+            if (_handler is { } h)
             {
-                if (handler is { } h)
-                {
-                    return h;
-                }
+                return ValueTask.FromResult(h);
+            }
 
-                var newHandler = (IHttpHandler)factory(context.RequestServices, null);
+            var newHandler = (IHttpHandler)_factory(context.RequestServices, null);
 
-                if (newHandler.IsReusable)
-                {
-                    Interlocked.Exchange(ref handler, newHandler);
-                }
+            if (newHandler.IsReusable)
+            {
+                Interlocked.Exchange(ref _handler, newHandler);
+            }
 
-                return newHandler;
-            };
+            return ValueTask.FromResult(newHandler);
         }
     }
 
@@ -147,5 +160,10 @@ internal sealed record RouteItem(Func<HttpContextCore, IHttpHandler> Handler, Ty
         {
             return new EndpointMetadataCollection(metadata);
         }
+    }
+
+    private sealed class SingletonHandlerMetadata(IHttpHandler handler) : IHttpHandlerMetadata
+    {
+        public ValueTask<IHttpHandler> Create(HttpContextCore context) => ValueTask.FromResult(handler);
     }
 }

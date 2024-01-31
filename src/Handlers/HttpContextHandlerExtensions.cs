@@ -1,8 +1,12 @@
 // MIT License.
 
 using System.Web.Routing;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.SystemWebAdapters;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Primitives;
 
 using RouteData = System.Web.Routing.RouteData;
 
@@ -44,6 +48,35 @@ public static class HttpContextHandlerExtensions
         httpContext.Features.Set<RequestContext>(requestContext);
 
         return requestContext;
+    }
+
+    public static ISystemWebAdapterBuilder AddHandlers(this ISystemWebAdapterBuilder builder, Action<IHttpHandlerBuilder> configure)
+    {
+        var manager = new HttpHandlerManager();
+
+        configure(manager);
+
+        builder.Services.AddSingleton<IHttpHandlerManager>(manager);
+
+        return builder;
+    }
+
+    private sealed class HttpHandlerManager : IHttpHandlerManager, IHttpHandlerBuilder
+    {
+        private readonly List<(string, IHttpHandler)> _handlers = new();
+
+        public IEnumerable<EndpointBuilder> GetBuilders()
+        {
+            foreach (var (path, handler) in _handlers)
+            {
+                yield return HandlerEndpointBuilder.Create(path, handler);
+            }
+        }
+
+        public IChangeToken GetChangeToken() => NullChangeToken.Singleton;
+
+        void IHttpHandlerBuilder.Add(string path, IHttpHandler handler)
+            => _handlers.Add((path, handler));
     }
 }
 

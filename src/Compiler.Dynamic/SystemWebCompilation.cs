@@ -1,90 +1,97 @@
 // MIT License.
 
 using System.CodeDom.Compiler;
+using System.Diagnostics;
 using System.Reflection;
 using System.Text;
 using System.Web;
 using System.Web.Compilation;
 using System.Web.UI;
-using Microsoft.AspNetCore.Http;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.CodeAnalysis.VisualBasic;
 using Microsoft.Extensions.FileProviders;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace WebForms.Compiler.Dynamic;
 
-internal abstract class SystemWebCompilation : IPageCompiler, IDisposable
+internal abstract class SystemWebCompilation<T> : IDisposable
+    where T : ICompiledPage
 {
     private readonly ICompiler _csharp;
     private readonly ICompiler _vb;
+    private readonly IOptions<PageCompilationOptions> _pageCompilation;
+
+    private Dictionary<string, Task<T>> _compiled = [];
 
     public SystemWebCompilation(
-        ILoggerFactory factory,
+        IOptions<PageCompilationOptions> pageCompilation,
         IOptions<PagesSection> pagesSection,
         IOptions<CompilationSection> compilationSection)
     {
         _csharp = new CSharpCompiler();
         _vb = new VisualBasicCompiler();
 
+        _pageCompilation = pageCompilation;
+
         // TODO: remove these statics and use DI
         MTConfigUtil.Compilation = compilationSection.Value;
         PagesSection.Instance = pagesSection.Value;
     }
 
-    public async Task<ICompiledPage> CompilePageAsync(IFileProvider files, string path, CancellationToken token)
+    protected IEnumerable<T> GetPages()
     {
-        try
+        foreach (var task in _compiled.Values)
         {
-            if (_compiled.TryGetValue(path, out var existing))
+            Debug.Assert(task.IsCompleted);
+
+            var page = task.GetAwaiter().GetResult();
+
+            if (page.AspxFile.EndsWith(".aspx", StringComparison.OrdinalIgnoreCase))
             {
-                return await existing.ConfigureAwait(false);
-            }
-            else
-            {
-                var task = InvokeAndWrap(files, path, token);
-                _compiled.Add(path, task);
-                return await task.ConfigureAwait(false);
+                yield return page;
             }
         }
-        catch (HttpParseException ex)
+    }
+
+    protected IDisposable MarkRecompile()
+    {
+        var before = _compiled;
+
+        _compiled = [];
+
+        return new DelegateDisposable(() =>
         {
-            return CompiledPage.FromError(new(path), ex);
+            foreach (var page in before.Values)
+            {
+                Debug.Assert(page.IsCompleted);
+                page.GetAwaiter().GetResult().Dispose();
+            }
+        });
+    }
+
+    public IFileProvider Files => _pageCompilation.Value.Files;
+
+    protected void RemovePage(string path) => _compiled.Remove(path);
+
+    protected Task<T> CompilePageAsync(string path, CancellationToken token)
+    {
+        if (_compiled.TryGetValue(path, out var result))
+        {
+            return result;
+        }
+        else
+        {
+            var task = InternalCompilePageAsync(path, token);
+
+            _compiled.Add(path, task);
+
+            return task;
         }
     }
 
-    private async Task<ICompiledPage> InvokeAndWrap(IFileProvider files, string path, CancellationToken token)
-    {
-        return new TrackedCompiledPage(this, await InternalCompilePageAsync(files, path, token).ConfigureAwait(false));
-    }
-
-    private sealed class TrackedCompiledPage(SystemWebCompilation c, ICompiledPage other) : ICompiledPage
-    {
-        public PathString Path => other.Path;
-
-        public string AspxFile => other.AspxFile;
-
-        public Type? Type => other.Type;
-
-        public Exception? Exception => other.Exception;
-
-        public IReadOnlyCollection<string> FileDependencies => other.FileDependencies;
-
-        public MetadataReference? MetadataReference => other.MetadataReference;
-
-        public void Dispose()
-        {
-            c._compiled.Remove(AspxFile);
-            other.Dispose();
-        }
-    }
-
-    private readonly Dictionary<string, Task<ICompiledPage>> _compiled = new();
-
-    private async Task<ICompiledPage> InternalCompilePageAsync(IFileProvider files, string path, CancellationToken token)
+    private async Task<T> InternalCompilePageAsync(string path, CancellationToken token)
     {
         var queue = new Queue<string>();
         queue.Enqueue(path);
@@ -95,19 +102,16 @@ internal abstract class SystemWebCompilation : IPageCompiler, IDisposable
 
         ICompiler compiler = null!;
 
-        var dependencies = new List<ICompiledPage>();
+        var dependencies = new List<T>();
 
         while (queue.Count > 0)
         {
             var currentPath = queue.Dequeue();
             var generator = CreateGenerator(currentPath);
 
-            dependencies.AddRange(await GetDependencyPages(files, generator.Parser, token).ConfigureAwait(false));
+            dependencies.AddRange(await GetDependencyPages(generator.Parser, token).ConfigureAwait(false));
 
-            if (compiler is null)
-            {
-                compiler = GetProvider(generator.Parser.CompilerType);
-            }
+            compiler ??= GetProvider(generator.Parser.CompilerType);
 
             var cu = generator.GetCodeDomTree(compiler.Provider, new StringResourceBuilder(), currentPath);
 
@@ -125,7 +129,7 @@ internal abstract class SystemWebCompilation : IPageCompiler, IDisposable
 
             foreach (var dep in generator.Parser.SourceDependencies)
             {
-                if (dep is string p && files.GetFileInfo(p) is { Exists: true, IsDirectory: false } file)
+                if (dep is string p && _pageCompilation.Value.Files.GetFileInfo(p) is { Exists: true, IsDirectory: false } file)
                 {
                     using var stream = file.CreateReadStream();
 
@@ -147,16 +151,23 @@ internal abstract class SystemWebCompilation : IPageCompiler, IDisposable
         var references = GetMetadataReferences().Concat(dependencies.Select(d => d.MetadataReference).Where(d => d is not null));
         var compilation = compiler.CreateCompilation(typeName, trees, references!);
 
-        return CreateCompiledPage(compilation, path, typeName, trees, references!, embedded, assemblies!, token);
+        var compiled = CreateCompiledPage(compilation, path, typeName, trees, references!, embedded, assemblies!, token);
+
+        foreach (var dependency in dependencies)
+        {
+            dependency.PageDependencies.Add(compiled);
+        }
+
+        return compiled;
     }
 
-    private async Task<ICompiledPage[]> GetDependencyPages(IFileProvider files, TemplateParser parser, CancellationToken token)
+    private async Task<T[]> GetDependencyPages(TemplateParser parser, CancellationToken token)
     {
-        var p = new List<Task<ICompiledPage>>();
+        var p = new List<Task<T>>();
 
         foreach (var path in GetDependencyPaths(parser))
         {
-            p.Add(CompilePageAsync(files, path, token));
+            p.Add(CompilePageAsync(path, token));
         }
 
         return await Task.WhenAll(p).ConfigureAwait(false);
@@ -170,7 +181,7 @@ internal abstract class SystemWebCompilation : IPageCompiler, IDisposable
         }
     }
 
-    protected abstract ICompiledPage CreateCompiledPage(
+    protected abstract T CreateCompiledPage(
         Compilation compilation,
         string route,
         string typeName,
@@ -293,5 +304,10 @@ internal abstract class SystemWebCompilation : IPageCompiler, IDisposable
                   optimizationLevel: OptimizationLevel.Debug),
               syntaxTrees: trees,
               references: references.Concat(_vbReferences));
+    }
+
+    private sealed class DelegateDisposable(Action action) : IDisposable
+    {
+        public void Dispose() => action();
     }
 }

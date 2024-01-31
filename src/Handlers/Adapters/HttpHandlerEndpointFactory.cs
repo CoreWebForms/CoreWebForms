@@ -32,5 +32,5 @@ internal sealed class HttpHandlerEndpointFactory : IHttpHandlerEndpointFactory
         return newEndpoint;
     }
 
-    private static Endpoint Create(IHttpHandler handler) => new RouteItem(_ => handler, handler.GetType()).GetBuilder().Build();
+    private static Endpoint Create(IHttpHandler handler) => RouteItem.Create(handler).GetBuilder().Build();
 }

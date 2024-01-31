@@ -10,6 +10,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="..\Handlers\Routing\CancellationChangeTokenSource.cs" Link="CancellationChangeTokenSource.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis" Version="4.8.0" />
   </ItemGroup>
 

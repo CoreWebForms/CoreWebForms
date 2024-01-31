@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.SystemWebAdapters;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Options;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -34,7 +33,7 @@ public static class HandlerServicesExtensions
             return existing;
         }
 
-        var source = new HttpHandlerEndpointConventionBuilder(endpoints.ServiceProvider.GetRequiredService<IOptions<HttpHandlerOptions>>().Value.Routes);
+        var source = new HttpHandlerEndpointConventionBuilder(endpoints.ServiceProvider.GetRequiredService<IHttpHandlerManager>());
 
         endpoints.DataSources.Add(source);
 
