@@ -180,7 +180,11 @@ internal sealed class DynamicSystemWebCompilation : SystemWebCompilation<Dynamic
         {
             if (e is RoslynCompilationException r)
             {
-                return context.AsAspNetCore().Response.WriteAsJsonAsync(r.Error);
+                return context.AsAspNetCore().Response.WriteAsJsonAsync(r.Error.Select(e => new
+                {
+                    e.Severity,
+                    e.Message
+                }));
             }
             else
             {
