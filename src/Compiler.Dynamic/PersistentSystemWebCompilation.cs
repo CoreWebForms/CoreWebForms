@@ -25,7 +25,7 @@ internal sealed class PersistentSystemWebCompilation : SystemWebCompilation, IWe
         IOptions<PagesSection> pagesSection,
         IOptions<CompilationSection> compilationSection,
         ILoggerFactory factory)
-        : base(factory, pagesSection, compilationSection)
+        : base(pageOptions, pagesSection, compilationSection)
     {
         _logger = factory.CreateLogger<PersistentSystemWebCompilation>();
         _options = options;
@@ -112,7 +112,7 @@ internal sealed class PersistentSystemWebCompilation : SystemWebCompilation, IWe
         {
             if (file.FullPath.EndsWith(".aspx", StringComparison.OrdinalIgnoreCase))
             {
-                await CompilePageAsync(files, file.FullPath, token).ConfigureAwait(false);
+                await CompilePageAsync(file.FullPath, token).ConfigureAwait(false);
             }
         }
 

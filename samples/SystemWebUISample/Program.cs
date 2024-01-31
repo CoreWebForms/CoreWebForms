@@ -2,6 +2,7 @@
 
 using System.Runtime.Loader;
 using System.Web.UI;
+using Microsoft.AspNetCore.SystemWebAdapters;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +19,12 @@ builder.Services.AddSystemWebAdapters()
     .AddWebForms()
     .AddWebFormsExtensions()
     .AddDynamicWebForms();
+
+builder.Services.AddOptions<SystemWebAdaptersOptions>()
+    .Configure<IWebHostEnvironment>((options, env) =>
+    {
+        options.AppDomainAppPath = env.ContentRootPath;
+    });
 
 var app = builder.Build();
 

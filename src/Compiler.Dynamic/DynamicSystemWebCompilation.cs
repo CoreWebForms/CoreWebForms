@@ -18,7 +18,7 @@ internal sealed class DynamicSystemWebCompilation : SystemWebCompilation
     private readonly ILogger _logger;
 
     public DynamicSystemWebCompilation(ILoggerFactory factory, IOptions<PageCompilationOptions> options, IOptions<PagesSection> pagesSection, IOptions<CompilationSection> compilationSection)
-        : base(factory, pagesSection, compilationSection)
+        : base(options, pagesSection, compilationSection)
     {
         _logger = factory.CreateLogger<DynamicSystemWebCompilation>();
         _options = options;

@@ -1,6 +1,9 @@
 <%@ Page Title="Home Page" Language="C#" AutoEventWireup="true" MasterPageFile="~/Site.Master" CodeBehind="dynamic_page.aspx.cs" Inherits="SystemWebUISample.Pages.DynamicPage" %>
 
 <script runat="server">
+    static int count = 0;
+
+    string MyMessage { get; } = $"MM: {count++}";
 
     protected void Page_Load(object sender, EventArgs e) {  
         //if (!Page.IsPostBack) {  
@@ -38,7 +41,7 @@
   <asp:Button id="button1" value="Go" runat="server" Text="Click Me" OnClick="Button1_Click" />
   <asp:Button id="button2" value="Go" runat="server" Text="Click Me" OnClick="Button2_Click" />
 
-  Button clicked: <b><asp:Label id="label2" Text="None" runat="server" /></b>
+  Btton clicked 232 (<%=MyMessage%>: <b><asp:Label id="label2" Text="None" runat="server" /></b>
 
 <br/><br/><br/><br/>
 

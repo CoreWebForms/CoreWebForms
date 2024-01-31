@@ -11,8 +11,6 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.CodeAnalysis.VisualBasic;
-using Microsoft.Extensions.FileProviders;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace WebForms.Compiler.Dynamic;
@@ -21,21 +19,25 @@ internal abstract class SystemWebCompilation : IPageCompiler, IDisposable
 {
     private readonly ICompiler _csharp;
     private readonly ICompiler _vb;
+    private readonly IOptions<PageCompilationOptions> _pageCompilation;
+    private readonly Dictionary<string, Task<ICompiledPage>> _compiled = new();
 
     public SystemWebCompilation(
-        ILoggerFactory factory,
+        IOptions<PageCompilationOptions> pageCompilation,
         IOptions<PagesSection> pagesSection,
         IOptions<CompilationSection> compilationSection)
     {
         _csharp = new CSharpCompiler();
         _vb = new VisualBasicCompiler();
 
+        _pageCompilation = pageCompilation;
+
         // TODO: remove these statics and use DI
         MTConfigUtil.Compilation = compilationSection.Value;
         PagesSection.Instance = pagesSection.Value;
     }
 
-    public async Task<ICompiledPage> CompilePageAsync(IFileProvider files, string path, CancellationToken token)
+    public async Task<ICompiledPage> CompilePageAsync(string path, CancellationToken token)
     {
         try
         {
@@ -45,7 +47,7 @@ internal abstract class SystemWebCompilation : IPageCompiler, IDisposable
             }
             else
             {
-                var task = InvokeAndWrap(files, path, token);
+                var task = InvokeAndWrap(path, token);
                 _compiled.Add(path, task);
                 return await task.ConfigureAwait(false);
             }
@@ -56,9 +58,9 @@ internal abstract class SystemWebCompilation : IPageCompiler, IDisposable
         }
     }
 
-    private async Task<ICompiledPage> InvokeAndWrap(IFileProvider files, string path, CancellationToken token)
+    private async Task<ICompiledPage> InvokeAndWrap(string path, CancellationToken token)
     {
-        return new TrackedCompiledPage(this, await InternalCompilePageAsync(files, path, token).ConfigureAwait(false));
+        return new TrackedCompiledPage(this, await InternalCompilePageAsync(path, token).ConfigureAwait(false));
     }
 
     private sealed class TrackedCompiledPage(SystemWebCompilation c, ICompiledPage other) : ICompiledPage
@@ -77,14 +79,16 @@ internal abstract class SystemWebCompilation : IPageCompiler, IDisposable
 
         public void Dispose()
         {
+            // Remove itself and any dependencies
             c._compiled.Remove(AspxFile);
+
+
+
             other.Dispose();
         }
     }
 
-    private readonly Dictionary<string, Task<ICompiledPage>> _compiled = new();
-
-    private async Task<ICompiledPage> InternalCompilePageAsync(IFileProvider files, string path, CancellationToken token)
+    private async Task<ICompiledPage> InternalCompilePageAsync(string path, CancellationToken token)
     {
         var queue = new Queue<string>();
         queue.Enqueue(path);
@@ -102,12 +106,9 @@ internal abstract class SystemWebCompilation : IPageCompiler, IDisposable
             var currentPath = queue.Dequeue();
             var generator = CreateGenerator(currentPath);
 
-            dependencies.AddRange(await GetDependencyPages(files, generator.Parser, token).ConfigureAwait(false));
+            dependencies.AddRange(await GetDependencyPages(generator.Parser, token).ConfigureAwait(false));
 
-            if (compiler is null)
-            {
-                compiler = GetProvider(generator.Parser.CompilerType);
-            }
+            compiler ??= GetProvider(generator.Parser.CompilerType);
 
             var cu = generator.GetCodeDomTree(compiler.Provider, new StringResourceBuilder(), currentPath);
 
@@ -125,7 +126,7 @@ internal abstract class SystemWebCompilation : IPageCompiler, IDisposable
 
             foreach (var dep in generator.Parser.SourceDependencies)
             {
-                if (dep is string p && files.GetFileInfo(p) is { Exists: true, IsDirectory: false } file)
+                if (dep is string p && _pageCompilation.Value.Files.GetFileInfo(p) is { Exists: true, IsDirectory: false } file)
                 {
                     using var stream = file.CreateReadStream();
 
@@ -150,13 +151,13 @@ internal abstract class SystemWebCompilation : IPageCompiler, IDisposable
         return CreateCompiledPage(compilation, path, typeName, trees, references!, embedded, assemblies!, token);
     }
 
-    private async Task<ICompiledPage[]> GetDependencyPages(IFileProvider files, TemplateParser parser, CancellationToken token)
+    private async Task<ICompiledPage[]> GetDependencyPages(TemplateParser parser, CancellationToken token)
     {
         var p = new List<Task<ICompiledPage>>();
 
         foreach (var path in GetDependencyPaths(parser))
         {
-            p.Add(CompilePageAsync(files, path, token));
+            p.Add(CompilePageAsync(path, token));
         }
 
         return await Task.WhenAll(p).ConfigureAwait(false);

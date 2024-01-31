@@ -18,8 +18,8 @@
 
 <body>
     <form runat="server">
-           
-        <h1>MasterPage: WebForms Sample on ASP.NET Core <%: System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription %></h1>
+            
+        <h1>MasterPage: WebForms Sample on ASP.NET Core <%: System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription %> <%=Message%></h1>
     
         <div>
             <asp:ContentPlaceHolder ID="MainContent" runat="server">

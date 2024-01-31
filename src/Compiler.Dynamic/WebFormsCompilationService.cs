@@ -113,7 +113,7 @@ internal sealed class WebFormsCompilationService : BackgroundService
 
                 var aspx = file.Item.CompiledPage is { } compiled ? compiled.Item.AspxFile : file.Item.FullPath;
 
-                var compilation = await _compiler.CompilePageAsync(_files, aspx, token).ConfigureAwait(false);
+                var compilation = await _compiler.CompilePageAsync(aspx, token).ConfigureAwait(false);
 
                 if (compilation.Type is { } type)
                 {
