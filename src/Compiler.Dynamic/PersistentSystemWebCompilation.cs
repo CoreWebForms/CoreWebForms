@@ -80,6 +80,7 @@ internal sealed class PersistentSystemWebCompilation : SystemWebCompilation<Pers
         {
             TypeName = typeName,
             Assembly = $"WebForms.{typeName}",
+            MetadataReference = compilation.ToMetadataReference(),
         };
     }
 
@@ -122,10 +123,10 @@ internal sealed class PersistentSystemWebCompilation : SystemWebCompilation<Pers
         using var fs = File.OpenWrite(dataPath);
         fs.SetLength(0);
 
-        await JsonSerializer.SerializeAsync(fs, GetDetailsAsync(), cancellationToken: token).ConfigureAwait(false);
+        await JsonSerializer.SerializeAsync(fs, GetDetails(), cancellationToken: token).ConfigureAwait(false);
     }
 
-    private IEnumerable<PageDetails> GetDetailsAsync()
+    private IEnumerable<PageDetails> GetDetails()
     {
         foreach (var page in GetPages())
         {
