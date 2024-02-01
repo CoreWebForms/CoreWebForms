@@ -1,5 +1,5 @@
 <Project>
- 
+
   <ItemGroup>
     <AspxFiles Include="$(MSBuildProjectDirectory)\**\*.aspx" />
     <AspxFiles Include="$(MSBuildProjectDirectory)\**\*.Master" />
@@ -31,7 +31,7 @@
 
   <Target Name="WebFormsCompilation" Condition="!$(EnableRuntimeAspxCompilation)" BeforeTargets="Build;AssignTargetPaths">
     <PropertyGroup>
-      <_WebFormsTempDir>$(IntermediateOutputPath)webforms_compile/</_WebFormsTempDir>
+      <_WebFormsTempDir>$(IntermediateOutputPath)webforms_compile/$([System.Guid]::NewGuid())</_WebFormsTempDir>
       <_WebFormsTempDir Condition="!$([System.IO.Path]::IsPathRooted($(_WebFormsTempDir)))">$(ProjectDir)$(_WebFormsTempDir)</_WebFormsTempDir>
       <_WebFormsTempDir>$([MSBuild]::NormalizeDirectory($(_WebFormsTempDir)))</_WebFormsTempDir>
     </PropertyGroup>
@@ -39,11 +39,19 @@
     <ItemGroup>
       <CompiledWebFormsPages Include="$(_WebFormsTempDir)/*.dll" />
       <CompiledWebFormsPages Include="$(_WebFormsTempDir)/*.pdb" />
-      <CompiledWebFormsPages Include="$(_WebFormsTempDir)/webforms.pages.json" />
+      <CompiledWebFormsPages Include="$(_WebFormsTempDir)/webforms.pages.json" Condition="Exists('$(_WebFormsTempDir)/webforms.pages.json')" />
       <Content Include="@(CompiledWebFormsPages)" CopyToOutputDirectory="Always">
-         <Link>%(Filename)%(Extension)</Link>
+        <Link>%(Filename)%(Extension)</Link>
       </Content>
     </ItemGroup>
+  </Target>
+
+  <Target Name="NotifyWebFormsCompilationError" AfterTargets="WebFormsCompilation" Condition="Exists('$(_WebFormsTempDir)/webforms.error.txt')">
+    <ReadLinesFromFile File="$(_WebFormsTempDir)/webforms.error.txt">
+      <Output TaskParameter="Lines" PropertyName="__WebFormsError"/>
+    </ReadLinesFromFile>
+
+    <Error Text="$(__WebFormsError)" />
   </Target>
 
 </Project>

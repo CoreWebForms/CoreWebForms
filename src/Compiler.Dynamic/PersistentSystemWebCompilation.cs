@@ -111,19 +111,39 @@ internal sealed class PersistentSystemWebCompilation : SystemWebCompilation<Pers
 
         var files = _pageOptions.Value.Files!;
 
-        foreach (var file in files!.GetFiles())
+        try
         {
-            if (file.FullPath.EndsWith(".aspx", StringComparison.OrdinalIgnoreCase))
+            foreach (var file in files!.GetFiles())
             {
-                await CompilePageAsync(file.FullPath, token).ConfigureAwait(false);
+                if (file.FullPath.EndsWith(".aspx", StringComparison.OrdinalIgnoreCase))
+                {
+                    await CompilePageAsync(file.FullPath, token).ConfigureAwait(false);
+                }
             }
+
+            var dataPath = Path.Combine(_options.Value.TargetDirectory, "webforms.pages.json");
+            using var fs = File.OpenWrite(dataPath);
+            fs.SetLength(0);
+
+            await JsonSerializer.SerializeAsync(fs, GetDetails(), cancellationToken: token).ConfigureAwait(false);
         }
+        catch (RoslynCompilationException r)
+        {
+            var errorPath = Path.Combine(_options.Value.TargetDirectory, "webforms.error.txt");
 
-        var dataPath = Path.Combine(_options.Value.TargetDirectory, "webforms.pages.json");
-        using var fs = File.OpenWrite(dataPath);
-        fs.SetLength(0);
-
-        await JsonSerializer.SerializeAsync(fs, GetDetails(), cancellationToken: token).ConfigureAwait(false);
+            File.WriteAllText(errorPath, JsonSerializer.Serialize(r.Error.Select(e => new
+            {
+                e.Id,
+                e.Location,
+                e.Severity,
+                e.Message,
+            })));
+        }
+        catch (Exception e)
+        {
+            var errorPath = Path.Combine(_options.Value.TargetDirectory, "webforms.error.txt");
+            File.WriteAllText(errorPath, e.Message);
+        }
     }
 
     private IEnumerable<PageDetails> GetDetails()
