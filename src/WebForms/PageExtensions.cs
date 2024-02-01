@@ -3,6 +3,7 @@
 using System.Reflection;
 using System.Runtime.Loader;
 using System.Text.Json;
+using System.Web;
 using System.Web.UI;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -12,9 +13,9 @@ using Microsoft.AspNetCore.SystemWebAdapters;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
 using Microsoft.Net.Http.Headers;
+using WebForms.Routing;
 
 namespace Microsoft.AspNetCore.Builder;
 
@@ -23,6 +24,8 @@ public static class PageExtensions
     public static ISystemWebAdapterBuilder AddWebForms(this ISystemWebAdapterBuilder builder)
     {
         builder.AddHttpHandlers();
+        builder.AddRouting();
+
         return builder;
     }
 
@@ -115,13 +118,14 @@ public static class PageExtensions
         }
     }
 
-    private static void MapWebFormsPages(this IEndpointRouteBuilder endpoints)
+    private static IEndpointConventionBuilder MapWebFormsPages(this IEndpointRouteBuilder endpoints)
     {
         var env = endpoints.ServiceProvider.GetRequiredService<IWebHostEnvironment>();
 
+        IEndpointConventionBuilder builder = default;
+
         if (GetWebFormsFile(env) is { Exists: true } file)
         {
-            var routes = endpoints.ServiceProvider.GetRequiredService<IOptions<HttpHandlerOptions>>().Value.Routes;
             var results = JsonSerializer.Deserialize<WebFormsDetails[]>(file.CreateReadStream());
             var context = GetLoadContext();
 
@@ -131,10 +135,21 @@ public static class PageExtensions
                 {
                     if (context.LoadFromAssemblyName(new AssemblyName($"{type.Assembly}")).GetType(type.Type) is { } pageType)
                     {
-                        routes.Add(type.Path, pageType);
+                        builder = endpoints.MapHttpHandler(type.Path, pageType);
                     }
                 }
             }
+
+
+        }
+
+        return builder ?? new EmptyConventionBuilder();
+    }
+
+    private class EmptyConventionBuilder : IEndpointConventionBuilder
+    {
+        public void Add(Action<EndpointBuilder> convention)
+        {
         }
     }
 

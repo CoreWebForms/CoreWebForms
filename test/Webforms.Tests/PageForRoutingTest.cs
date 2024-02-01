@@ -1,41 +1,65 @@
 // MIT License.
 
+using System.Web.Routing;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
 namespace WebForms.Tests;
 
-[Collection(nameof(WebFormsBaseTest))]
-public class PageForRoutingTest
+public class PageForRoutingTest : HostedTestBase
 {
-    [Fact(Skip = "RouteCollection APIs are temporary broken")]
+    [Fact]
     public async Task MapPageRouteTest()
     {
         //Arrange/Act
-        var htmlResult = await TestUtil.RunPage<PageWithRoutingAPI>(services => services
-            .AddOptions<HttpHandlerOptions>()
-            .Configure(options =>
+        var htmlResult = await RunPage<PageWithRoutingAPI>(services => services
+            .AddSingleton<IStartupFilter>(new DelegateStartupFilter(app =>
             {
-                options.Routes.MapPageRoute("ProductsByCategoryRoute",
-                    "Category/{categoryName}", "~/ProductList.aspx");
-            }));
+                app.ApplicationServices.GetRequiredService<RouteCollection>()
+                    .MapPageRoute("ProductsByCategoryRoute", "Category/{categoryName}", "~/ProductList.aspx");
+            })));
 
-        //Assert
+        Assert.Equal("<span id=\"/Category/MyTest\"></span>", htmlResult);
+    }
 
-        Assert.NotNull(htmlResult);
-        Assert.True(htmlResult.Contains("Category/MyTest"), "Routing should convert based on MapPageRoute");
+    [Fact(Skip = "MapPageRoute is not enabled")]
+    public async Task VerifyMappedRoute()
+    {
+        //Arrange/Act
+        var htmlResult = await RunPage<PageWithRoutingAPI>(services => services
+            .AddSingleton<IStartupFilter>(new DelegateStartupFilter(app =>
+            {
+                app.ApplicationServices.GetRequiredService<RouteCollection>()
+                    .MapPageRoute("ProductsByCategoryRoute", "Category/{categoryName}", "~/ProductList.aspx");
+            })), "/category/name");
+
+        Assert.Equal("<span id=\"/Category/MyTest\"></span>", htmlResult);
+    }
+
+    private sealed class DelegateStartupFilter(Action<IApplicationBuilder> action) : IStartupFilter
+    {
+        public Action<IApplicationBuilder> Configure(Action<IApplicationBuilder> next)
+            => builder =>
+            {
+                action(builder);
+                next(builder);
+            };
     }
 
     private sealed class PageWithRoutingAPI : Page
     {
         protected override void FrameworkInitialize()
         {
-            Controls.Add(new LiteralControl("hello"));
-            Label lbl = new Label();
+            var lbl = new Label
+            {
+                ID = GetRouteUrl("ProductsByCategoryRoute", new { categoryName = "MyTest" })
+            };
+
             Controls.Add(lbl);
-            Controls[1].ID = Controls[0].GetRouteUrl("ProductsByCategoryRoute", new { categoryName = "MyTest" });
         }
     }
 }

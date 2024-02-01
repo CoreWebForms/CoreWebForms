@@ -1,10 +1,10 @@
 // MIT License.
 
 using System.Runtime.CompilerServices;
-using System.Web.Routing;
+using System.Web;
 using Microsoft.AspNetCore.Http;
 
-namespace System.Web;
+namespace Microsoft.AspNetCore.SystemWebAdapters.HttpHandlers;
 
 internal sealed class HttpHandlerEndpointFactory : IHttpHandlerEndpointFactory
 {
@@ -32,5 +32,5 @@ internal sealed class HttpHandlerEndpointFactory : IHttpHandlerEndpointFactory
         return newEndpoint;
     }
 
-    private static Endpoint Create(IHttpHandler handler) => RouteItem.Create(handler).GetBuilder().Build();
+    private static Endpoint Create(IHttpHandler handler) => HandlerEndpointBuilder.Create(handler).Build();
 }

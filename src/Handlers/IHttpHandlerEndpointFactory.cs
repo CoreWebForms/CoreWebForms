@@ -1,8 +1,9 @@
 // MIT License.
 
+using System.Web;
 using Microsoft.AspNetCore.Http;
 
-namespace System.Web;
+namespace Microsoft.AspNetCore.SystemWebAdapters.HttpHandlers;
 
 internal interface IHttpHandlerEndpointFactory
 {

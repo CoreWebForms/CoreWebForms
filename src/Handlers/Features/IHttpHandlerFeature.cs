@@ -4,7 +4,7 @@
 
 using System.Web;
 
-namespace Microsoft.AspNetCore.SystemWebAdapters;
+namespace Microsoft.AspNetCore.SystemWebAdapters.Features;
 
 public interface IHttpHandlerFeature
 {
