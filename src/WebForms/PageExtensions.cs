@@ -148,15 +148,6 @@ public static class PageExtensions
         public void Add(Action<EndpointBuilder> convention)
         {
         }
-
-        return builder ?? new EmptyConventionBuilder();
-    }
-
-    private class EmptyConventionBuilder : IEndpointConventionBuilder
-    {
-        public void Add(Action<EndpointBuilder> convention)
-        {
-        }
     }
 
     private static AssemblyLoadContext GetLoadContext()
