@@ -38,6 +38,12 @@ public static class WebFormsCompilerExtensions
             .Configure<IHostEnvironment>((options, env) =>
             {
                 options.Files = env.ContentRootFileProvider;
+
+                options.AddParser<PageParser>(".aspx");
+                options.AddParser<MasterPageParser>(".Master");
+
+                //TODO https://github.com/twsouthwick/systemweb-adapters-ui/issues/19 , keeping the code to tackle in next CR
+                //options.AddParser<UserControlParser>(".ascx");
             })
             .Configure(configure);
 
