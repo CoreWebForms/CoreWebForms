@@ -3,6 +3,7 @@
 
   <PropertyGroup>
     <IsPackable>false</IsPackable>
+    <DefineConstants>$(DefineConstants);WEBFORMS_STATIC</DefineConstants>
     <EnableRuntimeAspxCompilation>false</EnableRuntimeAspxCompilation>
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>

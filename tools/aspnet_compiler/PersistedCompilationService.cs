@@ -1,6 +1,5 @@
 // MIT License.
 
-using System.Diagnostics;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using WebForms.Compiler.Dynamic;
@@ -20,8 +19,6 @@ internal sealed class PersistedCompilationService : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        Debugger.Launch();
-
         try
         {
             await _compiler.CompilePagesAsync(stoppingToken).ConfigureAwait(false);
