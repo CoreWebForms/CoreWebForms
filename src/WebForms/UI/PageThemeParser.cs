@@ -5,7 +5,6 @@ namespace System.Web.UI;
 using System;
 using System.Collections;
 using System.Text;
-using System.Web.Compilation;
 using System.Web.Util;
 
 internal class PageThemeParser : BaseTemplateParser
@@ -29,8 +28,6 @@ internal class PageThemeParser : BaseTemplateParser
         _skinFileList = skinFileList;
         _cssFileList = cssFileList;
     }
-
-    internal override BaseCodeDomTreeGenerator GetGenerator() => new PageThemeCodeDomTreeGenerator(this);
 
     internal ICollection CssFileList
     {

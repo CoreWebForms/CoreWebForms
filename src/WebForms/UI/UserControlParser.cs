@@ -10,7 +10,6 @@ namespace System.Web.UI;
 
 using System;
 using System.Collections;
-using System.Web.Compilation;
 
 /*
  * Parser for declarative controls
@@ -26,8 +25,6 @@ internal class UserControlParser : TemplateControlParser
     internal static bool FSharedPartialCaching => false;
     internal static string Provider => null;
 #endif
-
-    internal override BaseCodeDomTreeGenerator GetGenerator() => new UserControlCodeDomTreeGenerator(this);
 
     // Get default settings from config
     internal override void ProcessConfigSettings()

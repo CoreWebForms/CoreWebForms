@@ -60,10 +60,6 @@ public class CompilationSection
 public abstract class TemplateParser : BaseParser, IAssemblyDependencyParser
 {
 
-    internal abstract BaseCodeDomTreeGenerator GetGenerator();
-
-    internal virtual IEnumerable<string> GetDependencyPaths() => [];
-
     internal const string CodeFileBaseClassAttributeName = "codefilebaseclass";
 
     // The <compilation> config section

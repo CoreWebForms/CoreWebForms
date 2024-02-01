@@ -11,7 +11,6 @@ namespace System.Web.UI;
 using System;
 using System.Collections;
 using System.Web;
-using System.Web.Compilation;
 using System.Web.Util;
 
 /*
@@ -52,8 +51,6 @@ internal sealed class MasterPageParser : UserControlParser
             return _placeHolderList;
         }
     }
-
-    internal override BaseCodeDomTreeGenerator GetGenerator() => new MasterPageCodeDomTreeGenerator(this);
 
     // Do not apply the basetype. Override this method
     // so the userControlbasetype do not affect masterpages.

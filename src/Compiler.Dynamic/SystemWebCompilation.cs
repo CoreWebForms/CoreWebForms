@@ -165,12 +165,20 @@ internal abstract class SystemWebCompilation<T> : IDisposable
     {
         var p = new List<Task<T>>();
 
-        foreach (var path in parser.GetDependencyPaths())
+        foreach (var path in GetDependencyPaths(parser))
         {
             p.Add(CompilePageAsync(path, token));
         }
 
         return await Task.WhenAll(p).ConfigureAwait(false);
+
+        static IEnumerable<string> GetDependencyPaths(TemplateParser parser)
+        {
+            if (parser is PageParser { MasterPage.Path: { } masterPage })
+            {
+                yield return masterPage;
+            }
+        }
     }
 
     protected abstract T CreateCompiledPage(
@@ -200,16 +208,46 @@ internal abstract class SystemWebCompilation<T> : IDisposable
         throw new NotSupportedException($"Unknown language {compiler.Language}");
     }
 
-    private BaseCodeDomTreeGenerator CreateGenerator(string path)
+    private static BaseCodeDomTreeGenerator CreateGenerator(string path)
     {
-        var extension = Path.GetExtension(path);
+        var extension = Path.GetExtension(path).ToLower();
 
-        if (_pageCompilation.Value.Parsers.TryGetValue(extension, out var parser))
+        return extension switch
         {
-            return parser(path);
+            ".aspx" => CreateFromPage(path),
+            //".ascx" => CreateFromUserControl(path),
+            ".master" => CreateFromMasterPage(path),
+            _ => throw new NotImplementedException($"Unknown extension for compilation: {extension}"),
+        };
+
+        static BaseCodeDomTreeGenerator CreateFromPage(string path)
+        {
+            var parser = new PageParser();
+            parser.AddAssemblyDependency(Assembly.GetEntryAssembly(), true);
+            parser.Parse(Array.Empty<string>(), path);
+
+            return new PageCodeDomTreeGenerator(parser);
         }
 
-        throw new NotImplementedException($"Unknown extension for compilation: {extension}");
+        static BaseCodeDomTreeGenerator CreateFromMasterPage(string path)
+        {
+            var parser = new MasterPageParser();
+            parser.AddAssemblyDependency(Assembly.GetEntryAssembly(), true);
+            parser.Parse(Array.Empty<string>(), path);
+
+            return new MasterPageCodeDomTreeGenerator(parser);
+        }
+
+        //TODO https://github.com/twsouthwick/systemweb-adapters-ui/issues/19 , keeping the code to tackle in next CR
+#pragma warning disable CS8321 // Local function is declared but never used
+        static BaseCodeDomTreeGenerator CreateFromUserControl(string path)
+        {
+            var parser = new UserControlParser();
+            parser.AddAssemblyDependency(Assembly.GetEntryAssembly(), true);
+            parser.Parse(Array.Empty<string>(), path);
+            return new UserControlCodeDomTreeGenerator(parser);
+        }
+#pragma warning restore CS8321 // Local function is declared but never used
     }
 
     public void Dispose()
