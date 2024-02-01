@@ -26,7 +26,7 @@ public sealed class RouteCollection
     public void MapPageRoute(string routeName, string routeUrl, string path)
     {
         var pattern = RoutePatternFactory.Parse(routeUrl);
-        AddMapping(path, new(routeName, pattern, _templateBinder.Create(pattern)));
+        AddMapping(path, new(routeName, pattern, new TemplateMatcher(new RouteTemplate(pattern), [])));
     }
 
     internal bool TryGetMapped(PathString path, out PathString newPath, [MaybeNullWhen(false)] out Microsoft.AspNetCore.Routing.RouteValueDictionary result)
@@ -35,10 +35,7 @@ public sealed class RouteCollection
 
         foreach (var (key, m) in _mapped)
         {
-            var re = new RouteTemplate(m.Pattern);
-            var matcher = new TemplateMatcher(re, result);
-
-            if (matcher.TryMatch(path, result))
+            if (m.Matcher.TryMatch(path, result))
             {
                 newPath = key;
                 return true;
@@ -104,7 +101,7 @@ public sealed class RouteCollection
         }
     }
 
-    internal sealed record MappedRoute(string Name, RoutePattern Pattern, TemplateBinder Binder);
+    internal sealed record MappedRoute(string Name, RoutePattern Pattern, TemplateMatcher Matcher);
 
     //The Algo can be improved , let's discuss.
     private bool GetMappedRoute(string routeName, out RoutePattern? routePattern)
