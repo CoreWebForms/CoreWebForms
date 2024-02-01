@@ -55,10 +55,8 @@ public sealed class PageParser : TemplateControlParser
     {
         if (MasterPage is { Path: { } masterPath })
         {
-            return [masterPath, .. base.GetDependencyPaths()];
+            yield return masterPath;
         }
-
-        return base.GetDependencyPaths();
     }
 
     private readonly TraceMode _traceMode = System.Web.TraceMode.Default;
