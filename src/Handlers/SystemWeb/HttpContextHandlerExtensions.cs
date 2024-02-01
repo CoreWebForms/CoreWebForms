@@ -13,10 +13,10 @@ namespace System.Web;
 public static class HttpContextHandlerExtensions
 {
     public static void SetHandler(this HttpContext context, IHttpHandler handler)
-        => ((HttpContextCore)context).Features.GetRequired<IHttpHandlerFeature>().Current = handler;
+        => ((HttpContextCore)context).Features.GetRequiredFeature<IHttpHandlerFeature>().Current = handler;
 
     public static IHttpHandler? GetHandler(this HttpContext context)
-        => ((HttpContextCore)context).Features.GetRequired<IHttpHandlerFeature>().Current;
+        => ((HttpContextCore)context).Features.GetRequiredFeature<IHttpHandlerFeature>().Current;
 
     public static IEndpointConventionBuilder MapHttpHandler<T>(this IEndpointRouteBuilder endpoints, string path)
        where T : IHttpHandler

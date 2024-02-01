@@ -15,8 +15,6 @@ using System.Web.Util;
 using Microsoft.AspNetCore.SystemWebAdapters;
 using Microsoft.AspNetCore.SystemWebAdapters.Features;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
-using WebForms.Routing;
 
 #nullable disable
 

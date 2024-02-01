@@ -16,7 +16,7 @@ public class PageForRoutingTest : HostedTestBase
     public async Task MapPageRouteTest()
     {
         //Arrange/Act
-        var htmlResult = await RunPage<PageWithRoutingAPI>(services => services
+        var htmlResult = await RunPage<GetRouteUrlPage>(services => services
             .AddSingleton<IStartupFilter>(new DelegateStartupFilter(app =>
             {
                 app.ApplicationServices.GetRequiredService<RouteCollection>()
@@ -26,18 +26,18 @@ public class PageForRoutingTest : HostedTestBase
         Assert.Equal("<span id=\"/Category/MyTest\"></span>", htmlResult);
     }
 
-    [Fact(Skip = "MapPageRoute is not enabled")]
+    [Fact]
     public async Task VerifyMappedRoute()
     {
         //Arrange/Act
-        var htmlResult = await RunPage<PageWithRoutingAPI>(services => services
+        var htmlResult = await RunPage<GetRouteValuePage>(services => services
             .AddSingleton<IStartupFilter>(new DelegateStartupFilter(app =>
             {
                 app.ApplicationServices.GetRequiredService<RouteCollection>()
-                    .MapPageRoute("ProductsByCategoryRoute", "Category/{categoryName}", "~/ProductList.aspx");
-            })), "/category/name");
+                    .MapPageRoute("ProductsByCategoryRoute", "Category/{categoryName}", "~/");
+            })), "/category/mycategoryname");
 
-        Assert.Equal("<span id=\"/Category/MyTest\"></span>", htmlResult);
+        Assert.Equal("<span id=\"mycategoryname\"></span>", htmlResult);
     }
 
     private sealed class DelegateStartupFilter(Action<IApplicationBuilder> action) : IStartupFilter
@@ -50,13 +50,26 @@ public class PageForRoutingTest : HostedTestBase
             };
     }
 
-    private sealed class PageWithRoutingAPI : Page
+    private sealed class GetRouteUrlPage : Page
     {
         protected override void FrameworkInitialize()
         {
             var lbl = new Label
             {
                 ID = GetRouteUrl("ProductsByCategoryRoute", new { categoryName = "MyTest" })
+            };
+
+            Controls.Add(lbl);
+        }
+    }
+
+    private sealed class GetRouteValuePage : Page
+    {
+        protected override void FrameworkInitialize()
+        {
+            var lbl = new Label
+            {
+                ID = RouteData.Values["categoryName"]!.ToString()
             };
 
             Controls.Add(lbl);

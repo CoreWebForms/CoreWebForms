@@ -116,7 +116,7 @@ public static class HandlerEndpointBuilder
 
         private static Task DefaultHandler(HttpContextCore context)
         {
-            if (context.Features.GetRequired<IHttpHandlerFeature>().Current is { } handler)
+            if (context.Features.GetRequiredFeature<IHttpHandlerFeature>().Current is { } handler)
             {
                 return handler.RunHandlerAsync(context).AsTask();
             }

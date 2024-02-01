@@ -14,6 +14,8 @@ public class RouteData
         _data = data;
     }
 
+    internal Microsoft.AspNetCore.Routing.RouteData AsAspNetCore() => _data;
+
     public RouteValueDictionary DataTokens => _tokens ??= new(_data.DataTokens);
 
     public RouteValueDictionary Values => _values ??= new(_data.Values);

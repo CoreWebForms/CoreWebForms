@@ -1,6 +1,8 @@
 // MIT License.
 
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Routing.Patterns;
 using Microsoft.AspNetCore.Routing.Template;
@@ -11,30 +13,49 @@ namespace System.Web.Routing;
 
 public sealed class RouteCollection
 {
-    private readonly Dictionary<string, HashSet<MappedRoute>> _mapped = new();
-    private RouteOptions? _options;
+    private readonly Dictionary<string, MappedRoute> _mapped = new();
+    private readonly IOptions<RouteOptions> _options;
+    private readonly TemplateBinderFactory _templateBinder;
 
-    internal RouteCollection()
+    internal RouteCollection(TemplateBinderFactory template, IOptions<RouteOptions> options)
     {
+        _options = options;
+        _templateBinder = template;
     }
 
     public void MapPageRoute(string routeName, string routeUrl, string path)
     {
-        AddMapping(path, new(routeName, RoutePatternFactory.Parse(routeUrl)));
+        var pattern = RoutePatternFactory.Parse(routeUrl);
+        AddMapping(path, new(routeName, pattern, _templateBinder.Create(pattern)));
+    }
+
+    internal bool TryGetMapped(PathString path, out PathString newPath, [MaybeNullWhen(false)] out Microsoft.AspNetCore.Routing.RouteValueDictionary result)
+    {
+        result = [];
+
+        foreach (var (key, m) in _mapped)
+        {
+            var re = new RouteTemplate(m.Pattern);
+            var matcher = new TemplateMatcher(re, result);
+
+            if (matcher.TryMatch(path, result))
+            {
+                newPath = key;
+                return true;
+            }
+
+            result.Clear();
+        }
+
+        newPath = default;
+        return false;
     }
 
     private void AddMapping(string path, MappedRoute route)
     {
         var normalized = path.Trim('~');
 
-        if (_mapped.TryGetValue(normalized, out var result))
-        {
-            result.Add(route);
-        }
-        else
-        {
-            _mapped.Add(normalized, new() { route });
-        }
+        _mapped[normalized] = route;
     }
 
     public VirtualPathData GetVirtualPath(RequestContext requestContext, RouteValueDictionary values)
@@ -51,17 +72,17 @@ public sealed class RouteCollection
 
         if (!string.IsNullOrEmpty(name) && httpContext != null)
         {
-            EnsureOptions(httpContext);
             RoutePattern? routePattern;
             bool routeFound;
-            var templateBinderFactory = httpContext.GetService<TemplateBinderFactory>();
+
             using (GetReadLock())
             {
                 routeFound = GetMappedRoute(name, out routePattern);
             }
-            if (routeFound && templateBinderFactory != null && routePattern != null)
+
+            if (routeFound && _templateBinder != null && routePattern != null)
             {
-                var path = templateBinderFactory.Create(routePattern).BindValues(values);
+                var path = _templateBinder.Create(routePattern).BindValues(values);
                 path = NormalizeVirtualPath(path);
                 var virTualPathData = new VirtualPathData();
                 virTualPathData.VirtualPath = path ?? string.Empty;
@@ -83,21 +104,18 @@ public sealed class RouteCollection
         }
     }
 
-    internal sealed record MappedRoute(string Name, RoutePattern Pattern);
+    internal sealed record MappedRoute(string Name, RoutePattern Pattern, TemplateBinder Binder);
 
     //The Algo can be improved , let's discuss.
     private bool GetMappedRoute(string routeName, out RoutePattern? routePattern)
     {
         routePattern = null;
-        foreach (var mappedRoutes in _mapped.Values)
+        foreach (var mapRoute in _mapped.Values)
         {
-            foreach (MappedRoute mapRoute in mappedRoutes)
+            if (string.Equals(mapRoute.Name, routeName, StringComparison.OrdinalIgnoreCase))
             {
-                if (string.CompareOrdinal(mapRoute.Name, routeName) == 0)
-                {
-                    routePattern = mapRoute.Pattern;
-                    return true;
-                }
+                routePattern = mapRoute.Pattern;
+                return true;
             }
         }
         return false;
@@ -110,7 +128,9 @@ public sealed class RouteCollection
             return url;
         }
 
-        if (!string.IsNullOrEmpty(url) && (_options != null && (_options.LowercaseUrls || _options.AppendTrailingSlash)))
+        var options = _options.Value;
+
+        if (!string.IsNullOrEmpty(url) && (options != null && (options.LowercaseUrls || options.AppendTrailingSlash)))
         {
             var indexOfSeparator = url.AsSpan().IndexOfAny('?', '#');
             var urlWithoutQueryString = url;
@@ -122,17 +142,17 @@ public sealed class RouteCollection
                 queryString = url.Substring(indexOfSeparator);
             }
 
-            if (_options.LowercaseUrls)
+            if (options.LowercaseUrls)
             {
                 urlWithoutQueryString = urlWithoutQueryString.ToLowerInvariant();
             }
 
-            if (_options.LowercaseUrls && _options.LowercaseQueryStrings)
+            if (options.LowercaseUrls && options.LowercaseQueryStrings)
             {
                 queryString = queryString.ToLowerInvariant();
             }
 
-            if (_options.AppendTrailingSlash && !urlWithoutQueryString.EndsWith('/'))
+            if (options.AppendTrailingSlash && !urlWithoutQueryString.EndsWith('/'))
             {
                 urlWithoutQueryString += "/";
             }
@@ -144,11 +164,6 @@ public sealed class RouteCollection
         }
 
         return url;
-    }
-
-    private void EnsureOptions(HttpContextBase httpContext)
-    {
-        _options ??= httpContext.GetService<IOptions<RouteOptions>>()?.Value;
     }
 
     private sealed class EmptyDisposable : IDisposable
