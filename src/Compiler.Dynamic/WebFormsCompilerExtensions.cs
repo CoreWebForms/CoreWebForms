@@ -2,6 +2,7 @@
 
 using System.Web.UI;
 using Microsoft.AspNetCore.SystemWebAdapters;
+using Microsoft.AspNetCore.SystemWebAdapters.HttpHandlers;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using WebForms.Compiler.Dynamic;

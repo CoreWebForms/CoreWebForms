@@ -13,8 +13,8 @@ using System.Web.UI.Adapters;
 using System.Web.UI.WebControls;
 using System.Web.Util;
 using Microsoft.AspNetCore.SystemWebAdapters;
+using Microsoft.AspNetCore.SystemWebAdapters.Features;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 
 #nullable disable
 
@@ -921,7 +921,7 @@ public partial class Control : IComponent, IParserAccessor, IDataBindingsAccesso
 
     private Page page;
 
-//#if PORT_ROUTING
+    //#if PORT_ROUTING
     internal RouteCollection RouteCollection
     {
         get
@@ -930,10 +930,10 @@ public partial class Control : IComponent, IParserAccessor, IDataBindingsAccesso
                 _occasionalFields.RareFields == null ||
                 _occasionalFields.RareFields.RouteCollection == null)
             {
-                
-               if (Context != null)
+
+                if (Context != null)
                 {
-                    _routes ??= Context.AsAspNetCore().RequestServices.GetRequiredService<IOptions<HttpHandlerOptions>>().Value.Routes;
+                    _routes ??= Context.AsAspNetCore().RequestServices.GetRequiredService<RouteCollection>();
                     return _routes;
                 }
                 else
@@ -960,7 +960,7 @@ public partial class Control : IComponent, IParserAccessor, IDataBindingsAccesso
             }
         }
     }
-//#endif
+    //#endif
 
     // VSWhidbey 244999
     internal virtual bool IsReloadable => false;
@@ -1027,7 +1027,7 @@ public partial class Control : IComponent, IParserAccessor, IDataBindingsAccesso
         Justification = "Consistent with other URL properties in ASP.NET.")]
     public string GetRouteUrl(string routeName, RouteValueDictionary routeParameters)
     {
-        var requestContext = Context.AsAspNetCore().GetRequestContext();
+        var requestContext = Context.GetRequestContext();
         VirtualPathData data = RouteCollection.GetVirtualPath(requestContext, routeName, routeParameters);
         if (data != null)
         {
@@ -3764,9 +3764,9 @@ public partial class Control : IComponent, IParserAccessor, IDataBindingsAccesso
         public Version RenderingCompatibility;
         public ControlAdapter Adapter;
 
-//#if PORT_ROUTING
+        //#if PORT_ROUTING
         public RouteCollection RouteCollection;
-//#endif
+        //#endif
 
         public void Dispose()
         {
@@ -3785,9 +3785,9 @@ public partial class Control : IComponent, IParserAccessor, IDataBindingsAccesso
             ControlDesignerAccessorUserData = null;
             DesignModeState = null;
             RenderingCompatibility = null;
-//#if PORT_ROUTING
+            //#if PORT_ROUTING
             RouteCollection = null;
-//#endif
+            //#endif
         }
     }
 
