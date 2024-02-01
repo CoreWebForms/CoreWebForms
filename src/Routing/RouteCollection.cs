@@ -6,16 +6,16 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Routing.Patterns;
 using Microsoft.AspNetCore.Routing.Template;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
 namespace System.Web.Routing;
 
-public sealed class RouteCollection
+public sealed class RouteCollection : IDisposable
 {
-    private readonly Dictionary<string, MappedRoute> _mapped = new();
+    private readonly Dictionary<PathString, MappedRoute> _mapped = [];
     private readonly IOptions<RouteOptions> _options;
     private readonly TemplateBinderFactory _templateBinder;
+    private readonly ReaderWriterLockSlim _rwLock = new();
 
     internal RouteCollection(TemplateBinderFactory template, IOptions<RouteOptions> options)
     {
@@ -25,34 +25,48 @@ public sealed class RouteCollection
 
     public void MapPageRoute(string routeName, string routeUrl, string path)
     {
-        var pattern = RoutePatternFactory.Parse(routeUrl);
-        AddMapping(path, new(routeName, pattern, new TemplateMatcher(new RouteTemplate(pattern), [])));
+        _rwLock.EnterWriteLock();
+
+        try
+        {
+            var normalized = path.Trim('~');
+            var pattern = RoutePatternFactory.Parse(routeUrl);
+            var route = new MappedRoute(routeName, pattern, new TemplateMatcher(new RouteTemplate(pattern), []));
+
+            _mapped[normalized] = route;
+        }
+        finally
+        {
+            _rwLock.ExitWriteLock();
+        }
     }
 
     internal bool TryGetMapped(PathString path, out PathString newPath, [MaybeNullWhen(false)] out Microsoft.AspNetCore.Routing.RouteValueDictionary result)
     {
         result = [];
 
-        foreach (var (key, m) in _mapped)
+        _rwLock.EnterReadLock();
+
+        try
         {
-            if (m.Matcher.TryMatch(path, result))
+            foreach (var (key, m) in _mapped)
             {
-                newPath = key;
-                return true;
+                if (m.Matcher.TryMatch(path, result))
+                {
+                    newPath = key;
+                    return true;
+                }
+
+                result.Clear();
             }
 
-            result.Clear();
+            newPath = default;
+            return false;
         }
-
-        newPath = default;
-        return false;
-    }
-
-    private void AddMapping(string path, MappedRoute route)
-    {
-        var normalized = path.Trim('~');
-
-        _mapped[normalized] = route;
+        finally
+        {
+            _rwLock.ExitReadLock();
+        }
     }
 
     public VirtualPathData GetVirtualPath(RequestContext requestContext, RouteValueDictionary values)
@@ -60,30 +74,20 @@ public sealed class RouteCollection
         throw new NotImplementedException("Not implemented yet");
     }
 
-    // TODO implement better
-    private static IDisposable GetReadLock() => EmptyDisposable.Singleton;
-
     public VirtualPathData GetVirtualPath(RequestContext requestContext, string name, RouteValueDictionary values)
     {
-        var httpContext = requestContext.HttpContext; //This HttpContextWrapper
+        var httpContext = requestContext.HttpContext;
 
         if (!string.IsNullOrEmpty(name) && httpContext != null)
         {
-            RoutePattern? routePattern;
-            bool routeFound;
-
-            using (GetReadLock())
-            {
-                routeFound = GetMappedRoute(name, out routePattern);
-            }
-
-            if (routeFound && _templateBinder != null && routePattern != null)
+            if (GetMappedRoute(name, out var routePattern))
             {
                 var path = _templateBinder.Create(routePattern).BindValues(values);
-                path = NormalizeVirtualPath(path);
-                var virTualPathData = new VirtualPathData();
-                virTualPathData.VirtualPath = path ?? string.Empty;
-                return virTualPathData;
+
+                return new VirtualPathData
+                {
+                    VirtualPath = NormalizeVirtualPath(path) ?? string.Empty
+                };
             }
             else
             {
@@ -101,23 +105,33 @@ public sealed class RouteCollection
         }
     }
 
-    internal sealed record MappedRoute(string Name, RoutePattern Pattern, TemplateMatcher Matcher);
-
     //The Algo can be improved , let's discuss.
-    private bool GetMappedRoute(string routeName, out RoutePattern? routePattern)
+    private bool GetMappedRoute(string routeName, [MaybeNullWhen(false)] out RoutePattern routePattern)
     {
-        routePattern = null;
-        foreach (var mapRoute in _mapped.Values)
+        _rwLock.EnterReadLock();
+
+        try
         {
-            if (string.Equals(mapRoute.Name, routeName, StringComparison.OrdinalIgnoreCase))
+            routePattern = null;
+
+            foreach (var mapRoute in _mapped.Values)
             {
-                routePattern = mapRoute.Pattern;
-                return true;
+                if (string.Equals(mapRoute.Name, routeName, StringComparison.OrdinalIgnoreCase))
+                {
+                    routePattern = mapRoute.Pattern;
+                    return true;
+                }
             }
+
+            return false;
         }
-        return false;
+        finally
+        {
+            _rwLock.ExitReadLock();
+        }
     }
 
+    [return: NotNullIfNotNull(nameof(url))]
     private string? NormalizeVirtualPath(string? url)
     {
         if (url == null)
@@ -163,12 +177,10 @@ public sealed class RouteCollection
         return url;
     }
 
-    private sealed class EmptyDisposable : IDisposable
+    public void Dispose()
     {
-        public static EmptyDisposable Singleton { get; } = new();
-
-        public void Dispose()
-        {
-        }
+        _rwLock.Dispose();
     }
+
+    private sealed record MappedRoute(string Name, RoutePattern Pattern, TemplateMatcher Matcher);
 }
