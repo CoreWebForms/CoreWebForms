@@ -10,8 +10,10 @@ namespace System.Web.UI;
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Web.Compilation;
 using System.Web.Configuration;
 using System.Web.Util;
 
@@ -46,6 +48,16 @@ public sealed class PageParser : TemplateControlParser
 #else
     internal static int TransactionMode => 0;
 #endif
+
+    internal override BaseCodeDomTreeGenerator GetGenerator() => new PageCodeDomTreeGenerator(this);
+
+    internal override IEnumerable<string> GetDependencyPaths()
+    {
+        if (MasterPage is { Path: { } masterPath })
+        {
+            yield return masterPath;
+        }
+    }
 
     private readonly TraceMode _traceMode = System.Web.TraceMode.Default;
     internal TraceMode TraceMode { get { return _traceMode; } }
