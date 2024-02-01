@@ -13,7 +13,6 @@ using System.Collections;
 using System.ComponentModel.Design;
 using System.Diagnostics;
 using System.Web.Util;
-using HttpException = System.Web.HttpException;
 
 /*
  * Parser for Template Files (TemplateControls and PageTheme)

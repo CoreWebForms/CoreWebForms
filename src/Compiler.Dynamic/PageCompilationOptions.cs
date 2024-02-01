@@ -2,6 +2,7 @@
 
 using System.Reflection;
 using System.Web;
+using System.Web.Compilation;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using Microsoft.Extensions.FileProviders;
@@ -28,6 +29,24 @@ public class PageCompilationOptions
         AddAssembly(typeof(IHttpHandler).Assembly);
         AddAssembly(typeof(HttpContext).Assembly);
         AddAssembly(typeof(HtmlTextWriter).Assembly);
+    }
+
+    internal Dictionary<string, Func<string, BaseCodeDomTreeGenerator>> Parsers { get; } = new(StringComparer.OrdinalIgnoreCase);
+
+    internal void AddParser<TParser>(string extension)
+        where TParser : BaseTemplateParser, new()
+    {
+        Parsers.Add(extension, Create);
+
+        static BaseCodeDomTreeGenerator Create(string path)
+        {
+            var parser = new TParser();
+
+            parser.AddAssemblyDependency(Assembly.GetEntryAssembly(), true);
+            parser.Parse(Array.Empty<string>(), path);
+
+            return parser.GetGenerator();
+        }
     }
 
     public void AddAssembly(Assembly assembly) => _assemblies.Add(assembly);
