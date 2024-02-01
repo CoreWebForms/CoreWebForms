@@ -10,7 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\Handlers\Routing\CancellationChangeTokenSource.cs" Link="CancellationChangeTokenSource.cs" />
+    <Compile Include="..\Handlers\CancellationChangeTokenSource.cs" Link="CancellationChangeTokenSource.cs" />
   </ItemGroup>
 
   <ItemGroup>

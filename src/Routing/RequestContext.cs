@@ -1,4 +1,3 @@
-// MIT License.
 //MIT License
 
 using System.Diagnostics.CodeAnalysis;

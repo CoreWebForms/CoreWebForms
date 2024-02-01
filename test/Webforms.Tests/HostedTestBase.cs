@@ -2,19 +2,23 @@
 
 using System.Web;
 using System.Web.UI;
+using Compiler.Dynamic.Tests;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Xunit;
 
 namespace WebForms.Tests;
 
-internal sealed class TestUtil
+[Collection(nameof(SelfHostedTests))]
+public abstract class HostedTestBase
 {
-    internal static async Task<string> RunPage<TPage>(Action<IServiceCollection>? servicesConfigure = null)
+    protected async Task<string> RunPage<TPage>(Action<IServiceCollection>? servicesConfigure = null, string? path=null)
         where TPage : Page, new()
     {
+        path ??= "/";
         using var host = await Host.CreateDefaultBuilder()
             .ConfigureWebHost(app =>
             {
@@ -45,6 +49,6 @@ internal sealed class TestUtil
 
         using var client = host.GetTestClient();
 
-        return await client.GetStringAsync("/");
+        return await client.GetStringAsync(path);
     }
 }

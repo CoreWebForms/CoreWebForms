@@ -1,14 +1,10 @@
 // MIT License.
 
 using System.Web;
-using System.Web.Routing;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.FileProviders;
-using Microsoft.Extensions.Primitives;
 
-namespace Microsoft.AspNetCore.SystemWebAdapters;
+namespace Microsoft.AspNetCore.SystemWebAdapters.HttpHandlers;
 
 internal static class HandlerExtensions
 {

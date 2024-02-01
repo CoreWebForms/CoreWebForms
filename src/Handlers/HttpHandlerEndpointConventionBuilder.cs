@@ -5,14 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Primitives;
 
-namespace Microsoft.AspNetCore.SystemWebAdapters;
-
-public interface IHttpHandlerManager
-{
-    IChangeToken GetChangeToken();
-
-    IEnumerable<EndpointBuilder> GetBuilders();
-}
+namespace Microsoft.AspNetCore.SystemWebAdapters.HttpHandlers;
 
 internal abstract class HttpHandlerEndpointConventionBuilder : EndpointDataSource, IEndpointConventionBuilder
 {
