@@ -29,6 +29,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="assets\test05\error_page.aspx" />
     <None Remove="assets\test04\other_page_with_master.aspx" />
     <None Remove="assets\test04\page_with_master.aspx" />
     <None Remove="assets\test04\page_with_master.aspx._0.html" />

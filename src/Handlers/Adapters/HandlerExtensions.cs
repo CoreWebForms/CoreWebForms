@@ -1,14 +1,18 @@
 // MIT License.
 
 using System.Web;
+using System.Web.Routing;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Primitives;
 
 namespace Microsoft.AspNetCore.SystemWebAdapters;
 
 internal static class HandlerExtensions
 {
-    internal static async Task RunHandlerAsync(this IHttpHandler handler, HttpContextCore context)
+    internal static async ValueTask RunHandlerAsync(this IHttpHandler handler, HttpContextCore context)
     {
         if (handler is HttpTaskAsyncHandler task)
         {
@@ -42,9 +46,10 @@ internal static class HandlerExtensions
         {
             return handler;
         }
-        else if (endpoint.Metadata.GetMetadata<Func<HttpContextCore, IHttpHandler>>() is { } factory)
+        else if (endpoint.Metadata.GetMetadata<IHttpHandlerMetadata>() is { } metadata)
         {
-            return factory(context);
+            // TODO: flow async
+            return metadata.Create(context).AsTask().GetAwaiter().GetResult();
         }
         else
         {

@@ -7,16 +7,23 @@ using Microsoft.Extensions.Primitives;
 
 namespace Microsoft.AspNetCore.SystemWebAdapters;
 
-internal sealed class HttpHandlerEndpointConventionBuilder : EndpointDataSource, IEndpointConventionBuilder
+public interface IHttpHandlerManager
 {
-    private List<Action<EndpointBuilder>> _conventions = new();
+    IChangeToken GetChangeToken();
 
-    internal HttpHandlerEndpointConventionBuilder(System.Web.Routing.RouteCollection routes)
+    IEnumerable<EndpointBuilder> GetBuilders();
+}
+
+internal abstract class HttpHandlerEndpointConventionBuilder : EndpointDataSource, IEndpointConventionBuilder
+{
+    private List<Action<EndpointBuilder>> _conventions = [];
+
+    internal HttpHandlerEndpointConventionBuilder(IHttpHandlerManager handlers)
     {
-        Routes = routes;
+        Manager = handlers;
     }
 
-    public System.Web.Routing.RouteCollection Routes { get; }
+    protected IHttpHandlerManager Manager { get; }
 
     public override IReadOnlyList<Endpoint> Endpoints
     {
@@ -24,10 +31,8 @@ internal sealed class HttpHandlerEndpointConventionBuilder : EndpointDataSource,
         {
             var endpoints = new List<Endpoint>();
 
-            foreach (var route in Routes.GetRoutes())
+            foreach (var builder in Manager.GetBuilders())
             {
-                var builder = route.GetBuilder();
-
                 foreach (var convention in _conventions)
                 {
                     convention(builder);
@@ -47,7 +52,7 @@ internal sealed class HttpHandlerEndpointConventionBuilder : EndpointDataSource,
     }
 
     public void Add(Action<EndpointBuilder> convention)
-        => (_conventions ??= new()).Add(convention);
+        => (_conventions ??= []).Add(convention);
 
-    public override IChangeToken GetChangeToken() => Routes.GetChangeToken();
+    public override IChangeToken GetChangeToken() => Manager.GetChangeToken();
 }

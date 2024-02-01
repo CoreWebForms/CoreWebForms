@@ -17,5 +17,7 @@ internal interface ICompiledPage : IDisposable
 
     IReadOnlyCollection<string> FileDependencies { get; }
 
+    ICollection<ICompiledPage> PageDependencies { get; }
+
     MetadataReference? MetadataReference { get; }
 }

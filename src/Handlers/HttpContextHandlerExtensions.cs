@@ -1,8 +1,13 @@
 // MIT License.
 
+using System.Runtime.CompilerServices;
 using System.Web.Routing;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.SystemWebAdapters;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Primitives;
 
 using RouteData = System.Web.Routing.RouteData;
 
@@ -44,6 +49,36 @@ public static class HttpContextHandlerExtensions
         httpContext.Features.Set<RequestContext>(requestContext);
 
         return requestContext;
+    }
+
+    public static IEndpointConventionBuilder MapHttpHandler<T>(this IEndpointRouteBuilder endpoints, string path)
+       where T : IHttpHandler
+    {
+        if (endpoints.DataSources.OfType<HttpHandlerManagerBuilder>().FirstOrDefault() is not { } existing)
+        {
+            existing = new HttpHandlerManagerBuilder();
+            endpoints.DataSources.Add(existing);
+        }
+
+        existing.Add<T>(path);
+
+        return existing;
+    }
+
+    private sealed class HttpHandlerManagerBuilder() : HttpHandlerEndpointConventionBuilder(new HttpHandlerManager())
+    {
+        public void Add<T>(string path) => ((HttpHandlerManager)Manager).Add(HandlerEndpointBuilder.Create(path, typeof(T)));
+    }
+
+    private sealed class HttpHandlerManager : IHttpHandlerManager
+    {
+        private readonly List<EndpointBuilder> _handlers = new();
+
+        public IEnumerable<EndpointBuilder> GetBuilders() => _handlers;
+
+        public IChangeToken GetChangeToken() => NullChangeToken.Singleton;
+
+        public void Add(EndpointBuilder builder) => _handlers.Add(builder);
     }
 }
 
