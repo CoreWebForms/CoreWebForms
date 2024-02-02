@@ -1,8 +1,1 @@
-<Project>
-  <!-- <PropertyGroup>
-    <IsShipped Condition=" '$(IsShipped)' == '' ">false</IsShipped>
-    <PackageOutputPath>$(MSBuildThisFileDirectory)bin\$(Configuration)\packages\</PackageOutputPath>
-    <PackageOutputPath Condition="$(IsShipped)">$(PackageOutputPath)shipping\</PackageOutputPath>
-  </PropertyGroup> -->
-
-</Project>
+<Project />
