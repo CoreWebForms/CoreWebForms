@@ -34,8 +34,8 @@ jobs:
       with:
         name: packages
         path: |
-          bin/Release/packages/shipping/*.nupkg
-          bin/Release/packages/shipping/*.snupkg
+          artifacts/packages/release/*.nupkg
+          artifacts/packages/release/*.snupkg
     - name: Push nuget package to Azure storage
       if: github.ref == 'refs/heads/main'
       env:
@@ -43,7 +43,7 @@ jobs:
         SLEET_FEED_CONTAINER: feed
         SLEET_FEED_CONNECTIONSTRING: ${{secrets.SLEET_CONNECTIONSTRING}}
       run: |
-        cd $GITHUB_WORKSPACE/bin/Release/packages/shipping/
+        cd $GITHUB_WORKSPACE/artifacts/packages/release/
         dotnet tool install -g sleet
         sleet push . --skip-existing
     - name: Publish Dynamic Site
