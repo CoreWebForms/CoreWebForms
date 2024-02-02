@@ -5,8 +5,7 @@
       Include="$(MSBuildThisFileDirectory)../src/Compiler.Generator/Compiler.Generator.csproj"
       OutputItemType="Analyzer"
       ReferenceOutputAssembly="false"
-      SkipGetTargetFrameworkProperties="true"
-      GlobalPropertiesToRemove="TargetFramework" />
+      SetTargetFramework="TargetFramework=netstandard2.0" />
   </ItemGroup>
 
   <Import Project="..\src\Compiler\Build\WebForms.Compiler.targets" />

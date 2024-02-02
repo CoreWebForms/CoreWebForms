@@ -1,6 +1,6 @@
 <Project>
 
-  <Import Project="WebForms.Compiler.DefaultItems.targets"/>
+  <Import Project="$(MSBuildThisFileDirectory)WebForms.Compiler.DefaultItems.targets"/>
   <Import Project="$(MSBuildThisFileDirectory)WebForms.Compiler.Runtime.targets" Condition="$(EnableRuntimeAspxCompilation)" />
   <Import Project="$(MSBuildThisFileDirectory)WebForms.Compiler.Static.targets" Condition="!$(EnableRuntimeAspxCompilation)" />
 

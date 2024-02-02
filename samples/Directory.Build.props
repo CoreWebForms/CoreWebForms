@@ -2,5 +2,12 @@
   <Import Project="..\Directory.Build.props" />
 
   <!-- If using the NuGet package, the install of the package handles setting this stuff up -->
+  <PropertyGroup>
+    <_AspNetArtifactKind>publish</_AspNetArtifactKind>
+    <_AspNetArtifactKind Condition="'$(BuildingInsideVisualStudio)' == 'true'">bin</_AspNetArtifactKind>
+    <_AspNetCompilerRoot>$(MSBuildThisFileDirectory)../artifacts/$(_AspNetArtifactKind)/aspnet_compiler/$(Configuration.ToLowerInvariant())_net6.0/</_AspNetCompilerRoot>
+    <_AspNetCompilerRoot>$([MSBuild]::NormalizePath($(_AspNetCompilerRoot)))</_AspNetCompilerRoot>
+  </PropertyGroup>
+
   <Import Project="..\src\Compiler\Build\WebForms.Compiler.props" />
 </Project>
