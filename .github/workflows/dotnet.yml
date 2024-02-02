@@ -32,6 +32,7 @@ jobs:
     - name: Upload artifact
       uses: actions/upload-artifact@v4.3.0
       with:
+        name: packages
         path: |
           bin/Release/packages/shipping/*.nupkg
           bin/Release/packages/shipping/*.snupkg
@@ -45,3 +46,17 @@ jobs:
         cd $GITHUB_WORKSPACE/bin/Release/packages/shipping/
         dotnet tool install -g sleet
         sleet push . --skip-existing
+    - name: Publish Dynamic Site
+      run: dotnet publish samples/WebFormsSample/WebFormsSample.Dynamic.csproj
+    - name: Publish Static Site
+      run: dotnet publish samples/WebFormsSample/WebFormsSample.Static.csproj
+    - name: Publish Static Site with Interceptors
+      run: dotnet publish samples/WebFormsSample/WebFormsSample.Static.Interceptors.csproj
+    - name: Upload Samples
+      uses: actions/upload-artifact@v4.3.0
+      with:
+        name: samples
+        path: |
+          artifacts/publish/WebFormsSample.Dynamic/release/**/*
+          artifacts/publish/WebFormsSample.Static/release/**/*
+          artifacts/publish/WebFormsSample.Static.Interceptors/release/**/*

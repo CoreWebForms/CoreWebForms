@@ -1,0 +1,12 @@
+<Project>
+
+  <ItemGroup>
+    <Content Include="@(WebFormsFiles)" />
+    <Content Include="@(WebFormsCodeBehindFiles)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="@(WebFormsCodeBehindFiles)" />
+  </ItemGroup>
+ 
+</Project>

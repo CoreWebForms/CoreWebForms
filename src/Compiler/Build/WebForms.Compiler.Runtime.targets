@@ -1,0 +1,12 @@
+<Project>
+
+  <ItemGroup>
+    <Content Update="@(WebFormsFiles)">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="@(WebFormsCodeBehindFiles)">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+</Project>

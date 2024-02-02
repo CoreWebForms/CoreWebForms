@@ -1,6 +1,7 @@
 <Project>
   <PropertyGroup>
     <LangVersion>12</LangVersion>
+    <UseArtifactsOutput>true</UseArtifactsOutput>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
@@ -12,13 +13,6 @@
     <FileVersion>$(GitVersion_MajorMinorPatch)</FileVersion>
     <AssemblyVersion>$(GitVersion_AssemblySemVer)</AssemblyVersion>
     <Version>$(GitVersion_NuGetVersionV2)</Version>
-  </PropertyGroup>
-
-  <PropertyGroup>
-    <OutputFullPath>$(MSBuildThisFileDirectory)</OutputFullPath>
-    <OutputDrop Condition=" '$(OutputDrop)' == '' ">$(OutputFullPath)bin\$(Configuration)\</OutputDrop>
-    <OutputPath>$(OutputDrop)\$(MSBuildProjectName)\</OutputPath>
-    <BaseIntermediateOutputPath>$(OutputFullPath)obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -34,8 +28,7 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <!-- Enables building samples with the aspnet_compiler built in this project -->
-    <_AspNetCompilerRoot>$(OutputDrop)aspnet_compiler/net6.0/</_AspNetCompilerRoot>
+    <_AspNetCompilerRoot>$(MSBuildThisFileDirectory)artifacts/publish/aspnet_compiler/$(Configuration.ToLowerInvariant())_net6.0/</_AspNetCompilerRoot>
   </PropertyGroup>
 
 </Project>

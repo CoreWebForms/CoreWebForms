@@ -1,0 +1,13 @@
+<Project>
+
+  <PropertyGroup>
+    <InterceptorsPreviewNamespaces>$(InterceptorsPreviewNamespaces);WebForms.Generated</InterceptorsPreviewNamespaces>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Include="@(WebFormsFiles)" LinkBase="$(MSBuildProjectDirectory)" />
+    <CompilerVisibleProperty Include="UseWebFormsInterceptors" />
+    <CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="LinkBase" />
+  </ItemGroup>
+
+</Project>

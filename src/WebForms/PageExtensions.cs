@@ -57,9 +57,6 @@ public static class PageExtensions
 
         var pipeline = app.Build();
 
-        endpoints.MapHttpHandlers();
-        endpoints.MapWebFormsPages();
-
         var composite = new WebFormsConventionBuilder();
 
         foreach (var file in provider.GetDirectoryContents(string.Empty))
@@ -117,7 +114,7 @@ public static class PageExtensions
         }
     }
 
-    private static IEndpointConventionBuilder MapWebFormsPages(this IEndpointRouteBuilder endpoints)
+    public static IEndpointConventionBuilder MapWebFormsPages(this IEndpointRouteBuilder endpoints)
     {
         var env = endpoints.ServiceProvider.GetRequiredService<IWebHostEnvironment>();
 

@@ -1,0 +1,47 @@
+<Project>
+  <Import Project="$(MSBuildThisFileDirectory)WebForms.Compiler.Static.Interceptor.targets" Condition="$(UseWebFormsInterceptors)" />
+
+  <PropertyGroup>
+    <_HasWebFormsError>false</_HasWebFormsError>
+    <BeforeWebFormsCompilation>$(BeforeWebFormsCompilation);Build;AssignTargetPaths;ResolveAssemblyReferences</BeforeWebFormsCompilation>
+  </PropertyGroup>
+
+  <Target Name="WebFormsCompilation" BeforeTargets="$(BeforeWebFormsCompilation)">
+    <PropertyGroup>
+      <_WebFormsTempDir>$(IntermediateOutputPath)webforms_compile/$([System.Guid]::NewGuid())</_WebFormsTempDir>
+      <_WebFormsTempDir Condition="!$([System.IO.Path]::IsPathRooted($(_WebFormsTempDir)))">$(ProjectDir)$(_WebFormsTempDir)</_WebFormsTempDir>
+      <_WebFormsTempDir>$([MSBuild]::NormalizeDirectory($(_WebFormsTempDir)))</_WebFormsTempDir>
+      <_WebFormsErrorFile>$(_WebFormsTempDir)/webforms.error.txt</_WebFormsErrorFile>
+      <_WebFormsPagesFileName>webforms.pages.json</_WebFormsPagesFileName>
+      <_WebFormsPagesFile>$(_WebFormsTempDir)/$(_WebFormsPagesFileName)</_WebFormsPagesFile>
+    </PropertyGroup>
+
+    <Exec Command="dotnet $(AspNetCompilePath) -p $(MSBuildProjectDirectory) $(_WebFormsTempDir)" />
+
+    <PropertyGroup>
+      <_HasWebFormsError Condition="Exists('$(_WebFormsErrorFile)')">true</_HasWebFormsError>
+      <_HasWebFormsError Condition="!Exists('$(_WebFormsPagesFile)')">true</_HasWebFormsError>
+    </PropertyGroup>
+  </Target>
+
+  <Target Name="AddWebFormsPagesFileToContent" AfterTargets="WebFormsCompilation" Condition="!$(_HasWebFormsError) AND !$(UseWebFormsInterceptors)">
+    <ItemGroup>
+      <Content Include="$(_WebFormsPagesFile)" Link="$(_WebFormsPagesFileName)" CopyToOutputDirectory="PreserveNewest" />
+    </ItemGroup>
+  </Target>
+
+  <Target Name="AddCompiledWebFormsAssembliesToReferences" AfterTargets="WebFormsCompilation">
+    <ItemGroup>
+      <Reference Include="$(_WebFormsTempDir)/*.dll" />
+    </ItemGroup>
+  </Target>
+
+  <Target Name="NotifyWebFormsCompilationError" AfterTargets="WebFormsCompilation" Condition="$(_HasWebFormsError)">
+    <ReadLinesFromFile File="$(_WebFormsErrorFile)">
+      <Output TaskParameter="Lines" PropertyName="__WebFormsError"/>
+    </ReadLinesFromFile>
+
+    <Error Text="$(__WebFormsError)" />
+  </Target>
+
+</Project>

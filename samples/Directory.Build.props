@@ -1,0 +1,6 @@
+<Project>
+  <Import Project="..\Directory.Build.props" />
+
+  <!-- If using the NuGet package, the install of the package handles setting this stuff up -->
+  <Import Project="..\src\Compiler\Build\WebForms.Compiler.props" />
+</Project>

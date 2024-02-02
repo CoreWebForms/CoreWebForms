@@ -55,7 +55,7 @@ public class DynamicCompilationTests
                     app.UseSystemWebAdapters();
                     app.UseEndpoints(endpoints =>
                     {
-                        endpoints.MapWebForms();
+                        endpoints.MapHttpHandlers();
                     });
                 });
                 app.ConfigureServices(services =>
