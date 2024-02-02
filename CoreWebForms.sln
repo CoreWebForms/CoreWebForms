@@ -61,10 +61,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Compiler.Generator", "src\C
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebFormsSample.Static.Interceptor", "samples\WebFormsSample\WebFormsSample.Static.Interceptor.csproj", "{D73FE3B9-7D52-45C1-84A7-ECAA23B913B1}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebFormsSample.Dynamic", "samples\WebFormsSample\WebFormsSample.Dynamic.csproj", "{1C7DF377-6558-4CB5-B329-23497B46F193}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Routing", "src\Routing\Routing.csproj", "{D010AD40-A04C-4E70-B7D2-3AD9712F5125}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
