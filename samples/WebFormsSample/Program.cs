@@ -16,8 +16,10 @@ builder.Services.AddSystemWebAdapters()
     .AddJsonSessionSerializer()
     .AddWrappedAspNetCoreSession()
     .AddWebForms()
-    .AddWebFormsExtensions()
-    .AddDynamicWebForms();
+#if WEBFORMS_DYNAMIC
+    .AddDynamicWebForms()
+#endif
+    .AddWebFormsExtensions();
 
 var app = builder.Build();
 

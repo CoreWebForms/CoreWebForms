@@ -11,11 +11,11 @@ namespace Microsoft.Extensions.DependencyInjection;
 
 public static class WebFormsCompilerExtensions
 {
-    public static void AddWebFormsCompilation(this IServiceCollection services, Action<PageCompilationOptions> configure)
+    public static void AddPersistentWebFormsCompilation(this ISystemWebAdapterBuilder builder, Action<PageCompilationOptions> configure)
     {
-        services.AddWebFormsCompilationCore(configure);
-        services.AddSingleton<PersistentSystemWebCompilation>();
-        services.AddSingleton<IWebFormsCompiler>(ctx => ctx.GetRequiredService<PersistentSystemWebCompilation>());
+        builder.Services.AddWebFormsCompilationCore(configure);
+        builder.Services.AddSingleton<PersistentSystemWebCompilation>();
+        builder.Services.AddSingleton<IWebFormsCompiler>(ctx => ctx.GetRequiredService<PersistentSystemWebCompilation>());
     }
 
     public static ISystemWebAdapterBuilder AddDynamicWebForms(this ISystemWebAdapterBuilder services)

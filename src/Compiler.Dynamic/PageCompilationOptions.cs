@@ -28,6 +28,7 @@ public class PageCompilationOptions
         AddAssembly(typeof(HttpUtility).Assembly);
         AddAssembly(typeof(IHttpHandler).Assembly);
         AddAssembly(typeof(HttpContext).Assembly);
+        AddAssembly(typeof(HtmlTextWriter).Assembly);
     }
 
     internal Dictionary<string, Func<string, BaseCodeDomTreeGenerator>> Parsers { get; } = new(StringComparer.OrdinalIgnoreCase);
