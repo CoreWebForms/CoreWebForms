@@ -7,10 +7,8 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
-
+  pack:
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v4
       with:
@@ -25,8 +23,6 @@ jobs:
       run: dotnet restore
     - name: Build
       run: dotnet build -c Release --no-restore
-    - name: Test
-      run: dotnet test -c Release --no-build --verbosity normal
     - name: Pack
       run: dotnet pack -c Release
     - name: Upload artifact
@@ -46,17 +42,39 @@ jobs:
         cd $GITHUB_WORKSPACE/artifacts/packages/release/
         dotnet tool install -g sleet
         sleet push . --skip-existing
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        dotnet: [ '6.0', '8.0' ]
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+    - name: Install GitVersion
+      run: dotnet tool install --global GitVersion.Tool --ignore-failed-sources
+    - name: Run GitVersion
+      run: dotnet gitversion /output buildserver /nofetch
+    - name: Restore dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build -c Release --no-restore
+    - name: Publish Compiler.Dynamic tests
+      run: dotnet publish test/Compiler.Dynamic.Tests/Compiler.Dynamic.Tests.csproj --sc
+    - name: Publish Compiler.Dynamic tests
+      run: dotnet publish test/Webforms.Tests/Webforms.Tests.csproj --sc
     - name: Publish Dynamic Site
-      run: dotnet publish samples/WebFormsSample/WebFormsSample.Dynamic.csproj
+      run: dotnet publish samples/WebFormsSample/WebFormsSample.Dynamic.csproj --sc
     - name: Publish Static Site
-      run: dotnet publish samples/WebFormsSample/WebFormsSample.Static.csproj
+      run: dotnet publish samples/WebFormsSample/WebFormsSample.Static.csproj --sc
     - name: Publish Static Site with Interceptors
       run: dotnet publish samples/WebFormsSample/WebFormsSample.Static.Interceptor.csproj
     - name: Upload Samples
       uses: actions/upload-artifact@v4.3.0
       with:
-        name: samples
+        name: artifacts
         path: |
-          artifacts/publish/WebFormsSample.Dynamic/release/**/*
-          artifacts/publish/WebFormsSample.Static/release/**/*
-          artifacts/publish/WebFormsSample.Static.Interceptor/release/**/*
+          artifacts/publish/**/*
