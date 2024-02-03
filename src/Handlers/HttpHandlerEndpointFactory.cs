@@ -2,7 +2,9 @@
 
 using System.Runtime.CompilerServices;
 using System.Web;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing;
 
 namespace Microsoft.AspNetCore.SystemWebAdapters.HttpHandlers;
 
@@ -32,5 +34,31 @@ internal sealed class HttpHandlerEndpointFactory : IHttpHandlerEndpointFactory
         return newEndpoint;
     }
 
-    private static Endpoint Create(IHttpHandler handler) => HandlerEndpointBuilder.Create(handler).Build();
+    private static Endpoint Create(IHttpHandler handler)
+    {
+        var builder = new NonRouteEndpointBuilder();
+        var metadata = HandlerMetadata.Create("/", handler);
+
+        HttpHandlerEndpointConventionBuilder.AddHttpHandlerMetadata(builder, metadata);
+
+        return builder.Build();
+    }
+
+    internal sealed class NonRouteEndpointBuilder : EndpointBuilder
+    {
+        public override Endpoint Build()
+        {
+            if (RequestDelegate is null)
+            {
+                throw new InvalidOperationException($"{nameof(RequestDelegate)} must be specified to construct a {nameof(RouteEndpoint)}.");
+            }
+
+            return new Endpoint(RequestDelegate, CreateMetadataCollection(Metadata), DisplayName);
+        }
+
+        private static EndpointMetadataCollection CreateMetadataCollection(IList<object> metadata)
+        {
+            return new EndpointMetadataCollection(metadata);
+        }
+    }
 }
