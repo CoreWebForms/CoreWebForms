@@ -1,0 +1,20 @@
+<Project>
+
+  <PropertyGroup>
+    <!-- Prevents including build and publish outputs -->
+    <__DefaultExcludes>$(__DefaultExcludes);$([MSBuild]::EnsureTrailingSlash($(OutputPath)))**</__DefaultExcludes>
+    <__DefaultExcludes Condition="'$(PackageLocation)'!=''">$(__DefaultExcludes);$([MSBuild]::EnsureTrailingSlash($(PackageLocation)))**</__DefaultExcludes>
+    <__DefaultExcludes Condition="'$(BaseIntermediateOutputPath)'!=''">$(__DefaultExcludes);$([MSBuild]::EnsureTrailingSlash($(BaseIntermediateOutputPath)))**</__DefaultExcludes>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <WebFormsFiles Include="$(MSBuildProjectDirectory)\**\*.aspx" Exclude="@(__DefaultExcludes)" />
+    <WebFormsFiles Include="$(MSBuildProjectDirectory)\**\*.master" Exclude="@(__DefaultExcludes) "/>
+
+    <WebFormsCodeBehindFiles Include="$(MSBuildProjectDirectory)\**\*.aspx.vb" Exclude="@(__DefaultExcludes)" />
+    <WebFormsCodeBehindFiles Include="$(MSBuildProjectDirectory)\**\*.aspx.cs" Exclude="@(__DefaultExcludes)" />
+    <WebFormsCodeBehindFiles Include="$(MSBuildProjectDirectory)\**\*.master.vb" Exclude="@(__DefaultExcludes)" />
+    <WebFormsCodeBehindFiles Include="$(MSBuildProjectDirectory)\**\*.master.cs" Exclude="@(__DefaultExcludes)" />
+  </ItemGroup>
+ 
+</Project>

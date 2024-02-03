@@ -1,58 +1,7 @@
 <Project>
 
-  <ItemGroup>
-    <AspxFiles Include="$(MSBuildProjectDirectory)\**\*.aspx" />
-    <AspxFiles Include="$(MSBuildProjectDirectory)\**\*.Master" />
-    <AspxFiles Remove="$(OutDir)\**\*.aspx" />
-    <AspxFiles Remove="$(OutDir)\**\*.Master" />
-
-    <__CodeBehindFiles Include="$(MSBuildProjectDirectory)\**\*.aspx.vb" />
-    <__CodeBehindFiles Include="$(MSBuildProjectDirectory)\**\*.aspx.cs" />
-    <__CodeBehindFiles Include="$(MSBuildProjectDirectory)\**\*.Master.vb" />
-    <__CodeBehindFiles Include="$(MSBuildProjectDirectory)\**\*.Master.cs" />
-    <__CodeBehindFiles Remove="$(OutDir)\**\*.aspx.vb" />
-    <__CodeBehindFiles Remove="$(OutDir)\**\*.aspx.cs" />
-    <__CodeBehindFiles Remove="$(OutDir)\**\*.Master.vb" />
-    <__CodeBehindFiles Remove="$(OutDir)\**\*.Master.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Remove="@(__CodeBehindFiles)" />
-  </ItemGroup>
-
-  <ItemGroup Condition="$(EnableRuntimeAspxCompilation)">
-    <None Include="@(AspxFiles)">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="@(__CodeBehindFiles)">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
-  <Target Name="WebFormsCompilation" Condition="!$(EnableRuntimeAspxCompilation)" BeforeTargets="Build;AssignTargetPaths">
-    <PropertyGroup>
-      <_WebFormsTempDir>$(IntermediateOutputPath)webforms_compile/$([System.Guid]::NewGuid())</_WebFormsTempDir>
-      <_WebFormsTempDir Condition="!$([System.IO.Path]::IsPathRooted($(_WebFormsTempDir)))">$(ProjectDir)$(_WebFormsTempDir)</_WebFormsTempDir>
-      <_WebFormsTempDir>$([MSBuild]::NormalizeDirectory($(_WebFormsTempDir)))</_WebFormsTempDir>
-    </PropertyGroup>
-    <Warning Text="Args: 'dotnet $(AspNetCompilePath) -p $(MSBuildProjectDirectory) $(_WebFormsTempDir)'"/>
-    <Exec Command="dotnet $(AspNetCompilePath) -p $(MSBuildProjectDirectory) $(_WebFormsTempDir)" />
-    <ItemGroup>
-      <CompiledWebFormsPages Include="$(_WebFormsTempDir)/*.dll" />
-      <CompiledWebFormsPages Include="$(_WebFormsTempDir)/*.pdb" />
-      <CompiledWebFormsPages Include="$(_WebFormsTempDir)/webforms.pages.json" Condition="Exists('$(_WebFormsTempDir)/webforms.pages.json')" />
-      <Content Include="@(CompiledWebFormsPages)" CopyToOutputDirectory="Always">
-        <Link>%(Filename)%(Extension)</Link>
-      </Content>
-    </ItemGroup>
-  </Target>
-
-  <Target Name="NotifyWebFormsCompilationError" AfterTargets="WebFormsCompilation" Condition="Exists('$(_WebFormsTempDir)/webforms.error.txt')">
-    <ReadLinesFromFile File="$(_WebFormsTempDir)/webforms.error.txt">
-      <Output TaskParameter="Lines" PropertyName="__WebFormsError"/>
-    </ReadLinesFromFile>
-
-    <Error Text="$(__WebFormsError)" />
-  </Target>
+  <Import Project="$(MSBuildThisFileDirectory)WebForms.Compiler.DefaultItems.targets"/>
+  <Import Project="$(MSBuildThisFileDirectory)WebForms.Compiler.Runtime.targets" Condition="$(EnableRuntimeAspxCompilation)" />
+  <Import Project="$(MSBuildThisFileDirectory)WebForms.Compiler.Static.targets" Condition="!$(EnableRuntimeAspxCompilation)" />
 
 </Project>

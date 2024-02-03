@@ -45,5 +45,7 @@ app.MapGet("/acls", () => AssemblyLoadContext.All.Select(acl => new
 }));
 
 app.MapWebForms();
+app.MapHttpHandlers();
+app.MapWebFormsPages();
 
 app.Run();

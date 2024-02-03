@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Static Sample": {
+      "commandName": "DebugRoslynComponent",
+      "targetProject": "..\\..\\samples\\WebFormsSample\\WebFormsSample.Static.csproj"
+    }
+  }
+}

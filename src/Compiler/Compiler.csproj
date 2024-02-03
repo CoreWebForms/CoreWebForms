@@ -24,6 +24,12 @@
       Targets="Publish;PublishItemsOutputGroup"
       Private="false"
       OutputItemType="AspNetCompilerOutputs" />
+    <ProjectReference
+      Include="../Compiler.Generator/Compiler.Generator.csproj"
+      ReferenceOutputAssembly="false"
+      Targets="Publish;PublishItemsOutputGroup"
+      Private="false"
+      OutputItemType="CompilerGeneratorOutputs" />
   </ItemGroup>
 
   <Target Name="GetWebFormsCompiler" BeforeTargets="AssignTargetPaths" AfterTargets="ResolveProjectReferences">
@@ -35,6 +41,19 @@
         Include="%(AspNetCompilerOutputs.Identity)"
         Link="$(_AspNetCompilerPrefix)%(AspNetCompilerOutputs.RelativePath)"
         PackagePath="$(_AspNetCompilerPrefix)%(AspNetCompilerOutputs.RelativePath)"
+        Pack="true" />
+    </ItemGroup>
+  </Target>
+
+  <Target Name="GetCompilerGenerator" BeforeTargets="AssignTargetPaths" AfterTargets="ResolveProjectReferences">
+    <PropertyGroup>
+      <_AnalyzerPrefix>analyzers/dotnet/cs/roslyn4.8</_AnalyzerPrefix>
+    </PropertyGroup>
+    <ItemGroup>
+      <None
+        Include="%(CompilerGeneratorOutputs.Identity)"
+        Link="$(_AnalyzerPrefix)%(CompilerGeneratorOutputs.RelativePath)"
+        PackagePath="$(_AnalyzerPrefix)%(CompilerGeneratorOutputs.RelativePath)"
         Pack="true" />
     </ItemGroup>
   </Target>

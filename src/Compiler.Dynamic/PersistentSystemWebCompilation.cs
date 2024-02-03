@@ -121,11 +121,12 @@ internal sealed class PersistentSystemWebCompilation : SystemWebCompilation<Pers
                 }
             }
 
-            var dataPath = Path.Combine(_options.Value.TargetDirectory, "webforms.pages.json");
-            using var fs = File.OpenWrite(dataPath);
-            fs.SetLength(0);
+            var pagesPath = Path.Combine(_options.Value.TargetDirectory, "webforms.pages.json");
+            var assemblyPath = Path.Combine(_options.Value.TargetDirectory, "webforms.assemblies.txt");
+            var details = GetDetails().ToList();
 
-            await JsonSerializer.SerializeAsync(fs, GetDetails(), cancellationToken: token).ConfigureAwait(false);
+            File.WriteAllText(pagesPath, JsonSerializer.Serialize(details));
+            File.WriteAllLines(assemblyPath, details.Select(d => d.Assembly));
         }
         catch (RoslynCompilationException r)
         {
