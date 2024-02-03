@@ -75,15 +75,25 @@ jobs:
         shell: pwsh
         working-directory: '${{ github.workspace }}/tests'
         run: |
-          return gci * -Directory `
+          $resultsDirectory = Join-Path "${{ github.workspace }}" "test-results"
+          $tests = gci * -Directory `
             | % { gci $_ "*${{ matrix.rid }}" } `
             | % { gci $_ *.${{ matrix.ext }} } `
             | % { $_.FullName }
-            | % { if ($IsLinux) { chmod +x $_ } }
-            | % { & $_ --report-trx --results-directory "${{ github.workspace }}\test-results\" }
-            | % { $LastExitCode }
-            | measure -sum
-            | % { $_.Sum }
+          
+          $result = 0
+
+          foreach ($test in $tests) {
+            if ($IsLinux) {
+            Write-Output "is linux"  
+            #chmod +x $test
+            }
+
+            & $test --report-trx --results-directory "$resultsDirectory"
+            $result += $LastExitCode
+          }
+          
+          return $LastExitCode
       - name: Upload results
         uses: actions/upload-artifact@v4.3.0
         with:
