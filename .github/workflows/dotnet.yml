@@ -85,8 +85,7 @@ jobs:
 
           foreach ($test in $tests) {
             if ($IsLinux) {
-            Write-Output "is linux"  
-            #chmod +x $test
+              chmod +x $test
             }
 
             & $test --report-trx --results-directory "$resultsDirectory"
