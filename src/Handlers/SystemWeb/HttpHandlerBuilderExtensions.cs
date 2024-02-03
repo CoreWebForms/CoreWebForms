@@ -23,7 +23,7 @@ public static class HttpHandlerBuilderExtensions
     {
         if (endpoints.DataSources.OfType<HttpHandlerEndpointConventionBuilder>().FirstOrDefault() is not { } existing)
         {
-            var managers = endpoints.ServiceProvider.GetService<IEnumerable<IHttpHandlerManager>>();
+            var managers = endpoints.ServiceProvider.GetService<IEnumerable<IHttpHandlerCollection>>();
             existing = new HttpHandlerEndpointConventionBuilder(managers ?? []);
             endpoints.DataSources.Add(existing);
         }

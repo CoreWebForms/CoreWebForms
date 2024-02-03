@@ -21,7 +21,7 @@ public class PageForRoutingTest : HostedTestBase
             .AddSingleton<IStartupFilter>(new DelegateStartupFilter(app =>
             {
                 app.ApplicationServices.GetRequiredService<RouteCollection>()
-                    .MapPageRoute("ProductsByCategoryRoute", "Category/{categoryName}", "~/ProductList.aspx");
+                    .MapPageRoute("ProductsByCategoryRoute", "Category/{categoryName}", "~/");
             })));
 
         Assert.AreEqual("<span id=\"/Category/MyTest\"></span>", htmlResult);

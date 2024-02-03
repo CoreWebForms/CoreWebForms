@@ -5,7 +5,10 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Routing.Template;
 using Microsoft.AspNetCore.SystemWebAdapters;
+using Microsoft.AspNetCore.SystemWebAdapters.HttpHandlers;
 using Microsoft.Extensions.Options;
+
+using RouteCollection = System.Web.Routing.RouteCollection;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -13,19 +16,9 @@ public static class RoutingServiceExtensions
 {
     public static ISystemWebAdapterBuilder AddRouting(this ISystemWebAdapterBuilder builder)
     {
-        builder.Services.AddSingleton(ctx => new System.Web.Routing.RouteCollection(ctx.GetRequiredService<TemplateBinderFactory>(), ctx.GetRequiredService<IOptions<RouteOptions>>()));
-        builder.Services.AddTransient<IStartupFilter, RoutingStartupFilter>();
+        builder.Services.AddSingleton(ctx => new RouteCollection(ctx.GetRequiredService<TemplateBinderFactory>(), ctx.GetRequiredService<IOptions<RouteOptions>>()));
+        builder.Services.AddSingleton<IHttpHandlerCollection>(ctx => ctx.GetRequiredService<RouteCollection>());
 
         return builder;
-    }
-
-    private sealed class RoutingStartupFilter : IStartupFilter
-    {
-        public Action<IApplicationBuilder> Configure(Action<IApplicationBuilder> next)
-            => builder =>
-            {
-                builder.UseMiddleware<SystemWebRoutingMiddleware>();
-                next(builder);
-            };
     }
 }

@@ -20,7 +20,7 @@ using HttpContext = System.Web.HttpContext;
 
 namespace WebForms.Compiler.Dynamic;
 
-internal sealed class DynamicSystemWebCompilation : SystemWebCompilation<DynamicCompiledPage>, IHttpHandlerManager, IWebFormsCompiler
+internal sealed class DynamicSystemWebCompilation : SystemWebCompilation<DynamicCompiledPage>, IHttpHandlerCollection, IWebFormsCompiler
 {
     private readonly Dictionary<Assembly, MetadataReference> _references = new();
     private readonly IOptions<PageCompilationOptions> _options;
@@ -28,6 +28,8 @@ internal sealed class DynamicSystemWebCompilation : SystemWebCompilation<Dynamic
     private readonly ILogger _logger;
     private readonly ManualResetEventSlim _event = new(false);
     private readonly CancellationChangeTokenSource _changeTokenSource = new();
+
+    public IEnumerable<NamedHttpHandlerRoute> NamedRoutes => [];
 
     public DynamicSystemWebCompilation(ILoggerFactory factory, IOptions<PageCompilationOptions> options, IOptions<PagesSection> pagesSection, IOptions<CompilationSection> compilationSection)
         : base(options, pagesSection, compilationSection)
@@ -121,7 +123,7 @@ internal sealed class DynamicSystemWebCompilation : SystemWebCompilation<Dynamic
         return references;
     }
 
-    IEnumerable<IHttpHandlerMetadata> IHttpHandlerManager.GetHandlerMetadata()
+    IEnumerable<IHttpHandlerMetadata> IHttpHandlerCollection.GetHandlerMetadata()
     {
         foreach (var page in GetPages())
         {
@@ -136,7 +138,7 @@ internal sealed class DynamicSystemWebCompilation : SystemWebCompilation<Dynamic
         }
     }
 
-    IChangeToken IHttpHandlerManager.GetChangeToken() => _changeTokenSource.GetChangeToken();
+    IChangeToken IHttpHandlerCollection.GetChangeToken() => _changeTokenSource.GetChangeToken();
 
     async Task IWebFormsCompiler.CompilePagesAsync(CancellationToken token)
     {
