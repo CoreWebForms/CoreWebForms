@@ -12,6 +12,8 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.CodeAnalysis.VisualBasic;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace WebForms.Compiler.Dynamic;
@@ -19,20 +21,26 @@ namespace WebForms.Compiler.Dynamic;
 internal abstract class SystemWebCompilation<T> : IDisposable
     where T : ICompiledPage
 {
+    private readonly IHostEnvironment _env;
     private readonly ICompiler _csharp;
     private readonly ICompiler _vb;
+    private readonly ILogger<SystemWebCompilation<T>> _logger;
     private readonly IOptions<PageCompilationOptions> _pageCompilation;
 
     private Dictionary<string, Task<T>> _compiled = [];
 
     public SystemWebCompilation(
+        IHostEnvironment env,
+        ILoggerFactory logger,
         IOptions<PageCompilationOptions> pageCompilation,
         IOptions<PagesSection> pagesSection,
         IOptions<CompilationSection> compilationSection)
     {
+        _env = env;
         _csharp = new CSharpCompiler();
         _vb = new VisualBasicCompiler();
 
+        _logger = logger.CreateLogger<SystemWebCompilation<T>>();
         _pageCompilation = pageCompilation;
 
         // TODO: remove these statics and use DI
@@ -71,7 +79,7 @@ internal abstract class SystemWebCompilation<T> : IDisposable
         });
     }
 
-    public IFileProvider Files => _pageCompilation.Value.Files;
+    public IFileProvider Files => _env.ContentRootFileProvider;
 
     protected void RemovePage(string path) => _compiled.Remove(path);
 
@@ -79,10 +87,13 @@ internal abstract class SystemWebCompilation<T> : IDisposable
     {
         if (_compiled.TryGetValue(path, out var result))
         {
+            _logger.LogDebug("Retrieving previously compiled page '{Page}'", path);
             return result;
         }
         else
         {
+            _logger.LogDebug("Enqueueing page for compilation '{Page}'", path);
+
             var task = InternalCompilePageAsync(path, token);
 
             _compiled.Add(path, task);
@@ -129,7 +140,7 @@ internal abstract class SystemWebCompilation<T> : IDisposable
 
             foreach (var dep in generator.Parser.SourceDependencies)
             {
-                if (dep is string p && _pageCompilation.Value.Files.GetFileInfo(p) is { Exists: true, IsDirectory: false } file)
+                if (dep is string p && Files.GetFileInfo(p) is { Exists: true, IsDirectory: false } file)
                 {
                     using var stream = file.CreateReadStream();
 
@@ -157,6 +168,8 @@ internal abstract class SystemWebCompilation<T> : IDisposable
         {
             dependency.PageDependencies.Add(compiled);
         }
+
+        _logger.LogInformation("Compiled {Path}", path);
 
         return compiled;
     }

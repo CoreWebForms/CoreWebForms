@@ -1,10 +1,12 @@
 // MIT License.
 
+using System.Collections.Immutable;
 using System.Globalization;
 using System.Reflection;
 using System.Text.Json;
 using System.Web.UI;
 using Microsoft.CodeAnalysis;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -19,12 +21,13 @@ internal sealed class PersistentSystemWebCompilation : SystemWebCompilation<Pers
     private readonly ILogger _logger;
 
     public PersistentSystemWebCompilation(
+        IHostEnvironment env,
         IOptions<PersistentCompilationOptions> options,
         IOptions<PageCompilationOptions> pageOptions,
         IOptions<PagesSection> pagesSection,
         IOptions<CompilationSection> compilationSection,
         ILoggerFactory factory)
-        : base(pageOptions, pagesSection, compilationSection)
+        : base(env, factory, pageOptions, pagesSection, compilationSection)
     {
         _logger = factory.CreateLogger<PersistentSystemWebCompilation>();
         _options = options;
@@ -56,7 +59,7 @@ internal sealed class PersistentSystemWebCompilation : SystemWebCompilation<Pers
 
         if (!result.Success)
         {
-            _logger.LogWarning("{ErrorCount} error(s) found compiling {Route}", result.Diagnostics.Length, route);
+            _logger.LogError("{ErrorCount} error(s) found compiling {Route}", result.Diagnostics.Length, route);
 
             var errors = result.Diagnostics
                 .OrderByDescending(d => d.Severity)
@@ -109,11 +112,9 @@ internal sealed class PersistentSystemWebCompilation : SystemWebCompilation<Pers
     {
         Environment.CurrentDirectory = _options.Value.InputDirectory;
 
-        var files = _pageOptions.Value.Files!;
-
         try
         {
-            foreach (var file in files!.GetFiles())
+            foreach (var file in Files!.GetFiles())
             {
                 if (file.FullPath.EndsWith(".aspx", StringComparison.OrdinalIgnoreCase))
                 {
@@ -122,28 +123,18 @@ internal sealed class PersistentSystemWebCompilation : SystemWebCompilation<Pers
             }
 
             var pagesPath = Path.Combine(_options.Value.TargetDirectory, "webforms.pages.json");
-            var assemblyPath = Path.Combine(_options.Value.TargetDirectory, "webforms.assemblies.txt");
-            var details = GetDetails().ToList();
-
-            File.WriteAllText(pagesPath, JsonSerializer.Serialize(details));
-            File.WriteAllLines(assemblyPath, details.Select(d => d.Assembly));
+            File.WriteAllText(pagesPath, JsonSerializer.Serialize(GetDetails()));
         }
         catch (RoslynCompilationException r)
         {
-            var errorPath = Path.Combine(_options.Value.TargetDirectory, "webforms.error.txt");
-
-            File.WriteAllText(errorPath, JsonSerializer.Serialize(r.Error.Select(e => new
+            foreach (var error in r.Error)
             {
-                e.Id,
-                e.Location,
-                e.Severity,
-                e.Message,
-            })));
+                _logger.LogError("{Id} [{Severity}] {Message} ({Location})", error.Id, error.Severity, error.Message, error.Location);
+            }
         }
         catch (Exception e)
         {
-            var errorPath = Path.Combine(_options.Value.TargetDirectory, "webforms.error.txt");
-            File.WriteAllText(errorPath, e.Message);
+            _logger.LogError("Unexpected error: {Message} {Stacktrace}", e.Message, e.StackTrace);
         }
     }
 

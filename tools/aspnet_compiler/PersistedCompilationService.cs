@@ -4,6 +4,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using WebForms.Compiler.Dynamic;
 
+namespace WebForms.Compiler;
+
 internal sealed class PersistedCompilationService : BackgroundService
 {
     private readonly IHostApplicationLifetime _lifetime;
@@ -19,13 +21,16 @@ internal sealed class PersistedCompilationService : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
+        _logger.LogTrace("Starting persistent compilation");
+
         try
         {
             await _compiler.CompilePagesAsync(stoppingToken).ConfigureAwait(false);
+            _logger.LogInformation("Completed compilation");
         }
         catch (Exception ex)
         {
-            _logger.LogCritical(ex, "Exception while compiling occured");
+            _logger.LogCritical(ex, "Exception while compiling occurred");
         }
         finally
         {

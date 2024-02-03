@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SystemWebAdapters;
 using Microsoft.AspNetCore.SystemWebAdapters.HttpHandlers;
 using Microsoft.CodeAnalysis;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
@@ -31,8 +32,13 @@ internal sealed class DynamicSystemWebCompilation : SystemWebCompilation<Dynamic
 
     public IEnumerable<NamedHttpHandlerRoute> NamedRoutes => [];
 
-    public DynamicSystemWebCompilation(ILoggerFactory factory, IOptions<PageCompilationOptions> options, IOptions<PagesSection> pagesSection, IOptions<CompilationSection> compilationSection)
-        : base(options, pagesSection, compilationSection)
+    public DynamicSystemWebCompilation(
+        ILoggerFactory factory,
+        IHostEnvironment env,
+        IOptions<PageCompilationOptions> options,
+        IOptions<PagesSection> pagesSection,
+        IOptions<CompilationSection> compilationSection)
+        : base(env, factory, options, pagesSection, compilationSection)
     {
         _logger = factory.CreateLogger<DynamicSystemWebCompilation>();
         _options = options;

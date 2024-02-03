@@ -1,11 +1,14 @@
 // MIT License.
 
 using System.Text;
+using Microsoft.Extensions.FileProviders;
 
 namespace System.Web;
 
 internal sealed class VirtualPath
 {
+    public static IFileProvider Files { get; set; }
+
     public VirtualPath Parent
     {
         get
@@ -95,11 +98,11 @@ internal sealed class VirtualPath
         return value;
     }
 
-    internal Stream OpenFile() => File.OpenRead(System.IO.Path.Combine(HttpRuntime.AppDomainAppPath, Path));
+    internal Stream OpenFile() => Files.GetFileInfo(Path).CreateReadStream();
 
     internal static VirtualPath Create(string filename) => filename;
 
-    internal bool FileExists() => File.Exists(IO.Path.Combine(HttpRuntime.AppDomainAppPath, Path));
+    internal bool FileExists() => Files.GetFileInfo(Path).Exists;
 
     internal string MapPath()
     {
