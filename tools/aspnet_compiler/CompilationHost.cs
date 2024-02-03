@@ -1,5 +1,6 @@
 // MIT License.
 
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Http.Features;
@@ -47,7 +48,7 @@ internal sealed class CompilationHost
                     .ValidateDataAnnotations();
 
                 services
-                    .AddSystemWebAdapters()
+                    .AddWebForms()
                     .AddPersistentWebFormsCompilation(options =>
                     {
                         options.Files = new PhysicalFileProvider(path.FullName);

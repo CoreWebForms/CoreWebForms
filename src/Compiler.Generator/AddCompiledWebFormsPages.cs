@@ -49,7 +49,7 @@ public class AddCompiledWebFormsPagesGenerator : IIncrementalGenerator
             .Collect();
 
         var pagesWithDiagnostics = context.SyntaxProvider.CreateSyntaxProvider(
-            predicate: static (node, _) => node.TryGetMapMethodName(out var method) && method == "AddCompiledWebFormsPages",
+            predicate: static (node, _) => node.TryGetMapMethodName(out var method) && method == "AddCompiledPages",
             transform: static (context, token) =>
             {
                 var operation = context.SemanticModel.GetOperation(context.Node, token);
@@ -111,7 +111,7 @@ public class AddCompiledWebFormsPagesGenerator : IIncrementalGenerator
                 indented.Write(location.Character);
                 indented.WriteLine(")]");
 
-                indented.WriteLine("internal static ISystemWebAdapterBuilder AddCompiledWebFormsPages(this ISystemWebAdapterBuilder builder)");
+                indented.WriteLine("internal static IWebFormsBuilder AddCompiledPages(this IWebFormsBuilder builder)");
                 indented.WriteLine("{");
                 indented.Indent++;
                 indented.WriteLine("builder.Services.AddSingleton<IHttpHandlerCollection, InterceptedWebFormsPagesManager>();");

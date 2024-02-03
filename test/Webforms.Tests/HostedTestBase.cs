@@ -1,7 +1,5 @@
 // MIT License.
 
-
-using System.Web;
 using System.Web.UI;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -35,9 +33,7 @@ public abstract class HostedTestBase
                 {
                     services.AddDistributedMemoryCache();
                     services.AddRouting();
-                    services.AddSystemWebAdapters()
-                        .AddWrappedAspNetCoreSession()
-                        .AddWebForms();
+                    services.AddWebForms();
 
                     servicesConfigure?.Invoke(services);
 

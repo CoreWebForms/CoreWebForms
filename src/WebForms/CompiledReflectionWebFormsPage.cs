@@ -4,7 +4,6 @@ using System.Reflection;
 using System.Runtime.Loader;
 using System.Text.Json;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.SystemWebAdapters;
 using Microsoft.AspNetCore.SystemWebAdapters.HttpHandlers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
@@ -15,7 +14,7 @@ namespace Microsoft.AspNetCore.Builder;
 
 public static class CompiledWebFormsPageExtensions
 {
-    public static ISystemWebAdapterBuilder AddCompiledWebFormsPages(this ISystemWebAdapterBuilder builder)
+    public static IWebFormsBuilder AddCompiledPages(this IWebFormsBuilder builder)
     {
         builder.Services.AddSingleton<IHttpHandlerCollection, CompiledReflectionWebFormsPage>();
         return builder;
