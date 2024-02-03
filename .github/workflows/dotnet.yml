@@ -79,6 +79,7 @@ jobs:
             | % { gci $_ "*${{ matrix.rid }}" } `
             | % { gci $_ *.${{ matrix.ext }} } `
             | % { $_.FullName }
+            | % { if ($IsLinux) { chmod +x $_ } }
             | % { & $_ --report-trx --results-directory "${{ github.workspace }}\test-results\" }
             | % { $LastExitCode }
             | measure -sum
