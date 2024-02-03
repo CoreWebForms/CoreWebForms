@@ -6,13 +6,14 @@ using System.Web.UI.WebControls;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
-using Xunit;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace WebForms.Tests;
 
+[TestClass]
 public class PageForRoutingTest : HostedTestBase
 {
-    [Fact]
+    [TestMethod]
     public async Task MapPageRouteTest()
     {
         //Arrange/Act
@@ -23,10 +24,10 @@ public class PageForRoutingTest : HostedTestBase
                     .MapPageRoute("ProductsByCategoryRoute", "Category/{categoryName}", "~/ProductList.aspx");
             })));
 
-        Assert.Equal("<span id=\"/Category/MyTest\"></span>", htmlResult);
+        Assert.AreEqual("<span id=\"/Category/MyTest\"></span>", htmlResult);
     }
 
-    [Fact]
+    [TestMethod]
     public async Task VerifyMappedRoute()
     {
         //Arrange/Act
@@ -37,7 +38,7 @@ public class PageForRoutingTest : HostedTestBase
                     .MapPageRoute("ProductsByCategoryRoute", "Category/{categoryName}", "~/");
             })), "/category/mycategoryname");
 
-        Assert.Equal("<span id=\"mycategoryname\"></span>", htmlResult);
+        Assert.AreEqual("<span id=\"mycategoryname\"></span>", htmlResult);
     }
 
     private sealed class DelegateStartupFilter(Action<IApplicationBuilder> action) : IStartupFilter

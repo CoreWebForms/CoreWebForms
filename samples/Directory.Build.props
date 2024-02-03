@@ -5,9 +5,13 @@
   <PropertyGroup>
     <_AspNetArtifactKind>publish</_AspNetArtifactKind>
     <_AspNetArtifactKind Condition="'$(BuildingInsideVisualStudio)' == 'true'">bin</_AspNetArtifactKind>
-    <_AspNetCompilerRoot>$(MSBuildThisFileDirectory)../artifacts/$(_AspNetArtifactKind)/aspnet_compiler/$(Configuration.ToLowerInvariant())_net6.0/</_AspNetCompilerRoot>
+    <_AspNetCompilerRoot>$(MSBuildThisFileDirectory)../artifacts/tools/$(_AspNetArtifactKind)/aspnet_compiler/$(Configuration.ToLowerInvariant())_net6.0/</_AspNetCompilerRoot>
     <_AspNetCompilerRoot>$([MSBuild]::NormalizePath($(_AspNetCompilerRoot)))</_AspNetCompilerRoot>
   </PropertyGroup>
 
   <Import Project="..\src\Compiler\Build\WebForms.Compiler.props" />
+
+  <PropertyGroup>
+    <ArtifactsPath>$(ArtifactsPath)/samples</ArtifactsPath>
+  </PropertyGroup>
 </Project>

@@ -2,7 +2,6 @@
   <Import Project="..\Directory.Build.props" />
 
   <PropertyGroup>
-    <NoWarn>$(NoWarn);CA2007</NoWarn>
-    <ArtifactsPath>$(ArtifactsPath)/tests</ArtifactsPath>
+    <ArtifactsPath>$(ArtifactsPath)/tools</ArtifactsPath>
   </PropertyGroup>
 </Project>
