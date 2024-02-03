@@ -27,10 +27,10 @@ internal sealed class HttpHandlerEndpointConventionBuilder : EndpointDataSource,
     private static readonly ImmutableList<object> _metadataSession = _metadata.Add(new SessionAttribute { SessionBehavior = SessionStateBehavior.Required });
 
     private readonly AdditionalManager _additional;
-    private readonly IHttpHandlerManager[] _managers;
+    private readonly IHttpHandlerCollection[] _managers;
     private List<Action<EndpointBuilder>> _conventions = [];
 
-    internal HttpHandlerEndpointConventionBuilder(IEnumerable<IHttpHandlerManager> managers)
+    internal HttpHandlerEndpointConventionBuilder(IEnumerable<IHttpHandlerCollection> managers)
     {
         _additional = new AdditionalManager();
         _managers = [.. managers, _additional];
@@ -44,19 +44,17 @@ internal sealed class HttpHandlerEndpointConventionBuilder : EndpointDataSource,
         {
             var endpoints = new List<Endpoint>();
 
-            foreach (var manager in _managers)
+            foreach (var metadata in CollectMetadata())
             {
-                foreach (var metadata in manager.GetHandlerMetadata())
+                var pattern = RoutePatternFactory.Parse(metadata.Route);
+                var builder = new RouteEndpointBuilder(DefaultHandler, pattern, 0);
+
+                AddHttpHandlerMetadata(builder, metadata);
+
+                foreach (var convention in _conventions)
                 {
-                    var pattern = RoutePatternFactory.Parse(metadata.Route);
-                    var builder = new RouteEndpointBuilder(DefaultHandler, pattern, 0);
-
-                    AddHttpHandlerMetadata(builder, metadata);
-
-                    foreach (var convention in _conventions)
-                    {
-                        convention(builder);
-                    }
+                    convention(builder);
+                }
 
 #if NET7_0_OR_GREATER
                     if (builder.FilterFactories.Count > 0)
@@ -64,12 +62,44 @@ internal sealed class HttpHandlerEndpointConventionBuilder : EndpointDataSource,
                         throw new NotSupportedException("Filter factories are not supported for handlers");
                     }
 #endif
-                    endpoints.Add(builder.Build());
-                }
+
+                endpoints.Add(builder.Build());
             }
 
             return endpoints;
         }
+    }
+
+    private IEnumerable<IHttpHandlerMetadata> CollectMetadata()
+    {
+        var metadataCollection = new Dictionary<string, IHttpHandlerMetadata>();
+        var mappedRoutes = new List<NamedHttpHandlerRoute>();
+
+        foreach (var manager in _managers)
+        {
+            mappedRoutes.AddRange(manager.NamedRoutes);
+
+            foreach (var metadata in manager.GetHandlerMetadata())
+            {
+                metadataCollection.Add(metadata.Route, metadata);
+            }
+        }
+
+        foreach (var mappedRoute in mappedRoutes)
+        {
+            metadataCollection.Add(mappedRoute.Route, new MappedHandlerMetadata(mappedRoute.Route, metadataCollection[mappedRoute.Path]));
+        }
+
+        return metadataCollection.Values;
+    }
+
+    private sealed class MappedHandlerMetadata(string route, IHttpHandlerMetadata metadata) : IHttpHandlerMetadata
+    {
+        public SessionStateBehavior Behavior => metadata.Behavior;
+
+        public string Route => route;
+
+        public ValueTask<IHttpHandler> Create(HttpContextCore context) => metadata.Create(context);
     }
 
     internal static void AddHttpHandlerMetadata(EndpointBuilder builder, IHttpHandlerMetadata metadata)
@@ -105,9 +135,11 @@ internal sealed class HttpHandlerEndpointConventionBuilder : EndpointDataSource,
         return context.Response.WriteAsync("Invalid handler");
     }
 
-    private sealed class AdditionalManager : IHttpHandlerManager
+    private sealed class AdditionalManager : IHttpHandlerCollection
     {
         private readonly List<IHttpHandlerMetadata> _endpoints = new();
+
+        public IEnumerable<NamedHttpHandlerRoute> NamedRoutes => [];
 
         public void Add(string path, Type type) => _endpoints.Add(HandlerMetadata.Create(path, type));
 

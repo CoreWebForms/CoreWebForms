@@ -17,13 +17,15 @@ public static class CompiledWebFormsPageExtensions
 {
     public static ISystemWebAdapterBuilder AddCompiledWebFormsPages(this ISystemWebAdapterBuilder builder)
     {
-        builder.Services.AddSingleton<IHttpHandlerManager, CompiledReflectionWebFormsPage>();
+        builder.Services.AddSingleton<IHttpHandlerCollection, CompiledReflectionWebFormsPage>();
         return builder;
     }
 
-    private sealed class CompiledReflectionWebFormsPage(IWebHostEnvironment env) : IHttpHandlerManager, IDisposable
+    private sealed class CompiledReflectionWebFormsPage(IWebHostEnvironment env) : IHttpHandlerCollection, IDisposable
     {
-        public IChangeToken GetChangeToken() => NullChangeToken.Singleton;
+        IEnumerable<NamedHttpHandlerRoute> IHttpHandlerCollection.NamedRoutes => [];
+
+        IChangeToken IHttpHandlerCollection.GetChangeToken() => NullChangeToken.Singleton;
 
         public IEnumerable<IHttpHandlerMetadata> GetHandlerMetadata()
         {

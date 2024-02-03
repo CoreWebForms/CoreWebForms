@@ -2,20 +2,40 @@
 
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Routing.Patterns;
 using Microsoft.AspNetCore.Routing.Template;
+using Microsoft.AspNetCore.SystemWebAdapters.HttpHandlers;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Primitives;
 
 namespace System.Web.Routing;
 
-public sealed class RouteCollection : IDisposable
+public sealed class RouteCollection : IDisposable, IHttpHandlerCollection
 {
-    private readonly Dictionary<PathString, MappedRoute> _mapped = [];
+    private readonly Dictionary<string, (RoutePattern Pattern, NamedHttpHandlerRoute Mapped)> _mapped = [];
     private readonly IOptions<RouteOptions> _options;
     private readonly TemplateBinderFactory _templateBinder;
     private readonly ReaderWriterLockSlim _rwLock = new();
+    private readonly CancellationChangeTokenSource _cts = new();
+
+    IEnumerable<NamedHttpHandlerRoute> IHttpHandlerCollection.NamedRoutes
+    {
+        get
+        {
+            _rwLock.EnterReadLock();
+
+            try
+            {
+                return _mapped.Values.Select(m => m.Mapped).ToList();
+            }
+            finally
+            {
+                _rwLock.ExitReadLock();
+            }
+        }
+    }
+
 
     internal RouteCollection(TemplateBinderFactory template, IOptions<RouteOptions> options)
     {
@@ -27,45 +47,18 @@ public sealed class RouteCollection : IDisposable
     {
         _rwLock.EnterWriteLock();
 
+        if (path.StartsWith("~"))
+        {
+            path = path[1..];
+        }
+
         try
         {
-            var normalized = path.Trim('~');
-            var pattern = RoutePatternFactory.Parse(routeUrl);
-            var route = new MappedRoute(routeName, pattern, new TemplateMatcher(new RouteTemplate(pattern), []));
-
-            _mapped[normalized] = route;
+            _mapped.Add(routeName, (RoutePatternFactory.Parse(routeUrl), new(routeName, routeUrl, path)));
         }
         finally
         {
             _rwLock.ExitWriteLock();
-        }
-    }
-
-    internal bool TryGetMapped(PathString path, out PathString newPath, [MaybeNullWhen(false)] out Microsoft.AspNetCore.Routing.RouteValueDictionary result)
-    {
-        result = [];
-
-        _rwLock.EnterReadLock();
-
-        try
-        {
-            foreach (var (key, m) in _mapped)
-            {
-                if (m.Matcher.TryMatch(path, result))
-                {
-                    newPath = key;
-                    return true;
-                }
-
-                result.Clear();
-            }
-
-            newPath = default;
-            return false;
-        }
-        finally
-        {
-            _rwLock.ExitReadLock();
         }
     }
 
@@ -112,17 +105,15 @@ public sealed class RouteCollection : IDisposable
 
         try
         {
-            routePattern = null;
+            var success = _mapped.TryGetValue(routeName, out var result);
 
-            foreach (var mapRoute in _mapped.Values)
+            if (success)
             {
-                if (string.Equals(mapRoute.Name, routeName, StringComparison.OrdinalIgnoreCase))
-                {
-                    routePattern = mapRoute.Pattern;
-                    return true;
-                }
+                routePattern = result.Pattern;
+                return success;
             }
 
+            routePattern = default;
             return false;
         }
         finally
@@ -180,7 +171,10 @@ public sealed class RouteCollection : IDisposable
     public void Dispose()
     {
         _rwLock.Dispose();
+        _cts.Dispose();
     }
 
-    private sealed record MappedRoute(string Name, RoutePattern Pattern, TemplateMatcher Matcher);
+    IChangeToken IHttpHandlerCollection.GetChangeToken() => _cts.GetChangeToken();
+
+    IEnumerable<IHttpHandlerMetadata> IHttpHandlerCollection.GetHandlerMetadata() => [];
 }

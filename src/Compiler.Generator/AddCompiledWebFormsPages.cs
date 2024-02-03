@@ -114,7 +114,7 @@ public class AddCompiledWebFormsPagesGenerator : IIncrementalGenerator
                 indented.WriteLine("internal static ISystemWebAdapterBuilder AddCompiledWebFormsPages(this ISystemWebAdapterBuilder builder)");
                 indented.WriteLine("{");
                 indented.Indent++;
-                indented.WriteLine("builder.Services.AddSingleton<IHttpHandlerManager, InterceptedWebFormsPagesManager>();");
+                indented.WriteLine("builder.Services.AddSingleton<IHttpHandlerCollection, InterceptedWebFormsPagesManager>();");
                 indented.WriteLine("return builder;");
                 indented.Indent--;
                 indented.WriteLine("}");
@@ -123,7 +123,7 @@ public class AddCompiledWebFormsPagesGenerator : IIncrementalGenerator
                 indented.WriteLine("}");
                 indented.WriteLine();
 
-                indented.WriteLine("file sealed class InterceptedWebFormsPagesManager : IHttpHandlerManager");
+                indented.WriteLine("file sealed class InterceptedWebFormsPagesManager : IHttpHandlerCollection");
                 indented.WriteLine("{");
                 indented.Indent++;
 
@@ -144,6 +144,9 @@ public class AddCompiledWebFormsPagesGenerator : IIncrementalGenerator
                 indented.WriteLine();
 
                 indented.WriteLine("public IChangeToken GetChangeToken() => NullChangeToken.Singleton;");
+                indented.WriteLine();
+
+                indented.WriteLine("public IEnumerable<NamedHttpHandlerRoute> NamedRoutes => [];");
 
                 indented.Indent--;
                 indented.WriteLine("}");
