@@ -28,14 +28,12 @@ internal sealed class HttpHandlerEndpointConventionBuilder : EndpointDataSource,
 
     private readonly AdditionalManager _additional;
     private readonly IHttpHandlerManager[] _managers;
-    private readonly CompositeChangeToken _changeToken;
     private List<Action<EndpointBuilder>> _conventions = [];
 
     internal HttpHandlerEndpointConventionBuilder(IEnumerable<IHttpHandlerManager> managers)
     {
         _additional = new AdditionalManager();
         _managers = [.. managers, _additional];
-        _changeToken = new CompositeChangeToken(_managers.Select(m => m.GetChangeToken()).ToArray());
     }
 
     public void Add(string path, Type type) => _additional.Add(path, type);
@@ -94,7 +92,7 @@ internal sealed class HttpHandlerEndpointConventionBuilder : EndpointDataSource,
     public void Add(Action<EndpointBuilder> convention)
         => (_conventions ??= []).Add(convention);
 
-    public override IChangeToken GetChangeToken() => _changeToken;
+    public override IChangeToken GetChangeToken() => new CompositeChangeToken(_managers.Select(m => m.GetChangeToken()).ToArray());
 
     private static Task DefaultHandler(HttpContextCore context)
     {
