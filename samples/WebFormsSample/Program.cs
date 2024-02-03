@@ -18,6 +18,8 @@ builder.Services.AddSystemWebAdapters()
     .AddWebForms()
 #if WEBFORMS_DYNAMIC
     .AddDynamicWebForms()
+#else
+    .AddCompiledWebFormsPages()
 #endif
     .AddWebFormsExtensions();
 
@@ -45,7 +47,6 @@ app.MapGet("/acls", () => AssemblyLoadContext.All.Select(acl => new
 }));
 
 app.MapWebForms();
-app.MapHttpHandlers();
-app.MapWebFormsPages();
 
 app.Run();
+
