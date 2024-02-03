@@ -3,50 +3,52 @@
 using System.Web.UI;
 using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
-using Xunit;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace WebForms.Tests;
 
+[TestClass]
 public class PageTests : HostedTestBase
 {
-    [Fact]
+    [TestMethod]
     public async Task EmptyPage()
     {
         // Arrange/Act
         var result = await RunPage<Page1>();
 
         // Assert
-        Assert.Empty(result);
+        Assert.AreEqual(string.Empty, result);
     }
 
-    [Fact]
+    [TestMethod]
     public async Task CustomRender()
     {
         // Arrange/Act
         var result = await RunPage<Page2>();
 
         // Assert
-        Assert.Equal("hello", result);
+        Assert.AreEqual("hello", result);
     }
 
-    [Fact]
+    [TestMethod]
     public async Task PageLoadAddControl()
     {
         // Arrange/Act
         var result = await RunPage<Page3>();
 
         // Assert
-        Assert.Equal("hello", result);
+        Assert.AreEqual("hello", result);
     }
 
-    [Fact(Skip = "Not working")]
+    [TestMethod]
+    [Ignore("Currently not working")]
     public async Task PageWithForm()
     {
         // Arrange/Act
         var result = await RunPage<Page4>();
 
         // Assert
-        Assert.Equal("<form method=\"post\" action=\"/path\"><div class=\"aspNetHidden\"</div></form>", result);
+        Assert.AreEqual("<form method=\"post\" action=\"/path\"><div class=\"aspNetHidden\"</div></form>", result);
     }
 
     private sealed class PageWithRoutingAPI : Page

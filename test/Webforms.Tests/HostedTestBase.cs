@@ -1,18 +1,16 @@
 // MIT License.
 
+
 using System.Web;
 using System.Web.UI;
-using Compiler.Dynamic.Tests;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Xunit;
 
 namespace WebForms.Tests;
 
-[Collection(nameof(SelfHostedTests))]
 public abstract class HostedTestBase
 {
     protected async Task<string> RunPage<TPage>(Action<IServiceCollection>? servicesConfigure = null, string? path=null)

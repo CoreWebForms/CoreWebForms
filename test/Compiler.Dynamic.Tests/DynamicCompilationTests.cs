@@ -8,27 +8,27 @@ using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
-using Xunit;
-using Xunit.Abstractions;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Compiler.Dynamic.Tests;
 
-[Collection(nameof(SelfHostedTests))]
+[TestClass]
 public class DynamicCompilationTests
 {
-    private readonly ITestOutputHelper _output;
+    private static TestContext _context = null!;
 
-    public DynamicCompilationTests(ITestOutputHelper output)
+    [ClassInitialize]
+    public static void Initialize(TestContext context)
     {
-        _output = output;
+        _context = context;
     }
 
-    [InlineData("test01", "basic_page.aspx")]
-    [InlineData("test02", "code_behind.aspx")]
-    [InlineData("test03", "page_with_master.aspx")]
-    [InlineData("test04", "page_with_master.aspx", "other_page_with_master.aspx", "page_with_master.aspx")]
-    [InlineData("test05", "error_page.aspx")]
-    [Theory]
+    [DataTestMethod]
+    [DataRow("test01", "basic_page.aspx")]
+    [DataRow("test02", "code_behind.aspx")]
+    [DataRow("test03", "page_with_master.aspx")]
+    [DataRow("test04", "page_with_master.aspx", "other_page_with_master.aspx", "page_with_master.aspx")]
+    [DataRow("test05", "error_page.aspx")]
     public async Task CompiledPageRuns(string test, params string[] pages)
     {
         // Arrange
@@ -101,9 +101,9 @@ public class DynamicCompilationTests
 
             var tempPath = Path.Combine(Path.GetTempPath(), $"{page}._{i}.html");
             File.WriteAllText(tempPath, result);
-            _output.WriteLine($"Wrote result to {tempPath}");
+            _context.WriteLine($"Wrote result to {tempPath}");
 
-            Assert.Equal(expectedHtml, result);
+            Assert.AreEqual(expectedHtml, result);
         }
     }
 }
