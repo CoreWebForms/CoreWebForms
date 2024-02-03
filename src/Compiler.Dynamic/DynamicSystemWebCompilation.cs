@@ -6,7 +6,6 @@ using System.Runtime.Loader;
 using System.Web;
 using System.Web.Routing;
 using System.Web.UI;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SystemWebAdapters;
 using Microsoft.AspNetCore.SystemWebAdapters.HttpHandlers;
@@ -122,17 +121,17 @@ internal sealed class DynamicSystemWebCompilation : SystemWebCompilation<Dynamic
         return references;
     }
 
-    IEnumerable<EndpointBuilder> IHttpHandlerManager.GetBuilders()
+    IEnumerable<IHttpHandlerMetadata> IHttpHandlerManager.GetHandlerMetadata()
     {
         foreach (var page in GetPages())
         {
             if (page.Type is { } type)
             {
-                yield return HandlerEndpointBuilder.Create(page.Path, type);
+                yield return HandlerMetadata.Create(page.Path, type);
             }
             else if (page.Exception is { } ex)
             {
-                yield return HandlerEndpointBuilder.Create(page.Path, new ErrorHandler(ex));
+                yield return HandlerMetadata.Create(page.Path, new ErrorHandler(ex));
             }
         }
     }

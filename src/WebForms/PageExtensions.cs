@@ -1,18 +1,13 @@
 // MIT License.
 
-using System.Reflection;
-using System.Runtime.Loader;
-using System.Text.Json;
 using System.Web;
 using System.Web.UI;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.AspNetCore.SystemWebAdapters;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Primitives;
 using Microsoft.Net.Http.Headers;
 
@@ -30,6 +25,9 @@ public static class PageExtensions
 
     public static IEndpointConventionBuilder MapWebForms(this IEndpointRouteBuilder endpoints)
     {
+        // This ensures they're mapped which always returns the same convention builder
+        endpoints.MapHttpHandlers();
+
         if (endpoints.DataSources.OfType<WebFormsConventionBuilder>().FirstOrDefault() is { } existing)
         {
             return existing;
@@ -92,7 +90,7 @@ public static class PageExtensions
     }
 
     // This is an empty endpoint so that we can track it in the IEndpointRouteBuilder
-    private sealed class WebFormsConventionBuilder : EndpointDataSource, IWebFormsEndpointConventionBuilder
+    private sealed class WebFormsConventionBuilder : EndpointDataSource, IEndpointConventionBuilder
     {
         private readonly List<IEndpointConventionBuilder> _builders = new();
 
@@ -113,83 +111,4 @@ public static class PageExtensions
             }
         }
     }
-
-    public static IEndpointConventionBuilder MapWebFormsPages(this IEndpointRouteBuilder endpoints)
-    {
-        var env = endpoints.ServiceProvider.GetRequiredService<IWebHostEnvironment>();
-
-        IEndpointConventionBuilder builder = default;
-
-        if (GetWebFormsFile(env) is { Exists: true } file)
-        {
-            var results = JsonSerializer.Deserialize<WebFormsDetails[]>(file.CreateReadStream());
-            var context = GetLoadContext();
-
-            if (results is not null)
-            {
-                foreach (var type in results)
-                {
-                    if (context.LoadFromAssemblyName(new AssemblyName($"{type.Assembly}")).GetType(type.Type) is { } pageType)
-                    {
-                        builder = endpoints.MapHttpHandler(type.Path, pageType);
-                    }
-                }
-            }
-        }
-
-        return builder ?? new EmptyConventionBuilder();
-    }
-
-    private class EmptyConventionBuilder : IEndpointConventionBuilder
-    {
-        public void Add(Action<EndpointBuilder> convention)
-        {
-        }
-    }
-
-    private static AssemblyLoadContext GetLoadContext()
-        => AssemblyLoadContext.All.OfType<WebFormsAssemblyLoadContext>().FirstOrDefault() ?? new WebFormsAssemblyLoadContext();
-
-    private sealed class WebFormsAssemblyLoadContext : AssemblyLoadContext
-    {
-        public WebFormsAssemblyLoadContext()
-            : base("WebForms Load Context")
-        {
-        }
-
-        protected override Assembly Load(AssemblyName assemblyName)
-        {
-            if (assemblyName.Name is { } name && name.StartsWith("WebForms.ASP.", StringComparison.OrdinalIgnoreCase))
-            {
-                var path = Path.Combine(AppContext.BaseDirectory, $"{name}.dll");
-
-                if (File.Exists(path))
-                {
-                    return LoadFromAssemblyPath(path);
-                }
-            }
-
-            return null;
-        }
-    }
-
-    private static IFileInfo GetWebFormsFile(IWebHostEnvironment env)
-    {
-        const string DetailsPath = "webforms.pages.json";
-
-        if (env.ContentRootFileProvider.GetFileInfo(DetailsPath) is { Exists: true } file)
-        {
-            return file;
-        }
-
-        if (env.IsDevelopment() && new PhysicalFileProvider(AppContext.BaseDirectory).GetFileInfo(DetailsPath) is { } debug)
-        {
-            return debug;
-        }
-
-        return null;
-    }
-
-    private sealed record WebFormsDetails(string Path, string Type, string Assembly);
-
 }
