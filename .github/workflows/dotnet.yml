@@ -75,11 +75,14 @@ jobs:
         shell: pwsh
         working-directory: '${{ github.workspace }}/tests'
         run: |
-          gci * -Directory `
-          | % { gci $_ "*${{ matrix.rid }}" } `
-          | % { gci $_ *.${{ matrix.ext }} } `
-          | % { $_.FullName }
-          | % { & $_ --report-trx --results-directory "${{ github.workspace }}\test-results\" }
+          return gci * -Directory `
+            | % { gci $_ "*${{ matrix.rid }}" } `
+            | % { gci $_ *.${{ matrix.ext }} } `
+            | % { $_.FullName }
+            | % { & $_ --report-trx --results-directory "${{ github.workspace }}\test-results\" }
+            | % { $LastExitCode }
+            | measure -sum
+            | % { $_.Sum }
       - name: Upload results
         uses: actions/upload-artifact@v4.3.0
         with:
