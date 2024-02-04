@@ -1,11 +1,11 @@
 // MIT License.
 
+using System.Drawing;
 using System.Reflection;
 using System.Web;
 using System.Web.Compilation;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using Microsoft.Extensions.FileProviders;
 
 namespace WebForms.Compiler.Dynamic;
 
@@ -27,6 +27,7 @@ public class PageCompilationOptions
         AddAssembly(typeof(IHttpHandler).Assembly);
         AddAssembly(typeof(HttpContext).Assembly);
         AddAssembly(typeof(HtmlTextWriter).Assembly);
+        AddAssembly(typeof(Bitmap).Assembly);
     }
 
     internal Dictionary<string, Func<string, BaseCodeDomTreeGenerator>> Parsers { get; } = new(StringComparer.OrdinalIgnoreCase);
