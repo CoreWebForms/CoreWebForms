@@ -1,7 +1,6 @@
 // MIT License.
 
 using System.Web.UI;
-using Microsoft.AspNetCore.SystemWebAdapters;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;

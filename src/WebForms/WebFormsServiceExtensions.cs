@@ -3,6 +3,7 @@
 using System.Web.Compilation;
 using Microsoft.AspNetCore.SystemWebAdapters;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using WebForms;
 
 namespace Microsoft.AspNetCore.Builder;
@@ -28,12 +29,13 @@ public static class WebFormsServiceExtensions
         .AddExpressionBuilder<RouteUrlExpressionBuilder>("RouteUrl");
 
     private static IWebFormsBuilder AddExpressionBuilder<T>(this IWebFormsBuilder builder, string name)
-        where T : ExpressionBuilder
+        where T : ExpressionBuilder, new()
     {
+        builder.Services.TryAddSingleton<ExpressionBuilderCollection>();
         var factory = ActivatorUtilities.CreateFactory(typeof(T), []);
 
-        builder.Services.AddOptions<ExpressionBuilderOption>(name)
-            .Configure<IServiceProvider>((options, provider) => options.Factory = () => (ExpressionBuilder)factory(provider, null));
+        builder.Services.AddOptions<ExpressionBuilderCollection.ExpressionOption>(name)
+            .Configure<IServiceProvider>((options, sp) => options.Add(name, () => (ExpressionBuilder)factory(sp, null)));
 
         return builder;
     }

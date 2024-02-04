@@ -120,7 +120,8 @@ internal sealed class VirtualPath
 
 public class VirtualPathProvider
 {
-    VirtualPath _virtualPath;
+    readonly VirtualPath _virtualPath;
+
     public VirtualPathProvider(string path)
     {
         _virtualPath = new VirtualPath(path);
