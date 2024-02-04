@@ -38,6 +38,6 @@ jobs:
         SLEET_FEED_CONTAINER: feed
         SLEET_FEED_CONNECTIONSTRING: ${{secrets.SLEET_CONNECTIONSTRING}}
       run: |
-        cd $GITHUB_WORKSPACE/artifacts/packages/release/
+        cd $GITHUB_WORKSPACE/artifacts/webforms/package/release
         dotnet tool install -g sleet
         sleet push . --skip-existing
