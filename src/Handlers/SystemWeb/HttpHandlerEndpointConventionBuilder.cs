@@ -78,7 +78,11 @@ internal sealed class HttpHandlerEndpointConventionBuilder : EndpointDataSource,
 
         foreach (var mappedRoute in mappedRoutes)
         {
-            metadataCollection.Add(mappedRoute.Route, new MappedHandlerMetadata(mappedRoute.Route, metadataCollection[mappedRoute.Path]));
+            // TODO should we log if we can't find it? It may be a race condition where the compilation hasn't found it yet, so it could be an unnecessary warning
+            if (metadataCollection.TryGetValue(mappedRoute.Path, out var fromCollection))
+            {
+                metadataCollection.Add(mappedRoute.Route, new MappedHandlerMetadata(mappedRoute.Route, fromCollection));
+            }
         }
 
         return metadataCollection.Values;
