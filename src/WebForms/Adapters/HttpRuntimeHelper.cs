@@ -27,7 +27,7 @@ internal static class HttpRuntimeHelper
         return () =>
         {
             var current = currentProperty.GetValue(null);
-            return (IServiceProvider)spProperty.GetValue(current);
+            return (IServiceProvider)spProperty.GetValue(current)!;
         };
     }, isThreadSafe: true);
 
