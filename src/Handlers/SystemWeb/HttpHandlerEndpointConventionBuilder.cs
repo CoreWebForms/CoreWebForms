@@ -1,6 +1,5 @@
 // MIT License.
 
-using System.Collections.Immutable;
 using System.Web.SessionState;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -16,24 +15,16 @@ namespace System.Web;
 
 internal sealed class HttpHandlerEndpointConventionBuilder : EndpointDataSource, IEndpointConventionBuilder
 {
-    private static readonly ImmutableList<object> _metadata = new object[]
-    {
-        new BufferResponseStreamAttribute(),
-        new PreBufferRequestStreamAttribute(),
-        new SetThreadCurrentPrincipalAttribute(),
-    }.ToImmutableList();
-
-    private static readonly ImmutableList<object> _metadataReadonlySession = _metadata.Add(new SessionAttribute { SessionBehavior = SessionStateBehavior.ReadOnly });
-    private static readonly ImmutableList<object> _metadataSession = _metadata.Add(new SessionAttribute { SessionBehavior = SessionStateBehavior.Required });
-
     private readonly AdditionalManager _additional;
     private readonly IHttpHandlerCollection[] _managers;
+    private readonly HandlerMetadataProvider _metadataProvider;
     private List<Action<EndpointBuilder>> _conventions = [];
 
-    internal HttpHandlerEndpointConventionBuilder(IEnumerable<IHttpHandlerCollection> managers)
+    public HttpHandlerEndpointConventionBuilder(IEnumerable<IHttpHandlerCollection> managers, HandlerMetadataProvider metadataProvider)
     {
         _additional = new AdditionalManager();
         _managers = [.. managers, _additional];
+        _metadataProvider = metadataProvider;
     }
 
     public void Add(string path, Type type) => _additional.Add(path, type);
@@ -49,7 +40,7 @@ internal sealed class HttpHandlerEndpointConventionBuilder : EndpointDataSource,
                 var pattern = RoutePatternFactory.Parse(metadata.Route);
                 var builder = new RouteEndpointBuilder(DefaultHandler, pattern, 0);
 
-                AddHttpHandlerMetadata(builder, metadata);
+                _metadataProvider.Add(builder, metadata);
 
                 foreach (var convention in _conventions)
                 {
@@ -57,10 +48,10 @@ internal sealed class HttpHandlerEndpointConventionBuilder : EndpointDataSource,
                 }
 
 #if NET7_0_OR_GREATER
-                    if (builder.FilterFactories.Count > 0)
-                    {
-                        throw new NotSupportedException("Filter factories are not supported for handlers");
-                    }
+                if (builder.FilterFactories.Count > 0)
+                {
+                    throw new NotSupportedException("Filter factories are not supported for handlers");
+                }
 #endif
 
                 endpoints.Add(builder.Build());
@@ -100,23 +91,6 @@ internal sealed class HttpHandlerEndpointConventionBuilder : EndpointDataSource,
         public string Route => route;
 
         public ValueTask<IHttpHandler> Create(HttpContextCore context) => metadata.Create(context);
-    }
-
-    internal static void AddHttpHandlerMetadata(EndpointBuilder builder, IHttpHandlerMetadata metadata)
-    {
-        var intrinsicMetadata = metadata.Behavior switch
-        {
-            SessionStateBehavior.ReadOnly => _metadataReadonlySession,
-            SessionStateBehavior.Required => _metadataSession,
-            _ => _metadata
-        };
-
-        builder.Metadata.Add(metadata);
-
-        foreach (var intrinsic in intrinsicMetadata)
-        {
-            builder.Metadata.Add(intrinsic);
-        }
     }
 
     public void Add(Action<EndpointBuilder> convention)

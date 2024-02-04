@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Routing;
 
 namespace Microsoft.AspNetCore.SystemWebAdapters.HttpHandlers;
 
-internal sealed class HttpHandlerEndpointFactory : IHttpHandlerEndpointFactory
+internal sealed class HttpHandlerEndpointFactory(HandlerMetadataProvider metadataProvider) : IHttpHandlerEndpointFactory
 {
     // Used to ensure we only create a single endpoint instance for a given handler. However,
     // we don't have a way to track when a handler ceases to exist, so we use the
@@ -34,12 +34,12 @@ internal sealed class HttpHandlerEndpointFactory : IHttpHandlerEndpointFactory
         return newEndpoint;
     }
 
-    private static Endpoint Create(IHttpHandler handler)
+    private Endpoint Create(IHttpHandler handler)
     {
         var builder = new NonRouteEndpointBuilder();
         var metadata = HandlerMetadata.Create("/", handler);
 
-        HttpHandlerEndpointConventionBuilder.AddHttpHandlerMetadata(builder, metadata);
+        metadataProvider.Add(builder, metadata);
 
         return builder.Build();
     }
