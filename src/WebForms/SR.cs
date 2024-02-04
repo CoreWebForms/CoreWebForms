@@ -1,5 +1,6 @@
-// MIT License.
-using System.Globalization;
+// MIT
+
+
 namespace System.Web;
 
 internal static class AssemblyRef
@@ -12,8 +13,8 @@ internal static class AssemblyRef
 
 internal static class SR
 {
-    public static string GetString(string name, params object[] args) => args.Length > 0 ? string.Format(CultureInfo.InvariantCulture, name, args) : name;
-
+    public static string GetString(string name, params object[] args) => name;
+    
     public const string Ambiguous_server_tag = "The server tag '{0}' is ambiguous. Please modify the associated registration that is causing ambiguity and pick a new tag prefix.";
     public const string Ambiguous_type = "The type '{0}' is ambiguous: it could come from assembly '{1}' or from assembly '{2}'. Please specify the assembly explicitly in the type name.";
     public const string App_session_only_valid_in_global_asax = "The Application and Session scopes are valid only in the global.asax file.";
@@ -128,8 +129,6 @@ internal static class SR
     public const string Codefile_without_inherits = "The 'CodeFile' attribute cannot be used without an 'Inherits' attribute.";
     public const string CodeFileBaseClass_Without_Codefile = "The 'CodeFileBaseClass' attribute cannot be used without a 'CodeFile' attribute.";
     public const string Collection_readonly_Codeblocks = "The Controls collection cannot be modified because the control contains code blocks (i.e. <% ... %>).";
-    public const string Common_PropertyNotFound = "The property {0}.{1} could not be found.";
-    public const string Common_NullOrEmpty= "Value cannot be null or empty.";
     public const string CommandField_CallbacksNotSupported = "Callbacks are not supported on CommandField when the select button is enabled because other controls on your page that are dependent on the selected value of '{0}' for their rendering will not update in a callback.  Turn callbacks off on '{0}'.";
     public const string CommandField_CancelImageUrl = "The URL of the image to be displayed as the cancel button.";
     public const string CommandField_CancelText = "The text to be displayed on the cancel button.";
@@ -157,6 +156,8 @@ internal static class SR
     public const string CommandField_ShowSelectButton = "Whether the field should display a select button to the user.";
     public const string CommandField_UpdateImageUrl = "The URL of the image to be displayed as the update button.";
     public const string CommandField_UpdateText = "The text to be displayed on the update button.";
+    public const string Common_NullOrEmpty = "Value cannot be null or empty.";
+    public const string Common_PropertyNotFound = "The property {0}.{1} could not be found.";
     public const string Common_TypeMustImplementInterface = "The type '{0}' does not implement the interface '{1}'.";
     public const string Compilmode_not_allowed = "The compilation mode cannot be set to 'Never', because an earlier construct in the page requires compilation.";
     public const string Content_allowed_in_top_level_only = "Content controls have to be top-level controls in a content page or a nested master page that references a master page.";
@@ -211,7 +212,7 @@ internal static class SR
     public const string Ctrl_not_data_handler = "Page.RegisterRequiresPostBack can only be called on controls that implement IPostBackDataHandler.";
     public const string Dangerous_input_detected_descr = nameof(Dangerous_input_detected_descr);
     public const string DataAnnotationsModelMetadataProvider_UnknownProperty = "{0} has a DisplayColumn attribute for {1}, but property {1} does not exist.";
-    public const string DataAnnotationsModelMetadataProvider_UnreadableProperty = "0} has a DisplayColumn attribute for {1}, but property {1} does not have a public getter.";
+    public const string DataAnnotationsModelMetadataProvider_UnreadableProperty = "{0} has a DisplayColumn attribute for {1}, but property {1} does not have a public getter.";
     public const string DataBinder_Invalid_Indexed_Expr = "DataBinding: '{0}' is not a valid indexed expression.";
     public const string DataBinder_No_Indexed_Accessor = "DataBinding: '{0}' does not allow indexed access.";
     public const string DataBinder_Prop_Not_Found = "DataBinding: '{0}' does not contain a property with the name '{1}'.";
@@ -314,8 +315,6 @@ internal static class SR
     public const string DataSourceView_NoSorting = "The data source does not support sorting.";
     public const string Debugging_not_supported_in_low_trust = "Debugging is not supported under current trust level settings.";
     public const string DesignTimeTemplateParser_ErrorParsingTheme = "There was an error parsing the theme:";
-    public const string DetailsViewFormView_ControlMustBeInEditMode = "{0} '{1}' must be in edit mode to update a record.";
-    public const string DetailsViewFormView_ControlMustBeInInsertMode = "{0} '{1}' must be in insert mode to insert a new record.";
     public const string DetailsView_AllowPaging = "Whether to turn on paging functionality in the DetailsView.";
     public const string DetailsView_AlternatingRowStyle = "The style applied to alternating rows.";
     public const string DetailsView_AutoGenerateDeleteButton = "Whether a delete button is generated automatically at runtime.";
@@ -326,24 +325,26 @@ internal static class SR
     public const string DetailsView_CellSpacing = "The spacing between cells.";
     public const string DetailsView_CommandRowStyle = "The style applied to rows that contain command fields.";
     public const string DetailsView_DataKey = "The Data key of the currently displayed item.";
-    public const string DetailsView_PageIndex = "The index of the current data item being displayed by the control.";
+    public const string DetailsView_DataSourceMustBeCollection = "DetailsView with id '{0}' must have a data source that implements ICollection if AllowPaging is true.";
     public const string DetailsView_EnablePagingCallbacks = "Whether client script for paging should be rendered to browser clients that can support callbacks.";
+    public const string DetailsView_FieldHeaderStyle = "The style applied to the header column.";
+    public const string DetailsView_Fields = "The set of fields to be shown in the control.";
     public const string DetailsView_FooterStyle = "The style applied to the footer.";
     public const string DetailsView_FooterTemplate = "The template used for the footer.";
-    public const string DetailsView_FieldHeaderStyle = "The style applied to the header column.";
-    public const string DetailsView_OnPageIndexChanged = "Fires when the page index of the DetailsView has changed.";
-    public const string DetailsView_OnPageIndexChanging = "Fires when the page index of the DetailsView is changing.";
+    public const string DetailsView_MustBeParented = "A DetailsView with EnablePagingCallbacks set to true must be parented to a naming container before Render is called.";
+    public const string DetailsView_NoAutoGenFields = "DetailsView with id '{0}' did not have any properties or attributes from which to generate fields.  Ensure that your data source has content.";
     public const string DetailsView_OnItemCommand = "Fires when a CommandEvent is generated within the DetailsView.";
     public const string DetailsView_OnItemCreated = "Fires when the item is created.";
     public const string DetailsView_OnModeChanged = "Fires after the DetailsView's mode changes.";
     public const string DetailsView_OnModeChanging = "Fires before the DetailsView's mode changes.";
+    public const string DetailsView_OnPageIndexChanged = "Fires when the page index of the DetailsView has changed.";
+    public const string DetailsView_OnPageIndexChanging = "Fires when the page index of the DetailsView is changing.";
+    public const string DetailsView_PageIndex = "The index of the current data item being displayed by the control.";
     public const string DetailsView_PagerSettings = "Controls the paging UI settings associated with the control.";
-    public const string DetailsView_Fields = "The set of fields to be shown in the control.";
     public const string DetailsView_Rows = "The collection of rows.";
-    public const string DetailsView_NoAutoGenFields = "DetailsView with id '{0}' did not have any properties or attributes from which to generate fields.Ensure that your data source has content.";
     public const string DetailsView_UnhandledEvent = "The DetailsView '{0}' fired event {1} which wasn't handled.";
-    public const string DetailsView_DataSourceMustBeCollection = "DetailsView with id '{0}' must have a data source that implements ICollection if AllowPaging is true.";
-    public const string DetailsView_MustBeParented = "A DetailsView with EnablePagingCallbacks set to true must be parented to a naming container before Render is called.";
+    public const string DetailsViewFormView_ControlMustBeInEditMode = "{0} '{1}' must be in edit mode to update a record.";
+    public const string DetailsViewFormView_ControlMustBeInInsertMode = "{0} '{1}' must be in insert mode to insert a new record.";
     public const string Device_unsupported_in_directive = "The '{0}' directive does not support the use of device filters on its attributes.";
     public const string Directive_not_allowed = "The directive '{0}' is not allowed in this page.";
     public const string Duplicate_attr_in_directive = "The directive contains duplicate '{0}' attributes.";
@@ -371,9 +372,9 @@ internal static class SR
     public const string Field_Not_Found = "A field or property with the name '{0}' was not found on the selected data source.";
     public const string FileName_does_not_exist = "The file '{0}' does not exist.";
     public const string FileUpload_AllowMultiple = "Whether to enable multi-file uploads.";
+    public const string FileUpload_StreamLengthNotReached = "The byte stream that represents the uploaded file appears to be incomplete.  Try the upload again.";
     public const string FileUpload_StreamNotSeekable = "The stream returned by FileContent does not support seeking, so FileBytes is not supported.";
-    public const string FileUpload_StreamTooLong = "The stream returned by FileContent is longer than Int32.MaxValue.FileBytes supports only streams less than or equal to Int32.MaxValue.";
-    public const string FileUpload_StreamLengthNotReached = "The byte stream that represents the uploaded file appears to be incomplete.Try the upload again.";
+    public const string FileUpload_StreamTooLong = "The stream returned by FileContent is longer than Int32.MaxValue.  FileBytes supports only streams less than or equal to Int32.MaxValue.";
     public const string FilteredAttributeDictionary_ArgumentMustBeString = "The argument must be a string.";
     public const string FontInfo_Bold = "Whether the font is bold.";
     public const string FontInfo_Italic = "Whether the font is italic.";
@@ -406,58 +407,55 @@ internal static class SR
     public const string FormView_UnhandledEvent = "The FormView '{0}' fired event {1} which wasn't handled.";
     public const string GenericModelBinderProvider_ParameterMustSpecifyOpenGenericType = "The type '{0}' is not an open generic type.";
     public const string GenericModelBinderProvider_TypeArgumentCountMismatch = "The open model type '{0}' has {1} generic type argument(s), but the open binder type '{2}' has {3} generic type argument(s). The binder type must not be an open generic type or must have the same number of generic arguments as the open model type.";
+    public const string GridView_AllowCustomPaging = "Whether to turn on support for custom paging.";
+    public const string GridView_AllowPaging = "Whether to turn on paging functionality in the GridView.";
+    public const string GridView_AllowSorting = "Whether the field headers can be used to sort the associated data source.";
+    public const string GridView_AlternatingRowStyle = "The style applied to alternating rows.";
+    public const string GridView_AutoGenerateDeleteButton = "Whether the delete button is generated automatically at runtime.";
+    public const string GridView_AutoGenerateEditButton = "Whether the edit button is generated automatically at runtime.";
+    public const string GridView_AutoGenerateSelectButton = "Whether the select button is generated automatically at runtime.";
+    public const string GridView_CellPadding = "The padding within cells.";
+    public const string GridView_CellSpacing = "The spacing between cells.";
+    public const string GridView_DataKeyNamesMustBeSpecified = "Data keys must be specified on GridView '{0}' before the selected data keys can be retrieved.  Use the DataKeyNames property to specify data keys.";
+    public const string GridView_DataKeys = "The collection of data key field values.";
+    public const string GridView_DataSourceReturnedNullView = "The IDataSource that is the data source for GridView '{0}' returned a null view.  Check that the DataMember property value of GridView is valid.";
+    public const string GridView_EditIndex = "The index of the row shown in edit mode.";
+    public const string GridView_EditRowStyle = "The style applied to rows in edit mode.";
+    public const string GridView_EmptyDataRowStyle = "The style applied to the row that contain the EmptyDataTemplate.";
+    public const string GridView_EnablePersistedSelection = "Whether selection should be based on DataKeys or row index.";
+    public const string GridView_EnableSortingAndPagingCallbacks = "Whether client script for sorting and paging should be rendered to browser clients that can support callbacks.";
+    public const string GridView_MustBeParented = "A GridView with EnableSortingAndPagingCallbacks set to true must be parented to a naming container before Render is called.";
+    public const string GridView_NoAutoGenFields = "The data source for GridView with id '{0}' did not have any properties or attributes from which to generate columns.  Ensure that your data source has content.";
+    public const string GridView_OnPageIndexChanged = "Fires when the current page index of the GridView has changed.";
+    public const string GridView_OnPageIndexChanging = "Fires when the current page index of the GridView is changing.";
+    public const string GridView_OnRowCancelingEdit = "Fires when a Cancel event is generated within the GridView.";
+    public const string GridView_OnRowCommand = "Fires when an event is generated within the GridView.";
+    public const string GridView_OnRowCreated = "Fires when a row is created.";
+    public const string GridView_OnRowDataBound = "Fires after a row has been databound.";
+    public const string GridView_OnRowEditing = "Fires when an Edit event is generated within the GridView.";
+    public const string GridView_OnSelectedIndexChanged = "Fires when a row is selected in the GridView, after the selection is complete.";
+    public const string GridView_OnSelectedIndexChanging = "Fires when a new row is selected in the GridView, before the new row is selected.";
+    public const string GridView_OnSorted = "Fires when a column is sorted in the GridView, after the sort is complete.";
+    public const string GridView_OnSorting = "Fires when a column is sorted in the GridView, before the sort occurs.";
+    public const string GridView_PageCount = "The current page count.";
+    public const string GridView_PageIndex = "The index of the current page.";
     public const string GridView_PagerSettings = "Controls the paging UI settings associated with the control.";
-    public const string GridView_AllowCustomPaging = "Whether to turn on support for custom paging";
-    public const string GridView_AllowPaging = "Whether to turn on paging functionality in the GridView";
-    public const string GridView_AllowSorting = "Whether the field headers can be used to sort the associated data source";
-    public const string GridView_AlternatingRowStyle = "The style applied to alternating rows";
-    public const string GridView_AutoGenerateDeleteButton = "Whether the delete button is generated automatically at runtime";
-    public const string GridView_AutoGenerateEditButton = "Whether the edit button is generated automatically at runtime";
-    public const string GridView_AutoGenerateSelectButton = "Whether the select button is generated automatically at runtime";
-    public const string GridView_CellPadding = "The padding within cells";
-    public const string GridView_CellSpacing = "The spacing between cells";
-    public const string GridView_DataKeys = "The collection of data key field values";
-    public const string GridView_EditIndex = "The index of the row shown in edit mode";
-    public const string GridView_EditRowStyle = "The style applied to rows in edit mode";
-    public const string GridView_EnableSortingAndPagingCallbacks = "Whether client script for sorting and paging should be rendered to browser clients that can support callbacks";
-    public const string GridView_EnablePersistedSelection = "Whether selection should be based on DataKeys or row index";
-    public const string GridView_EmptyDataRowStyle = "The style applied to the row that contain the EmptyDataTemplate";
-    public const string GridView_NextRow = "Next Row";
-    public const string GridView_OnRowCancelingEdit = "Fires when a Cancel event is generated within the GridView";
-    public const string GridView_OnRowEditing = "Fires when an Edit event is generated within the GridView";
-    public const string GridView_OnPageIndexChanging = "Fires when the current page index of the GridView is changing";
-    public const string GridView_OnPageIndexChanged = "Fires when the current page index of the GridView has changed";
-    public const string GridView_OnSelectedIndexChanged = "Fires when a row is selected in the GridView, after the selection is complete";
-    public const string GridView_OnSelectedIndexChanging = "Fires when a new row is selected in the GridView, before the new row is selected";
-    public const string GridView_OnSorted = "Fires when a column is sorted in the GridView, after the sort is complete";
-    public const string GridView_OnSorting = "Fires when a column is sorted in the GridView, before the sort occurs";
-    public const string GridView_OnRowCommand = "Fires when an event is generated within the GridView";
-    public const string GridView_OnRowCreated = "Fires when a row is created";
-    public const string GridView_OnRowDataBound = "Fires after a row has been databound";
-    public const string GridView_PageCount = "The current page count";
-    public const string GridView_PageIndex = "The index of the current page";
-    public const string GridView_PageSize = "The number of rows from the data source to display per page";
-    public const string GridView_PreviousRow = "Previous Row";
-    public const string GridView_RowHeaderColumn = "The data source field corresponding to the column that is the row header";
-    public const string GridView_Rows = "The collection of rows";
-    public const string GridView_ShowHeaderWhenEmpty = "Whether to the show the header when displaying the EmptyDataTemplate";
-    public const string GridView_SelectedIndex = "The index of the currently selected row";
-    public const string GridView_SelectedRow = "The currently selected row";
-    public const string GridView_SelectedRowStyle = "The style applied to selected rows";
-    public const string GridView_SortDirection = "The direction in which to sort the field";
-    public const string GridView_SortExpression = "Sort expression used to sort the data source to which the GridView is binding";
-    public const string GridView_SortedAscendingCellStyle = "The style applied to cells when sorting in ascending order";
-    public const string GridView_SortedDescendingCellStyle = "The style applied to cells when sorting in descending order";
-    public const string GridView_SortedAscendingHeaderStyle = "The style applied to header when sorting in ascending order";
-    public const string GridView_SortedDescendingHeaderStyle = "The style applied to header when sorting in descending order";
+    public const string GridView_PageSize = "The number of rows from the data source to display per page.";
+    public const string GridView_PersistedSelectionRequiresDataKeysNames = "DataKeyNames must be specified for persisted selection to work.";
+    public const string GridView_RowHeaderColumn = "The data source field corresponding to the column that is the row header.";
+    public const string GridView_Rows = "The collection of rows.";
+    public const string GridView_SelectedIndex = "The index of the currently selected row.";
+    public const string GridView_SelectedRow = "The currently selected row.";
+    public const string GridView_SelectedRowStyle = "The style applied to selected rows.";
+    public const string GridView_ShowHeaderWhenEmpty = "Whether to the show the header when displaying the EmptyDataTemplate.";
+    public const string GridView_SortDirection = "The direction in which to sort the field.";
+    public const string GridView_SortedAscendingCellStyle = "The style applied to cells when sorting in ascending order.";
+    public const string GridView_SortedAscendingHeaderStyle = "The style applied to header when sorting in ascending order.";
+    public const string GridView_SortedDescendingCellStyle = "The style applied to cells when sorting in descending order.";
+    public const string GridView_SortedDescendingHeaderStyle = "The style applied to header when sorting in descending order.";
+    public const string GridView_SortExpression = "Sort expression used to sort the data source to which the GridView is binding.";
+    public const string GridView_UnhandledEvent = "The GridView '{0}' fired event {1} which wasn't handled.";
     public const string GridView_VirtualItemCount = "The count of visible items.";
-    internal const string GridView_Missing_VirtualItemCount = "GridView_Missing_VirtualItemCount";
-    internal const string GridView_NoAutoGenFields = "GridView_NoAutoGenFields";
-    internal const string GridView_DataSourceReturnedNullView = "GridView_DataSourceReturnedNullView";
-    internal const string GridView_UnhandledEvent = "GridView_UnhandledEvent";
-    internal const string GridView_MustBeParented = "GridView_MustBeParented";
-    internal const string GridView_DataKeyNamesMustBeSpecified = "GridView_DataKeyNamesMustBeSpecified";
-    internal const string GridView_PersistedSelectionRequiresDataKeysNames = "GridView_PersistedSelectionRequiresDataKeysNames";
     public const string Head_Needs_Page = "HtmlHead cannot render without a reference to the Page instance.  Make sure your head has been added to the control tree.";
     public const string HiddenField_OnValueChanged = "Fires when the value of the control changes.";
     public const string HiddenField_Value = "The value stored in the hidden field.";
@@ -479,7 +477,6 @@ internal static class SR
     public const string HtmlSelect_DataValueField = "The field in the data source that provides the item value.";
     public const string HtmlSelect_OnServerChange = "Fires when the selection changes.";
     public const string HtmlTextArea_OnServerChange = "Fires when the text within the control changes.";
-    public const string HTMLTextWriterUnbalancedPop = "A PopEndTag was called without a corresponding PushEndTag.";
     public const string HyperLink_ImageHeight = "The height of an image to be displayed.";
     public const string HyperLink_ImageUrl = "The URL of an image to be displayed.";
     public const string HyperLink_ImageWidth = "The width of an image to be displayed.";
@@ -551,7 +548,7 @@ internal static class SR
     public const string Invalid_use_of_config_uc = "The page '{0}' cannot use the user control '{1}', because it is registered in web.config and lives in the same directory as the page.";
     public const string Invalid_vpath = "'{0}' is not a valid virtual path.";
     public const string InvalidArgumentValue = "Invalid value for '{0}' parameter.";
-    internal const string InvalidDefaultAutoFieldGenerator = "InvalidDefaultAutoFieldGenerator";
+    public const string InvalidDefaultAutoFieldGenerator = "The field generator of type '{0}' can be used only with '{1}'.";
     public const string InvalidExpressionPrefix = "The expression prefix '{0}' was not recognized.  Please correct the prefix or register the prefix in the <expressionBuilders> section of configuration.";
     public const string InvalidExpressionSyntax = "The expression '{0}' is invalid. Expressions use the syntax <%$ prefix:value %>.";
     public const string InvalidSerializedData = "The serialized data is invalid.";
@@ -801,6 +798,7 @@ internal static class SR
     public const string Resource_problem = "An error occurred while try to load the string resources ({0} failed with error {1}).";
     public const string ResourceExpresionBuilder_PageResourceNotFound = "The resource class for this page was not found.  Please check if the resource file exists and try again.";
     public const string Response_not_available = "Response is not available in this context.";
+    public const string RouteUrlExpression_InvalidExpression = nameof(RouteUrlExpression_InvalidExpression);
     public const string Runat_can_only_be_server = "The Runat attribute must have the value Server.";
     public const string Sample_Databound_Text = "Databound";
     public const string Script_tag_without_src_must_have_content = "A script tag without a src attribute must have content.";

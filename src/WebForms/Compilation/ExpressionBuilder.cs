@@ -9,6 +9,8 @@ using System.Web;
 #if !FEATURE_PAL
 #endif // !FEATURE_PAL
 using System.Web.UI;
+using Microsoft.Extensions.DependencyInjection;
+using WebForms;
 
 public abstract class ExpressionBuilder
 {
@@ -95,7 +97,8 @@ public abstract class ExpressionBuilder
 
         return expressionBuilder;
 #else
-        throw new NotImplementedException("GetExpressionBuilder");
+        return HttpRuntimeHelper.Services.GetRequiredService<ExpressionBuilderCollection>()
+            .GetBuilder(expressionPrefix);
 #endif
     }
 

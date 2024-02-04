@@ -2,6 +2,7 @@
 
 using System.Web.UI;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace System.Web.Optimization;
@@ -17,16 +18,13 @@ public class BundleReference : Control
             return;
         }
 
-        var options = ((Microsoft.AspNetCore.Http.HttpContext)Context).RequestServices
-            .GetRequiredService<IOptions<BundleReferenceOptions>>()
-            .Value;
+        var options = Context.GetRequiredService<IOptions<BundleReferenceOptions>>().Value;
 
         if (!options.Bundles.TryGetBundle(Path, out var bundle))
         {
-            throw new InvalidOperationException($"Unknown bundle: '{Path}'");
+            Logger.LogWarning("Unknown requested bundle for {Path}", Path);
         }
-
-        if (bundle is StyleBundle styles)
+        else if (bundle is StyleBundle styles)
         {
             Write(writer, styles);
         }
@@ -36,7 +34,7 @@ public class BundleReference : Control
         }
         else
         {
-            throw new NotImplementedException($"Unknown ScriptBundle type: {bundle.GetType()}");
+            Logger.LogWarning("Unknown requested bundle for {Path} {Type}", Path, bundle.GetType().Name);
         }
     }
 
