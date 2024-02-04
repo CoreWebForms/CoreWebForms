@@ -30,6 +30,7 @@ This will make use of `Microsoft.AspNetCore.SystemWebAdapters` to provide the `S
 - `WebForms.Compiler.Dynamic` - Run time compiler that will allow for updating `aspx` at run time and generating a new in-memory assembly
 - `WebForms.HttpHandler` - Contains `IHttpHandler` and related helpers to enable hooking them up to ASP.NET Core
 - `WebForms.Routing` - Contains APIs from the `System.Web.Routing` namespace
+- `WebForms.Extensions` - Contains APIs from the `System.Web.Extensions` namespace
 - `WebForms.SystemWebShim` - A package with a `System.Web.dll` assembly that will type forward to the new locations. This is build for .NET 6+ and would help with controls/assemblies/etc that are compiled and cannot be recompiled for some reason. If they use members/types not supported, they will throw at runtime, but can be a helpful step in migrating old projects (see the `TypeDumper` tool to regenerate the available types for the shim)
 
 ## Get Started

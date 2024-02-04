@@ -18,6 +18,26 @@ public static class WebFormsCompilerExtensions
         builder.Services.AddSingleton<IWebFormsCompiler>(ctx => ctx.GetRequiredService<PersistentSystemWebCompilation>());
     }
 
+    /// <summary>
+    /// Registers a <paramref name="tagPrefix"/> for use in compilation. This will ensure the assembly is hooked up for compilation
+    /// as well as the namespace of <typeparamref name="T"/> is available for the registered prefix.
+    /// </summary>
+    /// <typeparam name="T">Type whose namespace is registered</typeparam>
+    /// <param name="builder">The <see cref="IWebFormsBuilder"/>.</param>
+    /// <param name="tagPrefix">The prefix to register.</param>
+    /// <returns></returns>
+    public static IWebFormsBuilder AddPrefix<T>(this IWebFormsBuilder builder, string tagPrefix)
+        where T : Control
+    {
+        builder.Services.AddOptions<PageCompilationOptions>()
+            .Configure(options =>
+            {
+                options.AddTypeNamespace<T>(tagPrefix);
+            });
+
+        return builder;
+    }
+
     public static IWebFormsBuilder AddDynamicPages(this IWebFormsBuilder services)
         => services.AddDynamicPages(options => { });
 

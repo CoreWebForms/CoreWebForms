@@ -1,6 +1,8 @@
 // MIT License.
 
 using System.Runtime.Loader;
+using System.Web.UI;
+using System.Web.UI.WebControls;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,10 +19,11 @@ builder.Services.AddSystemWebAdapters()
     .AddWebForms()
 #if WEBFORMS_DYNAMIC
     .AddDynamicPages()
+    .AddPrefix<ScriptManager>("asp")
+    .AddPrefix<ListView>("asp");
 #else
-    .AddCompiledPages()
+    .AddCompiledPages();
 #endif
-    .AddWebFormsExtensions();
 
 var app = builder.Build();
 
@@ -48,4 +51,3 @@ app.MapGet("/acls", () => AssemblyLoadContext.All.Select(acl => new
 app.MapWebForms();
 
 app.Run();
-
