@@ -34,7 +34,7 @@ public static class WebFormsServiceExtensions
         builder.Services.TryAddSingleton<ExpressionBuilderCollection>();
         var factory = ActivatorUtilities.CreateFactory(typeof(T), []);
 
-        builder.Services.AddOptions<ExpressionBuilderCollection.ExpressionOption>(name)
+        builder.Services.AddOptions<ExpressionBuilderCollection.ExpressionOption>()
             .Configure<IServiceProvider>((options, sp) => options.Add(name, () => (ExpressionBuilder)factory(sp, null)));
 
         return builder;

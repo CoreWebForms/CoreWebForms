@@ -1,6 +1,7 @@
 // MIT License.
 
 using System.Diagnostics;
+using System.Web.Routing;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
@@ -28,6 +29,7 @@ public class DynamicCompilationTests
     [DataRow("test03", "page_with_master.aspx")]
     [DataRow("test04", "page_with_master.aspx", "other_page_with_master.aspx", "page_with_master.aspx")]
     [DataRow("test05", "error_page.aspx")]
+    [DataRow("test06", "route_url_expressionbuilder.aspx")]
     public async Task CompiledPageRuns(string test, params string[] pages)
     {
         // Arrange
@@ -59,6 +61,8 @@ public class DynamicCompilationTests
                 app.UseTestServer();
                 app.Configure(app =>
                 {
+                    RouteTable.Routes.MapPageRoute("Test", "/test", pages[0]);
+
                     app.UseRouting();
                     app.UseSession();
                     app.UseSystemWebAdapters();
