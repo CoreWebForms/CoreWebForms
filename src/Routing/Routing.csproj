@@ -11,6 +11,7 @@
   <ItemGroup>
     <Compile Include="..\Handlers\CancellationChangeTokenSource.cs" Link="CancellationChangeTokenSource.cs" />
     <Compile Include="..\Handlers\FeatureCollectionExtensions.cs" Link="FeatureCollectionExtensions.cs" />
+    <Compile Include="..\WebForms\Adapters\HttpRuntimeHelper.cs" Link="HttpRuntimeHelper.cs" />
   </ItemGroup>
 
   <ItemGroup>
