@@ -18,6 +18,18 @@ public static class WebFormsCompilerExtensions
         builder.Services.AddSingleton<IWebFormsCompiler>(ctx => ctx.GetRequiredService<PersistentSystemWebCompilation>());
     }
 
+    public static IWebFormsBuilder AddPrefix<T>(this IWebFormsBuilder builder, string prefix)
+        where T : Control
+    {
+        builder.Services.AddOptions<PageCompilationOptions>()
+            .Configure(options =>
+            {
+                options.AddTypeNamespace<T>(prefix);
+            });
+
+        return builder;
+    }
+
     public static IWebFormsBuilder AddDynamicPages(this IWebFormsBuilder services)
         => services.AddDynamicPages(options => { });
 

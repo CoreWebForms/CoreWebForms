@@ -16,7 +16,6 @@
   </ItemGroup>
 
   <ItemGroup>
-     <ProjectReference Include="..\Compiler.Dynamic\Compiler.Dynamic.csproj" />
      <ProjectReference Include="..\WebForms\WebForms.csproj" />
   </ItemGroup>
   
