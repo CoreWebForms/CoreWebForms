@@ -177,7 +177,7 @@ internal abstract class SystemWebCompilation<T> : IDisposable
         }
         catch (Exception e)
         {
-            return CreateErrorPage(e);
+            return CreateErrorPage(path, e);
         }
     }
 
