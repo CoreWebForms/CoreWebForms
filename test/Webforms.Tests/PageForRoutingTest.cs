@@ -51,7 +51,7 @@ public class PageForRoutingTest : HostedTestBase
                 app.ApplicationServices.GetRequiredService<RouteCollection>()
                     .MapPageRoute("ProductsByCategoryRoute", "Category/{categoryName}", "~/");
                 app.ApplicationServices.GetRequiredService<RouteCollection>()
-                    .MapPageRoute("ProductsByCategoryRoute", "Category2/{categoryName}", "~/extra_route");
+                    .MapPageRoute("ProductsByCategoryRoute2", "Category2/{categoryName}", "~/extra_route");
             })), "/category/mycategoryname");
 
         Assert.AreEqual("<span id=\"mycategoryname\"></span>", htmlResult);
