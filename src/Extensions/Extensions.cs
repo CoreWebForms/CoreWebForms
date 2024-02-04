@@ -1,15 +1,15 @@
 // MIT License.
 
+using System.Web.UI;
 using System.Web.UI.WebControls;
-using Microsoft.AspNetCore.SystemWebAdapters;
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Builder;
 using WebForms.Compiler.Dynamic;
 
-namespace System.Web.UI;
+namespace Microsoft.Extensions.DependencyInjection;
 
 public static class Extensions
 {
-    public static ISystemWebAdapterBuilder AddWebFormsExtensions(this ISystemWebAdapterBuilder builder)
+    public static IWebFormsBuilder AddWebFormsExtensions(this IWebFormsBuilder builder)
     {
         builder.Services.AddOptions<PageCompilationOptions>()
           .Configure(options =>

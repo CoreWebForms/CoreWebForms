@@ -1,7 +1,6 @@
 // MIT License.
 
 using System.Runtime.Loader;
-using System.Web.UI;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,9 +16,9 @@ builder.Services.AddSystemWebAdapters()
     .AddWrappedAspNetCoreSession()
     .AddWebForms()
 #if WEBFORMS_DYNAMIC
-    .AddDynamicWebForms()
+    .AddDynamicPages()
 #else
-    .AddCompiledWebFormsPages()
+    .AddCompiledPages()
 #endif
     .AddWebFormsExtensions();
 

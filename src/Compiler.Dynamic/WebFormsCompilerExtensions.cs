@@ -1,7 +1,7 @@
 // MIT License.
 
 using System.Web.UI;
-using Microsoft.AspNetCore.SystemWebAdapters;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.SystemWebAdapters.HttpHandlers;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
@@ -11,17 +11,17 @@ namespace Microsoft.Extensions.DependencyInjection;
 
 public static class WebFormsCompilerExtensions
 {
-    public static void AddPersistentWebFormsCompilation(this ISystemWebAdapterBuilder builder, Action<PageCompilationOptions> configure)
+    public static void AddPersistentWebFormsCompilation(this IWebFormsBuilder builder, Action<PageCompilationOptions> configure)
     {
         builder.Services.AddWebFormsCompilationCore(configure);
         builder.Services.AddSingleton<PersistentSystemWebCompilation>();
         builder.Services.AddSingleton<IWebFormsCompiler>(ctx => ctx.GetRequiredService<PersistentSystemWebCompilation>());
     }
 
-    public static ISystemWebAdapterBuilder AddDynamicWebForms(this ISystemWebAdapterBuilder services)
-        => services.AddDynamicWebForms(options => { });
+    public static IWebFormsBuilder AddDynamicPages(this IWebFormsBuilder services)
+        => services.AddDynamicPages(options => { });
 
-    public static ISystemWebAdapterBuilder AddDynamicWebForms(this ISystemWebAdapterBuilder services, Action<PageCompilationOptions> configure)
+    public static IWebFormsBuilder AddDynamicPages(this IWebFormsBuilder services, Action<PageCompilationOptions> configure)
     {
         services.Services.AddWebFormsCompilationCore(configure);
         services.Services.AddHostedService<WebFormsCompilationService>();

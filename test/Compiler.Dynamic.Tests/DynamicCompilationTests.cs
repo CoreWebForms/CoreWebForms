@@ -65,7 +65,7 @@ public class DynamicCompilationTests
                     services.AddSystemWebAdapters()
                         .AddWrappedAspNetCoreSession()
                         .AddWebForms()
-                        .AddDynamicWebForms();
+                        .AddDynamicPages();
 
                     services.AddOptions<SystemWebAdaptersOptions>().Configure(options =>
                     {

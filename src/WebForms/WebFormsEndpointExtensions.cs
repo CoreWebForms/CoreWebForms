@@ -1,28 +1,17 @@
-// MIT License.
+﻿// MIT License.
 
-using System.Web;
 using System.Web.UI;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.StaticFiles;
-using Microsoft.AspNetCore.SystemWebAdapters;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Primitives;
 using Microsoft.Net.Http.Headers;
 
 namespace Microsoft.AspNetCore.Builder;
 
-public static class PageExtensions
+public static class WebFormsEndpointExtensions
 {
-    public static ISystemWebAdapterBuilder AddWebForms(this ISystemWebAdapterBuilder builder)
-    {
-        builder.AddHttpHandlers();
-        builder.AddRouting();
-
-        return builder;
-    }
-
     public static IEndpointConventionBuilder MapWebForms(this IEndpointRouteBuilder endpoints)
     {
         // This ensures they're mapped which always returns the same convention builder
