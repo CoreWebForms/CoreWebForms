@@ -17,28 +17,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="assets/**/*" CopyToOutputDirectory="PreserveNewest" />
-    <Compile Remove="assets/**/*" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Remove="assets\test05\error_page.aspx" />
-    <None Remove="assets\test04\other_page_with_master.aspx" />
-    <None Remove="assets\test04\page_with_master.aspx" />
-    <None Remove="assets\test04\page_with_master.aspx._0.html" />
-    <None Remove="assets\test04\page_with_master.aspx._2.html" />
-    <None Remove="assets\test04\Site.Master" />
-    <None Remove="assets\test06\route_url_expressionbuilder.aspx" />
+    <TestAssets Include="assets/**/*" />
+    <EmbeddedResource Include="@(TestAssets)" CopyToOutputDirectory="PreserveNewest" />
+    <Compile Remove="@(TestAssets)" />
+    <None Remove="@(TestAssets)" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Compiler.Dynamic\Compiler.Dynamic.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Update="assets\test06\route_url_expressionbuilder.aspx">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
   </ItemGroup>
 
 </Project>
