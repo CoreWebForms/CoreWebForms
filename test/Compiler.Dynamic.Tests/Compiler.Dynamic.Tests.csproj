@@ -28,10 +28,17 @@
     <None Remove="assets\test04\page_with_master.aspx._0.html" />
     <None Remove="assets\test04\page_with_master.aspx._2.html" />
     <None Remove="assets\test04\Site.Master" />
+    <None Remove="assets\test06\route_url_expressionbuilder.aspx" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Compiler.Dynamic\Compiler.Dynamic.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="assets\test06\route_url_expressionbuilder.aspx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
   </ItemGroup>
 
 </Project>
