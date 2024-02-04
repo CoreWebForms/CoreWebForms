@@ -146,6 +146,8 @@ internal sealed class PersistentSystemWebCompilation : SystemWebCompilation<Pers
         }
     }
 
+    protected override PersistedCompiledPage CreateErrorPage(string path, Exception e) => throw e;
+
     private sealed record PageDetails(string Path, string Type, string Assembly);
 
     internal sealed class PersistedCompiledPage : CompiledPage
