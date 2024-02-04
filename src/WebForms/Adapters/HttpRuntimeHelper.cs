@@ -13,9 +13,11 @@ internal static class HttpRuntimeHelper
         var currentProperty = type.GetProperty("Current", BindingFlags.Static | BindingFlags.Public);
         var spProperty = type.GetProperty("Services", BindingFlags.Instance | BindingFlags.Public);
 
-        var current = currentProperty.GetValue(null);
-
-        return () => (IServiceProvider)spProperty.GetValue(current);
+        return () =>
+        {
+            var current = currentProperty.GetValue(null);
+            return (IServiceProvider)spProperty.GetValue(current);
+        };
     }, isThreadSafe: true);
 
     /// <summary>
