@@ -1,5 +1,6 @@
 // MIT License.
 
+using System.Web;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SystemWebAdapters;
@@ -14,6 +15,8 @@ public static class HandlerServicesExtensions
     {
         services.Services.TryAddSingleton<IHttpHandlerEndpointFactory, HttpHandlerEndpointFactory>();
         services.Services.AddTransient<IStartupFilter, HttpHandlerStartupFilter>();
+        services.Services.AddTransient<HandlerMetadataProvider>();
+        services.Services.AddTransient<HttpHandlerEndpointConventionBuilder>();
 
         return services;
     }
