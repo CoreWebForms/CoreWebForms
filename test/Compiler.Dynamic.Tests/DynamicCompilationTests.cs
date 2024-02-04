@@ -3,7 +3,6 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.SystemWebAdapters;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
@@ -33,16 +32,26 @@ public class DynamicCompilationTests
     {
         // Arrange
         using var cts = Debugger.IsAttached ? new CancellationTokenSource() : new CancellationTokenSource(TimeSpan.FromSeconds(30));
-        var contentRoot = Path.Combine(AppContext.BaseDirectory, "assets", test);
-        var expectedHtmls = pages
-            .Select((page, index) => Path.Combine(contentRoot, $"{page}._{index}.html"))
-            .Select(expectedHtmlPath => File.Exists(expectedHtmlPath) ? File.ReadAllText(expectedHtmlPath) : string.Empty).ToArray();
+        var contentProvider = new EmbeddedFileProvider(typeof(DynamicCompilationTests).Assembly, $"Compiler.Dynamic.Tests.assets.{test}");
+        var expectedPages = pages
+            .Select((page, index) => $"{page}._{index}.html")
+            .Select(expectedHtmlPath =>
+            {
+                if (contentProvider.GetFileInfo(expectedHtmlPath) is { Exists: true } file)
+                {
+                    using var stream = file.CreateReadStream();
+                    using var reader = new StreamReader(stream);
 
-        using var contentProvider = new PhysicalFileProvider(contentRoot);
+                    return reader.ReadToEnd();
+                }
+
+                return string.Empty;
+            })
+            .ToList();
+
         using var host = Host.CreateDefaultBuilder()
             .ConfigureAppConfiguration((ctx, _) =>
             {
-                ctx.HostingEnvironment.ContentRootPath = contentRoot;
                 ctx.HostingEnvironment.ContentRootFileProvider = contentProvider;
             })
             .ConfigureWebHost(app =>
@@ -66,11 +75,6 @@ public class DynamicCompilationTests
                         .AddWrappedAspNetCoreSession()
                         .AddWebForms()
                         .AddDynamicPages();
-
-                    services.AddOptions<SystemWebAdaptersOptions>().Configure(options =>
-                    {
-                        options.AppDomainAppPath = contentRoot;
-                    });
                 });
             })
             .Start();
@@ -80,7 +84,7 @@ public class DynamicCompilationTests
 
         for (int i = 0; i < pages.Length; i++)
         {
-            var expectedHtml = expectedHtmls[i];
+            var expectedHtml = expectedPages[i];
             var page = pages[i];
 
             string? result = null;
@@ -106,4 +110,5 @@ public class DynamicCompilationTests
             Assert.AreEqual(expectedHtml, result);
         }
     }
+
 }

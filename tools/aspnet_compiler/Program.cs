@@ -1,6 +1,7 @@
 // MIT License.
 
 using System.CommandLine;
+using WebForms.Compiler;
 
 var path = new Option<DirectoryInfo>(name: "-p", "Specifies the path to the root directory of the application") { IsRequired = true };
 var target = new Argument<DirectoryInfo>("targetDir", "Specifies the path to the root directory of the application");

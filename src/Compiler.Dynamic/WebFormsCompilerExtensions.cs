@@ -11,9 +11,9 @@ namespace Microsoft.Extensions.DependencyInjection;
 
 public static class WebFormsCompilerExtensions
 {
-    public static void AddPersistentWebFormsCompilation(this IWebFormsBuilder builder, Action<PageCompilationOptions> configure)
+    public static void AddPersistentWebFormsCompilation(this IWebFormsBuilder builder)
     {
-        builder.Services.AddWebFormsCompilationCore(configure);
+        builder.Services.AddWebFormsCompilationCore(options => { });
         builder.Services.AddSingleton<PersistentSystemWebCompilation>();
         builder.Services.AddSingleton<IWebFormsCompiler>(ctx => ctx.GetRequiredService<PersistentSystemWebCompilation>());
     }
@@ -37,8 +37,6 @@ public static class WebFormsCompilerExtensions
         services.AddOptions<PageCompilationOptions>()
             .Configure<IHostEnvironment>((options, env) =>
             {
-                options.Files = env.ContentRootFileProvider;
-
                 options.AddParser<PageParser>(".aspx");
                 options.AddParser<MasterPageParser>(".Master");
 

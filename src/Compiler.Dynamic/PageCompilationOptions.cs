@@ -13,8 +13,6 @@ public class PageCompilationOptions
 {
     private readonly HashSet<Assembly> _assemblies;
 
-    public IFileProvider Files { get; set; } = new NullFileProvider();
-
     internal ICollection<TagNamespaceRegisterEntry> KnownTags { get; }
 
     public PageCompilationOptions()

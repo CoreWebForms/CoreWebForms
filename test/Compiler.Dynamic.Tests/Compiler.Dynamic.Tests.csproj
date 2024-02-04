@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="assets/**/*" CopyToOutputDirectory="PreserveNewest" />
+    <EmbeddedResource Include="assets/**/*" CopyToOutputDirectory="PreserveNewest" />
     <Compile Remove="assets/**/*" />
   </ItemGroup>
 

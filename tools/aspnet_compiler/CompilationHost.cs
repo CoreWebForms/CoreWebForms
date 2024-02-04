@@ -9,7 +9,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Console;
 using WebForms.Compiler.Dynamic;
+
+namespace WebForms.Compiler;
 
 internal sealed class CompilationHost
 {
@@ -23,6 +26,14 @@ internal sealed class CompilationHost
             .ConfigureLogging(logging =>
             {
                 logging.ClearProviders();
+                logging.AddSimpleConsole(options =>
+                {
+                    options.SingleLine = true;
+                    options.ColorBehavior = LoggerColorBehavior.Default;
+                });
+
+                logging.AddFilter("Microsoft.Hosting", LogLevel.Warning);
+                logging.AddFilter("WebForms", LogLevel.Trace);
             })
 
             // This is needed so we can enable HttpRuntime APIs
@@ -33,7 +44,6 @@ internal sealed class CompilationHost
             .ConfigureServices(services =>
             {
                 services.AddSingleton<IServer, WebFormsCompilationServer>();
-                services.AddHostedService<PersistedCompilationService>();
                 services.AddOptions<PersistentCompilationOptions>()
                     .Configure(options =>
                     {
@@ -49,10 +59,9 @@ internal sealed class CompilationHost
 
                 services
                     .AddWebForms()
-                    .AddPersistentWebFormsCompilation(options =>
-                    {
-                        options.Files = new PhysicalFileProvider(path.FullName);
-                    });
+                    .AddPersistentWebFormsCompilation();
+
+                services.AddHostedService<PersistedCompilationService>();
 
                 services.AddOptions<SystemWebAdaptersOptions>().Configure(options =>
                 {
