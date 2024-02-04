@@ -24,8 +24,8 @@ public static class WebFormsServiceExtensions
             .AddWebForms()
             .AddDefaultExpressionBuilders();
 
-    private static IWebFormsBuilder AddDefaultExpressionBuilders(this IWebFormsBuilder builder) => builder
-        .AddExpressionBuilder<RouteUrlExpressionBuilder>("Routes");
+    public static IWebFormsBuilder AddDefaultExpressionBuilders(this IWebFormsBuilder builder) => builder
+        .AddExpressionBuilder<RouteUrlExpressionBuilder>("RouteUrl");
 
     private static IWebFormsBuilder AddExpressionBuilder<T>(this IWebFormsBuilder builder, string name)
         where T : ExpressionBuilder
