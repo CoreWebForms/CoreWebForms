@@ -1,10 +1,9 @@
 // MIT License.
 
-using Microsoft.AspNetCore.Hosting;
-using System.Web;
+using System.Web.Compilation;
 using Microsoft.AspNetCore.SystemWebAdapters;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
+using WebForms;
 
 namespace Microsoft.AspNetCore.Builder;
 
@@ -15,8 +14,6 @@ public static class WebFormsServiceExtensions
         builder.AddHttpHandlers();
         builder.AddRouting();
 
-        builder.Services.AddHostedService<VirtualFileEnvService>();
-
         return new Builder(builder);
     }
 
@@ -24,29 +21,25 @@ public static class WebFormsServiceExtensions
         => builder
             .AddSystemWebAdapters()
             .AddWrappedAspNetCoreSession()
-            .AddWebForms();
+            .AddWebForms()
+            .AddDefaultExpressionBuilders();
+
+    private static IWebFormsBuilder AddDefaultExpressionBuilders(this IWebFormsBuilder builder) => builder
+        .AddExpressionBuilder<RouteUrlExpressionBuilder>("Routes");
+
+    private static IWebFormsBuilder AddExpressionBuilder<T>(this IWebFormsBuilder builder, string name)
+        where T : ExpressionBuilder
+    {
+        var factory = ActivatorUtilities.CreateFactory(typeof(T), []);
+
+        builder.Services.AddOptions<ExpressionBuilderOption>(name)
+            .Configure<IServiceProvider>((options, provider) => options.Factory = () => (ExpressionBuilder)factory(provider, null));
+
+        return builder;
+    }
 
     private record Builder(ISystemWebAdapterBuilder SystemWebAdapterBuilder) : IWebFormsBuilder
     {
         public IServiceCollection Services => SystemWebAdapterBuilder.Services;
-    }
-
-    /// <summary>
-    /// This is just used until we can get the <see cref="IServiceProvider"/> off of <see cref="HttpRuntime"/>.
-    /// </summary>
-    /// <param name="env"></param>
-    private sealed class VirtualFileEnvService(IWebHostEnvironment env) : BackgroundService
-    {
-        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
-        {
-            var tcs = new TaskCompletionSource();
-            using var registration = stoppingToken.Register(tcs.SetResult);
-
-            VirtualPath.Files = env.ContentRootFileProvider;
-
-            await tcs.Task.ConfigureAwait(false);
-
-            VirtualPath.Files = null;
-        }
     }
 }

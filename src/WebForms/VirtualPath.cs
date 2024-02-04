@@ -1,13 +1,16 @@
 // MIT License.
 
 using System.Text;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Hosting;
+using WebForms;
 
 namespace System.Web;
 
 internal sealed class VirtualPath
 {
-    public static IFileProvider Files { get; set; }
+    private static IFileProvider Files => HttpRuntimeHelper.Services.GetRequiredService<IHostEnvironment>().ContentRootFileProvider;
 
     public VirtualPath Parent
     {
