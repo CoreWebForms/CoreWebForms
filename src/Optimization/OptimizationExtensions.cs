@@ -9,6 +9,7 @@ public static class OptimizationExtensions
 {
     public static IWebFormsBuilder AddOptimization(this IWebFormsBuilder builder, Action<BundleReferenceOptions> configure)
     {
+        builder.Services.AddSingleton<BundleCollection>();
         builder.Services.AddOptions<BundleReferenceOptions>()
             .Configure(configure);
 

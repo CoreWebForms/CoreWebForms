@@ -10,6 +10,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="..\WebForms\Adapters\HttpRuntimeHelper.cs" Link="HttpRuntimeHelper.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\WebForms\WebForms.csproj" />
   </ItemGroup>
 
