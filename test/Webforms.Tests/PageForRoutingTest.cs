@@ -41,6 +41,22 @@ public class PageForRoutingTest : HostedTestBase
         Assert.AreEqual("<span id=\"mycategoryname\"></span>", htmlResult);
     }
 
+    [TestMethod]
+    public async Task UnmappedRoute()
+    {
+        //Arrange/Act
+        var htmlResult = await RunPage<GetRouteValuePage>(services => services
+            .AddSingleton<IStartupFilter>(new DelegateStartupFilter(app =>
+            {
+                app.ApplicationServices.GetRequiredService<RouteCollection>()
+                    .MapPageRoute("ProductsByCategoryRoute", "Category/{categoryName}", "~/");
+                app.ApplicationServices.GetRequiredService<RouteCollection>()
+                    .MapPageRoute("ProductsByCategoryRoute", "Category2/{categoryName}", "~/extra_route");
+            })), "/category/mycategoryname");
+
+        Assert.AreEqual("<span id=\"mycategoryname\"></span>", htmlResult);
+    }
+
     private sealed class DelegateStartupFilter(Action<IApplicationBuilder> action) : IStartupFilter
     {
         public Action<IApplicationBuilder> Configure(Action<IApplicationBuilder> next)
