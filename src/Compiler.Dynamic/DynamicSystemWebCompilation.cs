@@ -165,6 +165,12 @@ internal sealed class DynamicSystemWebCompilation : SystemWebCompilation<Dynamic
         }
     }
 
+    protected override DynamicCompiledPage CreateErrorPage(string path, Exception e)
+        => new(this, new(path), [])
+        {
+            Exception = e
+        };
+
     internal sealed class DynamicCompiledPage(DynamicSystemWebCompilation compilation, PagePath path, string[] dependencies) : CompiledPage(path, dependencies)
     {
         public override void Dispose()

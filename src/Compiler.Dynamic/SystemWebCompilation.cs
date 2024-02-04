@@ -104,74 +104,81 @@ internal abstract class SystemWebCompilation<T> : IDisposable
 
     private async Task<T> InternalCompilePageAsync(string path, CancellationToken token)
     {
-        var queue = new Queue<string>();
-        queue.Enqueue(path);
-
-        var embedded = new List<EmbeddedText>();
-        var trees = new List<SyntaxTree>();
-        string typeName = null!;
-
-        ICompiler compiler = null!;
-
-        var dependencies = new List<T>();
-
-        while (queue.Count > 0)
+        try
         {
-            var currentPath = queue.Dequeue();
-            var generator = CreateGenerator(currentPath);
+            var queue = new Queue<string>();
+            queue.Enqueue(path);
 
-            dependencies.AddRange(await GetDependencyPages(generator.Parser, token).ConfigureAwait(false));
+            var embedded = new List<EmbeddedText>();
+            var trees = new List<SyntaxTree>();
+            string typeName = null!;
 
-            compiler ??= GetProvider(generator.Parser.CompilerType);
+            ICompiler compiler = null!;
 
-            var cu = generator.GetCodeDomTree(compiler.Provider, new StringResourceBuilder(), currentPath);
+            var dependencies = new List<T>();
 
-            using var writer = new StringWriter();
-            compiler.Provider.GenerateCodeFromCompileUnit(cu, writer, new());
-            var source = SourceText.From(writer.ToString(), Encoding.UTF8);
-
-            var filename = $"__{currentPath}.{compiler.Provider.FileExtension}";
-            var sourceTree = compiler.ParseText(source, path: filename, cancellationToken: token);
-
-            trees.Add(sourceTree);
-            embedded.Add(EmbeddedText.FromSource(filename, source));
-
-            typeName ??= generator.GetInstantiatableFullTypeName();
-
-            foreach (var dep in generator.Parser.SourceDependencies)
+            while (queue.Count > 0)
             {
-                if (dep is string p && Files.GetFileInfo(p) is { Exists: true, IsDirectory: false } file)
-                {
-                    using var stream = file.CreateReadStream();
+                var currentPath = queue.Dequeue();
+                var generator = CreateGenerator(currentPath);
 
-                    if (p.EndsWith(compiler.Provider.FileExtension, StringComparison.OrdinalIgnoreCase))
+                dependencies.AddRange(await GetDependencyPages(generator.Parser, token).ConfigureAwait(false));
+
+                compiler ??= GetProvider(generator.Parser.CompilerType);
+
+                var cu = generator.GetCodeDomTree(compiler.Provider, new StringResourceBuilder(), currentPath);
+
+                using var writer = new StringWriter();
+                compiler.Provider.GenerateCodeFromCompileUnit(cu, writer, new());
+                var source = SourceText.From(writer.ToString(), Encoding.UTF8);
+
+                var filename = $"__{currentPath}.{compiler.Provider.FileExtension}";
+                var sourceTree = compiler.ParseText(source, path: filename, cancellationToken: token);
+
+                trees.Add(sourceTree);
+                embedded.Add(EmbeddedText.FromSource(filename, source));
+
+                typeName ??= generator.GetInstantiatableFullTypeName();
+
+                foreach (var dep in generator.Parser.SourceDependencies)
+                {
+                    if (dep is string p && Files.GetFileInfo(p) is { Exists: true, IsDirectory: false } file)
                     {
-                        var sourceText = SourceText.From(stream, canBeEmbedded: true);
-                        trees.Add(compiler.ParseText(sourceText, p, cancellationToken: token));
-                        embedded.Add(EmbeddedText.FromSource(p, sourceText));
-                    }
-                    else
-                    {
-                        embedded.Add(EmbeddedText.FromStream(p, stream));
+                        using var stream = file.CreateReadStream();
+
+                        if (p.EndsWith(compiler.Provider.FileExtension, StringComparison.OrdinalIgnoreCase))
+                        {
+                            var sourceText = SourceText.From(stream, canBeEmbedded: true);
+                            trees.Add(compiler.ParseText(sourceText, p, cancellationToken: token));
+                            embedded.Add(EmbeddedText.FromSource(p, sourceText));
+                        }
+                        else
+                        {
+                            embedded.Add(EmbeddedText.FromStream(p, stream));
+                        }
                     }
                 }
             }
+
+            var assemblies = dependencies.Select(d => d.Type?.Assembly).Where(a => a is not null);
+            var references = GetMetadataReferences().Concat(dependencies.Select(d => d.MetadataReference).Where(d => d is not null));
+            var compilation = compiler.CreateCompilation(typeName, trees, references!);
+
+            var compiled = CreateCompiledPage(compilation, path, typeName, trees, references!, embedded, assemblies!, token);
+
+            foreach (var dependency in dependencies)
+            {
+                dependency.PageDependencies.Add(compiled);
+            }
+
+            _logger.LogInformation("Compiled {Path}", path);
+
+            return compiled;
         }
-
-        var assemblies = dependencies.Select(d => d.Type?.Assembly).Where(a => a is not null);
-        var references = GetMetadataReferences().Concat(dependencies.Select(d => d.MetadataReference).Where(d => d is not null));
-        var compilation = compiler.CreateCompilation(typeName, trees, references!);
-
-        var compiled = CreateCompiledPage(compilation, path, typeName, trees, references!, embedded, assemblies!, token);
-
-        foreach (var dependency in dependencies)
+        catch (Exception e)
         {
-            dependency.PageDependencies.Add(compiled);
+            return CreateErrorPage(path, e);
         }
-
-        _logger.LogInformation("Compiled {Path}", path);
-
-        return compiled;
     }
 
     private async Task<T[]> GetDependencyPages(TemplateParser parser, CancellationToken token)
@@ -185,6 +192,8 @@ internal abstract class SystemWebCompilation<T> : IDisposable
 
         return await Task.WhenAll(p).ConfigureAwait(false);
     }
+
+    protected abstract T CreateErrorPage(string path, Exception e);
 
     protected abstract T CreateCompiledPage(
         Compilation compilation,
