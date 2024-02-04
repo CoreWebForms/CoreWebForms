@@ -14,15 +14,15 @@ public static class WebFormsServiceExtensions
         builder.AddHttpHandlers();
         builder.AddRouting();
 
-        return new Builder(builder);
+        return new Builder(builder)
+            .AddDefaultExpressionBuilders();
     }
 
     public static IWebFormsBuilder AddWebForms(this IServiceCollection builder)
         => builder
             .AddSystemWebAdapters()
             .AddWrappedAspNetCoreSession()
-            .AddWebForms()
-            .AddDefaultExpressionBuilders();
+            .AddWebForms();
 
     public static IWebFormsBuilder AddDefaultExpressionBuilders(this IWebFormsBuilder builder) => builder
         .AddExpressionBuilder<RouteUrlExpressionBuilder>("RouteUrl");
