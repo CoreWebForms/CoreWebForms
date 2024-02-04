@@ -11,7 +11,6 @@
       <_WebFormsTempDir>$(IntermediateOutputPath)webforms_compile/$([System.Guid]::NewGuid())</_WebFormsTempDir>
       <_WebFormsTempDir Condition="!$([System.IO.Path]::IsPathRooted($(_WebFormsTempDir)))">$(ProjectDir)$(_WebFormsTempDir)</_WebFormsTempDir>
       <_WebFormsTempDir>$([MSBuild]::NormalizeDirectory($(_WebFormsTempDir)))</_WebFormsTempDir>
-      <_WebFormsErrorFile>$(_WebFormsTempDir)/webforms.error.txt</_WebFormsErrorFile>
       <_WebFormsPagesFileName>webforms.pages.json</_WebFormsPagesFileName>
       <_WebFormsPagesFile>$(_WebFormsTempDir)/$(_WebFormsPagesFileName)</_WebFormsPagesFile>
     </PropertyGroup>
@@ -21,7 +20,6 @@
     <Exec Command="dotnet $(AspNetCompilePath) -p $(MSBuildProjectDirectory) $(_WebFormsTempDir)" ContinueOnError="true" />
 
     <PropertyGroup>
-      <_HasWebFormsError Condition="Exists('$(_WebFormsErrorFile)')">true</_HasWebFormsError>
       <_HasWebFormsError Condition="!Exists('$(_WebFormsPagesFile)')">true</_HasWebFormsError>
     </PropertyGroup>
   </Target>
@@ -36,14 +34,6 @@
     <ItemGroup>
       <Reference Include="$(_WebFormsTempDir)/*.dll" />
     </ItemGroup>
-  </Target>
-
-  <Target Name="NotifyWebFormsCompilationError" AfterTargets="InvokeAspNetCompiler" Condition="Exists('$(_WebFormsErrorFile)')">
-    <ReadLinesFromFile File="$(_WebFormsErrorFile)">
-      <Output TaskParameter="Lines" PropertyName="__WebFormsError"/>
-    </ReadLinesFromFile>
-
-    <Error Text="$(__WebFormsError)" />
   </Target>
 
   <Target Name="NotifyGenericWebFormsCompilationError" AfterTargets="InvokeAspNetCompiler" BeforeTargets="NotifyWebFormsCompilationError" Condition="$(_HasWebFormsError)">
