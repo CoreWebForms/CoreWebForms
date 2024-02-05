@@ -1,5 +1,7 @@
 // MIT License.
 
+using System.Web.UI.WebControls;
+using System.Web.UI;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Server;
@@ -59,7 +61,9 @@ internal sealed class CompilationHost
 
                 services
                     .AddWebForms()
-                    .AddPersistentWebFormsCompilation();
+                    .AddPersistentWebFormsCompilation()
+                    .AddPrefix<ScriptManager>("asp")
+                    .AddPrefix<ListView>("asp");
 
                 services.AddHostedService<PersistedCompilationService>();
 

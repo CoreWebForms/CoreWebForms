@@ -1,6 +1,7 @@
 // MIT License.
 
 using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.Loader;
 using Microsoft.Extensions.Logging;

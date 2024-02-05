@@ -1,11 +1,10 @@
 // MIT License.
 
-namespace System.Web.UI;
 
-using System;
 using System.ComponentModel;
 using System.Web.Resources;
 
+namespace System.Web.UI;
 [AttributeUsage(AttributeTargets.All)]
 internal sealed class ResourceCategoryAttribute : CategoryAttribute
 {

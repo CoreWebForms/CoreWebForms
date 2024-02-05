@@ -1,14 +1,11 @@
 // MIT License.
 
-namespace System.Web.UI;
 
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Web;
 using System.Web.UI.HtmlControls;
 
+namespace System.Web.UI;
 internal sealed class PageWrapper : IPage
 {
     private readonly Page _page;

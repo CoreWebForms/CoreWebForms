@@ -1,12 +1,10 @@
 // MIT License.
 
-namespace System.Web.UI;
 
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
 
+namespace System.Web.UI;
 internal sealed class ClientScriptManagerWrapper : IClientScriptManager
 {
     private readonly ClientScriptManager _clientScriptManager;
