@@ -17,11 +17,10 @@ public static class HandlerServicesExtensions
     public static ISystemWebAdapterBuilder AddHttpHandler<T>(this ISystemWebAdapterBuilder services, string route)
         where T : IHttpHandler
     {
+        services.AddHttpHandlers();
         services.Services.TryAddSingleton<IHttpHandlerCollection, RegisteredHandlerCollection>();
         services.Services.AddOptions<RegisteredHandlerOptions>()
             .Configure(options => options.Metadata.Add(HandlerMetadata.Create<T>(route)));
-
-        services.AddHttpHandlers();
 
         return services;
     }
