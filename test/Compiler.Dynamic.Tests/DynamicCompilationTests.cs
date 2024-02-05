@@ -66,10 +66,6 @@ public class DynamicCompilationTests
                     RouteTable.Routes.MapPageRoute("Test", "/test", pages[0]);
 
                     app.UseRouting();
-                    app.Use((ctx, next) =>
-                    {
-                        return next(ctx);
-                    });
                     app.UseSession();
                     app.UseSystemWebAdapters();
                     app.UseEndpoints(endpoints =>
