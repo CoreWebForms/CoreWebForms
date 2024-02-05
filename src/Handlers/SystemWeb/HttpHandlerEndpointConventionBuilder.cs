@@ -8,14 +8,12 @@ using Microsoft.AspNetCore.Routing.Patterns;
 using Microsoft.AspNetCore.SystemWebAdapters;
 using Microsoft.AspNetCore.SystemWebAdapters.Features;
 using Microsoft.AspNetCore.SystemWebAdapters.HttpHandlers;
-using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Primitives;
 
 namespace System.Web;
 
 internal sealed class HttpHandlerEndpointConventionBuilder : EndpointDataSource, IEndpointConventionBuilder
 {
-    private readonly AdditionalManager _additional;
     private readonly IHttpHandlerCollection[] _managers;
     private readonly HandlerMetadataProvider _metadataProvider;
     private readonly RequestDelegate _defaultHandler;
@@ -27,13 +25,10 @@ internal sealed class HttpHandlerEndpointConventionBuilder : EndpointDataSource,
         HandlerMetadataProvider metadataProvider,
         IServiceProvider services)
     {
-        _additional = new AdditionalManager();
-        _managers = [.. managers, _additional];
+        _managers = managers.ToArray();
         _metadataProvider = metadataProvider;
         _defaultHandler = BuildDefaultHandler(services);
     }
-
-    public void Add(string path, Type type) => _additional.Add(path, type);
 
     public override IReadOnlyList<Endpoint> Endpoints
     {
@@ -94,15 +89,6 @@ internal sealed class HttpHandlerEndpointConventionBuilder : EndpointDataSource,
         return metadataCollection.Values;
     }
 
-    private sealed class MappedHandlerMetadata(string route, IHttpHandlerMetadata metadata) : IHttpHandlerMetadata
-    {
-        public SessionStateBehavior Behavior => metadata.Behavior;
-
-        public string Route => route;
-
-        public ValueTask<IHttpHandler> Create(HttpContextCore context) => metadata.Create(context);
-    }
-
     public void Add(Action<EndpointBuilder> convention)
         => (_conventions ??= []).Add(convention);
 
@@ -127,17 +113,12 @@ internal sealed class HttpHandlerEndpointConventionBuilder : EndpointDataSource,
         return builder.Build();
     }
 
-    private sealed class AdditionalManager : IHttpHandlerCollection
+    private sealed class MappedHandlerMetadata(string route, IHttpHandlerMetadata metadata) : IHttpHandlerMetadata
     {
-        private readonly List<IHttpHandlerMetadata> _endpoints = new();
+        public SessionStateBehavior Behavior => metadata.Behavior;
 
-        public IEnumerable<NamedHttpHandlerRoute> NamedRoutes => [];
+        public string Route => route;
 
-        public void Add(string path, Type type) => _endpoints.Add(HandlerMetadata.Create(path, type));
-
-        public IEnumerable<IHttpHandlerMetadata> GetHandlerMetadata() => _endpoints;
-
-        // We can use a null change token because we only expect this to be used at the time of registration
-        public IChangeToken GetChangeToken() => NullChangeToken.Singleton;
+        public ValueTask<IHttpHandler> Create(HttpContextCore context) => metadata.Create(context);
     }
 }

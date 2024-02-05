@@ -26,14 +26,17 @@ public abstract class HostedTestBase
                     app.UseSystemWebAdapters();
                     app.UseEndpoints(endpoints =>
                     {
-                        endpoints.MapHttpHandler<TPage>("/");
+                        endpoints.MapHttpHandlers();
                     });
                 });
                 app.ConfigureServices(services =>
                 {
                     services.AddDistributedMemoryCache();
                     services.AddRouting();
-                    services.AddWebForms();
+                    services.AddSystemWebAdapters()
+                        .AddWrappedAspNetCoreSession()
+                        .AddHttpHandler<TPage>("/")
+                        .AddWebForms();
 
                     servicesConfigure?.Invoke(services);
 
