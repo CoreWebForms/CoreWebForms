@@ -17,7 +17,7 @@ internal static class RequestEndExtensions
     public static IApplicationBuilder EnsureRequestEndThrows(this IApplicationBuilder app)
         => app.Use(async (ctx, next) =>
         {
-            var feature = new RequestThrowingEndFeature(ctx);
+            var feature = new RequestEndThrowingFeature(ctx);
 
             ctx.Features.Set<IHttpResponseEndFeature>(feature);
 
@@ -33,13 +33,13 @@ internal static class RequestEndExtensions
             }
         });
 
-    private sealed class RequestThrowingEndFeature : IHttpResponseEndFeature, IAsyncDisposable
+    private sealed class RequestEndThrowingFeature : IHttpResponseEndFeature, IAsyncDisposable
     {
         private readonly HttpContextCore _context;
         private readonly IHttpResponseEndFeature _original;
         private bool _end;
 
-        public RequestThrowingEndFeature(HttpContextCore context)
+        public RequestEndThrowingFeature(HttpContextCore context)
         {
             _context = context;
             _original = context.Features.GetRequiredFeature<IHttpResponseEndFeature>();
