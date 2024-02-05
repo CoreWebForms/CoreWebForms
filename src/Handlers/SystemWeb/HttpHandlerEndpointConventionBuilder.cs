@@ -18,13 +18,19 @@ internal sealed class HttpHandlerEndpointConventionBuilder : EndpointDataSource,
     private readonly AdditionalManager _additional;
     private readonly IHttpHandlerCollection[] _managers;
     private readonly HandlerMetadataProvider _metadataProvider;
+    private readonly RequestDelegate _defaultHandler;
+
     private List<Action<EndpointBuilder>> _conventions = [];
 
-    public HttpHandlerEndpointConventionBuilder(IEnumerable<IHttpHandlerCollection> managers, HandlerMetadataProvider metadataProvider)
+    public HttpHandlerEndpointConventionBuilder(
+        IEnumerable<IHttpHandlerCollection> managers,
+        HandlerMetadataProvider metadataProvider,
+        IServiceProvider services)
     {
         _additional = new AdditionalManager();
         _managers = [.. managers, _additional];
         _metadataProvider = metadataProvider;
+        _defaultHandler = BuildDefaultHandler(services);
     }
 
     public void Add(string path, Type type) => _additional.Add(path, type);
@@ -38,7 +44,7 @@ internal sealed class HttpHandlerEndpointConventionBuilder : EndpointDataSource,
             foreach (var metadata in CollectMetadata())
             {
                 var pattern = RoutePatternFactory.Parse(metadata.Route);
-                var builder = new RouteEndpointBuilder(DefaultHandler, pattern, 0);
+                var builder = new RouteEndpointBuilder(_defaultHandler, pattern, 0);
 
                 _metadataProvider.Add(builder, metadata);
 
@@ -102,15 +108,23 @@ internal sealed class HttpHandlerEndpointConventionBuilder : EndpointDataSource,
 
     public override IChangeToken GetChangeToken() => new CompositeChangeToken(_managers.Select(m => m.GetChangeToken()).ToArray());
 
-    private static Task DefaultHandler(HttpContextCore context)
+    private static RequestDelegate BuildDefaultHandler(IServiceProvider services)
     {
-        if (context.Features.GetRequiredFeature<IHttpHandlerFeature>().Current is { } handler)
-        {
-            return handler.RunHandlerAsync(context).AsTask();
-        }
+        var builder = new ApplicationBuilder(services);
 
-        context.Response.StatusCode = 500;
-        return context.Response.WriteAsync("Invalid handler");
+        builder.EnsureRequestEndThrows();
+        builder.Run(context =>
+        {
+            if (context.Features.GetRequiredFeature<IHttpHandlerFeature>().Current is { } handler)
+            {
+                return handler.RunHandlerAsync(context).AsTask();
+            }
+
+            context.Response.StatusCode = 500;
+            return context.Response.WriteAsync("Invalid handler");
+        });
+
+        return builder.Build();
     }
 
     private sealed class AdditionalManager : IHttpHandlerCollection

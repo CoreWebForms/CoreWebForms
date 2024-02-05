@@ -1,6 +1,7 @@
 // MIT License.
 
 using System.Diagnostics;
+using System.Net;
 using System.Web.Routing;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -30,6 +31,7 @@ public class DynamicCompilationTests
     [DataRow("test04", "page_with_master.aspx", "other_page_with_master.aspx", "page_with_master.aspx")]
     [DataRow("test05", "error_page.aspx")]
     [DataRow("test06", "route_url_expressionbuilder.aspx")]
+    [DataRow("test07", "redirect_page.aspx")]
     public async Task CompiledPageRuns(string test, params string[] pages)
     {
         // Arrange
@@ -92,12 +94,17 @@ public class DynamicCompilationTests
             var page = pages[i];
 
             string? result = null;
+            var currentPage = page;
 
             do
             {
-                using var response = await client.GetAsync(page, cts.Token);
+                using var response = await client.GetAsync(currentPage, cts.Token);
 
-                if (response.IsSuccessStatusCode)
+                if (response.StatusCode == HttpStatusCode.Found)
+                {
+                    currentPage = response.Headers.Location!.ToString();
+                }
+                else if (response.IsSuccessStatusCode)
                 {
                     result = await response.Content.ReadAsStringAsync();
                 }
