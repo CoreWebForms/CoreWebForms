@@ -14,19 +14,17 @@ internal static class RequestEndExtensions
     /// By design, the System.Web adapters try not to throw when <see cref="HttpResponse.End"/> but rather tracks it in other ways.
     /// However, WebForms was built with that expectation and some common scenarios (such as postback calls) break without this.
     /// </summary>
+    [Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2007:Consider calling ConfigureAwait on the awaited task", Justification = "Need the type itself")]
     public static IApplicationBuilder EnsureRequestEndThrows(this IApplicationBuilder app)
         => app.Use(async (ctx, next) =>
         {
-            var feature = new RequestEndThrowingFeature(ctx);
+            await using var feature = new RequestEndThrowingFeature(ctx);
 
             ctx.Features.Set<IHttpResponseEndFeature>(feature);
 
             try
             {
-                await using (feature)
-                {
-                    await next(ctx).ConfigureAwait(false);
-                }
+                await next(ctx).ConfigureAwait(false);
             }
             catch (RequestEndException)
             {
