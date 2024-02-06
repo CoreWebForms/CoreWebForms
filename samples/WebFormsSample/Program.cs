@@ -17,6 +17,7 @@ builder.Services.AddSystemWebAdapters()
     .AddJsonSessionSerializer()
     .AddWrappedAspNetCoreSession()
     .AddWebForms()
+    .AddScriptManager()
 #if WEBFORMS_DYNAMIC
     .AddDynamicPages()
     .AddPrefix<ScriptManager>("asp")
@@ -49,5 +50,6 @@ app.MapGet("/acls", () => AssemblyLoadContext.All.Select(acl => new
 }));
 
 app.MapWebForms();
+app.MapScriptManager();
 
 app.Run();

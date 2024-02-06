@@ -1,0 +1,11 @@
+{
+    "name": "ajax",
+    "type": "module",
+    "private": true,
+    "scripts": {
+        "build": "rollup -c"
+    },
+    "devDependencies": {
+        "rollup": "^4.9.2"
+    }
+}
