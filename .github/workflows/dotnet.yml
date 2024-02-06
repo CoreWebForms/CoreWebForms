@@ -42,13 +42,13 @@ jobs:
             dotnet publish $project --no-restore -r ${{ matrix.rid }} -f net8.0
         }
     - name: Upload Samples
-      uses: actions/upload-artifact@v4.3.0
+      uses: actions/upload-artifact@v4.3.1
       with:
         name: samples-${{ matrix.rid }}
         path: |
           artifacts/samples/publish/**/*
     - name: Upload tests
-      uses: actions/upload-artifact@v4.3.0
+      uses: actions/upload-artifact@v4.3.1
       with:
         name: tests-${{ matrix.rid }}
         path: |
@@ -94,7 +94,7 @@ jobs:
           
           return $LastExitCode
       - name: Upload results
-        uses: actions/upload-artifact@v4.3.0
+        uses: actions/upload-artifact@v4.3.1
         with:
           name: test-result-${{ matrix.rid }}
           path: |
