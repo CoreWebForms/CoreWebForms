@@ -6,7 +6,6 @@
 
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
-using System.Drawing;
 using System.Globalization;
 using System.Web.Resources;
 
@@ -17,7 +16,6 @@ namespace System.Web.UI
     Designer("System.Web.UI.Design.UpdateProgressDesigner, " + AssemblyRef.SystemWebExtensionsDesign),
     ParseChildren(true),
     PersistChildren(false),
-    ToolboxBitmap(typeof(EmbeddedResourceFinder), "System.Web.Resources.UpdateProgress.bmp")
     ]
     public class UpdateProgress : Control, IAttributeAccessor, IScriptControl {
 

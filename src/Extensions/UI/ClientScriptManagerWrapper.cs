@@ -1,6 +1,5 @@
 // MIT License.
 
-
 using System.Diagnostics;
 using System.Reflection;
 

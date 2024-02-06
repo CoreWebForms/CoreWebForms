@@ -4,7 +4,8 @@ using System.Text;
 
 namespace System.Web.Script.Serialization;
 
-internal class JavaScriptSerializer
+// TODO: We'll want to use System.Text.Json and change it to be strongly typed
+internal sealed class JavaScriptSerializer
 {
     internal void Serialize(object value, StringBuilder builder, SerializationFormat javaScript)
     {

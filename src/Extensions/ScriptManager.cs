@@ -13,10 +13,10 @@ NonVisualControl(),
 ParseChildren(true),
 PersistChildren(false),
 ]
+[Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Still working on implementing")]
+    [Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Still working on implementing")]
 public class ScriptManager : Control, IScriptManagerInternal
 {
-    private readonly List<ScriptControlDescriptor> _scriptDescriptor = new();
-
     // TODO: use di here instead of static initialization
     [Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1810:Initialize reference type static fields inline", Justification = "Initialize something in a different. Should move to DI")]
     static ScriptManager()

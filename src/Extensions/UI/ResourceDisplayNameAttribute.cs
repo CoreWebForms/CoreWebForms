@@ -1,6 +1,5 @@
 // MIT License.
 
-
 using System.ComponentModel;
 using System.Web.Resources;
 
