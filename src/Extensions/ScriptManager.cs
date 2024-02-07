@@ -14,8 +14,8 @@ ParseChildren(true),
 PersistChildren(false),
 ]
 [Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Still working on implementing")]
-    [Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Still working on implementing")]
-public class ScriptManager : Control, IScriptManagerInternal
+[Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Still working on implementing")]
+public class ScriptManager : Control, IScriptManagerInternal, IScriptManager
 {
     // TODO: use di here instead of static initialization
     [Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1810:Initialize reference type static fields inline", Justification = "Initialize something in a different. Should move to DI")]
@@ -59,7 +59,7 @@ public class ScriptManager : Control, IScriptManagerInternal
     {
         get
         {
-            Debugger.Break();
+            Break();
             return "";
         }
     }
@@ -67,6 +67,60 @@ public class ScriptManager : Control, IScriptManagerInternal
     bool IScriptManagerInternal.SupportsPartialRendering => true;
 
     bool IScriptManagerInternal.IsInAsyncPostBack => false;
+
+    bool IScriptManager.SupportsPartialRendering
+    {
+        get
+        {
+            Break();
+            return false;
+        }
+    }
+
+    bool IScriptManager.IsInAsyncPostBack
+    {
+        get
+        {
+            Break();
+            return false;
+        }
+    }
+
+    bool IScriptManager.EnableCdn
+    {
+        get
+        {
+            Break();
+            return false;
+        }
+    }
+
+    bool IScriptManager.EnableCdnFallback
+    {
+        get
+        {
+            Break();
+            return false;
+        }
+    }
+
+    bool IScriptManager.IsDebuggingEnabled
+    {
+        get
+        {
+            Break();
+            return false;
+        }
+    }
+
+    bool IScriptManager.IsSecureConnection
+    {
+        get
+        {
+            Break();
+            return false;
+        }
+    }
 
     protected internal override void OnInit(EventArgs e)
     {
@@ -134,69 +188,59 @@ public class ScriptManager : Control, IScriptManagerInternal
         }
     }
 
-    internal void RegisterDispose(Control owner, string v)
-    {
+    internal void RegisterDispose(Control owner, string v) =>
         // TODO
-        Debugger.Break();
-    }
+        Break();
 
-    internal static ScriptManager GetCurrent(Page page)
-    {
-        return page.Items[typeof(ScriptManager)] as ScriptManager;
-    }
+    internal static ScriptManager GetCurrent(Page page) => page.Items[typeof(ScriptManager)] as ScriptManager;
 
-    internal void RegisterScriptDescriptors(IExtenderControl descriptor)
-    {
-        Debugger.Break();
-    }
+    internal void RegisterScriptDescriptors(IExtenderControl descriptor) => Break();
 
-    internal void RegisterScriptDescriptors(IScriptControl descriptor)
-    {
-        Debugger.Break();
-    }
+    internal void RegisterScriptDescriptors(IScriptControl descriptor) => Break();
 
     internal void RegisterScriptControl<TScriptControl>(TScriptControl scriptControl)
-        where TScriptControl : Control, IScriptControl
-    {
-        Debugger.Break();
-    }
+        where TScriptControl : Control, IScriptControl => Break();
 
-    void IScriptManagerInternal.RegisterAsyncPostBackControl(Control control)
-    {
-        Debugger.Break();
-    }
+    void IScriptManagerInternal.RegisterAsyncPostBackControl(Control control) => Break();
 
-    void IScriptManagerInternal.RegisterExtenderControl<TExtenderControl>(TExtenderControl extenderControl, Control targetControl)
-    {
-        Debugger.Break();
-    }
+    void IScriptManagerInternal.RegisterExtenderControl<TExtenderControl>(TExtenderControl extenderControl, Control targetControl) => Break();
 
-    void IScriptManagerInternal.RegisterPostBackControl(Control control)
-    {
-        Debugger.Break();
-    }
+    void IScriptManagerInternal.RegisterPostBackControl(Control control) => Break();
 
-    void IScriptManagerInternal.RegisterScriptControl<TScriptControl>(TScriptControl scriptControl)
-    {
-        Debugger.Break();
-    }
+    void IScriptManagerInternal.RegisterScriptControl<TScriptControl>(TScriptControl scriptControl) => Break();
 
-    void IScriptManagerInternal.RegisterScriptDescriptors(IExtenderControl extenderControl)
-    {
-        Debugger.Break();
-    }
+    void IScriptManagerInternal.RegisterScriptDescriptors(IExtenderControl extenderControl) => Break();
 
-    void IScriptManagerInternal.RegisterScriptDescriptors(IScriptControl scriptControl)
-    {
-        Debugger.Break();
-    }
+    void IScriptManagerInternal.RegisterScriptDescriptors(IScriptControl scriptControl) => Break();
 
-    void IScriptManagerInternal.RegisterUpdatePanel(UpdatePanel updatePanel)
-    {
-        Debugger.Break();
-    }
+    void IScriptManagerInternal.RegisterUpdatePanel(UpdatePanel updatePanel) => Break();
 
-    void IScriptManagerInternal.UnregisterUpdatePanel(UpdatePanel updatePanel)
+    void IScriptManagerInternal.UnregisterUpdatePanel(UpdatePanel updatePanel) => Break();
+
+    void IScriptManager.RegisterArrayDeclaration(Control control, string arrayName, string arrayValue) => Break();
+
+    void IScriptManager.RegisterClientScriptBlock(Control control, Type type, string key, string script, bool addScriptTags) => Break();
+
+    void IScriptManager.RegisterClientScriptInclude(Control control, Type type, string key, string url) => Break();
+
+    void IScriptManager.RegisterClientScriptResource(Control control, Type type, string resourceName) => Break();
+
+    void IScriptManager.RegisterDispose(Control control, string disposeScript) => Break();
+
+    void IScriptManager.RegisterExpandoAttribute(Control control, string controlId, string attributeName, string attributeValue, bool encode) => Break();
+
+    void IScriptManager.RegisterHiddenField(Control control, string hiddenFieldName, string hiddenFieldValue) => Break();
+
+    void IScriptManager.RegisterOnSubmitStatement(Control control, Type type, string key, string script) => Break();
+
+    void IScriptManager.RegisterPostBackControl(Control control) => Break();
+
+    void IScriptManager.RegisterStartupScript(Control control, Type type, string key, string script, bool addScriptTags) => Break();
+
+    void IScriptManager.SetFocusInternal(string clientID) => Break();
+
+    [Conditional("DEBUG")]
+    private static void Break()
     {
         Debugger.Break();
     }
