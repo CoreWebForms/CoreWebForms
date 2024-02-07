@@ -1,6 +1,8 @@
-Type._registerScript("MicrosoftAjaxWebServices.js", ["MicrosoftAjaxNetwork.js"]);
+Type._registerScript("MicrosoftAjaxWebServices.js", [
+  "MicrosoftAjaxNetwork.js",
+]);
 
-Type.registerNamespace('Sys.Net');
+Type.registerNamespace("Sys.Net");
 
-import {} from "./src/Sys/Net/WebServiceProxy.js"
-import {} from "./src/Sys/Net/WebServiceError.js"
+import {} from "./src/Sys/Net/WebServiceProxy.js";
+import {} from "./src/Sys/Net/WebServiceError.js";
