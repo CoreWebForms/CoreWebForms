@@ -460,10 +460,8 @@ public class Page : TemplateControl, IHttpAsyncHandler
                 //This is used to query the ViewState in ViewStateValueProvider later.
                 _modelBindingExecutionContext.PublishService<StateBag>(ViewState);
 
-#if PORT_ROUTING
                 //This is used to query RouteData in RouteDataValueProvider later.
                 _modelBindingExecutionContext.PublishService<RouteData>(RouteData);
-#endif
             }
             return _modelBindingExecutionContext;
         }

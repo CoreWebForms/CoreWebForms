@@ -921,7 +921,6 @@ public partial class Control : IComponent, IParserAccessor, IDataBindingsAccesso
 
     private Page page;
 
-    //#if PORT_ROUTING
     internal RouteCollection RouteCollection
     {
         get
@@ -960,7 +959,6 @@ public partial class Control : IComponent, IParserAccessor, IDataBindingsAccesso
             }
         }
     }
-    //#endif
 
     // VSWhidbey 244999
     internal virtual bool IsReloadable => false;
@@ -3764,9 +3762,7 @@ public partial class Control : IComponent, IParserAccessor, IDataBindingsAccesso
         public Version RenderingCompatibility;
         public ControlAdapter Adapter;
 
-        //#if PORT_ROUTING
         public RouteCollection RouteCollection;
-        //#endif
 
         public void Dispose()
         {
@@ -3785,9 +3781,7 @@ public partial class Control : IComponent, IParserAccessor, IDataBindingsAccesso
             ControlDesignerAccessorUserData = null;
             DesignModeState = null;
             RenderingCompatibility = null;
-            //#if PORT_ROUTING
             RouteCollection = null;
-            //#endif
         }
     }
 
