@@ -1,8 +1,4 @@
-//------------------------------------------------------------------------------
-// <copyright file="IExtenderControl.cs" company="Microsoft">
-//     Copyright (c) Microsoft Corporation.  All rights reserved.
-// </copyright>
-//------------------------------------------------------------------------------
+// MIT License.
 
 using System.Diagnostics.CodeAnalysis;
 

@@ -1,8 +1,4 @@
-//------------------------------------------------------------------------------
-// <copyright file="UpdatePanelControlTrigger.cs" company="Microsoft">
-//     Copyright (c) Microsoft Corporation.  All rights reserved.
-// </copyright>
-//------------------------------------------------------------------------------
+// MIT License.
 
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;

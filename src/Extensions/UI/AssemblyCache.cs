@@ -1,4 +1,4 @@
-//MIT license
+// MIT License.
 
 using System.Collections;
 using System.Collections.Concurrent;

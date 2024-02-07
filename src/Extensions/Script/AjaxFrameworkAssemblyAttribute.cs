@@ -1,4 +1,4 @@
-//MIT license
+// MIT License.
 
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
