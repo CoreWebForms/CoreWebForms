@@ -14,7 +14,7 @@ ParseChildren(true),
 PersistChildren(false),
 ]
 [Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Still working on implementing")]
-    [Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Still working on implementing")]
+[Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Still working on implementing")]
 public class ScriptManager : Control, IScriptManagerInternal
 {
     // TODO: use di here instead of static initialization
@@ -59,7 +59,7 @@ public class ScriptManager : Control, IScriptManagerInternal
     {
         get
         {
-            Debugger.Break();
+            Break();
             return "";
         }
     }
@@ -137,7 +137,7 @@ public class ScriptManager : Control, IScriptManagerInternal
     internal void RegisterDispose(Control owner, string v)
     {
         // TODO
-        Debugger.Break();
+        Break();
     }
 
     internal static ScriptManager GetCurrent(Page page)
@@ -147,56 +147,62 @@ public class ScriptManager : Control, IScriptManagerInternal
 
     internal void RegisterScriptDescriptors(IExtenderControl descriptor)
     {
-        Debugger.Break();
+        Break();
     }
 
     internal void RegisterScriptDescriptors(IScriptControl descriptor)
     {
-        Debugger.Break();
+        Break();
     }
 
     internal void RegisterScriptControl<TScriptControl>(TScriptControl scriptControl)
         where TScriptControl : Control, IScriptControl
     {
-        Debugger.Break();
+        Break();
     }
 
     void IScriptManagerInternal.RegisterAsyncPostBackControl(Control control)
     {
-        Debugger.Break();
+        Break();
     }
 
     void IScriptManagerInternal.RegisterExtenderControl<TExtenderControl>(TExtenderControl extenderControl, Control targetControl)
     {
-        Debugger.Break();
+        Break();
     }
 
     void IScriptManagerInternal.RegisterPostBackControl(Control control)
     {
-        Debugger.Break();
+        Break();
     }
 
     void IScriptManagerInternal.RegisterScriptControl<TScriptControl>(TScriptControl scriptControl)
     {
-        Debugger.Break();
+        Break();
     }
 
     void IScriptManagerInternal.RegisterScriptDescriptors(IExtenderControl extenderControl)
     {
-        Debugger.Break();
+        Break();
     }
 
     void IScriptManagerInternal.RegisterScriptDescriptors(IScriptControl scriptControl)
     {
-        Debugger.Break();
+        Break();
     }
 
     void IScriptManagerInternal.RegisterUpdatePanel(UpdatePanel updatePanel)
     {
-        Debugger.Break();
+        Break();
     }
 
     void IScriptManagerInternal.UnregisterUpdatePanel(UpdatePanel updatePanel)
+    {
+        Break();
+    }
+
+    [Conditional("Debug")]
+    private void Break()
     {
         Debugger.Break();
     }
