@@ -1,11 +1,9 @@
 // MIT License.
 
-namespace System.Web.UI;
-
-using System;
 using System.ComponentModel;
 using System.Web.Resources;
 
+namespace System.Web.UI;
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Property | AttributeTargets.Event, Inherited = true, AllowMultiple = false)]
 internal sealed class ResourceDescriptionAttribute : DescriptionAttribute
 {

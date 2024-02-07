@@ -1,6 +1,8 @@
 // MIT License.
 
 using System.ComponentModel;
+using System.Diagnostics;
+using System.Web.Resources;
 
 namespace System.Web.UI;
 
@@ -11,7 +13,9 @@ NonVisualControl(),
 ParseChildren(true),
 PersistChildren(false),
 ]
-public class ScriptManager : Control
+[Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Still working on implementing")]
+    [Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Still working on implementing")]
+public class ScriptManager : Control, IScriptManagerInternal
 {
     // TODO: use di here instead of static initialization
     [Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1810:Initialize reference type static fields inline", Justification = "Initialize something in a different. Should move to DI")]
@@ -47,6 +51,57 @@ public class ScriptManager : Control
         }
     }
 
+    public bool EnablePartialRendering { get; set; }
+
+    internal bool SupportsPartialRendering { get; set; }
+
+    string IScriptManagerInternal.AsyncPostBackSourceElementID
+    {
+        get
+        {
+            Debugger.Break();
+            return "";
+        }
+    }
+
+    bool IScriptManagerInternal.SupportsPartialRendering => true;
+
+    bool IScriptManagerInternal.IsInAsyncPostBack => false;
+
+    protected internal override void OnInit(EventArgs e)
+    {
+        base.OnInit(e);
+
+        if (!DesignMode)
+        {
+            ScriptManager existingInstance = ScriptManager.GetCurrent(Page);
+
+            if (existingInstance != null)
+            {
+                throw new InvalidOperationException(AtlasWeb.ScriptManager_OnlyOneScriptManager);
+            }
+
+            var page = Page;
+
+            page.Items[typeof(IScriptManager)] = this;
+            page.Items[typeof(ScriptManager)] = this;
+
+#if FALSE
+            page.InitComplete += OnPageInitComplete;
+            page.PreRenderComplete += OnPagePreRenderComplete;
+
+            if (page.IsPostBack)
+            {
+                _isInAsyncPostBack = PageRequestManager.IsAsyncPostBackRequest(page.Request);
+            }
+            // Delegate to PageRequestManager to hook up error handling for async posts
+            PageRequestManager.OnInit();
+
+            page.PreRender += ScriptControlManager.OnPagePreRender;
+#endif
+        }
+    }
+
     protected internal override void Render(HtmlTextWriter writer)
     {
         if (_scripts is null)
@@ -77,5 +132,72 @@ public class ScriptManager : Control
                 writer.WriteLine("' -->");
             }
         }
+    }
+
+    internal void RegisterDispose(Control owner, string v)
+    {
+        // TODO
+        Debugger.Break();
+    }
+
+    internal static ScriptManager GetCurrent(Page page)
+    {
+        return page.Items[typeof(ScriptManager)] as ScriptManager;
+    }
+
+    internal void RegisterScriptDescriptors(IExtenderControl descriptor)
+    {
+        Debugger.Break();
+    }
+
+    internal void RegisterScriptDescriptors(IScriptControl descriptor)
+    {
+        Debugger.Break();
+    }
+
+    internal void RegisterScriptControl<TScriptControl>(TScriptControl scriptControl)
+        where TScriptControl : Control, IScriptControl
+    {
+        Debugger.Break();
+    }
+
+    void IScriptManagerInternal.RegisterAsyncPostBackControl(Control control)
+    {
+        Debugger.Break();
+    }
+
+    void IScriptManagerInternal.RegisterExtenderControl<TExtenderControl>(TExtenderControl extenderControl, Control targetControl)
+    {
+        Debugger.Break();
+    }
+
+    void IScriptManagerInternal.RegisterPostBackControl(Control control)
+    {
+        Debugger.Break();
+    }
+
+    void IScriptManagerInternal.RegisterScriptControl<TScriptControl>(TScriptControl scriptControl)
+    {
+        Debugger.Break();
+    }
+
+    void IScriptManagerInternal.RegisterScriptDescriptors(IExtenderControl extenderControl)
+    {
+        Debugger.Break();
+    }
+
+    void IScriptManagerInternal.RegisterScriptDescriptors(IScriptControl scriptControl)
+    {
+        Debugger.Break();
+    }
+
+    void IScriptManagerInternal.RegisterUpdatePanel(UpdatePanel updatePanel)
+    {
+        Debugger.Break();
+    }
+
+    void IScriptManagerInternal.UnregisterUpdatePanel(UpdatePanel updatePanel)
+    {
+        Debugger.Break();
     }
 }

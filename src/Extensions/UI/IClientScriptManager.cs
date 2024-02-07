@@ -1,11 +1,8 @@
 // MIT License.
 
-namespace System.Web.UI;
-
-using System;
-using System.Collections.Generic;
 using System.Reflection;
 
+namespace System.Web.UI;
 internal interface IClientScriptManager
 {
     Dictionary<Assembly, Dictionary<String, Object>> RegisteredResourcesToSuppress

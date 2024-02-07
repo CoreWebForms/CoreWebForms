@@ -1,9 +1,8 @@
-//MIT License
+// MIT License.
 
-using System;
 using System.Reflection;
 
-namespace System.Web.UI; 
+namespace System.Web.UI;
 
 public class ScriptResourceDefinition : IScriptResourceDefinition {
     private string _path;
