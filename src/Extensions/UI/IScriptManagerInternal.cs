@@ -2,16 +2,20 @@
 
 namespace System.Web.UI
 {
-    internal interface IScriptManagerInternal {
-        string AsyncPostBackSourceElementID {
+    internal interface IScriptManagerInternal
+    {
+        string AsyncPostBackSourceElementID
+        {
             get;
         }
 
-        bool SupportsPartialRendering {
+        bool SupportsPartialRendering
+        {
             get;
         }
 
-        bool IsInAsyncPostBack {
+        bool IsInAsyncPostBack
+        {
             get;
         }
 
@@ -19,7 +23,7 @@ namespace System.Web.UI
         void RegisterExtenderControl<TExtenderControl>(TExtenderControl extenderControl, Control targetControl)
             where TExtenderControl : Control, IExtenderControl;
         void RegisterPostBackControl(Control control);
-        //void RegisterProxy(ScriptManagerProxy proxy);
+        void RegisterProxy(ScriptManagerProxy proxy);
         void RegisterScriptControl<TScriptControl>(TScriptControl scriptControl)
             where TScriptControl : Control, IScriptControl;
         void RegisterScriptDescriptors(IExtenderControl extenderControl);

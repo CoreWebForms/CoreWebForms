@@ -7,6 +7,7 @@
     <Nullable>disable</Nullable>
     <AssemblyName>WebForms.Extensions</AssemblyName>
     <RootNamespace>System.Web</RootNamespace>
+    <NoWarn>$(NoWarn);CA1823;CA1852;CA1822;CA2249;CA1845;CA1305;CS0649;CS0414;CA1805;CA1810;CA1846;CS0169</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
