@@ -1,4 +1,4 @@
-import preprocess from './preprocess.js'
+import preprocess from './rollup-plugin-preprocess.js'
 
 export default [
   {
