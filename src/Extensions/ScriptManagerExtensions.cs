@@ -17,7 +17,7 @@ public static class ScriptManagerExtensions
     public static void MapScriptManager(this IEndpointRouteBuilder endpoints)
     {
         var provider = new EmbeddedFileProvider(typeof(ScriptManager).Assembly, "System.Web.Script.js.dist");
-        var path = "/__webforms/scripts/system.web.extensions";
+        var path = "/__webforms/scripts";
 
         endpoints.MapStaticFiles(provider, path, name => $"AJAX [{name}]");
     }

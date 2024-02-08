@@ -9,7 +9,17 @@ internal static class Extensions
 {
     public static string GetClientBaseDir(this HttpRequest request)
     {
-        return request.CurrentExecutionFilePathObject();
+        var path = request.CurrentExecutionFilePath;
+        var idx = path.LastIndexOf('/');
+
+        if (idx <= 0)
+        {
+            return "/";
+        }
+        else
+        {
+            return path.Substring(0, idx);
+        }
     }
 
     public static string ApplyAppPathModifier(this HttpResponse response, string url)
@@ -44,6 +54,6 @@ internal static class Extensions
 
     public static VirtualPath CurrentExecutionFilePathObject(this HttpRequest request)
     {
-        return request.Path;
+        return request.CurrentExecutionFilePath;
     }
 }

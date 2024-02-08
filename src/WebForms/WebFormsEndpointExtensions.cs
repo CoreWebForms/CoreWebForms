@@ -16,6 +16,6 @@ public static class WebFormsEndpointExtensions
 
         var provider = new EmbeddedFileProvider(typeof(Page).Assembly, "System.Web.UI.WebControls.RuntimeScripts");
 
-        endpoints.MapStaticFiles(provider, "/__webforms/scripts/system.web", path => $"WebForms Static Files [{path}]");
+        endpoints.MapStaticFiles(provider, "/__webforms/scripts", path => $"WebForms Static Files [{path}]");
     }
 }
