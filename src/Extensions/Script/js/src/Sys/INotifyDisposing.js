@@ -1,3 +1,5 @@
+// MIT License.
+
 Sys.INotifyDisposing = function () {
   /// <summary>Implement this interface if the class exposes an event to notify when it's disposing.</summary>
   ##DEBUG throw Error.notImplemented();

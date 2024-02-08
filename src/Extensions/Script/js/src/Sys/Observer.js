@@ -1,4 +1,6 @@
-﻿Sys.Observer = function () {
+// MIT License.
+
+Sys.Observer = function () {
   #if DEBUG
   throw Error.invalidOperation();
   #endif

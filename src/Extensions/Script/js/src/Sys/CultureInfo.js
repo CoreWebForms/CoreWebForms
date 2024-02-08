@@ -1,3 +1,5 @@
+// MIT License.
+
 Sys.CultureInfo = function (name, numberFormat, dateTimeFormat) {
   /// <param name="name" type="String">CultureInfo name.</param>
   /// <param name="numberFormat" type="Object">CultureInfo number format information.</param>

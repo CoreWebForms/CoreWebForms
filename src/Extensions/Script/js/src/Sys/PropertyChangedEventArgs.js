@@ -1,3 +1,5 @@
+// MIT License.
+
 Sys.PropertyChangedEventArgs = function (propertyName) {
   /// <summary>Describes property changes.</summary>
   /// <param name="propertyName" type="String">The name of the property that changed.</param>

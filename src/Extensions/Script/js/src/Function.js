@@ -1,3 +1,5 @@
+// MIT License.
+
 Function.__typeName = "Function";
 Function.__class = true;
 

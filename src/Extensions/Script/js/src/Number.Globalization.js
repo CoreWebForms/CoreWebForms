@@ -1,3 +1,5 @@
+// MIT License.
+
 Number.parseLocale = function (value) {
   /// <summary>Creates a number from its locale string representation.</summary>
   /// <param name="value" type="String">A string that can parse to a number.</param>

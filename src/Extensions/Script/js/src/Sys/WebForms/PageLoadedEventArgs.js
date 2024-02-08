@@ -1,3 +1,5 @@
+// MIT License.
+
 Sys.WebForms.PageLoadedEventArgs = function (
   panelsUpdated,
   panelsCreated,

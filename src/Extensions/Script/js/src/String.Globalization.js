@@ -1,3 +1,5 @@
+// MIT License.
+
 String.localeFormat = function (format, args) {
   /// <summary>
   ///     Replaces the format items in a specified String with the text equivalents of the values of

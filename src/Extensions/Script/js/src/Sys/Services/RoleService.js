@@ -1,3 +1,5 @@
+// MIT License.
+
 Sys.Services._RoleService = function () {
   /// <summary locid="M:J#Sys.Services.RoleService.#ctor"/>
   Sys.Services._RoleService.initializeBase(this);

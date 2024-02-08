@@ -1,3 +1,5 @@
+// MIT License.
+
 Sys.Net.XMLDOM = function (markup) {
   /// <summary>Creates an XML document from an XML string.</summary>
   /// <param name="markup" type="String">The XML string to parse.</param>

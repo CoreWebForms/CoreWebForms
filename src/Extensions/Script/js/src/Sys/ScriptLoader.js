@@ -1,3 +1,5 @@
+// MIT License.
+
 // This ScriptLoader works by injecting script tags into the DOM sequentially, waiting for each script
 // to finish loading before proceeding to the next one.
 // It supports a timeout which applies to ALL scripts.

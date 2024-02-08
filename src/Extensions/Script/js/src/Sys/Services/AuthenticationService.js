@@ -1,3 +1,5 @@
+// MIT License.
+
 Sys.Services._AuthenticationService = function () {
   /// <summary locid="M:J#Sys.Services.AuthenticationService.#ctor">A proxy to an authentication service.</summary>
   Sys.Services._AuthenticationService.initializeBase(this);

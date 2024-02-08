@@ -1,3 +1,5 @@
+// MIT License.
+
 Sys.Net.NetworkRequestEventArgs = function (webRequest) {
   /// <summary>This class is raised by the WebRequestManager when a WebRequest is about to be executed.</summary>
   /// <param name="webRequest" type="Sys.Net.WebRequest">The identifier for the event.</param>

@@ -1,3 +1,5 @@
+// MIT License.
+
 Sys.UI.Point = function (x, y) {
   /// <param name="x" type="Number"/>
   /// <param name="y" type="Number"/>

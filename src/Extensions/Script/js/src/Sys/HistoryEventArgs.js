@@ -1,4 +1,6 @@
-﻿Sys.HistoryEventArgs = function (state) {
+// MIT License.
+
+Sys.HistoryEventArgs = function (state) {
   /// <param name="state" type="Object"/>
   Sys.HistoryEventArgs.initializeBase(this);
   this._state = state;

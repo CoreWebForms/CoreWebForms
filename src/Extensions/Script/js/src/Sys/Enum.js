@@ -1,3 +1,5 @@
+// MIT License.
+
 function Sys$Enum$parse(value, ignoreCase) {
   /// <summary>
   ///     Converts the string representation of the name or numeric value of one or more enumerated

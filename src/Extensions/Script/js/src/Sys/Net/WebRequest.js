@@ -1,3 +1,5 @@
+// MIT License.
+
 Sys.Net.WebRequest = function () {
   /// <summary>WebRequest class</summary>
   this._url = "";

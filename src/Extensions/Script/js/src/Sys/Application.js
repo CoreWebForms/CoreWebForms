@@ -1,3 +1,5 @@
+// MIT License.
+
 Sys._Application = function () {
   /// <summary locid="M:J#Sys.Application.#ctor"/>
   Sys._Application.initializeBase(this);

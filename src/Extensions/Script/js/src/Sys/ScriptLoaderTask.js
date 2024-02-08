@@ -1,3 +1,5 @@
+// MIT License.
+
 // ScriptLoaderTask loads a single script by injecting a dynamic script tag into the DOM.
 // It calls the completed callback when the script element's load/readystatechange or error event occus.
 // The task should be disposed of after use, as it contains references to the script element.

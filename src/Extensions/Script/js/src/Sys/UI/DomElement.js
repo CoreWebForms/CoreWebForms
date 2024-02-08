@@ -1,3 +1,5 @@
+// MIT License.
+
 Sys.UI.DomElement = function () {
   /// <summary>This static class provides helpers to work with DOM elements.</summary>
   ##DEBUG throw Error.notImplemented();

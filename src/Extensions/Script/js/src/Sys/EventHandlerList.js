@@ -1,3 +1,5 @@
+// MIT License.
+
 Sys.EventHandlerList = function () {
   /// <summary>The EventHandlerList class contains a dictionary of multicast events.</summary>
   this._list = {};

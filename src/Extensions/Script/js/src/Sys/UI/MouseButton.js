@@ -1,3 +1,5 @@
+// MIT License.
+
 Sys.UI.MouseButton = function () {
   /// <summary>
   ///   Describes mouse buttons. The values are those from the DOM standard, which are different from the IE values.

@@ -1,3 +1,5 @@
+// MIT License.
+
 Sys.UI._UpdateProgress = function (element) {
   Sys.UI._UpdateProgress.initializeBase(this, [element]);
   this._displayAfter = 500;

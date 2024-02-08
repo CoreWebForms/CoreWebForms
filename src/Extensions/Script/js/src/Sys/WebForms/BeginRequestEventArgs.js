@@ -1,3 +1,5 @@
+// MIT License.
+
 Sys.WebForms.BeginRequestEventArgs = function (
   request,
   postBackElement,

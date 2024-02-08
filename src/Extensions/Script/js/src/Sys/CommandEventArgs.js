@@ -1,4 +1,6 @@
-﻿Sys.CommandEventArgs = function (commandName, commandArgument, commandSource) {
+// MIT License.
+
+Sys.CommandEventArgs = function (commandName, commandArgument, commandSource) {
   /// <param name="commandName" type="String">The command name.</param>
   /// <param name="commandArgument" mayBeNull="true">The command arguments.</param>
   /// <param name="commandSource" mayBeNull="true">The command source.</param>

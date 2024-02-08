@@ -1,3 +1,5 @@
+// MIT License.
+
 Sys.IContainer = function () {
   ##DEBUG throw Error.notImplemented();
 };

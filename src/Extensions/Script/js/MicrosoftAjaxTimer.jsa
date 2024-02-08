@@ -1,3 +1,5 @@
+// MIT License.
+
 Type._registerScript("Timer.js", ["MicrosoftAjaxComponentModel.js"]);
 
 #include "Sys/UI/Controls/Timer.js"

@@ -1,3 +1,5 @@
+// MIT License.
+
 // Partial Rendering
 
 Type._registerScript("MicrosoftAjaxWebForms.js", [

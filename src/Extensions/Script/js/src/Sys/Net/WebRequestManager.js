@@ -1,3 +1,5 @@
+// MIT License.
+
 Sys.Net._WebRequestManager = function () {
   /// <summary locid="P:J#Sys.Net.WebRequestManager.#ctor"/>
   this._defaultTimeout = 0;

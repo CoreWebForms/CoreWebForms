@@ -1,3 +1,5 @@
+// MIT License.
+
 String.__typeName = "String";
 String.__class = true;
 

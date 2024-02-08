@@ -1,3 +1,5 @@
+// MIT License.
+
 Object.__typeName = "Object";
 Object.__class = true;
 

@@ -1,3 +1,5 @@
+// MIT License.
+
 Sys.CancelEventArgs = function () {
   /// <summary>CancelEventArgs is the base class for classes containing event data, which can be used to cancel the event.</summary>
   Sys.CancelEventArgs.initializeBase(this);

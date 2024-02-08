@@ -1,3 +1,5 @@
+// MIT License.
+
 Sys.WebForms.PageRequestManager = function () {
   this._form = null;
   this._activeDefaultButton = null;

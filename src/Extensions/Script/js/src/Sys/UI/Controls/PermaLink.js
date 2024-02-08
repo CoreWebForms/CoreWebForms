@@ -1,4 +1,6 @@
-﻿Sys.UI.PermaLink = function (element) {
+// MIT License.
+
+Sys.UI.PermaLink = function (element) {
   Sys.UI.PermaLink.initializeBase(this, [element]);
 };
 Sys.UI.PermaLink.prototype = {

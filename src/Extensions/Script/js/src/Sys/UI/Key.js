@@ -1,3 +1,5 @@
+// MIT License.
+
 Sys.UI.Key = function () {
   /// <summary>
   ///   Describes key codes.

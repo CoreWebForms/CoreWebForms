@@ -1,3 +1,5 @@
+// MIT License.
+
 Sys.IDisposable = function () {
   ##DEBUG throw Error.notImplemented();
 };

@@ -1,4 +1,6 @@
-﻿Sys.CollectionChange = function (
+// MIT License.
+
+Sys.CollectionChange = function (
   action,
   newItems,
   newStartingIndex,

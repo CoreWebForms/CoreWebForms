@@ -1,3 +1,5 @@
+// MIT License.
+
 //!/ <reference name="MicrosoftAjaxCore.js" />
 
 Type._registerScript("MicrosoftAjaxComponentModel.js", ["MicrosoftAjaxCore.js"]);

@@ -1,3 +1,5 @@
+// MIT License.
+
 Sys._Debug = function () {
   /// <summary locid="M:J#Sys.Debug.#ctor">Provides a set of methods that help debug your code.</summary>
   /// <field name="isDebug" type="Boolean" locid="F:J#Sys.Debug.isDebug"/>

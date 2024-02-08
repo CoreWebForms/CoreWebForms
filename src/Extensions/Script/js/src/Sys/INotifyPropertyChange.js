@@ -1,3 +1,5 @@
+// MIT License.
+
 Sys.INotifyPropertyChange = function () {
   /// <summary>Implement this interface to become a provider of property change notifications.</summary>
   ##DEBUG throw Error.notImplemented();

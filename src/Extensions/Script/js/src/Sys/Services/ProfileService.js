@@ -1,3 +1,5 @@
+// MIT License.
+
 Sys.Services._ProfileService = function () {
   /// <summary locid="M:J#Sys.Net.ProfileService.#ctor"/>
   Sys.Services._ProfileService.initializeBase(this);

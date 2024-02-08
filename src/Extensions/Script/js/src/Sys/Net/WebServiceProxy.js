@@ -1,3 +1,5 @@
+// MIT License.
+
 Sys.Net.WebServiceProxy = function () {};
 Sys.Net.WebServiceProxy.prototype = {
   get_timeout: function () {

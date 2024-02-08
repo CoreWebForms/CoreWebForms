@@ -1,3 +1,5 @@
+// MIT License.
+
 Sys.StringBuilder = function (initialText) {
   /// <summary>Provides an optimized mechanism to concatenate a sequence of strings.</summary>
   /// <param name="initialText" optional="true" mayBeNull="true">The initial text for the StringBuilder.</param>

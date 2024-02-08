@@ -1,3 +1,5 @@
+// MIT License.
+
 if (!window.XMLHttpRequest) {
   window.XMLHttpRequest = function () {
     // DevDiv Bugs 150054: Msxml2.XMLHTTP (version independent ProgID) required for mobile IE

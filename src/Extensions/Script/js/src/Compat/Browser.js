@@ -1,3 +1,5 @@
+// MIT License.
+
 #if COPYRIGHT
 //------------------------------------------------------------------------------
 // <copyright file="Browser.js" company="Microsoft">

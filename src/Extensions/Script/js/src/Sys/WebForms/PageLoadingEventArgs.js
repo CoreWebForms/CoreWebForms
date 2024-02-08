@@ -1,3 +1,5 @@
+// MIT License.
+
 Sys.WebForms.PageLoadingEventArgs = function (
   panelsUpdating,
   panelsDeleting,

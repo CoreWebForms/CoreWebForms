@@ -1,3 +1,5 @@
+// MIT License.
+
 Date._appendPreOrPostMatch = function (preMatch, strBuilder) {
   // appends pre- and post- token match strings while removing escaped characters.
   // Returns a single quote count which is used to determine if the token occurs

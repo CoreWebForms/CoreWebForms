@@ -1,3 +1,5 @@
+// MIT License.
+
 Sys.ApplicationLoadEventArgs = function (components, isPartialLoad) {
   /// <param name="components" type="Array" elementType="Sys.Component">
   ///   The list of components that were created since the last time the load event was raised.

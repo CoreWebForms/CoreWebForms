@@ -1,3 +1,5 @@
+// MIT License.
+
 Array.__typeName = "Array";
 Array.__class = true;
 

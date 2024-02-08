@@ -1,3 +1,5 @@
+// MIT License.
+
 Sys.UI.Behavior = function (element) {
   /// <param name="element" domElement="true">The DOM element the behavior is associated with.</param>
   Sys.UI.Behavior.initializeBase(this);

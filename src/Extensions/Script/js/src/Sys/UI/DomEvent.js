@@ -1,3 +1,5 @@
+// MIT License.
+
 Sys.UI.DomEvent = function (eventObject) {
   /// <summary>A cross-browser object that represents event properties.</summary>
   /// <param name="eventObject">The browser-specific event object (window.event for IE).</param>

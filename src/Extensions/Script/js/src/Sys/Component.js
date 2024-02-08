@@ -1,3 +1,5 @@
+// MIT License.
+
 Sys.Component = function () {
   /// <summary>Base class for Control, Behavior and any object that wants its lifetime to be managed.</summary>
   if (Sys.Application) Sys.Application.registerDisposableObject(this);

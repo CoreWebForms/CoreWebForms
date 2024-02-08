@@ -1,3 +1,5 @@
+// MIT License.
+
 Sys.UI.VisibilityMode = function () {
   /// <summary>
   ///   Describes how a DOM element should disappear when its visible property is set to false.

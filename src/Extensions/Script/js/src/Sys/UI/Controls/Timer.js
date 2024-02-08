@@ -1,3 +1,5 @@
+// MIT License.
+
 Sys.UI._Timer = function (element) {
   Sys.UI._Timer.initializeBase(this, [element]);
   this._interval = 60000;

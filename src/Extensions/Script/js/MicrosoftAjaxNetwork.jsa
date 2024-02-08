@@ -1,3 +1,5 @@
+// MIT License.
+
 //!/ <reference name="MicrosoftAjaxSerialization.js" />
 
 Type._registerScript("MicrosoftAjaxNetwork.js", ["MicrosoftAjaxSerialization.js"]);

@@ -1,3 +1,5 @@
+// MIT License.
+
 Sys.WebForms.EndRequestEventArgs = function (error, dataItems, response) {
   /// <summary>The arguments for the PageRequestManager's endRequest event.
   /// The endRequest event is raised when a response has finished processing.</summary>

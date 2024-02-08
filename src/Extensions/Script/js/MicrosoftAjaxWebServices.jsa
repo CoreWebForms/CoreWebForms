@@ -1,3 +1,5 @@
+// MIT License.
+
 //!/ <reference name="MicrosoftAjaxNetwork.js" />
 
 Type._registerScript("MicrosoftAjaxWebServices.js", ["MicrosoftAjaxNetwork.js"]);

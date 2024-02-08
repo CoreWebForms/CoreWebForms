@@ -1,3 +1,5 @@
+// MIT License.
+
 // Define the root object (for non-browser hosts)
 if (!window) this.window = this;
 

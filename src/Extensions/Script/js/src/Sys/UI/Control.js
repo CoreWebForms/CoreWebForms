@@ -1,3 +1,5 @@
+// MIT License.
+
 Sys.UI.Control = function (element) {
   /// <param name="element" domElement="true">The DOM element the behavior is associated with.</param>
   ##DEBUG if (element.control !== null && typeof(element.control) !== 'undefined') throw Error.invalidOperation(Sys.Res.controlAlreadyDefined);
