@@ -1,6 +1,5 @@
 // MIT License.
 
-using System.Globalization;
 using System.Reflection;
 using System.Runtime.Loader;
 using System.Web;
@@ -68,25 +67,9 @@ internal sealed class DynamicSystemWebCompilation : SystemWebCompilation<Dynamic
         {
             _logger.LogWarning("{ErrorCount} error(s) found compiling {Route}", result.Diagnostics.Length, route);
 
-            var errors = result.Diagnostics
-                .OrderByDescending(d => d.Severity)
-                .Select(d => new RoslynError()
-                {
-                    Id = d.Id,
-                    Message = d.GetMessage(CultureInfo.CurrentCulture),
-                    Severity = d.Severity.ToString(),
-                    Location = d.Location.ToString(),
-                })
-                .ToList();
-
-            foreach (var er in errors)
-            {
-                _logger.LogError(er.Message);
-            }
-
             return new DynamicCompiledPage(this, new(route), [])
             {
-                Exception = new RoslynCompilationException(route, errors)
+                Exception = new RoslynCompilationException(route, GetErrors(result.Diagnostics))
             };
         }
 

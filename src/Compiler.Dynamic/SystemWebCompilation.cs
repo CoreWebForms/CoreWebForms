@@ -1,7 +1,9 @@
 // MIT License.
 
 using System.CodeDom.Compiler;
+using System.Collections.Immutable;
 using System.Diagnostics;
+using System.Globalization;
 using System.Reflection;
 using System.Text;
 using System.Web;
@@ -232,6 +234,31 @@ internal abstract class SystemWebCompilation<T> : IDisposable
         }
 
         throw new NotImplementedException($"Unknown extension for compilation: {extension}");
+    }
+
+    protected IEnumerable<RoslynError> GetErrors(ImmutableArray<Diagnostic> diagnostics)
+    {
+        foreach (var d in diagnostics)
+        {
+            var logLevel = d.Severity switch
+            {
+                DiagnosticSeverity.Hidden => LogLevel.Trace,
+                DiagnosticSeverity.Info => LogLevel.Debug,
+                DiagnosticSeverity.Warning => LogLevel.Warning,
+                DiagnosticSeverity.Error => LogLevel.Error,
+                _ => LogLevel.Critical,
+            };
+
+            _logger.Log(logLevel, "[{Id}] {Message} @{Location}", d.Id, d.GetMessage(CultureInfo.CurrentCulture), d.Location);
+
+            yield return new RoslynError()
+            {
+                Id = d.Id,
+                Message = d.GetMessage(CultureInfo.CurrentCulture),
+                Severity = d.Severity,
+                Location = d.Location.ToString(),
+            };
+        }
     }
 
     public void Dispose()

@@ -2758,6 +2758,7 @@ public class TreeView : HierarchicalDataBoundControl, IPostBackEventHandler, IPo
         return typedStyle;
     }
 
+    [Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1846:Prefer 'AsSpan' over 'Substring'", Justification = "Will do later after porting is complete")]
     private static int GetTrailingIndex(string s)
     {
         int i = s.Length - 1;
@@ -3829,6 +3830,7 @@ public class TreeView : HierarchicalDataBoundControl, IPostBackEventHandler, IPo
         _callbackEventArgument = eventArgument;
     }
 
+    [Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1846:Prefer 'AsSpan' over 'Substring'", Justification = "Will do later after porting is complete")]
     protected virtual string GetCallbackResult()
     {
         // Do not take any callback into account if the tree is disabled.

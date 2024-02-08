@@ -1,5 +1,7 @@
 // MIT License.
 
+using Microsoft.CodeAnalysis;
+
 namespace WebForms.Compiler.Dynamic;
 
 internal sealed class RoslynError
@@ -8,7 +10,7 @@ internal sealed class RoslynError
 
     public string Message { get; internal set; } = null!;
 
-    public string Severity { get; internal set; } = null!;
+    public DiagnosticSeverity Severity { get; internal set; } 
 
     public string Location { get; internal set; } = null!;
 }
