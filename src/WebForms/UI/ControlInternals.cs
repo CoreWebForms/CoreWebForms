@@ -26,5 +26,5 @@ public partial class Control
 
     internal bool HasViewState => _viewState is not null;
 
-    protected ILogger Logger => Context.GetRequiredService<ILoggerFactory>().CreateLogger(GetType().FullName ?? GetType().Name);
+    protected internal ILogger Logger => Context.GetRequiredService<ILoggerFactory>().CreateLogger(GetType().FullName ?? GetType().Name);
 }
