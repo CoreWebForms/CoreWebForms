@@ -16,6 +16,7 @@ builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSystemWebAdapters()
     .AddJsonSessionSerializer()
     .AddWrappedAspNetCoreSession()
+    .AddRouting()
     .AddWebForms()
     .AddScriptManager()
 #if WEBFORMS_DYNAMIC

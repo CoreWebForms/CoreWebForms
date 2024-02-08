@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.SystemWebAdapters.Features;
 
 namespace System.Web.Routing;
 
-public static class RoutingExtensions
+public static class RoutingContextExtensions
 {
     public static RequestContext GetRequestContext(this HttpContext httpContext)
         => httpContext.Request.GetOrCreateRouteDataFeature().RequestContext;
