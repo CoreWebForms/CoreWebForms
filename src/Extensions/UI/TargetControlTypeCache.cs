@@ -1,8 +1,4 @@
-//------------------------------------------------------------------------------
-// <copyright file="TargetControlTypeCache.cs" company="Microsoft">
-//     Copyright (c) Microsoft Corporation.  All rights reserved.
-// </copyright>
-//------------------------------------------------------------------------------
+// MIT License.
 
 namespace System.Web.UI
 {
