@@ -1,10 +1,10 @@
-// #if COPYRIGHT
+#if COPYRIGHT
 //------------------------------------------------------------------------------
 // <copyright file="PageRequestManager.js" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //------------------------------------------------------------------------------
-// #endif
+#endif
 
 Sys.WebForms.PageRequestManager = function () {
   this._form = null;
@@ -864,7 +864,7 @@ Sys.WebForms.PageRequestManager.prototype = {
   },
 
   _getPostBackSettings: function (element, elementUniqueID) {
-    // ##DEBUGINTERNAL Sys.Debug.assert(element ? true : false, 'panelID should be specified if async is true');
+    ##DEBUGINTERNAL Sys.Debug.assert(element ? true : false, 'panelID should be specified if async is true');
 
     var originalElement = element;
 
@@ -1925,7 +1925,7 @@ Sys.WebForms.PageRequestManager.prototype = {
     queueIncludes,
     queueBlocks,
   ) {
-    // ##DEBUGINTERNAL Sys.Debug.assert(queueIncludes || queueBlocks);
+    ##DEBUGINTERNAL Sys.Debug.assert(queueIncludes || queueBlocks);
     for (var i = 0, l = scriptBlockNodes.length; i < l; i++) {
       var scriptBlockType = scriptBlockNodes[i].id;
       switch (scriptBlockType) {
@@ -1994,8 +1994,8 @@ Sys.WebForms.PageRequestManager.prototype = {
     // this old response further we could corrupt viewstate and event validation.
     // At worst we may have loaded some unnecessary script includes, but its likely they would
     // have been required for the new update anyway, and if not they should be harmless libraries.
-    // ##DEBUGINTERNAL Sys.Debug.assert(!!data, "Data must be provided as the first parameter.");
-    // ##DEBUGINTERNAL Sys.Debug.assert(!!data.executor, "data.executor is missing.");
+    ##DEBUGINTERNAL Sys.Debug.assert(!!data, "Data must be provided as the first parameter.");
+    ##DEBUGINTERNAL Sys.Debug.assert(!!data.executor, "data.executor is missing.");
     if (data.executor.get_webRequest() !== this._request) {
       return;
     }
@@ -2154,8 +2154,8 @@ Sys.WebForms.PageRequestManager.prototype = {
   },
 
   _scriptsLoadComplete: function (scriptLoader, data) {
-    // ##DEBUGINTERNAL Sys.Debug.assert(!!data, "Data must be provided as the first parameter.");
-    // ##DEBUGINTERNAL Sys.Debug.assert(!!data.executor, "data.executor is missing.");
+    ##DEBUGINTERNAL Sys.Debug.assert(!!data, "Data must be provided as the first parameter.");
+    ##DEBUGINTERNAL Sys.Debug.assert(!!data.executor, "data.executor is missing.");
     // This function gets called after all scripts have been loaded by the PRM.
     // It might also get called directly if there aren't any scripts to load.
     // Its purpose is to finish off the processing of a postback.

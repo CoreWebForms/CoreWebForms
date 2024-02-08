@@ -88,14 +88,14 @@ Array.parse = function (value) {
   /// <param name="value" type="String" mayBeNull="true">The string representation of the array.</param>
   /// <returns type="Array" elementMayBeNull="true">An array built from the string representation.</returns>
   if (!value) return [];
-  // #if DEBUG
+  #if DEBUG
   var v = eval(value);
   if (!Array.isInstanceOfType(v))
     throw Error.argument("value", Sys.Res.arrayParseBadFormat);
   return v;
-  // #else
+  #else
   return eval(value);
-  // #endif
+  #endif
 };
 
 Array.remove = function (array, item) {

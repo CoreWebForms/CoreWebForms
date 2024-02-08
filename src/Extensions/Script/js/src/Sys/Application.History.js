@@ -1,10 +1,10 @@
-// #if COPYRIGHT
+#if COPYRIGHT
 //------------------------------------------------------------------------------
 // <copyright file="Application.History.js" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //------------------------------------------------------------------------------
-// #endif
+#endif
 
 // History fields ("entry" in the code always designates a string representation of the state):
 
@@ -15,9 +15,9 @@ Sys.Application._currentEntry = "";
 Sys.Application._endRequestHandler = null;
 Sys.Application._history = null;
 Sys.Application._enableHistory = false;
-// #if DEBUG
+#if DEBUG
 Sys.Application._historyEnabledInScriptManager = false;
-// #endif
+#endif
 Sys.Application._historyFrame = null;
 Sys.Application._historyInitialized = false;
 Sys.Application._historyPointIsNew = false;
@@ -64,13 +64,13 @@ Sys._Application.prototype.get_enableHistory = function () {
 };
 
 Sys._Application.prototype.set_enableHistory = function (value) {
-  // #if DEBUG
+  #if DEBUG
   if (this._initialized && !this._initializing) {
     throw Error.invalidOperation(Sys.Res.historyCannotEnableHistory);
   } else if (this._historyEnabledInScriptManager && !value) {
     throw Error.invalidOperation(Sys.Res.invalidHistorySettingCombination);
   }
-  // #endif
+  #endif
   this._enableHistory = value;
 };
 
@@ -94,7 +94,7 @@ Sys._Application.prototype.addHistoryPoint = function (state, title) {
   ///     for converting the state bits from and into the relevant types.
   /// </param>
   /// <param name="title" type="String" optional="true" mayBeNull="true">The title for the new history point.</param>
-  // #if DEBUG
+  #if DEBUG
   if (!this._enableHistory)
     throw Error.invalidOperation(
       Sys.Res.historyCannotAddHistoryPointWithHistoryDisabled,
@@ -109,7 +109,7 @@ Sys._Application.prototype.addHistoryPoint = function (state, title) {
       throw Error.argument("state", Sys.Res.stateMustBeStringDictionary);
     }
   }
-  // #endif
+  #endif
   this._ensureHistory();
   var initialState = this._state;
   for (var key in state) {
@@ -174,9 +174,9 @@ Sys._Application.prototype._deserializeState = function (entry) {
 
 Sys._Application.prototype._enableHistoryInScriptManager = function () {
   this._enableHistory = true;
-  // #if DEBUG
+  #if DEBUG
   this._historyEnabledInScriptManager = true;
-  // #endif
+  #endif
 };
 
 Sys._Application.prototype._ensureHistory = function () {
@@ -186,7 +186,7 @@ Sys._Application.prototype._ensureHistory = function () {
       (!document.documentMode || document.documentMode < 8)
     ) {
       this._historyFrame = document.getElementById("__historyFrame");
-      // ##DEBUG if (!this._historyFrame) throw Error.invalidOperation(Sys.Res.historyMissingFrame);
+      ##DEBUG if (!this._historyFrame) throw Error.invalidOperation(Sys.Res.historyMissingFrame);
       this._ignoreIFrame = true;
     }
     this._timerHandler = Function.createDelegate(this, this._onIdle);
@@ -367,7 +367,7 @@ Sys._Application.prototype._serializeState = function (state) {
     if (key === "__s") {
       var serverState = value;
     } else {
-      // ##DEBUG if (key.indexOf('=') !== -1) throw Error.argument('state', Sys.Res.stateFieldNameInvalid);
+      ##DEBUG if (key.indexOf('=') !== -1) throw Error.argument('state', Sys.Res.stateFieldNameInvalid);
       serialized[serialized.length] = key + "=" + encodeURIComponent(value);
     }
   }
@@ -418,14 +418,14 @@ Sys._Application.prototype._setState = function (entry, title) {
         var currentHash = this.get_stateString();
         if (entry !== currentHash) {
           // Check length before setting it
-          // #if DEBUG
+          #if DEBUG
           var loc = document.location;
           if (loc.href.length - loc.hash.length + entry.length > 2048) {
             throw Error.invalidOperation(
               String.format(Sys.Res.urlTooLong, 2048),
             );
           }
-          // #endif
+          #endif
           window.location.hash = entry;
           // reset currentEntry to the statestring in case the browser has
           // encoded any characters in it

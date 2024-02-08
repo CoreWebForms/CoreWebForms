@@ -1,7 +1,7 @@
 ﻿Sys.Observer = function () {
-  // #if DEBUG
+  #if DEBUG
   throw Error.invalidOperation();
-  // #endif
+  #endif
 };
 Sys.Observer.registerClass("Sys.Observer");
 
@@ -11,7 +11,7 @@ Sys.Observer.makeObservable = function (target) {
   /// <returns>The observable object.</returns>
   var isArray = target instanceof Array,
     o = Sys.Observer;
-  // ##DEBUG Sys.Observer._ensureObservable(target);
+  ##DEBUG Sys.Observer._ensureObservable(target);
   if (target.setValue === o._observeMethods.setValue) return target;
   o._addMethods(target, o._observeMethods);
   if (isArray) {
@@ -19,7 +19,7 @@ Sys.Observer.makeObservable = function (target) {
   }
   return target;
 };
-// #if DEBUG
+#if DEBUG
 Sys.Observer._ensureObservable = function (target) {
   var type = typeof target;
   if (
@@ -31,16 +31,16 @@ Sys.Observer._ensureObservable = function (target) {
     throw Error.invalidOperation(String.format(Sys.Res.notObservable, type));
   }
 };
-// #endif
+#endif
 Sys.Observer._addMethods = function (target, methods) {
   for (var m in methods) {
-    // #if DEBUG
+    #if DEBUG
     if (target[m] && target[m] !== methods[m]) {
       throw Error.invalidOperation(
         String.format(Sys.Res.observableConflict, m),
       );
     }
-    // #endif
+    #endif
     target[m] = methods[m];
   }
 };
@@ -54,7 +54,7 @@ Sys.Observer.addEventHandler = function (target, eventName, handler) {
   /// <param name="target"></param>
   /// <param name="eventName" type="String"></param>
   /// <param name="handler" type="Function"></param>
-  // ##DEBUG Sys.Observer._ensureObservable(target);
+  ##DEBUG Sys.Observer._ensureObservable(target);
   Sys.Observer._addEventHandler(target, eventName, handler);
 };
 // Make use of private version for significant perf improvement in Binding.
@@ -70,7 +70,7 @@ Sys.Observer.removeEventHandler = function (target, eventName, handler) {
   /// <param name="target"></param>
   /// <param name="eventName" type="String"></param>
   /// <param name="handler" type="Function"></param>
-  // ##DEBUG Sys.Observer._ensureObservable(target);
+  ##DEBUG Sys.Observer._ensureObservable(target);
   Sys.Observer._removeEventHandler(target, eventName, handler);
 };
 Sys.Observer.raiseEvent = function (target, eventName, eventArgs) {
@@ -78,7 +78,7 @@ Sys.Observer.raiseEvent = function (target, eventName, eventArgs) {
   /// <param name="target"></param>
   /// <param name="eventName" type="String"></param>
   /// <param name="eventArgs" type="Sys.EventArgs"></param>
-  // ##DEBUG Sys.Observer._ensureObservable(target);
+  ##DEBUG Sys.Observer._ensureObservable(target);
   var ctx = Sys.Observer._getContext(target);
   if (!ctx) return;
   var handler = ctx.events.getHandler(eventName);
@@ -90,26 +90,26 @@ Sys.Observer.addPropertyChanged = function (target, handler) {
   /// <summary>Adds a propertyChanged event handler to the target.</summary>
   /// <param name="target" mayBeNull="false">The object to observe.</param>
   /// <param name="handler" type="Function">The event handler.</param>
-  // ##DEBUG Sys.Observer._ensureObservable(target);
+  ##DEBUG Sys.Observer._ensureObservable(target);
   Sys.Observer._addEventHandler(target, "propertyChanged", handler);
 };
 Sys.Observer.removePropertyChanged = function (target, handler) {
   /// <summary>Removes a propertyChanged event handler from the target.</summary>
   /// <param name="target" mayBeNull="false">The object to observe.</param>
   /// <param name="handler" type="Function">The event handler.</param>
-  // ##DEBUG Sys.Observer._ensureObservable(target);
+  ##DEBUG Sys.Observer._ensureObservable(target);
   Sys.Observer._removeEventHandler(target, "propertyChanged", handler);
 };
 Sys.Observer.beginUpdate = function (target) {
   /// <summary></summary>
   /// <param name="target" mayBeNull="false"></param>
-  // ##DEBUG Sys.Observer._ensureObservable(target);
+  ##DEBUG Sys.Observer._ensureObservable(target);
   Sys.Observer._getContext(target, true).updating = true;
 };
 Sys.Observer.endUpdate = function (target) {
   /// <summary></summary>
   /// <param name="target" mayBeNull="false"></param>
-  // ##DEBUG Sys.Observer._ensureObservable(target);
+  ##DEBUG Sys.Observer._ensureObservable(target);
   var ctx = Sys.Observer._getContext(target);
   if (!ctx || !ctx.updating) return;
   ctx.updating = false;
@@ -128,7 +128,7 @@ Sys.Observer.isUpdating = function (target) {
   /// <summary></summary>
   /// <param name="target" mayBeNull="false"></param>
   /// <returns type="Boolean"></returns>
-  // ##DEBUG Sys.Observer._ensureObservable(target);
+  ##DEBUG Sys.Observer._ensureObservable(target);
   var ctx = Sys.Observer._getContext(target);
   return ctx ? ctx.updating : false;
 };
@@ -182,7 +182,7 @@ Sys.Observer.setValue = function (target, propertyName, value) {
   /// <param name="target" mayBeNull="false">The object to set a property on.</param>
   /// <param name="propertyName" type="String">The name of the property to field to set.</param>
   /// <param name="value" mayBeNull="true">The value to set.</param>
-  // ##DEBUG Sys.Observer._ensureObservable(target);
+  ##DEBUG Sys.Observer._ensureObservable(target);
   Sys.Observer._setValue(target, propertyName, value);
 };
 Sys.Observer.raisePropertyChanged = function (target, propertyName) {

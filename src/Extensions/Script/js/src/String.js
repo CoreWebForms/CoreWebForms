@@ -1,10 +1,10 @@
-// #if COPYRIGHT
+#if COPYRIGHT
 //------------------------------------------------------------------------------
 // <copyright file="String.js" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //------------------------------------------------------------------------------
-// #endif
+#endif
 
 String.__typeName = "String";
 String.__class = true;
@@ -81,12 +81,12 @@ String._toFormattedString = function (useLocale, args) {
       break;
     }
     if (close > 0 && (close < open || open < 0)) {
-      // #if DEBUG
+      #if DEBUG
       // Closing brace before opening is an error
       if (format.charAt(close + 1) !== "}") {
         throw Error.argument("format", Sys.Res.stringFormatBraceMismatch);
       }
-      // #endif
+      #endif
       result += format.slice(i, close + 1);
       i = close + 2;
       continue;
@@ -103,15 +103,15 @@ String._toFormattedString = function (useLocale, args) {
       continue;
     }
 
-    // #if DEBUG
+    #if DEBUG
     // at this point we have a valid opening brace, which should be matched by a closing brace.
     if (close < 0)
       throw Error.argument("format", Sys.Res.stringFormatBraceMismatch);
-    // #else
+    #else
     // This test is just done to break a potential infinite loop for invalid format strings.
     // The code here is minimal because this is an error condition in debug mode anyway.
     if (close < 0) break;
-    // #endif
+    #endif
 
     // Find the closing brace
 
@@ -120,7 +120,7 @@ String._toFormattedString = function (useLocale, args) {
     var colonIndex = brace.indexOf(":");
     var argNumber =
       parseInt(colonIndex < 0 ? brace : brace.substring(0, colonIndex), 10) + 1;
-    // ##DEBUG if (isNaN(argNumber)) throw Error.argument('format', Sys.Res.stringFormatInvalid);
+    ##DEBUG if (isNaN(argNumber)) throw Error.argument('format', Sys.Res.stringFormatInvalid);
     var argFormat = colonIndex < 0 ? "" : brace.substring(colonIndex + 1);
 
     var arg = args[argNumber];

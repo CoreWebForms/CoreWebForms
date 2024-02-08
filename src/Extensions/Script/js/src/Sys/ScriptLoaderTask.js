@@ -1,10 +1,10 @@
-// #if COPYRIGHT
+#if COPYRIGHT
 //------------------------------------------------------------------------------
 // <copyright file="ScriptLoaderTask.js" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //------------------------------------------------------------------------------
-// #endif
+#endif
 
 // ScriptLoaderTask loads a single script by injecting a dynamic script tag into the DOM.
 // It calls the completed callback when the script element's load/readystatechange or error event occus.
@@ -45,7 +45,7 @@ Sys._ScriptLoaderTask.prototype = {
   _executeInternal: function () {
     this._addScriptElementHandlers();
     // DevDiv Bugs 146697: use lowercase names on getElementsByTagName to work with xhtml content type
-    // #if DEBUG
+    #if DEBUG
     // DevDiv Bugs 146327: In debug mode, report useful error message for pages without <head> element
     var headElements = document.getElementsByTagName("head");
     if (headElements.length === 0) {
@@ -53,9 +53,9 @@ Sys._ScriptLoaderTask.prototype = {
     } else {
       headElements[0].appendChild(this._scriptElement);
     }
-    // #else
+    #else
     document.getElementsByTagName("head")[0].appendChild(this._scriptElement);
-    // #endif
+    #endif
   },
 
   _ensureReadyStateLoaded: function () {

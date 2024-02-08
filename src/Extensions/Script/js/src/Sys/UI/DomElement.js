@@ -1,14 +1,14 @@
-// #if COPYRIGHT
+#if COPYRIGHT
 //------------------------------------------------------------------------------
 // <copyright file="DomElement.js" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //------------------------------------------------------------------------------
-// #endif
+#endif
 
 Sys.UI.DomElement = function () {
   /// <summary>This static class provides helpers to work with DOM elements.</summary>
-  // ##DEBUG throw Error.notImplemented();
+  ##DEBUG throw Error.notImplemented();
 };
 Sys.UI.DomElement.registerClass("Sys.UI.DomElement");
 
@@ -390,20 +390,20 @@ Sys.UI.DomElement.resolveElement = function (
   if (!el) return null;
   if (typeof el === "string") {
     el = Sys.UI.DomElement.getElementById(el, containerElement);
-    // #if DEBUG
+    #if DEBUG
     if (!el) {
       throw Error.argument(
         "elementOrElementId",
         String.format(Sys.Res.elementNotFound, elementOrElementId),
       );
     }
-    // #endif
+    #endif
   }
-  // #if DEBUG
+  #if DEBUG
   else if (!Sys.UI.DomElement.isDomElement(el)) {
     throw Error.argument("elementOrElementId", Sys.Res.expectedElementOrId);
   }
-  // #endif
+  #endif
   return el;
 };
 

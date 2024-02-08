@@ -1,10 +1,10 @@
-// #if COPYRIGHT
+#if COPYRIGHT
 //------------------------------------------------------------------------------
 // <copyright file="WebRequest.js" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //------------------------------------------------------------------------------
-// #endif
+#endif
 
 Sys.Net.WebRequest = function () {
   /// <summary>WebRequest class</summary>
@@ -79,11 +79,11 @@ Sys.Net.WebRequest.prototype = {
     return this._httpVerb;
   },
   set_httpVerb: function (value) {
-    // #if DEBUG
+    #if DEBUG
     if (value.length === 0) {
       throw Error.argument("value", Sys.Res.invalidHttpVerb);
     }
-    // #endif
+    #endif
 
     this._httpVerb = value;
   },
@@ -112,11 +112,11 @@ Sys.Net.WebRequest.prototype = {
     return this._executor;
   },
   set_executor: function (value) {
-    // #if DEBUG
+    #if DEBUG
     if (this._executor !== null && this._executor.get_started()) {
       throw Error.invalidOperation(Sys.Res.setExecutorAfterActive);
     }
-    // #endif
+    #endif
 
     this._executor = value;
     this._executor._set_webRequest(this);
@@ -131,11 +131,11 @@ Sys.Net.WebRequest.prototype = {
     return this._timeout;
   },
   set_timeout: function (value) {
-    // #if DEBUG
+    #if DEBUG
     if (value < 0) {
       throw Error.argumentOutOfRange("value", value, Sys.Res.invalidTimeout);
     }
-    // #endif
+    #endif
 
     this._timeout = value;
   },
@@ -148,11 +148,11 @@ Sys.Net.WebRequest.prototype = {
 
   invoke: function () {
     /// <summary>Invokes the request</summary>
-    // #if DEBUG
+    #if DEBUG
     if (this._invokeCalled) {
       throw Error.invalidOperation(Sys.Res.invokeCalledTwice);
     }
-    // #endif
+    #endif
 
     Sys.Net.WebRequestManager.executeRequest(this);
     this._invokeCalled = true;
@@ -196,18 +196,18 @@ Sys.Net.WebRequest._resolveUrl = function (url, baseUrl) {
   // For absolute path url, we need to rebase it against the base url, stripping off everything after the http://host
   if (url.charAt(0) === "/") {
     var slashslash = baseUrl.indexOf("://");
-    // #if DEBUG
+    #if DEBUG
     if (slashslash === -1) {
       throw Error.argument("baseUrl", Sys.Res.badBaseUrl1);
     }
-    // #endif
+    #endif
 
     var nextSlash = baseUrl.indexOf("/", slashslash + 3);
-    // #if DEBUG
+    #if DEBUG
     if (nextSlash === -1) {
       throw Error.argument("baseUrl", Sys.Res.badBaseUrl2);
     }
-    // #endif
+    #endif
 
     return baseUrl.substr(0, nextSlash) + url;
   }
@@ -215,11 +215,11 @@ Sys.Net.WebRequest._resolveUrl = function (url, baseUrl) {
   // Note the app path always contains a trailing slash so when resolving app paths, we never strip off anything important
   else {
     var lastSlash = baseUrl.lastIndexOf("/");
-    // #if DEBUG
+    #if DEBUG
     if (lastSlash === -1) {
       throw Error.argument("baseUrl", Sys.Res.badBaseUrl3);
     }
-    // #endif
+    #endif
 
     return baseUrl.substr(0, lastSlash + 1) + url;
   }

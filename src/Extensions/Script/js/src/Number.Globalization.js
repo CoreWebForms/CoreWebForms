@@ -145,10 +145,10 @@ Number._parseNumberNegativePattern = function (
         return ["-", value.substr(1, value.length - 2)];
       }
       break;
-    // #if DEBUGINTERNAL
+    #if DEBUGINTERNAL
     default:
       Sys.Debug.fail("");
-    // #endif
+    #endif
   }
   return ["", value];
 };
@@ -207,7 +207,7 @@ Number.prototype._toFormattedString = function (format, cultureInfo) {
 
   // Handles expanding numbers into some specified grouping i.e. [2, 3, 5] would be ...,XXXXX,XXXXX,XXX,XX,
   function expandNumber(number, precision, groupSizes, sep, decimalChar) {
-    // ##DEBUGINTERNAL Sys.Debug.assert(groupSizes.length > 0, "groupSizes must be an array of at least 1");
+    ##DEBUGINTERNAL Sys.Debug.assert(groupSizes.length > 0, "groupSizes must be an array of at least 1");
     var curSize = groupSizes[0];
     var curGroupIndex = 1;
 
@@ -415,10 +415,10 @@ Number.prototype._toFormattedString = function (format, cultureInfo) {
       case "%":
         ret += nf.PercentSymbol;
         break;
-      // #if DEBUGINTERNAL
+      #if DEBUGINTERNAL
       default:
         Sys.Debug.fail("Invalid number format pattern");
-      // #endif
+      #endif
     }
   }
 

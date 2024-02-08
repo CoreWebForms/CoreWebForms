@@ -1,10 +1,10 @@
-// #if COPYRIGHT
+#if COPYRIGHT
 //------------------------------------------------------------------------------
 // <copyright file="CancelEventArgs.js" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //------------------------------------------------------------------------------
-// #endif
+#endif
 
 Sys.CancelEventArgs = function () {
   /// <summary>CancelEventArgs is the base class for classes containing event data, which can be used to cancel the event.</summary>

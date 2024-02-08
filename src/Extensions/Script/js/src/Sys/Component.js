@@ -1,10 +1,10 @@
-// #if COPYRIGHT
+#if COPYRIGHT
 //------------------------------------------------------------------------------
 // <copyright file="Component.js" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //------------------------------------------------------------------------------
-// #endif
+#endif
 
 Sys.Component = function () {
   /// <summary>Base class for Control, Behavior and any object that wants its lifetime to be managed.</summary>
@@ -12,7 +12,7 @@ Sys.Component = function () {
 };
 Sys.Component.prototype = {
   _id: null,
-  // ##DEBUG _idSet: false,
+  ##DEBUG _idSet: false,
   _initialized: false,
   _updating: false,
   get_events: function () {
@@ -31,14 +31,14 @@ Sys.Component.prototype = {
     return this._id;
   },
   set_id: function (value) {
-    // #if DEBUG
+    #if DEBUG
     if (this._idSet)
       throw Error.invalidOperation(Sys.Res.componentCantSetIdTwice);
     this._idSet = true;
     var oldId = this.get_id();
     if (oldId && Sys.Application.findComponent(oldId))
       throw Error.invalidOperation(Sys.Res.componentCantSetIdAfterAddedToApp);
-    // #endif
+    #endif
     this._id = value;
   },
   get_isInitialized: function () {
@@ -118,7 +118,7 @@ function Sys$Component$_setProperties(target, properties) {
     if (isObject || typeof getter !== "function") {
       // No getter, looking for an existing field.
       var targetVal = target[name];
-      // ##DEBUG if (!isObject && typeof(targetVal) === 'undefined') throw Error.invalidOperation(String.format(Sys.Res.propertyUndefined, name));
+      ##DEBUG if (!isObject && typeof(targetVal) === 'undefined') throw Error.invalidOperation(String.format(Sys.Res.propertyUndefined, name));
       if (!val || typeof val !== "object" || (isObject && !targetVal)) {
         target[name] = val;
       } else {
@@ -132,24 +132,24 @@ function Sys$Component$_setProperties(target, properties) {
       } else if (val instanceof Array) {
         // There is a getter but no setter and the value to set is an array. Adding to the existing array.
         current = getter.apply(target);
-        // ##DEBUG if (!(current instanceof Array)) throw new Error.invalidOperation(String.format(Sys.Res.propertyNotAnArray, name));
+        ##DEBUG if (!(current instanceof Array)) throw new Error.invalidOperation(String.format(Sys.Res.propertyNotAnArray, name));
         for (var i = 0, j = current.length, l = val.length; i < l; i++, j++) {
           current[j] = val[i];
         }
       } else if (typeof val === "object" && Object.getType(val) === Object) {
         // There is a getter but no setter and the value to set is a plain object. Adding to the existing object.
         current = getter.apply(target);
-        // ##DEBUG if ((typeof(current) === 'undefined') || (current === null)) throw new Error.invalidOperation(String.format(Sys.Res.propertyNullOrUndefined, name));
+        ##DEBUG if ((typeof(current) === 'undefined') || (current === null)) throw new Error.invalidOperation(String.format(Sys.Res.propertyNullOrUndefined, name));
         Sys$Component$_setProperties(current, val);
       }
-      // #if DEBUG
+      #if DEBUG
       else {
         // No setter, and the value is not an array or object, throwing.
         throw new Error.invalidOperation(
           String.format(Sys.Res.propertyNotWritable, name),
         );
       }
-      // #endif
+      #endif
     }
   }
   if (isComponent) target.endUpdate();
@@ -159,7 +159,7 @@ function Sys$Component$_setReferences(component, references) {
   for (var name in references) {
     var setter = component["set_" + name];
     var reference = $find(references[name]);
-    // #if DEBUG
+    #if DEBUG
     if (typeof setter !== "function")
       throw new Error.invalidOperation(
         String.format(Sys.Res.propertyNotWritable, name),
@@ -168,7 +168,7 @@ function Sys$Component$_setReferences(component, references) {
       throw Error.invalidOperation(
         String.format(Sys.Res.referenceNotFound, references[name]),
       );
-    // #endif
+    #endif
     setter.apply(component, [reference]);
   }
 }
@@ -201,7 +201,7 @@ var $create = (Sys.Component.create = function (
   ///   The DOM element the component must be attached to.
   /// </param>
   /// <returns type="Sys.UI.Component">The component instance.</returns>
-  // #if DEBUG
+  #if DEBUG
   if (!type.inheritsFrom(Sys.Component)) {
     throw Error.argument(
       "type",
@@ -212,7 +212,7 @@ var $create = (Sys.Component.create = function (
     if (!element) throw Error.argument("element", Sys.Res.createNoDom);
   } else if (element)
     throw Error.argument("element", Sys.Res.createComponentOnDom);
-  // #endif
+  #endif
   var component = element ? new type(element) : new type();
   var app = Sys.Application;
   var creatingComponents = app.get_isCreatingComponents();
@@ -223,14 +223,14 @@ var $create = (Sys.Component.create = function (
   }
   if (events) {
     for (var name in events) {
-      // #if DEBUG
+      #if DEBUG
       if (!(component["add_" + name] instanceof Function))
         throw new Error.invalidOperation(
           String.format(Sys.Res.undefinedEvent, name),
         );
       if (!(events[name] instanceof Function))
         throw new Error.invalidOperation(Sys.Res.eventHandlerNotFunction);
-      // #endif
+      #endif
       component["add_" + name](events[name]);
     }
   }

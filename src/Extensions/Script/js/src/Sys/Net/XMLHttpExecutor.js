@@ -1,10 +1,10 @@
-// #if COPYRIGHT
+#if COPYRIGHT
 //------------------------------------------------------------------------------
 // <copyright file="XMLHttpExecutor.js" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //------------------------------------------------------------------------------
-// #endif
+#endif
 
 Sys.Net.XMLDOM = function (markup) {
   /// <summary>Creates an XML document from an XML string.</summary>
@@ -87,26 +87,26 @@ Sys.Net.XMLHttpExecutor = function () {
 
       _this._clearTimer();
       _this._responseAvailable = true;
-      // #if DEBUG
-      // #else
+      #if DEBUG
+      #else
       try {
-        // #endif
+        #endif
         // DevDiv Bugs 148214: Use try/finally to ensure cleanup occurs even
         // if the completed callback causes an exception (such as with async
         // postbacks where a server-side exception occurred)
         _this._webRequest.completed(Sys.EventArgs.Empty);
-        // #if DEBUG
-        // #else
+        #if DEBUG
+        #else
       } finally {
-        // #endif
+        #endif
         if (_this._xmlHttpRequest != null) {
           _this._xmlHttpRequest.onreadystatechange = Function.emptyMethod;
           _this._xmlHttpRequest = null;
         }
-        // #if DEBUG
-        // #else
+        #if DEBUG
+        #else
       }
-      // #endif
+      #endif
     }
   };
 
@@ -158,7 +158,7 @@ Sys.Net.XMLHttpExecutor.prototype = {
     /// <summary>Invokes the request.</summary>
     this._webRequest = this.get_webRequest();
 
-    // #if DEBUG
+    #if DEBUG
     if (this._started) {
       throw Error.invalidOperation(
         String.format(Sys.Res.cannotCallOnceStarted, "executeRequest"),
@@ -167,7 +167,7 @@ Sys.Net.XMLHttpExecutor.prototype = {
     if (this._webRequest === null) {
       throw Error.invalidOperation(Sys.Res.nullWebRequest);
     }
-    // #endif
+    #endif
 
     var body = this._webRequest.get_body();
     var headers = this._webRequest.get_headers();
@@ -219,7 +219,7 @@ Sys.Net.XMLHttpExecutor.prototype = {
     /// <summary>Returns a response header.</summary>
     /// <param name="header" type="String">The requested header.</param>
     /// <returns type="String">The value of the header.</returns>
-    // #if DEBUG
+    #if DEBUG
     if (!this._responseAvailable) {
       throw Error.invalidOperation(
         String.format(Sys.Res.cannotCallBeforeResponse, "getResponseHeader"),
@@ -230,7 +230,7 @@ Sys.Net.XMLHttpExecutor.prototype = {
         String.format(Sys.Res.cannotCallOutsideHandler, "getResponseHeader"),
       );
     }
-    // #endif
+    #endif
 
     var result;
     try {
@@ -243,7 +243,7 @@ Sys.Net.XMLHttpExecutor.prototype = {
   getAllResponseHeaders: function () {
     /// <summary>Returns all the responses header.</summary>
     /// <returns type="String">The text of all the headers.</returns>
-    // #if DEBUG
+    #if DEBUG
     if (!this._responseAvailable) {
       throw Error.invalidOperation(
         String.format(
@@ -260,7 +260,7 @@ Sys.Net.XMLHttpExecutor.prototype = {
         ),
       );
     }
-    // #endif
+    #endif
 
     return this._xmlHttpRequest.getAllResponseHeaders();
   },
@@ -268,7 +268,7 @@ Sys.Net.XMLHttpExecutor.prototype = {
   get_responseData: function () {
     /// <summary>Returns the response data.</summary>
     /// <value type="String">The text of the response.</value>
-    // #if DEBUG
+    #if DEBUG
     if (!this._responseAvailable) {
       throw Error.invalidOperation(
         String.format(Sys.Res.cannotCallBeforeResponse, "get_responseData"),
@@ -279,7 +279,7 @@ Sys.Net.XMLHttpExecutor.prototype = {
         String.format(Sys.Res.cannotCallOutsideHandler, "get_responseData"),
       );
     }
-    // #endif
+    #endif
 
     return this._xmlHttpRequest.responseText;
   },
@@ -287,7 +287,7 @@ Sys.Net.XMLHttpExecutor.prototype = {
   get_statusCode: function () {
     /// <summary>Returns the status code for the response.</summary>
     /// <value type="Number">The status code of the response.</value>
-    // #if DEBUG
+    #if DEBUG
     if (!this._responseAvailable) {
       throw Error.invalidOperation(
         String.format(Sys.Res.cannotCallBeforeResponse, "get_statusCode"),
@@ -298,7 +298,7 @@ Sys.Net.XMLHttpExecutor.prototype = {
         String.format(Sys.Res.cannotCallOutsideHandler, "get_statusCode"),
       );
     }
-    // #endif
+    #endif
     var result = 0;
     try {
       result = this._xmlHttpRequest.status;
@@ -309,7 +309,7 @@ Sys.Net.XMLHttpExecutor.prototype = {
   get_statusText: function () {
     /// <summary>Returns the status text for the response.</summary>
     /// <value type="String">The status text of the repsonse.</value>
-    // #if DEBUG
+    #if DEBUG
     if (!this._responseAvailable) {
       throw Error.invalidOperation(
         String.format(Sys.Res.cannotCallBeforeResponse, "get_statusText"),
@@ -320,7 +320,7 @@ Sys.Net.XMLHttpExecutor.prototype = {
         String.format(Sys.Res.cannotCallOutsideHandler, "get_statusText"),
       );
     }
-    // #endif
+    #endif
 
     return this._xmlHttpRequest.statusText;
   },
@@ -328,7 +328,7 @@ Sys.Net.XMLHttpExecutor.prototype = {
   get_xml: function () {
     /// <summary>Returns the response in xml format.</summary>
     /// <value>The response in xml format.</value>
-    // #if DEBUG
+    #if DEBUG
     if (!this._responseAvailable) {
       throw Error.invalidOperation(
         String.format(Sys.Res.cannotCallBeforeResponse, "get_xml"),
@@ -339,7 +339,7 @@ Sys.Net.XMLHttpExecutor.prototype = {
         String.format(Sys.Res.cannotCallOutsideHandler, "get_xml"),
       );
     }
-    // #endif
+    #endif
 
     var xml = this._xmlHttpRequest.responseXML;
     if (!xml || !xml.documentElement) {
@@ -379,11 +379,11 @@ Sys.Net.XMLHttpExecutor.prototype = {
 
   abort: function () {
     /// <summary>Aborts the request.</summary>
-    // #if DEBUG
+    #if DEBUG
     if (!this._started) {
       throw Error.invalidOperation(Sys.Res.cannotAbortBeforeStart);
     }
-    // #endif
+    #endif
 
     // aborts are no ops if we are done, timedout, or aborted already
     if (this._aborted || this._responseAvailable || this._timedOut) return;

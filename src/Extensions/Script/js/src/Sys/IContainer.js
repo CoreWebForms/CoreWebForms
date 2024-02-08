@@ -1,16 +1,16 @@
-// #if COPYRIGHT
+#if COPYRIGHT
 //------------------------------------------------------------------------------
 // <copyright file="IContainer.js" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //------------------------------------------------------------------------------
-// #endif
+#endif
 
 Sys.IContainer = function () {
-  // ##DEBUG throw Error.notImplemented();
+  ##DEBUG throw Error.notImplemented();
 };
 Sys.IContainer.prototype = {
-  // #if DEBUG
+  #if DEBUG
   addComponent: function (component) {
     /// <param name="component" type="Sys.Component"/>
     throw Error.notImplemented();
@@ -28,6 +28,6 @@ Sys.IContainer.prototype = {
     /// <returns type="Array" elementType="Sys.Component"/>
     throw Error.notImplemented();
   },
-  // #endif
+  #endif
 };
 Sys.IContainer.registerInterface("Sys.IContainer");

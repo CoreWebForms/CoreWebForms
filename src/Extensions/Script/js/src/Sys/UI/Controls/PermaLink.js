@@ -1,10 +1,10 @@
-﻿// #if COPYRIGHT
+﻿#if COPYRIGHT
 //------------------------------------------------------------------------------
 // <copyright file="Timer.js" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //------------------------------------------------------------------------------
-// #endif
+#endif
 
 Sys.UI.PermaLink = function (element) {
   Sys.UI.PermaLink.initializeBase(this, [element]);
