@@ -1,11 +1,3 @@
-#if COPYRIGHT
-//------------------------------------------------------------------------------
-// <copyright file="DomElement.js" company="Microsoft">
-//     Copyright (c) Microsoft Corporation.  All rights reserved.
-// </copyright>
-//------------------------------------------------------------------------------
-#endif
-
 Sys.UI.DomElement = function () {
   /// <summary>This static class provides helpers to work with DOM elements.</summary>
   ##DEBUG throw Error.notImplemented();

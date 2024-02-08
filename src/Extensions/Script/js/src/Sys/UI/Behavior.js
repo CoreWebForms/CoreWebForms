@@ -1,11 +1,3 @@
-#if COPYRIGHT
-//------------------------------------------------------------------------------
-// <copyright file="Behavior.js" company="Microsoft">
-//     Copyright (c) Microsoft Corporation.  All rights reserved.
-// </copyright>
-//------------------------------------------------------------------------------
-#endif
-
 Sys.UI.Behavior = function (element) {
   /// <param name="element" domElement="true">The DOM element the behavior is associated with.</param>
   Sys.UI.Behavior.initializeBase(this);

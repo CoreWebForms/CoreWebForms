@@ -1,11 +1,3 @@
-#if COPYRIGHT
-//------------------------------------------------------------------------------
-// <copyright file="XMLHttpExecutor.js" company="Microsoft">
-//     Copyright (c) Microsoft Corporation.  All rights reserved.
-// </copyright>
-//------------------------------------------------------------------------------
-#endif
-
 Sys.Net.XMLDOM = function (markup) {
   /// <summary>Creates an XML document from an XML string.</summary>
   /// <param name="markup" type="String">The XML string to parse.</param>

@@ -1,9 +1,3 @@
-//!-----------------------------------------------------------------------
-//! Copyright (C) Microsoft Corporation. All rights reserved.
-//!-----------------------------------------------------------------------
-//! MicrosoftAjaxComponentModel.js
-//! Microsoft AJAX Framework Component Model.
-
 //!/ <reference name="MicrosoftAjaxCore.js" />
 
 Type._registerScript("MicrosoftAjaxComponentModel.js", ["MicrosoftAjaxCore.js"]);

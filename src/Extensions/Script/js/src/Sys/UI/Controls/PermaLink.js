@@ -1,12 +1,4 @@
-﻿#if COPYRIGHT
-//------------------------------------------------------------------------------
-// <copyright file="Timer.js" company="Microsoft">
-//     Copyright (c) Microsoft Corporation.  All rights reserved.
-// </copyright>
-//------------------------------------------------------------------------------
-#endif
-
-Sys.UI.PermaLink = function (element) {
+﻿Sys.UI.PermaLink = function (element) {
   Sys.UI.PermaLink.initializeBase(this, [element]);
 };
 Sys.UI.PermaLink.prototype = {

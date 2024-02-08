@@ -1,9 +1,3 @@
-//!-----------------------------------------------------------------------
-//! Copyright (C) Microsoft Corporation. All rights reserved.
-//!-----------------------------------------------------------------------
-//! MicrosoftAjaxTimer.js
-//! Sys.UI._Timer component
-
 Type._registerScript("Timer.js", ["MicrosoftAjaxComponentModel.js"]);
 
 #include "Sys/UI/Controls/Timer.js"

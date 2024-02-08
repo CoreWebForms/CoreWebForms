@@ -1,9 +1,3 @@
-//!-----------------------------------------------------------------------
-//! Copyright (C) Microsoft Corporation. All rights reserved.
-//!-----------------------------------------------------------------------
-//! MicrosoftAjaxNetwork.js
-//! Microsoft AJAX Framework Networking.
-
 //!/ <reference name="MicrosoftAjaxSerialization.js" />
 
 Type._registerScript("MicrosoftAjaxNetwork.js", ["MicrosoftAjaxSerialization.js"]);

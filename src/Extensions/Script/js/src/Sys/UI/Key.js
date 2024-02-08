@@ -1,11 +1,3 @@
-#if COPYRIGHT
-//------------------------------------------------------------------------------
-// <copyright file="Key.js" company="Microsoft">
-//     Copyright (c) Microsoft Corporation.  All rights reserved.
-// </copyright>
-//------------------------------------------------------------------------------
-#endif
-
 Sys.UI.Key = function () {
   /// <summary>
   ///   Describes key codes.

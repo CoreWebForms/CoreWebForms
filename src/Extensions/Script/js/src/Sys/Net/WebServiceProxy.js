@@ -1,11 +1,3 @@
-#if COPYRIGHT
-//------------------------------------------------------------------------------
-// <copyright file="WebServiceProxy.js" company="Microsoft">
-//     Copyright (c) Microsoft Corporation.  All rights reserved.
-// </copyright>
-//------------------------------------------------------------------------------
-#endif
-
 Sys.Net.WebServiceProxy = function () {};
 Sys.Net.WebServiceProxy.prototype = {
   get_timeout: function () {

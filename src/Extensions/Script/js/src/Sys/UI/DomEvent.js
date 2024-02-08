@@ -1,11 +1,3 @@
-#if COPYRIGHT
-//------------------------------------------------------------------------------
-// <copyright file="DomEvent.js" company="Microsoft">
-//     Copyright (c) Microsoft Corporation.  All rights reserved.
-// </copyright>
-//------------------------------------------------------------------------------
-#endif
-
 Sys.UI.DomEvent = function (eventObject) {
   /// <summary>A cross-browser object that represents event properties.</summary>
   /// <param name="eventObject">The browser-specific event object (window.event for IE).</param>

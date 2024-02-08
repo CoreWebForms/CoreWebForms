@@ -1,11 +1,3 @@
-#if COPYRIGHT
-//------------------------------------------------------------------------------
-// <copyright file="ApplicationLoadEventArgs.js" company="Microsoft">
-//     Copyright (c) Microsoft Corporation.  All rights reserved.
-// </copyright>
-//------------------------------------------------------------------------------
-#endif
-
 Sys.ApplicationLoadEventArgs = function (components, isPartialLoad) {
   /// <param name="components" type="Array" elementType="Sys.Component">
   ///   The list of components that were created since the last time the load event was raised.

@@ -1,11 +1,3 @@
-#if COPYRIGHT
-//------------------------------------------------------------------------------
-// <copyright file="Component.js" company="Microsoft">
-//     Copyright (c) Microsoft Corporation.  All rights reserved.
-// </copyright>
-//------------------------------------------------------------------------------
-#endif
-
 Sys.Component = function () {
   /// <summary>Base class for Control, Behavior and any object that wants its lifetime to be managed.</summary>
   if (Sys.Application) Sys.Application.registerDisposableObject(this);

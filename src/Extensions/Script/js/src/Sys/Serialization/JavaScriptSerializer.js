@@ -1,11 +1,3 @@
-#if COPYRIGHT
-//------------------------------------------------------------------------------
-// <copyright file="JavaScriptSerializer.js" company="Microsoft">
-//     Copyright (c) Microsoft Corporation.  All rights reserved.
-// </copyright>
-//------------------------------------------------------------------------------
-#endif
-
 Sys.Serialization.JavaScriptSerializer = function () {
   /// <summary>Provides serialization from JavaScript object to JavaScript object notation.</summary>
   // DevDiv #62350: Considered making all methods static and removing this constructor,

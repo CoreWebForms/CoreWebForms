@@ -1,13 +1,3 @@
-//!-----------------------------------------------------------------------
-//! Copyright (C) Microsoft Corporation. All rights reserved.
-//!-----------------------------------------------------------------------
-//! MicrosoftAjax.js
-//! Microsoft AJAX Framework.
-
-// **********************************************
-// ** MicrosoftAjaxCore.jsa
-// **********************************************
-
 // JavaScript Extensions and Type System
 
 #include "Function.js"

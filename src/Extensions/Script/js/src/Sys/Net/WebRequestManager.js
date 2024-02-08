@@ -1,11 +1,3 @@
-#if COPYRIGHT
-//------------------------------------------------------------------------------
-// <copyright file="WebRequestManager.js" company="Microsoft">
-//     Copyright (c) Microsoft Corporation.  All rights reserved.
-// </copyright>
-//------------------------------------------------------------------------------
-#endif
-
 Sys.Net._WebRequestManager = function () {
   /// <summary locid="P:J#Sys.Net.WebRequestManager.#ctor"/>
   this._defaultTimeout = 0;

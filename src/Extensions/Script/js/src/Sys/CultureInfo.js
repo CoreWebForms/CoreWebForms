@@ -1,11 +1,3 @@
-#if COPYRIGHT
-//------------------------------------------------------------------------------
-// <copyright file="CultureInfo.js" company="Microsoft">
-//     Copyright (c) Microsoft Corporation.  All rights reserved.
-// </copyright>
-//------------------------------------------------------------------------------
-#endif
-
 Sys.CultureInfo = function (name, numberFormat, dateTimeFormat) {
   /// <param name="name" type="String">CultureInfo name.</param>
   /// <param name="numberFormat" type="Object">CultureInfo number format information.</param>

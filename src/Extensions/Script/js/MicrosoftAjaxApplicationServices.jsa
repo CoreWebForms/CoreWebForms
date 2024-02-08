@@ -1,9 +1,3 @@
-//!-----------------------------------------------------------------------
-//! Copyright (C) Microsoft Corporation. All rights reserved.
-//!-----------------------------------------------------------------------
-//! MicrosoftAjaxApplicationServices.js
-//! Microsoft AJAX Framework Support for ASP.NET Application Services.
-
 //!/ <reference name="MicrosoftAjaxWebServices.js" />
 
 Type._registerScript("MicrosoftAjaxApplicationServices.js", ["MicrosoftAjaxWebServices.js"]);

@@ -1,11 +1,3 @@
-#if COPYRIGHT
-//------------------------------------------------------------------------------
-// <copyright file="ScriptLoader.js" company="Microsoft">
-//     Copyright (c) Microsoft Corporation.  All rights reserved.
-// </copyright>
-//------------------------------------------------------------------------------
-#endif
-
 // This ScriptLoader works by injecting script tags into the DOM sequentially, waiting for each script
 // to finish loading before proceeding to the next one.
 // It supports a timeout which applies to ALL scripts.

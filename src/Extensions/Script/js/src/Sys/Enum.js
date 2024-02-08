@@ -1,11 +1,3 @@
-#if COPYRIGHT
-//------------------------------------------------------------------------------
-// <copyright file="Enum.js" company="Microsoft">
-//     Copyright (c) Microsoft Corporation.  All rights reserved.
-// </copyright>
-//------------------------------------------------------------------------------
-#endif
-
 function Sys$Enum$parse(value, ignoreCase) {
   /// <summary>
   ///     Converts the string representation of the name or numeric value of one or more enumerated

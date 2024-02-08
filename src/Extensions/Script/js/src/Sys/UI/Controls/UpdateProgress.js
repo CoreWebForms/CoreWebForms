@@ -1,11 +1,3 @@
-#if COPYRIGHT
-//------------------------------------------------------------------------------
-// <copyright file="UpdateProgress.js" company="Microsoft">
-//     Copyright (c) Microsoft Corporation.  All rights reserved.
-// </copyright>
-//------------------------------------------------------------------------------
-#endif
-
 Sys.UI._UpdateProgress = function (element) {
   Sys.UI._UpdateProgress.initializeBase(this, [element]);
   this._displayAfter = 500;

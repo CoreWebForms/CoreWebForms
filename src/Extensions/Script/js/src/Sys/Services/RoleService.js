@@ -1,11 +1,3 @@
-#if COPYRIGHT
-//------------------------------------------------------------------------------
-// <copyright file="RoleService.js" company="Microsoft">
-//     Copyright (c) Microsoft Corporation.  All rights reserved.
-// </copyright>
-//------------------------------------------------------------------------------
-#endif
-
 Sys.Services._RoleService = function () {
   /// <summary locid="M:J#Sys.Services.RoleService.#ctor"/>
   Sys.Services._RoleService.initializeBase(this);

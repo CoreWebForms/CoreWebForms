@@ -1,9 +1,3 @@
-//!-----------------------------------------------------------------------
-//! Copyright (C) Microsoft Corporation. All rights reserved.
-//!-----------------------------------------------------------------------
-//! MicrosoftAjaxWebForms.js
-//! Microsoft AJAX ASP.NET WebForms Framework.
-
 // Partial Rendering
 
 Type._registerScript("MicrosoftAjaxWebForms.js", [

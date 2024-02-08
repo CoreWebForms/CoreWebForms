@@ -1,11 +1,3 @@
-#if COPYRIGHT
-//------------------------------------------------------------------------------
-// <copyright file="ProfileService.js" company="Microsoft">
-//     Copyright (c) Microsoft Corporation.  All rights reserved.
-// </copyright>
-//------------------------------------------------------------------------------
-#endif
-
 Sys.Services._ProfileService = function () {
   /// <summary locid="M:J#Sys.Net.ProfileService.#ctor"/>
   Sys.Services._ProfileService.initializeBase(this);

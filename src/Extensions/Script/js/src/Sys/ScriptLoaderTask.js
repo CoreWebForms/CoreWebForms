@@ -1,11 +1,3 @@
-#if COPYRIGHT
-//------------------------------------------------------------------------------
-// <copyright file="ScriptLoaderTask.js" company="Microsoft">
-//     Copyright (c) Microsoft Corporation.  All rights reserved.
-// </copyright>
-//------------------------------------------------------------------------------
-#endif
-
 // ScriptLoaderTask loads a single script by injecting a dynamic script tag into the DOM.
 // It calls the completed callback when the script element's load/readystatechange or error event occus.
 // The task should be disposed of after use, as it contains references to the script element.

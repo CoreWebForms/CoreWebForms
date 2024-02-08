@@ -1,9 +1,3 @@
-//!-----------------------------------------------------------------------
-//! Copyright (C) Microsoft Corporation. All rights reserved.
-//!-----------------------------------------------------------------------
-//! MicrosoftAjaxWebServices.js
-//! Microsoft AJAX Framework Web Services.
-
 //!/ <reference name="MicrosoftAjaxNetwork.js" />
 
 Type._registerScript("MicrosoftAjaxWebServices.js", ["MicrosoftAjaxNetwork.js"]);

@@ -1,11 +1,3 @@
-#if COPYRIGHT
-//------------------------------------------------------------------------------
-// <copyright file="WebServiceError.js" company="Microsoft">
-//     Copyright (c) Microsoft Corporation.  All rights reserved.
-// </copyright>
-//------------------------------------------------------------------------------
-#endif
-
 // Class returned to client if server throws an exception during ProcessRequest
 Sys.Net.WebServiceError = function (
   timedOut,

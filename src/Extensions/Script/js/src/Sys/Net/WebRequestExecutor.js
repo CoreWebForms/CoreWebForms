@@ -1,11 +1,3 @@
-#if COPYRIGHT
-//------------------------------------------------------------------------------
-// <copyright file="WebRequestExecutor.js" company="Microsoft">
-//     Copyright (c) Microsoft Corporation.  All rights reserved.
-// </copyright>
-//------------------------------------------------------------------------------
-#endif
-
 Sys.Net.WebRequestExecutor = function () {
   /// <summary>Base class for WebRequestExecutors which handle the actual execution of a WebRequest</summary>
   this._webRequest = null;

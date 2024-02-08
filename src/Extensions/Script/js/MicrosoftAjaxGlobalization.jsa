@@ -1,9 +1,3 @@
-//!-----------------------------------------------------------------------
-//! Copyright (C) Microsoft Corporation. All rights reserved.
-//!-----------------------------------------------------------------------
-//! MicrosoftAjaxSerialization.js
-//! Microsoft AJAX Framework Globalization.
-
 //!/ <reference name="MicrosoftAjaxCore.js" />
 
 Type._registerScript("MicrosoftAjaxGlobalization.js", ["MicrosoftAjaxCore.js"]);

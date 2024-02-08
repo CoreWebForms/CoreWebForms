@@ -1,11 +1,3 @@
-#if COPYRIGHT
-//------------------------------------------------------------------------------
-// <copyright file="String.Globalization.js" company="Microsoft">
-//     Copyright (c) Microsoft Corporation.  All rights reserved.
-// </copyright>
-//------------------------------------------------------------------------------
-#endif
-
 String.localeFormat = function (format, args) {
   /// <summary>
   ///     Replaces the format items in a specified String with the text equivalents of the values of
