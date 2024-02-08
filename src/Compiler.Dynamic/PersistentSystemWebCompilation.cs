@@ -61,17 +61,7 @@ internal sealed class PersistentSystemWebCompilation : SystemWebCompilation<Pers
         {
             _logger.LogError("{ErrorCount} error(s) found compiling {Route}", result.Diagnostics.Length, route);
 
-            var errors = result.Diagnostics
-                .OrderByDescending(d => d.Severity)
-                .Select(d => new RoslynError()
-                {
-                    Id = d.Id,
-                    Message = d.GetMessage(CultureInfo.CurrentCulture),
-                    Severity = d.Severity.ToString(),
-                    Location = d.Location.ToString(),
-                })
-                .ToList();
-
+            var errors = GetErrors(result.Diagnostics).ToList();
             var errorResult = JsonSerializer.Serialize(errors);
 
             File.WriteAllText(Path.Combine(_options.Value.TargetDirectory, $"{typeName}.errors.json"), errorResult);

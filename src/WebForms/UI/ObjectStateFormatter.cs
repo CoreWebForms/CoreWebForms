@@ -24,7 +24,7 @@ namespace System.Web.UI;
 /// binary serialization as a fallback mechanism. The formatter is also able to compress
 /// IndexedStrings contained in the object graph.
 /// </devdoc>
-public sealed class ObjectStateFormatter : IStateFormatter, IStateFormatter2, IFormatter
+public sealed class ObjectStateFormatter : IStateFormatter, IStateFormatter2
 {
     // Optimized type tokens
     private const byte Token_Int16 = 1;
@@ -1081,51 +1081,6 @@ public sealed class ObjectStateFormatter : IStateFormatter, IStateFormatter2, IF
     object IStateFormatter.Deserialize(string serializedState) => Deserialize(serializedState);
 
     string IStateFormatter.Serialize(object state) => Serialize(state);
-    #endregion
-
-    #region Implementation of IFormatter
-
-    /// <internalonly/>
-    SerializationBinder IFormatter.Binder
-    {
-        get
-        {
-            return null;
-        }
-        set
-        {
-        }
-    }
-
-    /// <internalonly/>
-    StreamingContext IFormatter.Context
-    {
-        get
-        {
-            return new StreamingContext(StreamingContextStates.All);
-        }
-        set
-        {
-        }
-    }
-
-    /// <internalonly/>
-    ISurrogateSelector IFormatter.SurrogateSelector
-    {
-        get
-        {
-            return null;
-        }
-        set
-        {
-        }
-    }
-
-    /// <internalonly/>
-    object IFormatter.Deserialize(Stream serializationStream) => Deserialize(serializationStream);
-
-    /// <internalonly/>
-    void IFormatter.Serialize(Stream serializationStream, object stateGraph) => Serialize(serializationStream, stateGraph);
     #endregion
 
     #region IStateFormatter2 Members
