@@ -1,9 +1,7 @@
 // MIT License.
 
 using System.ComponentModel.Design;
-using System.Drawing;
 using System.Reflection;
-using System.Web;
 using System.Web.UI;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.SystemWebAdapters.HttpHandlers;
@@ -31,13 +29,6 @@ public static class WebFormsCompilerExtensions
 
     public static IWebFormsBuilder AddDynamicPages(this IWebFormsBuilder services, Action<PageCompilationOptions> configure)
     {
-        // Ensure these are loaded early
-        _ = typeof(HttpUtility);
-        _ = typeof(IHttpHandler);
-        _ = typeof(HttpContext);
-        _ = typeof(HtmlTextWriter);
-        _ = typeof(Bitmap);
-
         services.Services.AddSingleton<DynamicControlCollection>();
         services.Services.AddSingleton<ITypeResolutionService>(ctx => ctx.GetRequiredService<DynamicControlCollection>());
         services.Services.AddSingleton<IMetadataProvider>(ctx => ctx.GetRequiredService<DynamicControlCollection>());

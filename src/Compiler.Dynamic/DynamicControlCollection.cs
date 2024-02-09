@@ -6,7 +6,6 @@ using System.Reflection;
 using System.Runtime.Loader;
 using System.Web.UI;
 using Microsoft.CodeAnalysis;
-using Microsoft.Extensions.Logging;
 
 namespace WebForms.Compiler.Dynamic;
 
@@ -16,7 +15,7 @@ internal sealed class DynamicControlCollection : ITypeResolutionService, IMetada
     private ImmutableHashSet<Assembly> _controls;
     private ImmutableDictionary<AssemblyName, MetadataReference> _map;
 
-    public DynamicControlCollection(ILogger<DynamicControlCollection> logger)
+    public DynamicControlCollection()
     {
         _controls = ImmutableHashSet<Assembly>.Empty;
         _context = AssemblyLoadContext.Default;
@@ -25,18 +24,6 @@ internal sealed class DynamicControlCollection : ITypeResolutionService, IMetada
         AppDomain.CurrentDomain.AssemblyLoad += CurrentDomain_AssemblyLoad;
 
         ProcessLoadedAssemblies();
-        EnsureReferencedAssembliesAreLoaded();
-    }
-
-    private void EnsureReferencedAssembliesAreLoaded()
-    {
-        if (Assembly.GetEntryAssembly()?.GetReferencedAssemblies() is { } names)
-        {
-            foreach (var name in names)
-            {
-                _ = _context.LoadFromAssemblyName(name);
-            }
-        }
     }
 
     private void CurrentDomain_AssemblyLoad(object? sender, AssemblyLoadEventArgs args)
