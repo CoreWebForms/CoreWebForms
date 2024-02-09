@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <IsShipped>true</IsShipped>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
     <IncludeSymbols>false</IncludeSymbols>
@@ -23,7 +23,15 @@
       ReferenceOutputAssembly="false"
       Targets="Publish;PublishItemsOutputGroup"
       Private="false"
-      OutputItemType="AspNetCompilerOutputs" />
+      SetTargetFramework="TargetFramework=net6.0"
+      OutputItemType="AspNetCompilerOutputs6" />
+    <ProjectReference
+      Include="../../tools/aspnet_compiler/aspnet_compiler.csproj"
+      ReferenceOutputAssembly="false"
+      Targets="Publish;PublishItemsOutputGroup"
+      Private="false"
+      SetTargetFramework="TargetFramework=net8.0"
+      OutputItemType="AspNetCompilerOutputs8" />
     <ProjectReference
       Include="../Compiler.Generator/Compiler.Generator.csproj"
       ReferenceOutputAssembly="false"
@@ -34,13 +42,19 @@
 
   <Target Name="GetWebFormsCompiler" BeforeTargets="AssignTargetPaths" AfterTargets="ResolveProjectReferences">
     <PropertyGroup>
-      <_AspNetCompilerPrefix>tools/aspnet_compiler/</_AspNetCompilerPrefix>
+      <_AspNetCompilerPrefix6>tools/aspnet_compiler/net6.0/</_AspNetCompilerPrefix6>
+      <_AspNetCompilerPrefix8>tools/aspnet_compiler/net8.0/</_AspNetCompilerPrefix8>
     </PropertyGroup>
     <ItemGroup>
       <None
-        Include="%(AspNetCompilerOutputs.Identity)"
-        Link="$(_AspNetCompilerPrefix)%(AspNetCompilerOutputs.RelativePath)"
-        PackagePath="$(_AspNetCompilerPrefix)%(AspNetCompilerOutputs.RelativePath)"
+        Include="%(AspNetCompilerOutputs6.Identity)"
+        Link="$(_AspNetCompilerPrefix6)%(AspNetCompilerOutputs.RelativePath)"
+        PackagePath="$(_AspNetCompilerPrefix6)%(AspNetCompilerOutputs.RelativePath)"
+        Pack="true" />
+      <None
+        Include="%(AspNetCompilerOutputs8.Identity)"
+        Link="$(_AspNetCompilerPrefix8)%(AspNetCompilerOutputs.RelativePath)"
+        PackagePath="$(_AspNetCompilerPrefix8)%(AspNetCompilerOutputs.RelativePath)"
         Pack="true" />
     </ItemGroup>
   </Target>

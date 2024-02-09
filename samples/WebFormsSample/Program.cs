@@ -20,9 +20,7 @@ builder.Services.AddSystemWebAdapters()
     .AddWebForms()
     .AddScriptManager()
 #if WEBFORMS_DYNAMIC
-    .AddDynamicPages()
-    .AddPrefix<ScriptManager>("asp")
-    .AddPrefix<ListView>("asp");
+    .AddDynamicPages();
 #else
     .AddCompiledPages();
 #endif

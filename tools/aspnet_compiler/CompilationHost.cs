@@ -1,12 +1,11 @@
 // MIT License.
 
-using System.Web.UI.WebControls;
-using System.Web.UI;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.SystemWebAdapters;
+using Microsoft.CodeAnalysis;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
@@ -18,7 +17,7 @@ namespace WebForms.Compiler;
 
 internal sealed class CompilationHost
 {
-    public static Task RunAsync(DirectoryInfo path, DirectoryInfo targetDir)
+    public static Task RunAsync(DirectoryInfo path, DirectoryInfo targetDir, FileInfo[] references)
         => Host.CreateDefaultBuilder()
             .ConfigureAppConfiguration((ctx, _) =>
             {
@@ -51,19 +50,12 @@ internal sealed class CompilationHost
                     {
                         options.TargetDirectory = targetDir.FullName;
                         options.InputDirectory = path.FullName;
-
-                        foreach (var r in Basic.Reference.Assemblies.Net60.References.All)
-                        {
-                            options.MetadataReferences.Add(r);
-                        }
                     })
                     .ValidateDataAnnotations();
 
                 services
                     .AddWebForms()
-                    .AddPersistentWebFormsCompilation()
-                    .AddPrefix<ScriptManager>("asp")
-                    .AddPrefix<ListView>("asp");
+                    .AddPersistentWebFormsCompilation(references.Select(r => r.FullName));
 
                 services.AddHostedService<PersistedCompilationService>();
 

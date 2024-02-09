@@ -1,10 +1,14 @@
 // MIT License.
 
 using System.Web.Compilation;
+using System.Web.UI;
 using Microsoft.AspNetCore.SystemWebAdapters;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using WebForms;
+
+[assembly: TagPrefix("System.Web.UI", "asp")]
+[assembly: TagPrefix("System.Web.UI.WebControls", "asp")]
 
 namespace Microsoft.AspNetCore.Builder;
 

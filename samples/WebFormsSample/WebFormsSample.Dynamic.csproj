@@ -4,7 +4,7 @@
     <IsPackable>false</IsPackable>
     <DefineConstants>$(DefineConstants);WEBFORMS_DYNAMIC</DefineConstants>
     <EnableRuntimeAspxCompilation>true</EnableRuntimeAspxCompilation>
-    <TargetFrameworks>net8.0</TargetFrameworks>
+    <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>

@@ -9,8 +9,6 @@ using System.Web.Configuration;
 // This used ConfigurationManager in framework
 internal class PagesSection
 {
-    public static PagesSection Instance { get; set; }
-
     public ICollection<TagNamespaceRegisterEntry> DefaultTagNamespaceRegisterEntries { get; } = new List<TagNamespaceRegisterEntry>();
 
     public IDictionary IgnoreDeviceFilters { get; } = new Hashtable();

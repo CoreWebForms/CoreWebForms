@@ -75,7 +75,6 @@ internal sealed class WebFormsCompilationService : BackgroundService
             _disposables.Add(disposable);
         }
 
-
         public void Dispose()
         {
             foreach (var d in _disposables)

@@ -1,10 +1,7 @@
 // MIT License.
 
-using System.Collections.Immutable;
-using System.Globalization;
 using System.Reflection;
 using System.Text.Json;
-using System.Web.UI;
 using Microsoft.CodeAnalysis;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -24,10 +21,9 @@ internal sealed class PersistentSystemWebCompilation : SystemWebCompilation<Pers
         IHostEnvironment env,
         IOptions<PersistentCompilationOptions> options,
         IOptions<PageCompilationOptions> pageOptions,
-        IOptions<PagesSection> pagesSection,
-        IOptions<CompilationSection> compilationSection,
+        IMetadataProvider metadataProvider,
         ILoggerFactory factory)
-        : base(env, factory, pageOptions, pagesSection, compilationSection)
+        : base(env, factory, metadataProvider, pageOptions)
     {
         _logger = factory.CreateLogger<PersistentSystemWebCompilation>();
         _options = options;
@@ -77,27 +73,6 @@ internal sealed class PersistentSystemWebCompilation : SystemWebCompilation<Pers
         };
     }
 
-    protected override IEnumerable<MetadataReference> GetMetadataReferences()
-    {
-        foreach (var assembly in _pageOptions.Value.Assemblies)
-        {
-            if (!assembly.IsDynamic)
-            {
-                yield return MetadataReference.CreateFromFile(assembly.Location);
-            }
-        }
-
-        foreach (var r in _options.Value.MetadataReferences)
-        {
-            yield return r;
-        }
-
-        foreach (var r in _options.Value.References)
-        {
-            yield return MetadataReference.CreateFromFile(r);
-        }
-    }
-
     async Task IWebFormsCompiler.CompilePagesAsync(CancellationToken token)
     {
         Environment.CurrentDirectory = _options.Value.InputDirectory;
@@ -115,12 +90,8 @@ internal sealed class PersistentSystemWebCompilation : SystemWebCompilation<Pers
             var pagesPath = Path.Combine(_options.Value.TargetDirectory, "webforms.pages.json");
             File.WriteAllText(pagesPath, JsonSerializer.Serialize(GetDetails()));
         }
-        catch (RoslynCompilationException r)
+        catch (RoslynCompilationException) // Exception is already displayed
         {
-            foreach (var error in r.Error)
-            {
-                _logger.LogError("{Id} [{Severity}] {Message} ({Location})", error.Id, error.Severity, error.Message, error.Location);
-            }
         }
         catch (Exception e)
         {

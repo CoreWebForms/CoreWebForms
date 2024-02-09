@@ -1,9 +1,12 @@
 // MIT License.
 
+using System.ComponentModel.Design;
+using System.Drawing;
+using System.Reflection;
+using System.Web;
 using System.Web.UI;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.SystemWebAdapters.HttpHandlers;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using WebForms.Compiler.Dynamic;
 
@@ -11,40 +14,33 @@ namespace Microsoft.Extensions.DependencyInjection;
 
 public static class WebFormsCompilerExtensions
 {
-    public static IWebFormsBuilder AddPersistentWebFormsCompilation(this IWebFormsBuilder builder)
+    public static IWebFormsBuilder AddPersistentWebFormsCompilation(this IWebFormsBuilder builder, IEnumerable<string> paths)
     {
-        builder.Services.AddWebFormsCompilationCore(options => { });
+        builder.Services.AddSingleton<PersistentControlCollection>(_ => new PersistentControlCollection(paths));
+        builder.Services.AddSingleton<ITypeResolutionService>(ctx => ctx.GetRequiredService<PersistentControlCollection>());
+        builder.Services.AddSingleton<IMetadataProvider>(ctx => ctx.GetRequiredService<PersistentControlCollection>());
+        builder.Services.AddWebFormsCompilationCore(_ => { });
         builder.Services.AddSingleton<PersistentSystemWebCompilation>();
         builder.Services.AddSingleton<IWebFormsCompiler>(ctx => ctx.GetRequiredService<PersistentSystemWebCompilation>());
 
         return builder;
     }
 
-    /// <summary>
-    /// Registers a <paramref name="tagPrefix"/> for use in compilation. This will ensure the assembly is hooked up for compilation
-    /// as well as the namespace of <typeparamref name="T"/> is available for the registered prefix.
-    /// </summary>
-    /// <typeparam name="T">Type whose namespace is registered</typeparam>
-    /// <param name="builder">The <see cref="IWebFormsBuilder"/>.</param>
-    /// <param name="tagPrefix">The prefix to register.</param>
-    /// <returns></returns>
-    public static IWebFormsBuilder AddPrefix<T>(this IWebFormsBuilder builder, string tagPrefix)
-        where T : Control
-    {
-        builder.Services.AddOptions<PageCompilationOptions>()
-            .Configure(options =>
-            {
-                options.AddTypeNamespace<T>(tagPrefix);
-            });
-
-        return builder;
-    }
-
     public static IWebFormsBuilder AddDynamicPages(this IWebFormsBuilder services)
-        => services.AddDynamicPages(options => { });
+        => services.AddDynamicPages(_ => { });
 
     public static IWebFormsBuilder AddDynamicPages(this IWebFormsBuilder services, Action<PageCompilationOptions> configure)
     {
+        // Ensure these are loaded early
+        _ = typeof(HttpUtility);
+        _ = typeof(IHttpHandler);
+        _ = typeof(HttpContext);
+        _ = typeof(HtmlTextWriter);
+        _ = typeof(Bitmap);
+
+        services.Services.AddSingleton<DynamicControlCollection>();
+        services.Services.AddSingleton<ITypeResolutionService>(ctx => ctx.GetRequiredService<DynamicControlCollection>());
+        services.Services.AddSingleton<IMetadataProvider>(ctx => ctx.GetRequiredService<DynamicControlCollection>());
         services.Services.AddWebFormsCompilationCore(configure);
         services.Services.AddHostedService<WebFormsCompilationService>();
         services.Services.AddSingleton<DynamicSystemWebCompilation>();
@@ -57,7 +53,7 @@ public static class WebFormsCompilerExtensions
     private static void AddWebFormsCompilationCore(this IServiceCollection services, Action<PageCompilationOptions> configure)
     {
         services.AddOptions<PageCompilationOptions>()
-            .Configure<IHostEnvironment>((options, env) =>
+            .Configure(options =>
             {
                 options.AddParser<PageParser>(".aspx");
                 options.AddParser<MasterPageParser>(".Master");
@@ -70,12 +66,17 @@ public static class WebFormsCompilerExtensions
         services.AddOptions<PagesSection>()
             .Configure<IOptions<PageCompilationOptions>>((options, compilation) =>
             {
-                foreach (var known in compilation.Value.KnownTags)
-                {
-                    options.DefaultTagNamespaceRegisterEntries.Add(known);
-                }
-
                 options.EnableSessionState = System.Web.Configuration.PagesEnableSessionState.True;
+            })
+            .Configure<IMetadataProvider>((options, metadata) =>
+            {
+                foreach (var control in metadata.ControlAssemblies)
+                {
+                    foreach (var tag in control.GetCustomAttributes<TagPrefixAttribute>())
+                    {
+                        options.DefaultTagNamespaceRegisterEntries.Add(new(tag.TagPrefix, tag.NamespaceName, control.FullName));
+                    }
+                }
             });
     }
 }

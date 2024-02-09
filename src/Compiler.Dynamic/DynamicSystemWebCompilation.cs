@@ -1,10 +1,8 @@
 // MIT License.
 
 using System.Reflection;
-using System.Runtime.Loader;
 using System.Web;
 using System.Web.Routing;
-using System.Web.UI;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SystemWebAdapters;
 using Microsoft.AspNetCore.SystemWebAdapters.HttpHandlers;
@@ -22,8 +20,6 @@ namespace WebForms.Compiler.Dynamic;
 
 internal sealed class DynamicSystemWebCompilation : SystemWebCompilation<DynamicCompiledPage>, IHttpHandlerCollection, IWebFormsCompiler
 {
-    private readonly Dictionary<Assembly, MetadataReference> _references = new();
-    private readonly IOptions<PageCompilationOptions> _options;
     private readonly ILoggerFactory _factory;
     private readonly ILogger _logger;
     private readonly ManualResetEventSlim _event = new(false);
@@ -34,13 +30,11 @@ internal sealed class DynamicSystemWebCompilation : SystemWebCompilation<Dynamic
     public DynamicSystemWebCompilation(
         ILoggerFactory factory,
         IHostEnvironment env,
-        IOptions<PageCompilationOptions> options,
-        IOptions<PagesSection> pagesSection,
-        IOptions<CompilationSection> compilationSection)
-        : base(env, factory, options, pagesSection, compilationSection)
+        IMetadataProvider metadataProvider,
+        IOptions<PageCompilationOptions> options)
+        : base(env, factory, metadataProvider, options)
     {
         _logger = factory.CreateLogger<DynamicSystemWebCompilation>();
-        _options = options;
         _factory = factory;
     }
 
@@ -89,27 +83,6 @@ internal sealed class DynamicSystemWebCompilation : SystemWebCompilation<Dynamic
         }
 
         throw new InvalidOperationException("No type found");
-    }
-
-    protected override IEnumerable<MetadataReference> GetMetadataReferences()
-    {
-        var references = new List<MetadataReference>();
-
-        foreach (var assembly in AssemblyLoadContext.Default.Assemblies.Concat(_options.Value.Assemblies))
-        {
-            if (!assembly.IsDynamic)
-            {
-                if (!_references.TryGetValue(assembly, out var metadata))
-                {
-                    metadata = MetadataReference.CreateFromFile(assembly.Location);
-                    _references.Add(assembly, metadata);
-                }
-
-                references.Add(metadata);
-            }
-        }
-
-        return references;
     }
 
     IEnumerable<IHttpHandlerMetadata> IHttpHandlerCollection.GetHandlerMetadata()
