@@ -75,6 +75,12 @@ public class DynamicCompilationTests
                 });
                 app.ConfigureServices(services =>
                 {
+                    services.ConfigureHttpJsonOptions(options =>
+                    {
+                        options.SerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
+                        options.SerializerOptions.WriteIndented = true;
+                    });
+
                     services.AddDistributedMemoryCache();
                     services.AddRouting();
                     services.AddSystemWebAdapters()
