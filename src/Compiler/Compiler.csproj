@@ -61,7 +61,7 @@
 
   <Target Name="GetCompilerGenerator" BeforeTargets="AssignTargetPaths" AfterTargets="ResolveProjectReferences">
     <PropertyGroup>
-      <_AnalyzerPrefix>analyzers/dotnet/cs/roslyn4.8</_AnalyzerPrefix>
+      <_AnalyzerPrefix>analyzers/dotnet/cs/roslyn4.8/</_AnalyzerPrefix>
     </PropertyGroup>
     <ItemGroup>
       <None
