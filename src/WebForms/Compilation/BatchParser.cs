@@ -10,20 +10,21 @@ using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Web.Util;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
+using WebForms;
 
 internal static class MTConfigUtil
 {
-    public static CompilationSection Compilation { get; set; }
+    public static CompilationSection Compilation => HttpRuntimeHelper.Services.GetRequiredService<IOptions<CompilationSection>>().Value;
 
     internal static CompilationSection GetCompilationAppConfig() => Compilation;
 
     internal static CompilationSection GetCompilationConfig(VirtualPath currentVirtualPath) => GetCompilationAppConfig();
 
-    internal static PagesSection GetPagesConfig()
-        => PagesSection.Instance;
+    internal static PagesSection GetPagesConfig() => HttpRuntimeHelper.Services.GetRequiredService<IOptions<PagesSection>>().Value;
 
-    internal static PagesSection GetPagesConfig(VirtualPath virtualPath)
-        => PagesSection.Instance;
+    internal static PagesSection GetPagesConfig(VirtualPath virtualPath) => GetPagesConfig();
 }
 
 internal abstract class DependencyParser : BaseParser

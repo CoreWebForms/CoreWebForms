@@ -3,21 +3,19 @@
   <PropertyGroup>
     <IsPackable>false</IsPackable>
     <OutputType>Exe</OutputType>
-    <TargetFrameworks>net6.0;net8.0</TargetFrameworks>
+    <TargetFrameworks>net8.0;net6.0</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Basic.Reference.Assemblies" Version="1.4.5" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
     <PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />
+    <PackageReference Include="System.Reflection.MetadataLoadContext" Version="8.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Compiler.Dynamic\Compiler.Dynamic.csproj" />
-    <ProjectReference Include="..\..\src\Extensions\Extensions.csproj" />
-    <ProjectReference Include="..\..\src\Optimization\Optimization.csproj" />
     <ProjectReference Include="..\..\src\WebForms\WebForms.csproj" />
   </ItemGroup>
 

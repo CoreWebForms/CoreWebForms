@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <IsShipped>true</IsShipped>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
     <IncludeSymbols>false</IncludeSymbols>
@@ -23,7 +23,15 @@
       ReferenceOutputAssembly="false"
       Targets="Publish;PublishItemsOutputGroup"
       Private="false"
-      OutputItemType="AspNetCompilerOutputs" />
+      SetTargetFramework="TargetFramework=net6.0"
+      OutputItemType="AspNetCompilerOutputs6" />
+    <ProjectReference
+      Include="../../tools/aspnet_compiler/aspnet_compiler.csproj"
+      ReferenceOutputAssembly="false"
+      Targets="Publish;PublishItemsOutputGroup"
+      Private="false"
+      SetTargetFramework="TargetFramework=net8.0"
+      OutputItemType="AspNetCompilerOutputs8" />
     <ProjectReference
       Include="../Compiler.Generator/Compiler.Generator.csproj"
       ReferenceOutputAssembly="false"
@@ -34,20 +42,26 @@
 
   <Target Name="GetWebFormsCompiler" BeforeTargets="AssignTargetPaths" AfterTargets="ResolveProjectReferences">
     <PropertyGroup>
-      <_AspNetCompilerPrefix>tools/aspnet_compiler/</_AspNetCompilerPrefix>
+      <_AspNetCompilerPrefix6>tools/net6.0/aspnet_compiler/</_AspNetCompilerPrefix6>
+      <_AspNetCompilerPrefix8>tools/net8.0/aspnet_compiler/</_AspNetCompilerPrefix8>
     </PropertyGroup>
     <ItemGroup>
       <None
-        Include="%(AspNetCompilerOutputs.Identity)"
-        Link="$(_AspNetCompilerPrefix)%(AspNetCompilerOutputs.RelativePath)"
-        PackagePath="$(_AspNetCompilerPrefix)%(AspNetCompilerOutputs.RelativePath)"
+        Include="%(AspNetCompilerOutputs6.Identity)"
+        Link="$(_AspNetCompilerPrefix6)%(AspNetCompilerOutputs6.RelativePath)"
+        PackagePath="$(_AspNetCompilerPrefix6)%(AspNetCompilerOutputs6.RelativePath)"
+        Pack="true" />
+      <None
+        Include="%(AspNetCompilerOutputs8.Identity)"
+        Link="$(_AspNetCompilerPrefix8)%(AspNetCompilerOutputs8.RelativePath)"
+        PackagePath="$(_AspNetCompilerPrefix8)%(AspNetCompilerOutputs8.RelativePath)"
         Pack="true" />
     </ItemGroup>
   </Target>
 
   <Target Name="GetCompilerGenerator" BeforeTargets="AssignTargetPaths" AfterTargets="ResolveProjectReferences">
     <PropertyGroup>
-      <_AnalyzerPrefix>analyzers/dotnet/cs/roslyn4.8</_AnalyzerPrefix>
+      <_AnalyzerPrefix>analyzers/dotnet/cs/roslyn4.8/</_AnalyzerPrefix>
     </PropertyGroup>
     <ItemGroup>
       <None

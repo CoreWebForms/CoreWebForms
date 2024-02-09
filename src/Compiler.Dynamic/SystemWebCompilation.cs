@@ -26,6 +26,7 @@ internal abstract class SystemWebCompilation<T> : IDisposable
     private readonly IHostEnvironment _env;
     private readonly ICompiler _csharp;
     private readonly ICompiler _vb;
+    private readonly IMetadataProvider _metadata;
     private readonly ILogger<SystemWebCompilation<T>> _logger;
     private readonly IOptions<PageCompilationOptions> _pageCompilation;
 
@@ -34,20 +35,17 @@ internal abstract class SystemWebCompilation<T> : IDisposable
     public SystemWebCompilation(
         IHostEnvironment env,
         ILoggerFactory logger,
-        IOptions<PageCompilationOptions> pageCompilation,
-        IOptions<PagesSection> pagesSection,
-        IOptions<CompilationSection> compilationSection)
+        IMetadataProvider metadata,
+        IOptions<PageCompilationOptions> pageCompilation)
     {
         _env = env;
         _csharp = new CSharpCompiler();
         _vb = new VisualBasicCompiler();
 
+        _metadata = metadata;
         _logger = logger.CreateLogger<SystemWebCompilation<T>>();
         _pageCompilation = pageCompilation;
 
-        // TODO: remove these statics and use DI
-        MTConfigUtil.Compilation = compilationSection.Value;
-        PagesSection.Instance = pagesSection.Value;
     }
 
     protected IEnumerable<T> GetPages()
@@ -163,7 +161,9 @@ internal abstract class SystemWebCompilation<T> : IDisposable
             }
 
             var assemblies = dependencies.Select(d => d.Type?.Assembly).Where(a => a is not null);
-            var references = GetMetadataReferences().Concat(dependencies.Select(d => d.MetadataReference).Where(d => d is not null));
+            var references = _metadata.References
+                .Concat(dependencies.Select(d => d.MetadataReference).Where(d => d is not null));
+
             var compilation = compiler.CreateCompilation(typeName, trees, references!);
 
             var compiled = CreateCompiledPage(compilation, path, typeName, trees, references!, embedded, assemblies!, token);
@@ -206,8 +206,6 @@ internal abstract class SystemWebCompilation<T> : IDisposable
         IEnumerable<EmbeddedText> embedded,
         IEnumerable<Assembly> assemblies,
         CancellationToken token);
-
-    protected abstract IEnumerable<MetadataReference> GetMetadataReferences();
 
     private ICompiler GetProvider(CompilerType compiler)
     {

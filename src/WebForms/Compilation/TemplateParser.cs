@@ -28,6 +28,8 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Web.Compilation;
 using System.Web.Util;
+using Microsoft.Extensions.DependencyInjection;
+using WebForms;
 
 public class CompilationSection
 {
@@ -2740,7 +2742,7 @@ private Match RunTextRegex(string text, int textPos) {
             return _typeResolutionService.GetAssembly(asmName, throwOnFail);
         }
 
-        return AssemblyLoadContext.Default.LoadFromAssemblyName(new(assemblyName));
+        return HttpRuntimeHelper.Services.GetRequiredService<ITypeResolutionService>().GetAssembly(new(assemblyName));
     }
 
     internal Type GetType(string typeName, bool ignoreCase)

@@ -1,7 +1,10 @@
 // MIT License.
 
 using System.Web.Optimization;
+using System.Web.UI;
 using Microsoft.AspNetCore.Builder;
+
+[assembly: TagPrefix("System.Web.Optimization", "webopt")]
 
 namespace Microsoft.Extensions.DependencyInjection;
 

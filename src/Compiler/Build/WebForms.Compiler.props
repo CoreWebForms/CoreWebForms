@@ -3,7 +3,7 @@
 
   <PropertyGroup>
     <!-- This is settable so local debug builds can point somewhere else -->
-    <_AspNetCompilerRoot Condition=" '$(_AspNetCompilerRoot)' == '' ">$(MSBuildThisFileDirectory)../tools/aspnet_compiler/</_AspNetCompilerRoot>
+    <_AspNetCompilerRoot Condition=" '$(_AspNetCompilerRoot)' == '' ">$(MSBuildThisFileDirectory)../tools/$(TargetFramework)/aspnet_compiler/</_AspNetCompilerRoot>
     <AspNetCompilePath>$(_AspNetCompilerRoot)aspnet_compiler.dll</AspNetCompilePath>
   </PropertyGroup>
 

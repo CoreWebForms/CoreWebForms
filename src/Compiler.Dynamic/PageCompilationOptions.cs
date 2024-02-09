@@ -1,33 +1,15 @@
 // MIT License.
 
-using System.Drawing;
 using System.Reflection;
-using System.Web;
 using System.Web.Compilation;
 using System.Web.UI;
-using System.Web.UI.WebControls;
 
 namespace WebForms.Compiler.Dynamic;
 
 public class PageCompilationOptions
 {
-    private readonly HashSet<Assembly> _assemblies;
-
-    internal ICollection<TagNamespaceRegisterEntry> KnownTags { get; }
-
     public PageCompilationOptions()
     {
-        _assemblies = new();
-        KnownTags = new List<TagNamespaceRegisterEntry>();
-
-        AddTypeNamespace<Page>("asp");
-        AddTypeNamespace<TextBox>("asp");
-
-        AddAssembly(typeof(HttpUtility).Assembly);
-        AddAssembly(typeof(IHttpHandler).Assembly);
-        AddAssembly(typeof(HttpContext).Assembly);
-        AddAssembly(typeof(HtmlTextWriter).Assembly);
-        AddAssembly(typeof(Bitmap).Assembly);
     }
 
     internal Dictionary<string, Func<string, BaseCodeDomTreeGenerator>> Parsers { get; } = new(StringComparer.OrdinalIgnoreCase);
@@ -46,21 +28,5 @@ public class PageCompilationOptions
 
             return parser.GetGenerator();
         }
-    }
-
-    public void AddAssembly(Assembly assembly) => _assemblies.Add(assembly);
-
-    public void AddAssemblyFrom<T>() => _assemblies.Add(typeof(T).Assembly);
-
-    public IEnumerable<Assembly> Assemblies => _assemblies;
-
-    public void AddTypeNamespace<T>(string prefix)
-        where T : Control
-        => AddAssembly(typeof(T).Assembly, typeof(T).Namespace ?? throw new InvalidOperationException(), prefix);
-
-    internal void AddAssembly(Assembly assembly, string ns, string prefix)
-    {
-        _assemblies.Add(assembly);
-        KnownTags.Add(new(prefix, ns, assembly.FullName));
     }
 }

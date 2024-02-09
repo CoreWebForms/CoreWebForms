@@ -13,6 +13,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
 using System.Reflection;
+using Microsoft.Extensions.DependencyInjection;
+using WebForms;
 
 /// <devdoc>
 ///    <para>Maps a sequence of text characters to a .NET Framework 
@@ -160,7 +162,7 @@ internal class NamespaceTagNameToTypeMapper : ITagNameToTypeMapper
         // If the assembly was not specified, look for the type in the code assemblies (including sub code assemblies)
         return BuildManager.GetTypeFromCodeAssembly(typeName, true /*ignoreCase*/);
 #else
-        throw new NotImplementedException();
+        return HttpRuntimeHelper.Services.GetRequiredService<ITypeResolutionService>().GetType(typeName);
 #endif
     }
 }
