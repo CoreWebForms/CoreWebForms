@@ -64,6 +64,9 @@ public sealed class HttpCompileException : HttpException
     /// <devdoc>
     ///    <para>Serialize the object.</para>
     /// </devdoc>
+#if NET8_0_OR_GREATER
+    [Obsolete]
+#endif
     public override void GetObjectData(SerializationInfo info, StreamingContext context)
     {
         base.GetObjectData(info, context);
@@ -233,6 +236,9 @@ public sealed class HttpParseException : HttpException
     /// <devdoc>
     ///    <para>Serialize the object.</para>
     /// </devdoc>
+#if NET8_0_OR_GREATER
+    [Obsolete]
+#endif
     public override void GetObjectData(SerializationInfo info, StreamingContext context)
     {
         base.GetObjectData(info, context);

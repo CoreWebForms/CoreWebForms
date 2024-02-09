@@ -1184,7 +1184,7 @@ public class ModelDataSourceView : DataSourceView, IStateManager
 
                 //Select parameters that take custom values providers are tracked by ViewState so that 
                 //we can detect any changes from previous page request and mark the data bound control for data binding if necessary.
-                if (dataSourceOperation == DataSourceOperation.Select && customValueProvider != null && parameterInfo.ParameterType.IsSerializable)
+                if (dataSourceOperation == DataSourceOperation.Select && customValueProvider != null)
                 {
                     if (!SelectParameters.ContainsKey(parameterInfo.Name))
                     {
