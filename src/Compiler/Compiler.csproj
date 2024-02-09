@@ -48,13 +48,13 @@
     <ItemGroup>
       <None
         Include="%(AspNetCompilerOutputs6.Identity)"
-        Link="$(_AspNetCompilerPrefix6)%(AspNetCompilerOutputs.RelativePath)"
-        PackagePath="$(_AspNetCompilerPrefix6)%(AspNetCompilerOutputs.RelativePath)"
+        Link="$(_AspNetCompilerPrefix6)%(AspNetCompilerOutputs6.RelativePath)"
+        PackagePath="$(_AspNetCompilerPrefix6)%(AspNetCompilerOutputs6.RelativePath)"
         Pack="true" />
       <None
         Include="%(AspNetCompilerOutputs8.Identity)"
-        Link="$(_AspNetCompilerPrefix8)%(AspNetCompilerOutputs.RelativePath)"
-        PackagePath="$(_AspNetCompilerPrefix8)%(AspNetCompilerOutputs.RelativePath)"
+        Link="$(_AspNetCompilerPrefix8)%(AspNetCompilerOutputs8.RelativePath)"
+        PackagePath="$(_AspNetCompilerPrefix8)%(AspNetCompilerOutputs8.RelativePath)"
         Pack="true" />
     </ItemGroup>
   </Target>
