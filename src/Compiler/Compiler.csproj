@@ -42,8 +42,8 @@
 
   <Target Name="GetWebFormsCompiler" BeforeTargets="AssignTargetPaths" AfterTargets="ResolveProjectReferences">
     <PropertyGroup>
-      <_AspNetCompilerPrefix6>tools/aspnet_compiler/net6.0/</_AspNetCompilerPrefix6>
-      <_AspNetCompilerPrefix8>tools/aspnet_compiler/net8.0/</_AspNetCompilerPrefix8>
+      <_AspNetCompilerPrefix6>tools/net6.0/aspnet_compiler/</_AspNetCompilerPrefix6>
+      <_AspNetCompilerPrefix8>tools/net8.0/aspnet_compiler/</_AspNetCompilerPrefix8>
     </PropertyGroup>
     <ItemGroup>
       <None
