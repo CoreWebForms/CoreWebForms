@@ -1,10 +1,4 @@
-// #if COPYRIGHT
-//------------------------------------------------------------------------------
-// <copyright file="EventHandlerList.js" company="Microsoft">
-//     Copyright (c) Microsoft Corporation.  All rights reserved.
-// </copyright>
-//------------------------------------------------------------------------------
-// #endif
+// MIT License.
 
 Sys.EventHandlerList = function () {
   /// <summary>The EventHandlerList class contains a dictionary of multicast events.</summary>

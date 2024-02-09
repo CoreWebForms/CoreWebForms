@@ -1,10 +1,4 @@
-// #if COPYRIGHT
-//------------------------------------------------------------------------------
-// <copyright file="RoleService.js" company="Microsoft">
-//     Copyright (c) Microsoft Corporation.  All rights reserved.
-// </copyright>
-//------------------------------------------------------------------------------
-// #endif
+// MIT License.
 
 Sys.Services._RoleService = function () {
   /// <summary locid="M:J#Sys.Services.RoleService.#ctor"/>
@@ -113,11 +107,11 @@ Sys.Services._RoleService.prototype = {
       var userContext = context[2] || this.get_defaultUserContext();
       callback(err, userContext, "Sys.Services.RoleService.load");
     }
-    // #if DEBUG
+    #if DEBUG
     else {
       Sys.Net.WebServiceProxy._defaultFailedCallback(err, methodName);
     }
-    // #endif
+    #endif
   },
 };
 

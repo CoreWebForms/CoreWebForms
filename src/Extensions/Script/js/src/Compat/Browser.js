@@ -1,10 +1,12 @@
-// #if COPYRIGHT
+// MIT License.
+
+#if COPYRIGHT
 //------------------------------------------------------------------------------
 // <copyright file="Browser.js" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //------------------------------------------------------------------------------
-// #endif
+#endif
 
 Sys.Browser = {};
 

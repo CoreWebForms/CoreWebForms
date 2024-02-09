@@ -1,19 +1,13 @@
-// #if COPYRIGHT
-//------------------------------------------------------------------------------
-// <copyright file="IDisposable.js" company="Microsoft">
-//     Copyright (c) Microsoft Corporation.  All rights reserved.
-// </copyright>
-//------------------------------------------------------------------------------
-// #endif
+// MIT License.
 
 Sys.IDisposable = function () {
-  // ##DEBUG throw Error.notImplemented();
+  ##DEBUG throw Error.notImplemented();
 };
 Sys.IDisposable.prototype = {
-  // #if DEBUG
+  #if DEBUG
   dispose: function () {
     throw Error.notImplemented();
   },
-  // #endif
+  #endif
 };
 Sys.IDisposable.registerInterface("Sys.IDisposable");

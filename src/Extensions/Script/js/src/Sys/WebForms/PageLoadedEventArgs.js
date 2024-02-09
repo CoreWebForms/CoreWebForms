@@ -1,10 +1,4 @@
-// #if COPYRIGHT
-//------------------------------------------------------------------------------
-// <copyright file="PageLoadedEventArgs.js" company="Microsoft">
-//     Copyright (c) Microsoft Corporation.  All rights reserved.
-// </copyright>
-//------------------------------------------------------------------------------
-// #endif
+// MIT License.
 
 Sys.WebForms.PageLoadedEventArgs = function (
   panelsUpdated,

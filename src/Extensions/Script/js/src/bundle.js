@@ -1,3 +1,5 @@
+// MIT License.
+
 "use strict";
 
 require("Function.js");

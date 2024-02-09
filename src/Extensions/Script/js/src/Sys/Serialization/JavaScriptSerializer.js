@@ -1,10 +1,4 @@
-// #if COPYRIGHT
-//------------------------------------------------------------------------------
-// <copyright file="JavaScriptSerializer.js" company="Microsoft">
-//     Copyright (c) Microsoft Corporation.  All rights reserved.
-// </copyright>
-//------------------------------------------------------------------------------
-// #endif
+// MIT License.
 
 Sys.Serialization.JavaScriptSerializer = function () {
   /// <summary>Provides serialization from JavaScript object to JavaScript object notation.</summary>
@@ -179,7 +173,7 @@ Sys.Serialization.JavaScriptSerializer._serializeWithBuilder = function (
   switch (typeof object) {
     case "object":
       if (object) {
-        // #if DEBUG
+        #if DEBUG
         if (prevObjects) {
           // The loop below makes serilzation O(n^2) worst case for linked list like struture
           // where in depth of graph is in linear proportion to number of elements.
@@ -197,7 +191,7 @@ Sys.Serialization.JavaScriptSerializer._serializeWithBuilder = function (
         }
         try {
           Array.add(prevObjects, object);
-          // #endif
+          #endif
 
           if (Number.isInstanceOfType(object)) {
             Sys.Serialization.JavaScriptSerializer._serializeNumberWithBuilder(
@@ -295,11 +289,11 @@ Sys.Serialization.JavaScriptSerializer._serializeWithBuilder = function (
             }
             stringBuilder.append("}");
           }
-          // #if DEBUG
+          #if DEBUG
         } finally {
           Array.removeAt(prevObjects, prevObjects.length - 1);
         }
-        // #endif
+        #endif
       } else {
         stringBuilder.append("null");
       }

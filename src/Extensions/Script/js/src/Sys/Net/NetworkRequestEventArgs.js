@@ -1,10 +1,4 @@
-// #if COPYRIGHT
-//------------------------------------------------------------------------------
-// <copyright file="NetworkRequestEventArgs.js" company="Microsoft">
-//     Copyright (c) Microsoft Corporation.  All rights reserved.
-// </copyright>
-//------------------------------------------------------------------------------
-// #endif
+// MIT License.
 
 Sys.Net.NetworkRequestEventArgs = function (webRequest) {
   /// <summary>This class is raised by the WebRequestManager when a WebRequest is about to be executed.</summary>

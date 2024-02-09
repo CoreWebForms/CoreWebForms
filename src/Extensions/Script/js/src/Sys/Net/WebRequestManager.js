@@ -1,10 +1,4 @@
-// #if COPYRIGHT
-//------------------------------------------------------------------------------
-// <copyright file="WebRequestManager.js" company="Microsoft">
-//     Copyright (c) Microsoft Corporation.  All rights reserved.
-// </copyright>
-//------------------------------------------------------------------------------
-// #endif
+// MIT License.
 
 Sys.Net._WebRequestManager = function () {
   /// <summary locid="P:J#Sys.Net.WebRequestManager.#ctor"/>
@@ -41,11 +35,11 @@ Sys.Net._WebRequestManager.prototype = {
     return this._defaultTimeout;
   },
   set_defaultTimeout: function (value) {
-    // #if DEBUG
+    #if DEBUG
     if (value < 0) {
       throw Error.argumentOutOfRange("value", value, Sys.Res.invalidTimeout);
     }
-    // #endif
+    #endif
 
     this._defaultTimeout = value;
   },
@@ -74,7 +68,7 @@ Sys.Net._WebRequestManager.prototype = {
         failed = true;
       }
 
-      // #if DEBUG
+      #if DEBUG
       if (
         failed ||
         !Sys.Net.WebRequestExecutor.isInstanceOfType(executor) ||
@@ -85,7 +79,7 @@ Sys.Net._WebRequestManager.prototype = {
           String.format(Sys.Res.invalidExecutorType, this._defaultExecutorType),
         );
       }
-      // #endif
+      #endif
 
       webRequest.set_executor(executor);
     }

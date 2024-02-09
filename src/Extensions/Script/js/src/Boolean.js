@@ -1,3 +1,5 @@
+// MIT License.
+
 Boolean.__typeName = "Boolean";
 Boolean.__class = true;
 

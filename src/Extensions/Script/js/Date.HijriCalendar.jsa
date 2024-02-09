@@ -1,0 +1,5 @@
+// MIT License.
+
+Type._registerScript("Date.HijriCalendar.js", ["MicrosoftAjaxGlobalization.js"]);
+
+#include "Date.HijriCalendar.js"

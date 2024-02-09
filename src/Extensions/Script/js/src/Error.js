@@ -1,3 +1,5 @@
+// MIT License.
+
 Error.__typeName = "Error";
 Error.__class = true;
 

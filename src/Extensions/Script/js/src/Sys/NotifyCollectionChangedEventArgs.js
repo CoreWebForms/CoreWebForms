@@ -1,4 +1,6 @@
-﻿Sys.NotifyCollectionChangedEventArgs = function (changes) {
+// MIT License.
+
+Sys.NotifyCollectionChangedEventArgs = function (changes) {
   /// <summary>Describes how the collection was changed.</summary>
   /// <param name="changes" type="Array" elementType="Sys.CollectionChange">A list of changes that were performed on the collection since the last event.</param>
   this._changes = changes;

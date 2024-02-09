@@ -1,10 +1,4 @@
-// #if COPYRIGHT
-//------------------------------------------------------------------------------
-// <copyright file="ProfileService.js" company="Microsoft">
-//     Copyright (c) Microsoft Corporation.  All rights reserved.
-// </copyright>
-//------------------------------------------------------------------------------
-// #endif
+// MIT License.
 
 Sys.Services._ProfileService = function () {
   /// <summary locid="M:J#Sys.Net.ProfileService.#ctor"/>
@@ -214,11 +208,11 @@ Sys.Services._ProfileService.prototype = {
       var userContext = context[2] || this.get_defaultUserContext();
       callback(err, userContext, "Sys.Services.ProfileService.load");
     }
-    // #if DEBUG
+    #if DEBUG
     else {
       Sys.Net.WebServiceProxy._defaultFailedCallback(err, methodName);
     }
-    // #endif
+    #endif
   },
 
   _onSaveComplete: function (result, context, methodName) {
@@ -261,11 +255,11 @@ Sys.Services._ProfileService.prototype = {
       var userContext = context[2] || this.get_defaultUserContext();
       callback(err, userContext, "Sys.Services.ProfileService.save");
     }
-    // #if DEBUG
+    #if DEBUG
     else {
       Sys.Net.WebServiceProxy._defaultFailedCallback(err, methodName);
     }
-    // #endif
+    #endif
   },
 
   _unflattenProperties: function (properties) {

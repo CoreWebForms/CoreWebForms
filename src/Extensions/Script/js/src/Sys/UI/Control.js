@@ -1,14 +1,8 @@
-// #if COPYRIGHT
-//------------------------------------------------------------------------------
-// <copyright file="Control.js" company="Microsoft">
-//     Copyright (c) Microsoft Corporation.  All rights reserved.
-// </copyright>
-//------------------------------------------------------------------------------
-// #endif
+// MIT License.
 
 Sys.UI.Control = function (element) {
   /// <param name="element" domElement="true">The DOM element the behavior is associated with.</param>
-  // ##DEBUG if (element.control !== null && typeof(element.control) !== 'undefined') throw Error.invalidOperation(Sys.Res.controlAlreadyDefined);
+  ##DEBUG if (element.control !== null && typeof(element.control) !== 'undefined') throw Error.invalidOperation(Sys.Res.controlAlreadyDefined);
   Sys.UI.Control.initializeBase(this);
 
   this._element = element;
@@ -55,7 +49,7 @@ Sys.UI.Control.prototype = {
     return null;
   },
   set_parent: function (value) {
-    // #if DEBUG
+    #if DEBUG
     if (!this._element)
       throw Error.invalidOperation(Sys.Res.cantBeCalledAfterDispose);
     var parents = [this];
@@ -66,7 +60,7 @@ Sys.UI.Control.prototype = {
       parents[parents.length] = current;
       current = current.get_parent();
     }
-    // #endif
+    #endif
     this._parent = value;
   },
   get_role: function () {
@@ -75,26 +69,26 @@ Sys.UI.Control.prototype = {
   },
   get_visibilityMode: function () {
     /// <value type="Sys.UI.VisibilityMode"/>
-    // ##DEBUG if (!this._element) throw Error.invalidOperation(Sys.Res.cantBeCalledAfterDispose);
+    ##DEBUG if (!this._element) throw Error.invalidOperation(Sys.Res.cantBeCalledAfterDispose);
     return Sys.UI.DomElement.getVisibilityMode(this._element);
   },
   set_visibilityMode: function (value) {
-    // ##DEBUG if (!this._element) throw Error.invalidOperation(Sys.Res.cantBeCalledAfterDispose);
+    ##DEBUG if (!this._element) throw Error.invalidOperation(Sys.Res.cantBeCalledAfterDispose);
     Sys.UI.DomElement.setVisibilityMode(this._element, value);
   },
   get_visible: function () {
     /// <value type="Boolean"/>
-    // ##DEBUG if (!this._element) throw Error.invalidOperation(Sys.Res.cantBeCalledAfterDispose);
+    ##DEBUG if (!this._element) throw Error.invalidOperation(Sys.Res.cantBeCalledAfterDispose);
     return Sys.UI.DomElement.getVisible(this._element);
   },
   set_visible: function (value) {
-    // ##DEBUG if (!this._element) throw Error.invalidOperation(Sys.Res.cantBeCalledAfterDispose);
+    ##DEBUG if (!this._element) throw Error.invalidOperation(Sys.Res.cantBeCalledAfterDispose);
     Sys.UI.DomElement.setVisible(this._element, value);
   },
   addCssClass: function (className) {
     /// <summary>Adds a CSS class to the control if it doesn't already have it.</summary>
     /// <param name="className" type="String">The name of the CSS class to add.</param>
-    // ##DEBUG if (!this._element) throw Error.invalidOperation(Sys.Res.cantBeCalledAfterDispose);
+    ##DEBUG if (!this._element) throw Error.invalidOperation(Sys.Res.cantBeCalledAfterDispose);
     Sys.UI.DomElement.addCssClass(this._element, className);
   },
   dispose: function () {
@@ -132,13 +126,13 @@ Sys.UI.Control.prototype = {
   removeCssClass: function (className) {
     /// <summary>Removes a CSS class from the control.</summary>
     /// <param name="className" type="String">The name of the CSS class to remove.</param>
-    // ##DEBUG if (!this._element) throw Error.invalidOperation(Sys.Res.cantBeCalledAfterDispose);
+    ##DEBUG if (!this._element) throw Error.invalidOperation(Sys.Res.cantBeCalledAfterDispose);
     Sys.UI.DomElement.removeCssClass(this._element, className);
   },
   toggleCssClass: function (className) {
     /// <summary>Toggles a CSS class on and off on the control.</summary>
     /// <param name="className" type="String">The name of the CSS class to toggle.</param>
-    // ##DEBUG if (!this._element) throw Error.invalidOperation(Sys.Res.cantBeCalledAfterDispose);
+    ##DEBUG if (!this._element) throw Error.invalidOperation(Sys.Res.cantBeCalledAfterDispose);
     Sys.UI.DomElement.toggleCssClass(this._element, className);
   },
 };

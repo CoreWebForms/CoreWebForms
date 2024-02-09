@@ -1,0 +1,9 @@
+// MIT License.
+
+//!/ <reference name="MicrosoftAjaxComponentModel.js" />
+//!/ <reference name="MicrosoftAjaxSerialization.js" />
+
+Type._registerScript("MicrosoftAjaxHistory.js", ["MicrosoftAjaxComponentModel.js", "MicrosoftAjaxSerialization.js"]);
+
+#include "Sys/HistoryEventArgs.js"
+#include "Sys/Application.History.js"

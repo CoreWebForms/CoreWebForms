@@ -1,10 +1,4 @@
-// #if COPYRIGHT
-//------------------------------------------------------------------------------
-// <copyright file="ScriptLoader.js" company="Microsoft">
-//     Copyright (c) Microsoft Corporation.  All rights reserved.
-// </copyright>
-//------------------------------------------------------------------------------
-// #endif
+// MIT License.
 
 // This ScriptLoader works by injecting script tags into the DOM sequentially, waiting for each script
 // to finish loading before proceeding to the next one.
@@ -150,7 +144,7 @@ Sys._ScriptLoader.prototype = {
       } else {
         // script is literal script, so just load the script by adding the new element to the DOM
         // DevDiv Bugs 146697: use lowercase names on getElementsByTagName to work with xhtml content type
-        // #if DEBUG
+        #if DEBUG
         // DevDiv Bugs 146327: In debug mode, report useful error message for pages without <head> element
         var headElements = document.getElementsByTagName("head");
         if (headElements.length === 0) {
@@ -158,9 +152,9 @@ Sys._ScriptLoader.prototype = {
         } else {
           headElements[0].appendChild(scriptElement);
         }
-        // #else
+        #else
         document.getElementsByTagName("head")[0].appendChild(scriptElement);
-        // #endif
+        #endif
 
         // DevDiv 157097: Removed setTimeout, assuming the script executed synchronously.
         // Previously the setTimeout worked around a Firefox bug where the script was not
@@ -199,15 +193,15 @@ Sys._ScriptLoader.prototype = {
 
     var session = Array.dequeue(this._sessions);
     this._currentSession = session;
-    // #if DEBUG
-    // #else
+    #if DEBUG
+    #else
     if (session.scriptTimeout > 0) {
       this._timeoutCookie = window.setTimeout(
         Function.createDelegate(this, this._scriptLoadTimeoutHandler),
         session.scriptTimeout * 1000,
       );
     }
-    // #endif
+    #endif
     this._loadScriptsInternal();
   },
 
@@ -241,8 +235,8 @@ Sys._ScriptLoader.prototype = {
       this._raiseError();
     }
   },
-  // #if DEBUG
-  // #else
+  #if DEBUG
+  #else
   _scriptLoadTimeoutHandler: function () {
     var callback = this._currentSession.scriptLoadTimeoutCallback;
     this._stopSession();
@@ -252,15 +246,15 @@ Sys._ScriptLoader.prototype = {
     }
     this._nextSession();
   },
-  // #endif
+  #endif
   _stopSession: function () {
-    // #if DEBUG
-    // #else
+    #if DEBUG
+    #else
     if (this._timeoutCookie) {
       window.clearTimeout(this._timeoutCookie);
       this._timeoutCookie = null;
     }
-    // #endif
+    #endif
     if (this._currentTask) {
       this._currentTask.dispose();
       this._currentTask = null;
@@ -309,13 +303,13 @@ Sys._ScriptLoader.readLoadedScripts = function () {
 
 Sys._ScriptLoader._errorScriptLoadFailed = function (scriptUrl) {
   var errorMessage;
-  // #if DEBUG
+  #if DEBUG
   // a much more detailed message is displayed in debug mode
   errorMessage = Sys.Res.scriptLoadFailedDebug;
-  // #else
+  #else
   // a simplier error is displayed in release
   errorMessage = Sys.Res.scriptLoadFailed;
-  // #endif
+  #endif
 
   var displayMessage =
     "Sys.ScriptLoadFailedException: " + String.format(errorMessage, scriptUrl);

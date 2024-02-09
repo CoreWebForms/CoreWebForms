@@ -1,0 +1,10 @@
+// MIT License.
+
+//!/ <reference name="MicrosoftAjaxCore.js" />
+
+Type._registerScript("MicrosoftAjaxGlobalization.js", ["MicrosoftAjaxCore.js"]);
+
+#include "Date.Globalization.js"
+#include "String.Globalization.js"
+#include "Number.Globalization.js"
+#include "Sys/CultureInfo.js"

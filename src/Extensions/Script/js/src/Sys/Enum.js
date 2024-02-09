@@ -1,10 +1,4 @@
-// #if COPYRIGHT
-//------------------------------------------------------------------------------
-// <copyright file="Enum.js" company="Microsoft">
-//     Copyright (c) Microsoft Corporation.  All rights reserved.
-// </copyright>
-//------------------------------------------------------------------------------
-// #endif
+// MIT License.
 
 function Sys$Enum$parse(value, ignoreCase) {
   /// <summary>
@@ -75,7 +69,7 @@ function Sys$Enum$toString(value) {
   // Need to do the type check manually instead of using parameter validation to be able to return
   // an error message that mentions the actual enum type that's expected instead of Number.
   if (typeof value === "undefined" || value === null) return this.__string;
-  // ##DEBUG if ((typeof(value) != 'number') || ((value % 1) !== 0)) throw Error.argumentType('value', Object.getType(value), this);
+  ##DEBUG if ((typeof(value) != 'number') || ((value % 1) !== 0)) throw Error.argumentType('value', Object.getType(value), this);
   var values = this.prototype;
   var i;
   if (!this.__flags || value === 0) {
@@ -110,15 +104,15 @@ function Sys$Enum$toString(value) {
     }
     if (parts.length && v === 0) return parts.reverse().join(", ");
   }
-  // #if DEBUG
+  #if DEBUG
   throw Error.argumentOutOfRange(
     "value",
     value,
     String.format(Sys.Res.enumInvalidValue, value, this.__typeName),
   );
-  // #else
+  #else
   return "";
-  // #endif
+  #endif
 }
 
 Type.prototype.registerEnum = function (name, flags) {
@@ -138,7 +132,7 @@ Type.prototype.registerEnum = function (name, flags) {
   /// </example>
   /// <param name="name" type="String">The fully-qualified name of the enum.</param>
   /// <param name="flags" type="Boolean" optional="true">True if the enum is a flags collection.</param>
-  // #if DEBUG
+  #if DEBUG
   if (!Type.__fullyQualifiedIdentifierRegExp.test(name))
     throw Error.argument("name", Sys.Res.notATypeName);
   // Check if the type name parses to an existing object that matches this.
@@ -164,7 +158,7 @@ Type.prototype.registerEnum = function (name, flags) {
     if (typeof this[j] !== "undefined")
       throw Error.invalidOperation(String.format(Sys.Res.enumReservedName, j));
   }
-  // #endif
+  #endif
   Sys.__upperCaseTypes[name.toUpperCase()] = this;
 
   for (var i in this.prototype) {
@@ -176,7 +170,7 @@ Type.prototype.registerEnum = function (name, flags) {
   this.toString = Sys$Enum$toString;
   this.__flags = flags;
   this.__enum = true;
-  // ##DEBUG Sys.__registeredTypes[name] = true;
+  ##DEBUG Sys.__registeredTypes[name] = true;
 };
 
 Type.isEnum = function (type) {

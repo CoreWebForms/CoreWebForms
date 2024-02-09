@@ -1,24 +1,32 @@
+import preprocess from './rollup-plugin-preprocess.js'
+
 export default [
   {
     input: [
-      "MicrosoftAjaxCore.js",
-      "MicrosoftAjaxWebForms.js",
-      "MicrosoftAjaxComponentModel.js",
-      "MicrosoftAjaxGlobalization.js",
-      "MicrosoftAjaxHistory.js",
-      "MicrosoftAjaxNetwork.js",
-      "MicrosoftAjaxSerialization.js",
+      "MicrosoftAjaxCore.jsa",
+      "MicrosoftAjaxWebForms.jsa",
+      "MicrosoftAjaxComponentModel.jsa",
+      "MicrosoftAjaxGlobalization.jsa",
+      "MicrosoftAjaxHistory.jsa",
+      "MicrosoftAjaxNetwork.jsa",
+      "MicrosoftAjaxSerialization.jsa",
     ],
     output: {
       dir: "dist/",
       format: "es",
     },
+    plugins: [
+      preprocess()
+    ]
   },
   {
-    input: ["MicrosoftAjax.js"],
+    input: ["MicrosoftAjax.jsa"],
     output: {
       dir: "dist/",
       format: "es",
     },
+    plugins: [
+      preprocess()
+    ]
   },
 ];

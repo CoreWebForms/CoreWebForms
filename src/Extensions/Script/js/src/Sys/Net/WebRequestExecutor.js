@@ -1,10 +1,4 @@
-// #if COPYRIGHT
-//------------------------------------------------------------------------------
-// <copyright file="WebRequestExecutor.js" company="Microsoft">
-//     Copyright (c) Microsoft Corporation.  All rights reserved.
-// </copyright>
-//------------------------------------------------------------------------------
-// #endif
+// MIT License.
 
 Sys.Net.WebRequestExecutor = function () {
   /// <summary>Base class for WebRequestExecutors which handle the actual execution of a WebRequest</summary>
@@ -20,13 +14,13 @@ Sys.Net.WebRequestExecutor.prototype = {
   },
 
   _set_webRequest: function (value) {
-    // #if DEBUG
+    #if DEBUG
     if (this.get_started()) {
       throw Error.invalidOperation(
         String.format(Sys.Res.cannotCallOnceStarted, "set_webRequest"),
       );
     }
-    // #endif
+    #endif
 
     this._webRequest = value;
   },
