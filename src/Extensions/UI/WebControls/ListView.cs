@@ -17,7 +17,9 @@ namespace System.Web.UI.WebControls;
 [ControlValueProperty("SelectedValue")]
 [DefaultEvent("SelectedIndexChanged")]
 [SupportsEventValidation]
+#if PORT_SYSTEMDRAWING
 [ToolboxBitmap(typeof(ListView), "ListView.bmp")]
+#endif
 [DataKeyProperty("SelectedPersistedDataKey")]
 public class ListView : DataBoundControl, INamingContainer, IPageableItemContainer, IPersistedSelector, IDataKeysControl, IDataBoundListControl, IWizardSideBarListControl
 {
