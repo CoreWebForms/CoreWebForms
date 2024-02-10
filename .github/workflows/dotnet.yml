@@ -32,8 +32,7 @@ jobs:
           "test\Compiler.Dynamic.Tests\Compiler.Dynamic.Tests.csproj",
           "test\Webforms.Tests\Webforms.Tests.csproj",
           "samples\WebFormsSample\WebFormsSample.Dynamic.csproj",
-          "samples\WebFormsSample\WebFormsSample.Static.csproj",
-          "samples\WebFormsSample\WebFormsSample.Static.Interceptor.csproj"
+          "samples\WebFormsSample\WebFormsSample.Static.csproj"
         )
 
         dotnet restore -r ${{ matrix.rid }}
