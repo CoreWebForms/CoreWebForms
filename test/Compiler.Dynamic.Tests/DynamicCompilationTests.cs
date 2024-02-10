@@ -2,8 +2,9 @@
 
 using System.Diagnostics;
 using System.Net;
-using System.Web.Routing;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
@@ -32,6 +33,7 @@ public class DynamicCompilationTests
     [DataRow("test05", "error_page.aspx")]
     [DataRow("test06", "route_url_expressionbuilder.aspx")]
     [DataRow("test07", "redirect_page.aspx")]
+    [DataRow("test08", "scripts.aspx")]
     public async Task CompiledPageRuns(string test, params string[] pages)
     {
         // Arrange
@@ -63,8 +65,6 @@ public class DynamicCompilationTests
                 app.UseTestServer();
                 app.Configure(app =>
                 {
-                    RouteTable.Routes.MapPageRoute("Test", "/test", pages[0]);
-
                     app.UseRouting();
                     app.UseSession();
                     app.UseSystemWebAdapters();
@@ -77,7 +77,7 @@ public class DynamicCompilationTests
                 {
                     services.ConfigureHttpJsonOptions(options =>
                     {
-                        options.SerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
+                        options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
                         options.SerializerOptions.WriteIndented = true;
                     });
 
@@ -85,8 +85,14 @@ public class DynamicCompilationTests
                     services.AddRouting();
                     services.AddSystemWebAdapters()
                         .AddWrappedAspNetCoreSession()
+                        .AddRouting(routes =>
+                        {
+                            routes.MapPageRoute("Test", "/test", pages[0]);
+                        })
                         .AddWebForms()
+                        .AddScriptManager()
                         .AddDynamicPages();
+                    services.AddSingleton<IDataProtectionProvider, NoopDataProtector>();
                 });
             })
             .Start();
@@ -128,4 +134,13 @@ public class DynamicCompilationTests
         }
     }
 
+    // Allows for data protection to be turned off for testing purposes.
+    private sealed class NoopDataProtector : IDataProtector, IDataProtectionProvider
+    {
+        public IDataProtector CreateProtector(string purpose) => this;
+
+        public byte[] Protect(byte[] plaintext) => plaintext;
+
+        public byte[] Unprotect(byte[] protectedData) => protectedData;
+    }
 }
