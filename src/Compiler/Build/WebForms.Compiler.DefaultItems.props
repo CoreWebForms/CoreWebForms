@@ -1,6 +1,7 @@
 <Project>
 
   <PropertyGroup>
+    <WarnOnUnsupportedWebForms Condition=" '$(WarnOnUnsupportedWebForms)' == '' ">true</WarnOnUnsupportedWebForms>
     <!-- Prevents including build and publish outputs -->
     <__DefaultExcludes>$(__DefaultExcludes);$([MSBuild]::EnsureTrailingSlash($(OutputPath)))**</__DefaultExcludes>
     <__DefaultExcludes Condition="'$(PackageLocation)'!=''">$(__DefaultExcludes);$([MSBuild]::EnsureTrailingSlash($(PackageLocation)))**</__DefaultExcludes>
@@ -10,6 +11,9 @@
   <ItemGroup>
     <WebFormsFiles Include="$(MSBuildProjectDirectory)\**\*.aspx" Exclude="@(__DefaultExcludes)" />
     <WebFormsFiles Include="$(MSBuildProjectDirectory)\**\*.master" Exclude="@(__DefaultExcludes) "/>
+
+    <UnsupportedWebFormsFiles Include="$(MSBuildProjectDirectory)\**\*.ascx*" Exclude="@(__DefaultExcludes)" Description="Compiling custom controls is not yet supported" />
+    <UnsupportedWebFormsFiles Include="$(MSBuildProjectDirectory)\**\*.ashx*" Exclude="@(__DefaultExcludes)" Description="Compiling handlers is not yet supported" />
 
     <WebFormsCodeBehindFiles Include="$(MSBuildProjectDirectory)\**\*.aspx.vb" Exclude="@(__DefaultExcludes)" />
     <WebFormsCodeBehindFiles Include="$(MSBuildProjectDirectory)\**\*.aspx.cs" Exclude="@(__DefaultExcludes)" />
