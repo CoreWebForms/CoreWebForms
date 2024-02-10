@@ -129,6 +129,7 @@ internal class PageCodeDomTreeGenerator : TemplateControlCodeDomTreeGenerator
 
         base.BuildDefaultConstructor();
 
+#if PORT_SCRIPTTIMEOUT
         if (CompilParams.IncludeDebugInformation)
         {
             // If in debug mode, set the timeout to some huge value (ASURT 49427)
@@ -140,8 +141,8 @@ internal class PageCodeDomTreeGenerator : TemplateControlCodeDomTreeGenerator
                 "ScriptTimeout");
             setScriptTimeout.Right = new CodePrimitiveExpression(DebugScriptTimeout);
             InitMethod.Statements.Add(setScriptTimeout);
-
         }
+#endif
 
         if (PageParser.TransactionMode != 0 /*TransactionOption.Disabled*/)
         {
