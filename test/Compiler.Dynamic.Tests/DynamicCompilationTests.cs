@@ -130,7 +130,7 @@ public class DynamicCompilationTests
             File.WriteAllText(tempPath, result);
             _context.WriteLine($"Wrote result to {tempPath}");
 
-            Assert.AreEqual(expectedHtml, result);
+            Assert.AreEqual(expectedHtml.ReplaceLineEndings(), result.ReplaceLineEndings());
         }
     }
 
