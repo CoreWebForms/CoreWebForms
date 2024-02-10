@@ -3,10 +3,16 @@
   <ItemGroup>
     <Content Include="@(WebFormsFiles)" />
     <Content Include="@(WebFormsCodeBehindFiles)" />
+    <Content Include="@(UnsupportedWebFormsFiles)" />
   </ItemGroup>
 
   <ItemGroup>
     <Compile Remove="@(WebFormsCodeBehindFiles)" />
+    <Compile Remove="@(UnsupportedWebFormsFiles)" />
   </ItemGroup>
+
+  <Target Name="IdentifyUnsupportedWebFormsFiles" BeforeTargets="Build" Condition=" $(WarnOnUnsupportedWebForms) AND '@(UnsupportedWebFormsFiles)' != '' ">
+    <Warning Text="%(UnsupportedWebFormsFiles.Description) [%(UnsupportedWebFormsFiles.Identity)]" />
+  </Target>
  
 </Project>
