@@ -3,7 +3,6 @@
 using System.Collections;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
-using System.Drawing;
 using System.Globalization;
 using System.Text;
 using System.Web.Resources;
@@ -16,7 +15,9 @@ PersistChildren(false),
 Themeable(true),
 SupportsEventValidation,
 Designer("System.Web.UI.Design.WebControls.DataPagerDesigner, " + AssemblyRef.SystemWebExtensionsDesign),
+#if PORT_SYSTEMDRAWING
 ToolboxBitmap(typeof(DataPager), "DataPager.bmp")
+#endif
 ]
 public class DataPager : Control, IAttributeAccessor, INamingContainer, ICompositeControlDesignerAccessor
 {
