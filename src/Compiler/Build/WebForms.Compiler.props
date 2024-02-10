@@ -9,7 +9,6 @@
 
   <PropertyGroup>
     <EnableRuntimeAspxCompilation Condition=" '$(EnableRuntimeAspxCompilation)' == '' ">false</EnableRuntimeAspxCompilation>
-    <UseWebFormsInterceptors Condition=" '$(UseWebFormsInterceptors)' == '' ">false</UseWebFormsInterceptors>
   </PropertyGroup>
 
 </Project>

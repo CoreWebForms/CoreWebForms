@@ -3,7 +3,6 @@
     "path": "CoreWebForms.sln",
     "projects": [
       "src\\Compiler.Dynamic\\Compiler.Dynamic.csproj",
-      "src\\Compiler.Generator\\Compiler.Generator.csproj",
       "src\\Compiler\\Compiler.csproj",
       "src\\Config\\Config.csproj",
       "src\\Extensions\\Extensions.csproj",

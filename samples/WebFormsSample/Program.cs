@@ -1,8 +1,6 @@
 // MIT License.
 
 using System.Runtime.Loader;
-using System.Web.UI;
-using System.Web.UI.WebControls;
 
 var builder = WebApplication.CreateBuilder(args);
 
