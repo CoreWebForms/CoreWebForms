@@ -20,18 +20,29 @@ public static class CompiledWebFormsPageExtensions
         return builder;
     }
 
-    private sealed class CompiledReflectionWebFormsPage(IWebHostEnvironment env) : IHttpHandlerCollection, IDisposable
+    private sealed class CompiledReflectionWebFormsPage : IHttpHandlerCollection, IDisposable
     {
+        private readonly Lazy<IEnumerable<IHttpHandlerMetadata>> _metadata;
+        private readonly IWebHostEnvironment _env;
+
+        public CompiledReflectionWebFormsPage(IWebHostEnvironment env)
+        {
+            _env = env;
+            _metadata = new(() => ParseHandlers().ToList(), isThreadSafe: true);
+        }
+
         IEnumerable<NamedHttpHandlerRoute> IHttpHandlerCollection.NamedRoutes => [];
 
         IChangeToken IHttpHandlerCollection.GetChangeToken() => NullChangeToken.Singleton;
 
-        public IEnumerable<IHttpHandlerMetadata> GetHandlerMetadata()
+        IEnumerable<IHttpHandlerMetadata> IHttpHandlerCollection.GetHandlerMetadata() => _metadata.Value;
+
+        private IEnumerable<IHttpHandlerMetadata> ParseHandlers()
         {
-            if (GetWebFormsFile(env) is { Exists: true } file)
+            if (GetWebFormsFile(_env) is { } path)
             {
-                var results = JsonSerializer.Deserialize<WebFormsDetails[]>(file.CreateReadStream());
-                var context = GetLoadContext();
+                var results = JsonSerializer.Deserialize<WebFormsDetails[]>(File.ReadAllText(path));
+                var context = new WebFormsAssemblyLoadContext();
 
                 if (results is not null)
                 {
@@ -46,25 +57,24 @@ public static class CompiledWebFormsPageExtensions
             }
         }
 
-        private static IFileInfo GetWebFormsFile(IWebHostEnvironment env)
+        private static string GetWebFormsFile(IWebHostEnvironment env)
         {
-            const string DetailsPath = "webforms.pages.json";
+            var path = $"{env.ApplicationName}.webforms.json";
 
-            if (env.ContentRootFileProvider.GetFileInfo(DetailsPath) is { Exists: true } file)
+            var fullPath = Path.Combine(env.ContentRootPath, path);
+
+            if (!File.Exists(fullPath) && env.IsDevelopment())
             {
-                return file;
+                fullPath = Path.Combine(AppContext.BaseDirectory, path);
             }
 
-            if (env.IsDevelopment() && new PhysicalFileProvider(AppContext.BaseDirectory).GetFileInfo(DetailsPath) is { } debug)
+            if (File.Exists(fullPath))
             {
-                return debug;
+                return fullPath;
             }
 
             return null;
         }
-
-        private static WebFormsAssemblyLoadContext GetLoadContext()
-          => AssemblyLoadContext.All.OfType<WebFormsAssemblyLoadContext>().FirstOrDefault() ?? new WebFormsAssemblyLoadContext();
 
         public void Dispose()
         {
@@ -83,14 +93,11 @@ public static class CompiledWebFormsPageExtensions
 
             protected override Assembly Load(AssemblyName assemblyName)
             {
-                if (assemblyName.Name is { } name && name.StartsWith("WebForms.ASP.", StringComparison.OrdinalIgnoreCase))
-                {
-                    var path = Path.Combine(AppContext.BaseDirectory, $"{name}.dll");
+                var path = Path.Combine(AppContext.BaseDirectory, "webforms", assemblyName.Name + ".dll");
 
-                    if (File.Exists(path))
-                    {
-                        return LoadFromAssemblyPath(path);
-                    }
+                if (File.Exists(path))
+                {
+                    return LoadFromAssemblyPath(path);
                 }
 
                 return null;

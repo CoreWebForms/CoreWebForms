@@ -1,12 +1,10 @@
 <Project>
-  <Import Project="$(MSBuildThisFileDirectory)WebForms.Compiler.Static.Interceptor.targets" Condition="$(UseWebFormsInterceptors)" />
 
   <PropertyGroup>
     <_HasWebFormsError>false</_HasWebFormsError>
-    <BeforeWebFormsCompilation>$(BeforeWebFormsCompilation);Build;AssignTargetPaths</BeforeWebFormsCompilation>
   </PropertyGroup>
 
-  <Target Name="WebFormsCompilation" BeforeTargets="$(BeforeWebFormsCompilation)" AfterTargets="ResolveAssemblyReferences">
+  <Target Name="WebFormsCompilation" AfterTargets="CoreBuild" BeforeTargets="GetCopyToOutputDirectoryItems">
     <PropertyGroup>
       <_WebFormsTempDir>$(IntermediateOutputPath)webforms_compile/$([System.Guid]::NewGuid())</_WebFormsTempDir>
       <_WebFormsTempDir Condition="!$([System.IO.Path]::IsPathRooted($(_WebFormsTempDir)))">$(ProjectDir)$(_WebFormsTempDir)</_WebFormsTempDir>
@@ -22,9 +20,10 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <__AspNetCompileRsp Include="-p $(MSBuildProjectDirectory)" />
-      <__AspNetCompileRsp Include="$(_WebFormsTempDir)" />
+      <__AspNetCompileRsp Include="-p &quot;$(MSBuildProjectDirectory)&quot;" />
+      <__AspNetCompileRsp Include="&quot;$(_WebFormsTempDir)&quot;" />
       <__AspNetCompileRsp Include="-r &quot;%(ReferencePath.Identity)&quot;" />
+      <__AspNetCompileRsp Include="-r &quot;%(IntermediateAssembly.Identity)&quot;" />
     </ItemGroup>
 
     <Message Importance="low" Text="Input parameters for aspnet_compiler: @$(__AspNetCompileRspFilePath)" />
@@ -38,20 +37,19 @@
     </PropertyGroup>
   </Target>
 
-  <Target Name="AddWebFormsPagesFileToContent" AfterTargets="InvokeAspNetCompiler" Condition="!$(_HasWebFormsError) AND !$(UseWebFormsInterceptors)" BeforeTargets="AssignTargetPaths">
+  <Target Name="CollectWebFormsOutput" AfterTargets="InvokeAspNetCompiler" Condition="!$(_HasWebFormsError)" BeforeTargets="GetCopyToOutputDirectoryItems">
     <ItemGroup>
-      <Content Include="$(_WebFormsPagesFile)" Link="$(_WebFormsPagesFileName)" CopyToOutputDirectory="PreserveNewest" />
-    </ItemGroup>
-  </Target>
-
-  <Target Name="AddCompiledWebFormsAssembliesToReferences" AfterTargets="InvokeAspNetCompiler" BeforeTargets="FindReferencedAssembliesForReference">
-    <ItemGroup>
-      <CompiledAspxPages Include="$(_WebFormsTempDir)/*.dll" />
-      <ReferencePath Include="@(CompiledAspxPages)">
-        <FusionName>%(CompiledAspxPages->Filename)</FusionName>
-        <CopyLocal>true</CopyLocal>
-      </ReferencePath>
-      <ReferenceCopyLocalPaths Include="@(COmpiledAspxPages)" />
+      <AspxOutputFiles Include="$(_WebFormsTempDir)/*.pdb" />
+      <AspxOutputFiles Include="$(_WebFormsTempDir)/*.dll" />
+        
+      <ContentWithTargetPath Include="$(_WebFormsPagesFile)"
+                             TargetPath="$(TargetName).webforms.json"
+                             CopyToOutputDirectory="PreserveNewest"
+                             CopyToPublishDirectory="Never" />
+      <ContentWithTargetPath Include="@(AspxOutputFiles)"
+                             TargetPath="webforms/%(FileName)%(Extension)"
+                             CopyToOutputDirectory="PreserveNewest"
+                             CopyToPublishDirectory="Never" />
     </ItemGroup>
   </Target>
 

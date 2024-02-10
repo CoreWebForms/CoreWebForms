@@ -10,6 +10,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="requires_main_assembly.aspx" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\src\Compiler\Compiler.csproj" />
     <ProjectReference Include="..\..\src\Config\Config.csproj" />
     <ProjectReference Include="..\..\src\Extensions\Extensions.csproj" />

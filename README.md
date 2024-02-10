@@ -72,8 +72,6 @@ This will make use of `Microsoft.AspNetCore.SystemWebAdapters` to provide the `S
 
 1. Add any `.aspx` or `.aspx.cs`/`.aspx.vb` files to your project. They should be served up as expected when you run.
 
-> NOTE: Set the `<UseWebFormsInterceptor>true</UseWebFormsInterceptor>` if you are using C# 12+ and would like to have the static assets compiled into the application instead of using runtime reflection to load them.
-
 ### Alternate
 
 There is a dynamic compilation method that can be enabled by doing the following (continued from the above sample):
