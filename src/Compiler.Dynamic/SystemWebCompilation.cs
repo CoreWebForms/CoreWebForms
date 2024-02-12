@@ -80,7 +80,7 @@ internal abstract class SystemWebCompilation<T> : IDisposable
         });
     }
 
-    public IFileProvider Files => _env.ContentRootFileProvider;
+    public IFileProvider Files => VirtualPath.Files ?? _env.ContentRootFileProvider;
 
     protected void RemovePage(string path) => _compiled.Remove(path);
 

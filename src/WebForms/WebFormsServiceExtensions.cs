@@ -6,6 +6,7 @@ using System.Web.UI;
 using Microsoft.AspNetCore.SystemWebAdapters;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Hosting;
 using WebForms;
 
 [assembly: TagPrefix("System.Web.UI", "asp")]
@@ -17,11 +18,12 @@ public static class WebFormsServiceExtensions
 {
     public static IWebFormsBuilder AddWebForms(this ISystemWebAdapterBuilder builder, Action<WebFormsOptions> configure = null)
     {
+        var optionsBuilder = builder.Services.AddOptions<WebFormsOptions>()
+            .Configure<IHostEnvironment>((options, env) => options.WebFormsFileProvider = env.ContentRootFileProvider);
+
         if (configure is not null)
         {
-            builder.Services.AddOptions<WebFormsOptions>()
-                .Configure(options => VirtualPath.Files = options.WebFormsFileProvider)
-                .Configure(configure);
+            optionsBuilder.Configure(configure);
         }
 
         builder.AddHttpHandlers();
