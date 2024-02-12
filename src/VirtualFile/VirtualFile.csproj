@@ -10,6 +10,7 @@
     <InternalsVisibleTo Include="WebForms" />
     <InternalsVisibleTo Include="WebForms.Compiler.Dynamic" />
     <InternalsVisibleTo Include="WebForms.Extensions" />
+    <InternalsVisibleTo Include="WebForms.Optimization" />
   </ItemGroup>
 
   <ItemGroup>

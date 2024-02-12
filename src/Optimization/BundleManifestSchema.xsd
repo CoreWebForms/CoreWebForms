@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="BundleConfig" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:complexType name="include">
+    <xs:attribute name="path" type="xs:string" use="required" />
+  </xs:complexType>
+  
+  <xs:complexType name="styleBundle">
+    <xs:sequence>
+      <xs:element name="include" type="include" minOccurs="1" maxOccurs="unbounded" />
+    </xs:sequence>
+    <xs:attribute name="path" type="xs:string" use="required" />
+    <xs:attribute name="cdnPath" type="xs:string" use="optional" />
+  </xs:complexType>
+
+  <xs:complexType name="scriptBundle">
+    <xs:sequence>
+      <xs:element name="include" type="include" minOccurs="1" maxOccurs="unbounded" />
+    </xs:sequence>
+    <xs:attribute name="path" type="xs:string" use="required" />
+    <xs:attribute name="cdnPath" type="xs:string" use="optional" />
+    <xs:attribute name="cdnFallbackExpression" type="xs:string" use="optional" />
+  </xs:complexType>
+
+  <xs:element name="bundles">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element type="styleBundle" name="styleBundle" />
+        <xs:element type="scriptBundle" name="scriptBundle" />
+      </xs:choice>
+      <xs:attribute name="version" type="xs:string" />
+    </xs:complexType>
+  </xs:element>
+
+</xs:schema>

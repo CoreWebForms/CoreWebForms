@@ -4,9 +4,9 @@
 namespace System.Web.Optimization
 {
     /// <summary>
-    /// Helper class for rendering script elements.
+    /// Helper class for rendering link elements.
     /// </summary>
-    public static class Scripts
+    public static class Styles
     {
 
         private static HttpContextBase _context;
@@ -27,9 +27,9 @@ namespace System.Web.Optimization
             }
         }
 
-        private static string _defaultTagFormat = @"<script src=""{0}""></script>";
+        private static string _defaultTagFormat = @"<link href=""{0}"" rel=""stylesheet""/>";
         /// <summary>
-        /// Default format string for defining how script tags are rendered.
+        /// Default format string for defining how link tags are rendered.
         /// </summary>
         public static string DefaultTagFormat
         {
@@ -44,14 +44,14 @@ namespace System.Web.Optimization
         }
 
         /// <summary>
-        /// Renders script tags for a set of paths.
+        /// Renders link tags for a set of paths.
         /// </summary>
-        /// <param name="paths">Set of virtual paths for which to generate script tags.</param>
-        /// <returns>HTML string containing the script tag or tags for the bundle.</returns>
+        /// <param name="paths">Set of virtual paths for which to generate link tags.</param>
+        /// <returns>HTML string containing the link tag or tags for the bundle.</returns>
         /// <remarks>
-        /// Render generates multiple script tags for each item in the bundle when 
+        /// Render generates multiple link tags for each item in the bundle when 
         /// <see cref="BundleTable.EnableOptimizations" /> is set to false. When optimizations are enabled, 
-        /// Render generates a single script tag to a version-stamped URL which represents the entire bundle.
+        /// Render generates a single link tag to a version-stamped URL which represents the entire bundle.
         /// </remarks>
         public static IHtmlString Render(params string[] paths)
         {
@@ -59,17 +59,17 @@ namespace System.Web.Optimization
         }
 
         /// <summary>
-        /// Renders script tags for a set of paths based on a format string.
+        /// Renders link tags for a set of paths based on a format string.
         /// </summary>
-        /// <param name="tagFormat">Format string for defining the rendered script tags. For more 
+        /// <param name="tagFormat">Format string for defining the rendered link tags. For more 
         /// details on format strings, see http://msdn.microsoft.com/en-us/library/txafckwd.aspx</param>
-        /// <param name="paths">Set of virtual paths for which to generate script tags.</param>
-        /// <returns>HTML string containing the script tag or tags for the bundle.</returns>
+        /// <param name="paths">Set of virtual paths for which to generate link tags.</param>
+        /// <returns>HTML string containing the link tag or tags for the bundle.</returns>
         /// <remarks>
-        /// RenderFormat generates script tags for the supplied paths using the specified format string. It 
-        /// generates multiple script tags for each item in the bundle when 
+        /// RenderFormat generates link tags for the supplied paths using the specified format string. It 
+        /// generates multiple link tags for each item in the bundle when 
         /// <see cref="BundleTable.EnableOptimizations" /> is set to false. When optimizations are enabled, 
-        /// it generates a single script tag to a version-stamped URL which represents the entire bundle.
+        /// it generates a single link tag to a version-stamped URL which represents the entire bundle.
         /// </remarks>
         public static IHtmlString RenderFormat(string tagFormat, params string[] paths)
         {
