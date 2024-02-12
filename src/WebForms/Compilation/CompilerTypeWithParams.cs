@@ -71,6 +71,8 @@ public sealed class CompilerType
             CompilerParameters.CompilerOptions == other.CompilerParameters.CompilerOptions;
     }
 
+    public override string ToString() => $"{Language} [warn: {CompilerParameters.WarningLevel}; debug: {CompilerParameters.IncludeDebugInformation}; options: {CompilerParameters.CompilerOptions}]";
+
 #if PORT_ASSEMBLYBUILDER
     internal static AssemblyBuilder GetDefaultAssemblyBuilder(CompilationSection compConfig,
     ICollection referencedAssemblies, VirtualPath configPath, string outputAssemblyName) {

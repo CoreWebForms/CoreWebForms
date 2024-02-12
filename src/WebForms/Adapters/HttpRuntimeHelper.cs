@@ -2,6 +2,8 @@
 
 using System.Reflection;
 using System.Web;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace WebForms;
 
@@ -35,4 +37,6 @@ internal static class HttpRuntimeHelper
     /// Only needed until HttpRuntime.WebObjectActivator is available
     /// </summary>
     public static IServiceProvider Services => ServiceProviderFactory.Value();
+
+    public static ILogger GetLogger<T>() => Services.GetRequiredService<ILogger<T>>();
 }

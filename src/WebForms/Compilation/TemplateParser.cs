@@ -29,6 +29,7 @@ using System.Threading;
 using System.Web.Compilation;
 using System.Web.Util;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using WebForms;
 
 public class CompilationSection
@@ -2573,7 +2574,8 @@ private Match RunTextRegex(string text, int textPos) {
         // Make sure we don't get conflicting languages
         if (_compilerType != null && !Equals(_compilerType, compilerType))
         {
-            ProcessError(SR.GetString(SR.Inconsistent_CodeFile_Language + $"[{codeFileVirtualPath}|{compilerType}:{_codeFileVirtualPath}|{_compilerType}]"));
+            HttpRuntimeHelper.GetLogger<TemplateParser>().LogError("File {File} expected compiler type {Expected} but got {Actual}", _codeFileVirtualPath.Path, _compilerType, compilerType);
+            ProcessError(SR.GetString(SR.Inconsistent_CodeFile_Language));
 
             return;
         }
