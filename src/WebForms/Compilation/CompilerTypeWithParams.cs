@@ -27,6 +27,23 @@ public sealed class CompilerType
 
     public bool IsVisualBasic() => string.Equals("VB", Language, StringComparison.OrdinalIgnoreCase);
 
+    public static CompilerType Create(string language)
+    {
+        if (string.Equals(language, "C#", StringComparison.OrdinalIgnoreCase))
+        {
+            return CSharp;
+        }
+        else
+        if (string.Equals(language, "VB", StringComparison.OrdinalIgnoreCase))
+        {
+            return VisualBasic;
+        }
+        else
+        {
+            return new CompilerType(language, null);
+        }
+    }
+
     public static CompilerType GetByExtension(string extension)
     {
         if (string.Equals(".cs", extension, StringComparison.OrdinalIgnoreCase))

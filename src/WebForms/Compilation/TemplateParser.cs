@@ -40,20 +40,8 @@ public class CompilationSection
     public bool Batch { get; internal set; }
     public int NumRecompilesBeforeAppRestart { get; internal set; }
     public string DefaultLanguage { get; internal set; }
-    public bool Debug { get; internal set; }
+    public bool Debug { get; internal set; } = true;
     public bool UrlLinePragmas { get; internal set; }
-
-    internal static CompilerType GetCompilerInfoFromExtension(string extension, bool v) => CompilerType.GetByExtension(extension);
-
-    internal CompilerType GetCompilerInfoFromLanguage(string language) => new(language, new()
-    {
-        IncludeDebugInformation = Debug,
-    });
-
-    internal Assembly LoadAssembly(string assemblyName, bool throwOnFail)
-    {
-        throw new NotImplementedException("LoadAssembly");
-    }
 }
 
 /// <internalonly/>
@@ -2543,8 +2531,7 @@ private Match RunTextRegex(string text, int textPos) {
             return;
         }
 
-        CompilerType compilerType = CompilationUtil.GetCompilerInfoFromLanguage(
-            CurrentVirtualPath, language);
+        CompilerType compilerType = CompilerType.Create(language);
 
         // Make sure we don't get conflicting languages
         if (_compilerType != null && !Equals(_compilerType, compilerType))

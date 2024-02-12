@@ -21,11 +21,13 @@ internal static class CompilationUtil
 
     internal static CompilerType GetDefaultLanguageCompilerInfo(CompilationSection compConfig, VirtualPath configPath)
     {
+#if PORT_CONFIG
         if (compConfig == null)
         {
             // Get the <compilation> config object
             compConfig = MTConfigUtil.GetCompilationConfig(configPath);
         }
+#endif
 
         // If no default language was specified in config, use VB
         if (compConfig.DefaultLanguage == null)
@@ -34,7 +36,7 @@ internal static class CompilationUtil
         }
         else
         {
-            return compConfig.GetCompilerInfoFromLanguage(compConfig.DefaultLanguage);
+            return CompilerType.Create(compConfig.DefaultLanguage);
         }
     }
 
@@ -43,7 +45,6 @@ internal static class CompilationUtil
      */
     internal static CompilerType GetCompilerInfoFromVirtualPath(VirtualPath virtualPath)
     {
-
         // Get the extension of the source file to compile
         string extension = virtualPath.Extension;
 
@@ -54,44 +55,7 @@ internal static class CompilationUtil
                 SR.GetString(SR.Empty_extension, virtualPath));
         }
 
-        return GetCompilerInfoFromExtension(virtualPath, extension);
-    }
-
-    /*
-     * Return a CompilerType that a extension maps to.
-     */
-    private static CompilerType GetCompilerInfoFromExtension(VirtualPath configPath, string extension)
-    {
-        return CompilationSection.GetCompilerInfoFromExtension(extension, true /*throwOnFail*/);
-    }
-
-    /*
-     * Return a CompilerType that a language maps to.
-     */
-    internal static CompilerType GetCompilerInfoFromLanguage(VirtualPath configPath, string language)
-    {
-        // Get the <compilation> config object
-        CompilationSection config = MTConfigUtil.GetCompilationConfig(configPath);
-
-        return config.GetCompilerInfoFromLanguage(language);
-    }
-
-    internal static CompilerType GetCSharpCompilerInfo(
-        CompilationSection compConfig, VirtualPath configPath)
-    {
-
-        if (compConfig == null)
-        {
-            // Get the <compilation> config object
-            compConfig = MTConfigUtil.GetCompilationConfig(configPath);
-        }
-
-        if (compConfig.DefaultLanguage == null)
-        {
-            return CompilerType.CSharp;
-        }
-
-        return compConfig.GetCompilerInfoFromLanguage("c#");
+        return CompilerType.GetByExtension(extension);
     }
 
 #if PORT_SUBDIRECTORIES
