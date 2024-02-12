@@ -38,6 +38,7 @@
     <ProjectReference Include="..\Handlers\Handlers.csproj" />
     <ProjectReference Include="..\HtmlTextWriter\HtmlTextWriter.csproj" />
     <ProjectReference Include="..\Routing\Routing.csproj" />
+    <ProjectReference Include="..\VirtualFile\VirtualFile.csproj" />
   </ItemGroup>
   
 </Project>
