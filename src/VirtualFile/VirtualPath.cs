@@ -1,6 +1,7 @@
 // MIT License.
 
 using System.Text;
+using System.Web.Util;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
@@ -69,6 +70,46 @@ internal sealed class VirtualPath
             return Path + "/";
         }
     }
+    public bool IsRelative
+    {
+        get
+        {
+            // Note that we don't need to check for "~/", since _virtualPath never contains
+            // app relative paths (_appRelativeVirtualPath does)
+            return Path != null && Path[0] != '/';
+        }
+    }
+
+    public VirtualPath Combine(VirtualPath relativePath)
+    {
+        if (relativePath == null)
+        {
+            throw new ArgumentNullException(nameof(relativePath));
+        }
+
+        // If it's not relative, return it unchanged
+        if (!relativePath.IsRelative)
+        {
+            return relativePath;
+        }
+
+        // The base of the combine should never be relative
+        FailIfRelativePath();
+
+        // Combine it with the relative
+        var virtualPath = UrlPath2.Combine(Path, relativePath.VirtualPathString);
+
+        // Set the appropriate virtual path in the new object
+        return new VirtualPath(virtualPath);
+    }
+
+    internal void FailIfRelativePath()
+    {
+        if (IsRelative)
+        {
+            throw new ArgumentException("Must be relative path");
+        }
+    }
 
     public string VirtualPathString => Path;
 
@@ -117,41 +158,3 @@ internal sealed class VirtualPath
         throw new NotImplementedException();
     }
 }
-
-public class VirtualPathProvider
-{
-    readonly VirtualPath _virtualPath;
-
-    public VirtualPathProvider(string path)
-    {
-        _virtualPath = new VirtualPath(path);
-    }
-
-    internal static VirtualPath CombineVirtualPathsInternal(VirtualPath templateControlVirtualPath, VirtualPath masterPageFile)
-    {
-        string result;
-
-        if (masterPageFile.Path.StartsWith('~'))
-        {
-            result = masterPageFile.Path.TrimStart('~');
-        }
-        else
-        {
-            result = Path.Combine(Path.GetDirectoryName(templateControlVirtualPath.Path), masterPageFile.Path);
-        }
-
-        return result.TrimStart('/');
-    }
-
-    public virtual bool FileExists(string virtualPath)
-    {
-        return _virtualPath.FileExists();
-    }
-
-    public virtual Stream Open()
-    {
-        return _virtualPath.OpenFile();
-    }
-
-}
-
