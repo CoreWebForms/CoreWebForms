@@ -55,11 +55,7 @@ public sealed class BundleManifest
     /// <remarks>In absence of a stream to the manifest file, this overload uses the virutal path provider to find the manifest file at "~/bundle.config.</remarks>
     public static BundleManifest ReadBundleManifest()
     {
-        VirtualPathProvider virtualPathProvider = new VirtualPathProvider(DefaultBundlePath);
-        using (var stream = virtualPathProvider.Open())
-        {
-            return BundleManifest.ReadBundleManifest(stream);
-        }
+        throw new InvalidOperationException("Can't read bundle manfiest - next pr will fix this");
     }
 
     /// <summary>
