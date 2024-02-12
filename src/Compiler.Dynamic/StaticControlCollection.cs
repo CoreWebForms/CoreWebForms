@@ -9,12 +9,12 @@ using Microsoft.CodeAnalysis;
 
 namespace WebForms.Compiler.Dynamic;
 
-internal sealed class PersistentControlCollection : AssemblyLoadContext, IDisposable, ITypeResolutionService, IMetadataProvider
+internal sealed class StaticControlCollection : AssemblyLoadContext, IDisposable, ITypeResolutionService, IMetadataProvider
 {
     private readonly List<MetadataReference> _reference = [];
     private readonly Action? _dispose;
 
-    public PersistentControlCollection(IEnumerable<string> paths)
+    public StaticControlCollection(IEnumerable<string> paths)
         : base("WebForms Compilation Context")
     {
         foreach (var path in paths)

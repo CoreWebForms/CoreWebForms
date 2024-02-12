@@ -7,25 +7,25 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-using static WebForms.Compiler.Dynamic.PersistentSystemWebCompilation;
+using static WebForms.Compiler.Dynamic.StaticSystemWebCompilation;
 
 namespace WebForms.Compiler.Dynamic;
 
-internal sealed class PersistentSystemWebCompilation : SystemWebCompilation<PersistedCompiledPage>, IWebFormsCompiler
+internal sealed class StaticSystemWebCompilation : SystemWebCompilation<PersistedCompiledPage>, IWebFormsCompiler
 {
-    private readonly IOptions<PersistentCompilationOptions> _options;
+    private readonly IOptions<StaticCompilationOptions> _options;
     private readonly IOptions<PageCompilationOptions> _pageOptions;
     private readonly ILogger _logger;
 
-    public PersistentSystemWebCompilation(
+    public StaticSystemWebCompilation(
         IHostEnvironment env,
-        IOptions<PersistentCompilationOptions> options,
+        IOptions<StaticCompilationOptions> options,
         IOptions<PageCompilationOptions> pageOptions,
         IMetadataProvider metadataProvider,
         ILoggerFactory factory)
         : base(env, factory, metadataProvider, pageOptions)
     {
-        _logger = factory.CreateLogger<PersistentSystemWebCompilation>();
+        _logger = factory.CreateLogger<StaticSystemWebCompilation>();
         _options = options;
         _pageOptions = pageOptions;
     }
@@ -89,9 +89,6 @@ internal sealed class PersistentSystemWebCompilation : SystemWebCompilation<Pers
 
             var pagesPath = Path.Combine(_options.Value.TargetDirectory, "webforms.pages.json");
             File.WriteAllText(pagesPath, JsonSerializer.Serialize(GetDetails()));
-        }
-        catch (RoslynCompilationException) // Exception is already displayed
-        {
         }
         catch (Exception e)
         {

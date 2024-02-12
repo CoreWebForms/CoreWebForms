@@ -14,12 +14,12 @@ public static class WebFormsCompilerExtensions
 {
     public static IWebFormsBuilder AddPersistentWebFormsCompilation(this IWebFormsBuilder builder, IEnumerable<string> paths)
     {
-        builder.Services.AddSingleton<PersistentControlCollection>(_ => new PersistentControlCollection(paths));
-        builder.Services.AddSingleton<ITypeResolutionService>(ctx => ctx.GetRequiredService<PersistentControlCollection>());
-        builder.Services.AddSingleton<IMetadataProvider>(ctx => ctx.GetRequiredService<PersistentControlCollection>());
+        builder.Services.AddSingleton<StaticControlCollection>(_ => new StaticControlCollection(paths));
+        builder.Services.AddSingleton<ITypeResolutionService>(ctx => ctx.GetRequiredService<StaticControlCollection>());
+        builder.Services.AddSingleton<IMetadataProvider>(ctx => ctx.GetRequiredService<StaticControlCollection>());
         builder.Services.AddWebFormsCompilationCore(_ => { });
-        builder.Services.AddSingleton<PersistentSystemWebCompilation>();
-        builder.Services.AddSingleton<IWebFormsCompiler>(ctx => ctx.GetRequiredService<PersistentSystemWebCompilation>());
+        builder.Services.AddSingleton<StaticSystemWebCompilation>();
+        builder.Services.AddSingleton<IWebFormsCompiler>(ctx => ctx.GetRequiredService<StaticSystemWebCompilation>());
 
         return builder;
     }

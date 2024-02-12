@@ -33,7 +33,7 @@ internal sealed class CompilationHost
                     options.ColorBehavior = LoggerColorBehavior.Default;
                 });
 
-                logging.AddFilter("Microsoft.Hosting", LogLevel.Warning);
+                logging.AddFilter("Microsoft", LogLevel.Warning);
                 logging.AddFilter("WebForms", LogLevel.Trace);
             })
 
@@ -45,7 +45,7 @@ internal sealed class CompilationHost
             .ConfigureServices(services =>
             {
                 services.AddSingleton<IServer, WebFormsCompilationServer>();
-                services.AddOptions<PersistentCompilationOptions>()
+                services.AddOptions<StaticCompilationOptions>()
                     .Configure(options =>
                     {
                         options.TargetDirectory = targetDir.FullName;
@@ -57,7 +57,7 @@ internal sealed class CompilationHost
                     .AddWebForms()
                     .AddPersistentWebFormsCompilation(references.Select(r => r.FullName));
 
-                services.AddHostedService<PersistedCompilationService>();
+                services.AddHostedService<StaticCompilationService>();
 
                 services.AddOptions<SystemWebAdaptersOptions>().Configure(options =>
                 {

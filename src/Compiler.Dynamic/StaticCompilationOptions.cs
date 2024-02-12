@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace WebForms.Compiler.Dynamic;
 
-public class PersistentCompilationOptions
+public class StaticCompilationOptions
 {
     [Required]
     public string InputDirectory { get; set; } = null!;
