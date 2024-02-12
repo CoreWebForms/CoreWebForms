@@ -60,7 +60,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebFormsSample.Dynamic", "s
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Routing", "src\Routing\Routing.csproj", "{D010AD40-A04C-4E70-B7D2-3AD9712F5125}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VirtualFile", "src\VirtualFile\VirtualFile.csproj", "{B0D90331-839E-46BE-AA1B-50A7EDAB22D9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VirtualFile", "src\VirtualFile\VirtualFile.csproj", "{B0D90331-839E-46BE-AA1B-50A7EDAB22D9}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Optimization", "src\Optimization\Optimization.csproj", "{B48FA4D4-3E20-413B-9BC6-C275A4F782C0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -136,6 +138,10 @@ Global
 		{B0D90331-839E-46BE-AA1B-50A7EDAB22D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B0D90331-839E-46BE-AA1B-50A7EDAB22D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B0D90331-839E-46BE-AA1B-50A7EDAB22D9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B48FA4D4-3E20-413B-9BC6-C275A4F782C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B48FA4D4-3E20-413B-9BC6-C275A4F782C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B48FA4D4-3E20-413B-9BC6-C275A4F782C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B48FA4D4-3E20-413B-9BC6-C275A4F782C0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -158,6 +164,7 @@ Global
 		{1C7DF377-6558-4CB5-B329-23497B46F193} = {97FC5E53-F4F6-40BE-9927-2D2EB1DC01D9}
 		{D010AD40-A04C-4E70-B7D2-3AD9712F5125} = {D3D2945C-76BA-4DE3-90D2-259E2B1406C5}
 		{B0D90331-839E-46BE-AA1B-50A7EDAB22D9} = {D3D2945C-76BA-4DE3-90D2-259E2B1406C5}
+		{B48FA4D4-3E20-413B-9BC6-C275A4F782C0} = {D3D2945C-76BA-4DE3-90D2-259E2B1406C5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B89024DA-2E51-49B1-8D52-651372AB5C83}

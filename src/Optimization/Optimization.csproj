@@ -10,7 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\WebForms\Adapters\HttpRuntimeHelper.cs" Link="HttpRuntimeHelper.cs" />
+    <Compile Include="..\VirtualFile\HttpRuntimeHelper.cs" Link="HttpRuntimeHelper.cs" />
   </ItemGroup>
 
   <ItemGroup>
