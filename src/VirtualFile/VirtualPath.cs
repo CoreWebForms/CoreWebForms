@@ -11,7 +11,12 @@ namespace System.Web;
 
 internal sealed class VirtualPath
 {
-    private static IFileProvider Files => HttpRuntimeHelper.Services.GetRequiredService<IHostEnvironment>().ContentRootFileProvider;
+    private static IFileProvider _fileProvider;
+    internal static IFileProvider Files
+    {
+        get => _fileProvider ??= HttpRuntimeHelper.Services.GetRequiredService<IHostEnvironment>().ContentRootFileProvider;
+        set => _fileProvider = value;
+    }
 
     public VirtualPath Parent
     {

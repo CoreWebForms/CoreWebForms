@@ -1,5 +1,6 @@
 // MIT License.
 
+using System.Web;
 using System.Web.Compilation;
 using System.Web.UI;
 using Microsoft.AspNetCore.SystemWebAdapters;
@@ -14,8 +15,15 @@ namespace Microsoft.AspNetCore.Builder;
 
 public static class WebFormsServiceExtensions
 {
-    public static IWebFormsBuilder AddWebForms(this ISystemWebAdapterBuilder builder)
+    public static IWebFormsBuilder AddWebForms(this ISystemWebAdapterBuilder builder, Action<WebFormsOptions> configure = null)
     {
+        if (configure is not null)
+        {
+            builder.Services.AddOptions<WebFormsOptions>()
+                .Configure(options => VirtualPath.Files = options.WebFormsFileProvider)
+                .Configure(configure);
+        }
+
         builder.AddHttpHandlers();
         builder.AddRouting();
         builder.AddVirtualPathProvider();
@@ -24,11 +32,11 @@ public static class WebFormsServiceExtensions
             .AddDefaultExpressionBuilders();
     }
 
-    public static IWebFormsBuilder AddWebForms(this IServiceCollection builder)
+    public static IWebFormsBuilder AddWebForms(this IServiceCollection builder, Action<WebFormsOptions> configure = null)
         => builder
             .AddSystemWebAdapters()
             .AddWrappedAspNetCoreSession()
-            .AddWebForms();
+            .AddWebForms(configure);
 
     public static IWebFormsBuilder AddDefaultExpressionBuilders(this IWebFormsBuilder builder) => builder
         .AddExpressionBuilder<RouteUrlExpressionBuilder>("RouteUrl");
