@@ -2573,7 +2573,7 @@ private Match RunTextRegex(string text, int textPos) {
         // Make sure we don't get conflicting languages
         if (_compilerType != null && !Equals(_compilerType, compilerType))
         {
-            ProcessError(SR.GetString(SR.Inconsistent_CodeFile_Language));
+            ProcessError(SR.GetString(SR.Inconsistent_CodeFile_Language + $"[{codeFileVirtualPath}|{compilerType}:{_codeFileVirtualPath}|{_compilerType}]"));
 
             return;
         }
