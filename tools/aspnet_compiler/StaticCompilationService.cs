@@ -6,13 +6,13 @@ using WebForms.Compiler.Dynamic;
 
 namespace WebForms.Compiler;
 
-internal sealed class PersistedCompilationService : BackgroundService
+internal sealed class StaticCompilationService : BackgroundService
 {
     private readonly IHostApplicationLifetime _lifetime;
-    private readonly ILogger<PersistedCompilationService> _logger;
+    private readonly ILogger<StaticCompilationService> _logger;
     private readonly IWebFormsCompiler _compiler;
 
-    public PersistedCompilationService(IWebFormsCompiler compiler, IHostApplicationLifetime lifetime, ILogger<PersistedCompilationService> logger)
+    public StaticCompilationService(IWebFormsCompiler compiler, IHostApplicationLifetime lifetime, ILogger<StaticCompilationService> logger)
     {
         _compiler = compiler;
         _lifetime = lifetime;
@@ -21,7 +21,7 @@ internal sealed class PersistedCompilationService : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        _logger.LogTrace("Starting persistent compilation");
+        _logger.LogTrace("Starting static compilation");
 
         try
         {

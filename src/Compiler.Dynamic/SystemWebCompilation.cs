@@ -92,7 +92,7 @@ internal abstract class SystemWebCompilation<T> : IDisposable
         }
         else
         {
-            _logger.LogDebug("Enqueueing page for compilation '{Page}'", path);
+            _logger.LogDebug("Starting compilation for '{Page}'", path);
 
             var task = InternalCompilePageAsync(path, token);
 
