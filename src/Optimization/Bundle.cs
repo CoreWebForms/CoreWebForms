@@ -5,9 +5,12 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Web;
 using System.Web.Caching;
 using System.Web.Hosting;
 using System.Web.Optimization.Resources;
+
+[assembly: TagPrefix("System.Web.Optimization", "webopt")]
 
 namespace System.Web.Optimization
 {
@@ -110,7 +113,7 @@ namespace System.Web.Optimization
         /// Gets or sets an alternate url for the bundle when it is stored in a content delivery network.
         /// </summary>
         /// <remarks>
-        /// In order to configure the Web optimization framework to emit links to the a bundle's CDN url, the <see cref="CdnPath"/> value must not be 
+        /// In order to configure the Web optimization framework to emit links to the a bundle's CDN url, the <see cref="CdnPath"/> value must not be
         /// null and  <see cref="BundleCollection.UseCdn"/> must equal true.
         /// </remarks>
         public string CdnPath
@@ -198,7 +201,7 @@ namespace System.Web.Optimization
         }
 
         /// <summary>
-        /// Specifies whether to use the <see cref="BundleCollection.FileExtensionReplacementList"/> 
+        /// Specifies whether to use the <see cref="BundleCollection.FileExtensionReplacementList"/>
         /// </summary>
         public virtual bool EnableFileExtensionReplacements
         {
@@ -264,7 +267,7 @@ namespace System.Web.Optimization
         /// <param name="bundleFiles">The list of all file paths in the bundle.</param>
         /// <returns>A <see cref="BundleResponse"/> object containing the processed bundle contents.</returns>
         /// <remarks>
-        /// ApplyTransforms iterates through each <see cref="IBundleTransform"/> object that was configured with the bundle when it was created and calls the 
+        /// ApplyTransforms iterates through each <see cref="IBundleTransform"/> object that was configured with the bundle when it was created and calls the
         /// transform's <see cref="IBundleTransform.Process"/> method.
         /// </remarks>
         public virtual BundleResponse ApplyTransforms(BundleContext context, string bundleContent, IEnumerable<BundleFile> bundleFiles)
@@ -284,7 +287,7 @@ namespace System.Web.Optimization
             }
             else
             {
-                // If there are no transforms requested, we still want to do some basic 
+                // If there are no transforms requested, we still want to do some basic
                 // stuff like infer what the proper content type is
                 DefaultTransform.Instance.Process(context, bundleResponse);
             }
@@ -329,12 +332,12 @@ namespace System.Web.Optimization
         /// <param name="virtualPaths">The virtual path of the file or file pattern to be included in the bundle.</param>
         /// <returns>The <see cref="Bundle"/> object itself for use in subsequent method chaining.</returns>
         /// <remarks>
-        /// By default, files are included based on the order in which they are specified in the <paramref name="virtualPaths"/> parameter. This behavior can be overridden 
+        /// By default, files are included based on the order in which they are specified in the <paramref name="virtualPaths"/> parameter. This behavior can be overridden
         /// by using the <see cref="Orderer"/> collection, or by creating a custom <see cref="IBundleOrderer"/> object.
-        /// 
-        /// Include also provides limited support for wildcards and substitution tokens in the last path segment. For example: 
+        ///
+        /// Include also provides limited support for wildcards and substitution tokens in the last path segment. For example:
         /// A prefix wildcard: *js
-        /// - or - 
+        /// - or -
         /// A suffix wildcard: jquery*
         /// - or -
         /// The version substitution token: jquery-{version}.js
@@ -357,9 +360,9 @@ namespace System.Web.Optimization
         /// <param name="transforms">The transforms to apply only to the included items</param>
         /// <returns>The <see cref="Bundle"/> object itself for use in subsequent method chaining.</returns>
         /// <remarks>
-        /// Include also provides limited support for wildcards and substitution tokens in the last path segment. For example: 
+        /// Include also provides limited support for wildcards and substitution tokens in the last path segment. For example:
         /// A prefix wildcard: *js
-        /// - or - 
+        /// - or -
         /// A suffix wildcard: jquery*
         /// - or -
         /// The version substitution token: jquery-{version}.js
@@ -415,7 +418,7 @@ namespace System.Web.Optimization
         }
 
         /// <summary>
-        /// Intrumentation mode applies only for Page Inspector and will consist of no minification 
+        /// Intrumentation mode applies only for Page Inspector and will consist of no minification
         /// and a special preamble between files in the bundle.
         /// </summary>
         /// <param name="context">The HTTP context providing details of the request</param>
@@ -553,7 +556,7 @@ namespace System.Web.Optimization
             return null;
         }
 
-        // 
+        //
         /// <summary>
         /// Store the response for this bundle instance in the appropriate caches
         /// </summary>
