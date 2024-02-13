@@ -31,8 +31,9 @@ internal sealed class DynamicSystemWebCompilation : SystemWebCompilation<Dynamic
         ILoggerFactory factory,
         IHostEnvironment env,
         IMetadataProvider metadataProvider,
-        IOptions<PageCompilationOptions> options)
-        : base(env, factory, metadataProvider, options)
+        IOptions<WebFormsOptions> webFormsOptions,
+        IOptions<PageCompilationOptions> pageCompilationOptions)
+        : base(env, factory, metadataProvider, webFormsOptions, pageCompilationOptions)
     {
         _logger = factory.CreateLogger<DynamicSystemWebCompilation>();
         _factory = factory;
