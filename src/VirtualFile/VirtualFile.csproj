@@ -4,6 +4,8 @@
     <TargetFrameworks>net6.0;net8.0</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>disable</Nullable>
+    <PackageId>WebForms.VirtualFile</PackageId>
+    <AssemblyName>WebForms.VirtualFile</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
