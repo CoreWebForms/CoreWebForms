@@ -107,3 +107,21 @@ jobs:
           name: test-result-${{ matrix.rid }}
           path: |
             ${{ github.workspace }}/test-results/**/*.trx
+  results:
+    permissions:
+      checks: write
+      pull-requests: write
+    runs-on: ubuntu-latest
+    needs: [ test ]
+    steps:
+      - name: Download tests results
+        uses: actions/download-artifact@v4
+        with:
+            pattern: test-result-*
+            path: '${{ github.workspace }}/results'
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always()
+        with:
+          files: |
+            ${{ github.workspace }}/results/**/*.trx
