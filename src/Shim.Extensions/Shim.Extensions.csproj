@@ -5,11 +5,12 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>disable</Nullable>
-    <PackageId>WebForms.Shim.SystemWeb</PackageId>
-    <AssemblyName>System.Web</AssemblyName>
+    <PackageId>WebForms.Shim.SystemWeb.Extensions</PackageId>
+    <AssemblyName>System.Web.Extensions</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Extensions\Extensions.csproj" />
     <ProjectReference Include="..\WebForms\WebForms.csproj" />
   </ItemGroup>
 
