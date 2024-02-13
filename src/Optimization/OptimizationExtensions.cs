@@ -54,7 +54,7 @@ public static class OptimizationExtensions
 
         private sealed class File(IFileProvider files, string path) : VirtualFile(path)
         {
-            public override Stream Open() => files.GetFileInfo(path).CreateReadStream();
+            public override Stream Open() => files.GetFileInfo(VirtualPath).CreateReadStream();
         }
 
         private sealed class Dir(IFileProvider files, string path) : VirtualDirectory(path)
@@ -67,16 +67,16 @@ public static class OptimizationExtensions
 
             private IEnumerable GetAll(bool returnFiles, bool returnDirectories)
             {
-                foreach (var item in files.GetDirectoryContents(path))
+                foreach (var item in files.GetDirectoryContents(VirtualPath))
                 {
                     if (returnFiles && !item.IsDirectory)
                     {
-                        yield return new File(files, Path.Combine(path, item.Name));
+                        yield return new File(files, Path.Combine(VirtualPath, item.Name));
                     }
 
                     else if (returnDirectories && item.IsDirectory)
                     {
-                        yield return new Dir(files, Path.Combine(path, item.Name));
+                        yield return new Dir(files, Path.Combine(VirtualPath, item.Name));
                     }
                 }
             }
