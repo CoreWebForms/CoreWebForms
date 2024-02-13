@@ -1,13 +1,21 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFrameworks>net6.0;net8.0</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>disable</Nullable>
     <IsShipped>true</IsShipped>
     <AssemblyName>WebForms.Optimization</AssemblyName>
     <RootNamespace>System.Web.Optimization</RootNamespace>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="Build\*" Pack="true" PackagePath="Build\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="BundleManifestSchema.xsd" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.SystemWebAdapters.CoreServices" Version="1.3.2" />
