@@ -7,6 +7,7 @@
     "pretty": "prettier --write \"./**/*.{js,jsx,mjs,cjs,ts,tsx,json}\""
   },
   "devDependencies": {
+    "@rollup/plugin-terser": "^0.4.4",
     "prettier": "^3.2.5",
     "rollup": "^4.9.2"
   }

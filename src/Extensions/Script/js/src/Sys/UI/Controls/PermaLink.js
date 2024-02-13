@@ -7,7 +7,7 @@ Sys.UI.PermaLink.prototype = {
   dispose: function () {
     if (this._navigateHandler) {
       Sys.Application.remove_navigate(this._navigateHandler);
-      delete this._navigateHandler;
+      this._navigateHandler = null;
     }
     Sys.UI.PermaLink.callBaseMethod(this, "dispose");
   },

@@ -81,19 +81,19 @@ Sys._Application.prototype = {
       this._disposing = true;
       if (this._timerCookie) {
         window.clearTimeout(this._timerCookie);
-        delete this._timerCookie;
+        this._timerCookie = null;
       }
       if (this._endRequestHandler) {
         Sys.WebForms.PageRequestManager.getInstance().remove_endRequest(
           this._endRequestHandler,
         );
-        delete this._endRequestHandler;
+        this._endRequestHandler = null;
       }
       if (this._beginRequestHandler) {
         Sys.WebForms.PageRequestManager.getInstance().remove_beginRequest(
           this._beginRequestHandler,
         );
-        delete this._beginRequestHandler;
+        this._beginRequestHandler = null;
       }
       if (window.pageUnload) {
         window.pageUnload(this, Sys.EventArgs.Empty);
@@ -305,7 +305,7 @@ Sys._Application.prototype = {
     /// <summary locid="M:J#Sys.Application.removeComponent">Removes a top-level component from the application.</summary>
     /// <param name="component" type="Sys.Component">The component to remove.</param>
     var id = component.get_id();
-    if (id) delete this._components[id];
+    if (id) this._components[id] = null;
   },
   unregisterDisposableObject: function (object) {
     /// <summary locid="M:J#Sys.Application.unregisterDisposableObject">Unregisters a disposable object from the application.</summary>
@@ -317,8 +317,8 @@ Sys._Application.prototype = {
         // remains correct on the other existing objects
         // When the array is enumerated we use for/in to skip over the deleted entries.
         var disposableObjects = this._disposableObjects;
-        delete disposableObjects[i];
-        delete object.__msdisposeindex;
+        disposableObjects[i] = null;
+        object.__msdisposeindex = null;
         if (++this._deleteCount > 1000) {
           // periodically rebuild the array to remove the sparse elements
           // to put a cap on the amount of memory it can consume

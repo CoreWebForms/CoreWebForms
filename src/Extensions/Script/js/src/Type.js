@@ -300,7 +300,7 @@ Type.prototype.resolveInheritance = function () {
         this.prototype[memberName] = memberValue;
       }
     }
-    delete this.__basePrototypePending;
+    this.__basePrototypePending = null;
   }
 };
 
@@ -416,7 +416,7 @@ Type._registerNamespace = function (namespacePath) {
         parsedName = null;
       }
       if (parsedName !== ns) {
-        delete rootObject[currentPart];
+        rootObject[currentPart] = null;
         throw Error.argument("namespacePath", Sys.Res.invalidNameSpace);
       }
       #endif
