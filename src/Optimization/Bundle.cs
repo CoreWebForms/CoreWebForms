@@ -5,9 +5,9 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Web;
 using System.Web.Caching;
 using System.Web.Hosting;
+using System.Web.UI;
 using System.Web.Optimization.Resources;
 
 [assembly: TagPrefix("System.Web.Optimization", "webopt")]
