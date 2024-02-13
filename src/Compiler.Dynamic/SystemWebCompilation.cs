@@ -83,7 +83,7 @@ internal abstract class SystemWebCompilation<T> : IDisposable
         });
     }
 
-    public IFileProvider Files => _webFormsOptions.Value.WebFormsFileProvider ?? _env.ContentRootFileProvider;
+    public IFileProvider Files => _webFormsOptions.Value.WebFormsFileProvider;
 
     protected void RemovePage(string path) => _compiled.Remove(path);
 
