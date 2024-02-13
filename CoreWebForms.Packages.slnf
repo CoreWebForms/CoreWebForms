@@ -9,6 +9,7 @@
       "src\\Handlers\\Handlers.csproj",
       "src\\HtmlTextWriter\\HtmlTextWriter.csproj",
       "src\\Optimization\\Optimization.csproj",
+      "src\\VirtualFile\\VirtualFile.csproj",
       "src\\Routing\\Routing.csproj",
       "src\\Shim\\Shim.csproj",
       "src\\WebForms\\WebForms.csproj",

@@ -1,60 +1,42 @@
-// MIT License.
+// Copyright (c) Microsoft Corporation, Inc. All rights reserved.
+// Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+using System;
+using System.ComponentModel;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Text;
+using System.Web.Optimization;
 using System.Web.UI;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
+using MapPathDelegate = System.Func<System.IServiceProvider, string, string>;
 
-namespace System.Web.Optimization;
-
-public class BundleReference : Control
+namespace Microsoft.AspNet.Web.Optimization.WebForms
 {
-    public string? Path { get; set; }
-
-    protected override void Render(HtmlTextWriter writer)
+    [DefaultProperty("Path")]
+    [NonVisualControl]
+    public class BundleReference : Control
     {
-        if (Path is null)
+        private const string PathKey = "Path";
+
+        [Bindable(true)]
+        [Category("Behavior")]
+        [DefaultValue("")]
+        public string Path
         {
-            return;
+            get
+            {
+                return ViewState[PathKey] as string ?? String.Empty;
+            }
+            set
+            {
+                ViewState[PathKey] = value;
+            }
         }
 
-        var options = Context.GetRequiredService<IOptions<BundleReferenceOptions>>().Value;
-
-        if (!options.Bundles.TryGetBundle(Path, out var bundle))
+        public override void RenderControl(HtmlTextWriter writer)
         {
-            Logger.LogWarning("Unknown requested bundle for {Path}", Path);
-        }
-        else if (bundle is StyleBundle styles)
-        {
-            Write(writer, styles);
-        }
-        else if (bundle is ScriptBundle scripts)
-        {
-            Write(writer, scripts);
-        }
-        else
-        {
-            Logger.LogWarning("Unknown requested bundle for {Path} {Type}", Path, bundle.GetType().Name);
-        }
-    }
-
-    private void Write(HtmlTextWriter writer, ScriptBundle bundle)
-    {
-        foreach (var include in bundle.Paths)
-        {
-            writer.Write("<script type=\"text/json\" src=\"");
-            writer.Write(ResolveUrl(include));
-            writer.WriteLine("\"></script>");
-        }
-    }
-
-    private void Write(HtmlTextWriter writer, StyleBundle bundle)
-    {
-        foreach (var include in bundle.Paths)
-        {
-            writer.Write("<link href=\"");
-            writer.Write(ResolveUrl(include));
-            writer.WriteLine("\" rel=\"stylesheet\" />");
+            writer.Write(Styles.Render(Path));
         }
     }
 }
