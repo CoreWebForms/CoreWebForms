@@ -21,7 +21,13 @@ jobs:
       actions: read
     steps:
       # Need to download from the associated workflow
-      - name: Download and Extract Artifacts from build
+      - name: Download event info
+        uses: dawidd6/action-download-artifact@v3
+        with:
+          run_id: ${{ github.event.workflow_run.id }}
+          name: Event File
+          path: artifacts
+      - name: Download test results
         uses: dawidd6/action-download-artifact@v3
         with:
           run_id: ${{ github.event.workflow_run.id }}
