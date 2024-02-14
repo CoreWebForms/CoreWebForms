@@ -7,6 +7,7 @@
     <Nullable>disable</Nullable>
     <PackageId>WebForms.Shim.SystemWeb</PackageId>
     <AssemblyName>System.Web</AssemblyName>
+    <Version>5.0.0.0</Version>
   </PropertyGroup>
 
   <ItemGroup>

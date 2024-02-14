@@ -1,4 +1,13 @@
 <Project>
+  <!-- If using the NuGet package, the install of the package handles setting this stuff up -->
+  <ItemGroup>
+    <ProjectReference
+      Include="$(MSBuildThisFileDirectory)../src/WebForms.Generator/WebForms.Generator.csproj"
+      OutputItemType="Analyzer"
+      ReferenceOutputAssembly="false"
+      SetTargetFramework="TargetFramework=netstandard2.0" />
+  </ItemGroup>
+  
   <Import Project="..\src\Compiler\Build\WebForms.Compiler.targets" />
   <Import Project="..\Directory.Build.targets" />
 </Project>

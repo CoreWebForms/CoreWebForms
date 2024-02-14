@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Generator": {
+      "commandName": "DebugRoslynComponent",
+      "targetProject": "..\\..\\samples\\WebFormsSample\\WebFormsSample.Dynamic.csproj"
+    }
+  }
+}

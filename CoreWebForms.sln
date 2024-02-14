@@ -66,6 +66,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Optimization", "src\Optimiz
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shim.Extensions", "src\Shim.Extensions\Shim.Extensions.csproj", "{728D74AE-9405-4C87-B4F6-2DB5A0E90360}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebForms.Generator", "src\WebForms.Generator\WebForms.Generator.csproj", "{F238C112-B718-4219-A8D7-05BAFA09FB38}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -148,6 +150,10 @@ Global
 		{728D74AE-9405-4C87-B4F6-2DB5A0E90360}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{728D74AE-9405-4C87-B4F6-2DB5A0E90360}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{728D74AE-9405-4C87-B4F6-2DB5A0E90360}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F238C112-B718-4219-A8D7-05BAFA09FB38}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F238C112-B718-4219-A8D7-05BAFA09FB38}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F238C112-B718-4219-A8D7-05BAFA09FB38}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F238C112-B718-4219-A8D7-05BAFA09FB38}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -172,6 +178,7 @@ Global
 		{FCFC1F83-8F2B-40DA-81B6-0EE32B3BEBFC} = {D3D2945C-76BA-4DE3-90D2-259E2B1406C5}
 		{9ECAE339-247E-4C80-A58F-29461649DC6E} = {D3D2945C-76BA-4DE3-90D2-259E2B1406C5}
 		{728D74AE-9405-4C87-B4F6-2DB5A0E90360} = {D3D2945C-76BA-4DE3-90D2-259E2B1406C5}
+		{F238C112-B718-4219-A8D7-05BAFA09FB38} = {D3D2945C-76BA-4DE3-90D2-259E2B1406C5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B89024DA-2E51-49B1-8D52-651372AB5C83}
