@@ -7,7 +7,6 @@
     <Nullable>disable</Nullable>
     <PackageId>WebForms.Shim.SystemWeb.Extensions</PackageId>
     <AssemblyName>System.Web.Extensions</AssemblyName>
-    <Version>5.0.0.0</Version>
   </PropertyGroup>
 
   <ItemGroup>

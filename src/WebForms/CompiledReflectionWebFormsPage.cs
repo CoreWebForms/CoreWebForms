@@ -11,6 +11,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Primitives;
 
 namespace Microsoft.AspNetCore.Builder;
+
 public static class CompiledWebFormsPageExtensions
 {
     public static IWebFormsBuilder AddCompiledPages(this IWebFormsBuilder builder)

@@ -1,7 +1,0 @@
-<Project>
-
-  <PropertyGroup>
-    <InterceptorsPreviewNamespaces>$(InterceptorsPreviewNamespaces);WebForms.Generated</InterceptorsPreviewNamespaces>
-  </PropertyGroup>
-
-</Project>

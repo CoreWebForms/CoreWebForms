@@ -24,6 +24,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <InternalsVisibleTo Include="WebForms.Compiler.Dynamic" />
+    <InternalsVisibleTo Include="WebForms.Extensions" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="System.CodeDom" Version="8.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.SystemWebAdapters" Version="1.3.2" />
     <PackageReference Include="Microsoft.AspNetCore.SystemWebAdapters.CoreServices" Version="1.3.2" />

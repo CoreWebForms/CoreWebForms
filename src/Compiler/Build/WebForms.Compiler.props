@@ -1,6 +1,5 @@
 <Project>
   <Import Project="WebForms.Compiler.DefaultItems.props"/>
-  <Import Project="$(MSBuildThisFileDirectory)WebForms.Compiler.Interceptor.props"/>
 
   <PropertyGroup>
     <!-- This is settable so local debug builds can point somewhere else -->
