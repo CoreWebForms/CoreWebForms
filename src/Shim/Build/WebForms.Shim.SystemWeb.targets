@@ -1,7 +1,10 @@
 <Project>
+
+  <!-- Must remove the in-box System.Web as all it does is forward to HttpUtility which we do as well as forward to the adapters and webforms -->
   <Target Name="RemoveSystemWeb" BeforeTargets="ResolveAssemblyReferences">
     <ItemGroup>
       <Reference Remove="@(Reference)" Condition=" '%(Reference.AssemblyName)' == 'System.Web' AND '%(Reference.AssemblyVersion)' == '4.0.0.0' " />
     </ItemGroup>
   </Target>
+
 </Project>
