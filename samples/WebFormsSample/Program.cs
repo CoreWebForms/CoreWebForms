@@ -12,6 +12,7 @@ builder.Services.AddSession();
 builder.Services.AddDistributedMemoryCache();
 
 builder.Services.AddSystemWebAdapters()
+    .AddPreApplicationStartMethod()
     .AddJsonSessionSerializer()
     .AddWrappedAspNetCoreSession()
     .AddRouting()

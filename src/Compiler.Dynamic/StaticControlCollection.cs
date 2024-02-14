@@ -2,7 +2,6 @@
 
 using System.ComponentModel.Design;
 using System.Reflection;
-using System.Reflection.Metadata;
 using System.Runtime.Loader;
 using System.Web.UI;
 using Microsoft.CodeAnalysis;
@@ -22,7 +21,7 @@ internal sealed class StaticControlCollection : AssemblyLoadContext, IDisposable
             var metadata = AssemblyMetadata.CreateFromFile(path);
             _dispose += metadata.Dispose;
 
-            if (HasControls(metadata) && !IsWebFormsLibrary(path))
+            if (HasTagPrefix(metadata) && !IsWebFormsLibrary(path))
             {
                 LoadFromAssemblyPath(path);
                 _reference.Add(metadata.GetReference());
@@ -34,6 +33,22 @@ internal sealed class StaticControlCollection : AssemblyLoadContext, IDisposable
         }
     }
 
+    // We only want to load assemblies that have controls, so we can check for their attribute in its metadata
+    private bool HasTagPrefix(AssemblyMetadata assembly)
+    {
+        foreach (var module in assembly.GetModules())
+        {
+            var reader = module.GetMetadataReader();
+
+            if (reader.HasAttribute(nameof(TagPrefixAttribute), "System.Web.UI"))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     private static bool IsWebFormsLibrary(string path)
     {
         return string.Equals(Path.GetFileName(path), "WebForms.dll", StringComparison.OrdinalIgnoreCase);
@@ -42,52 +57,6 @@ internal sealed class StaticControlCollection : AssemblyLoadContext, IDisposable
     public IEnumerable<Assembly> ControlAssemblies => [typeof(Page).Assembly, .. Assemblies];
 
     public IEnumerable<MetadataReference> References => _reference;
-
-    // We only want to load assemblies that have controls, so we can check for their attribute in its metadata
-    private static bool HasControls(AssemblyMetadata assembly)
-    {
-        foreach (var module in assembly.GetModules())
-        {
-            var reader = module.GetMetadataReader();
-
-            foreach (var a in reader.CustomAttributes)
-            {
-                var attribute = reader.GetCustomAttribute(a);
-                var attributeCtor = attribute.Constructor;
-
-                StringHandle attributeTypeName = default;
-                StringHandle attributeTypeNamespace = default;
-
-                if (attributeCtor.Kind == HandleKind.MemberReference)
-                {
-                    var attributeMemberParent = reader.GetMemberReference((MemberReferenceHandle)attributeCtor).Parent;
-                    if (attributeMemberParent.Kind == HandleKind.TypeReference)
-                    {
-                        var attributeTypeRef = reader.GetTypeReference((TypeReferenceHandle)attributeMemberParent);
-                        attributeTypeName = attributeTypeRef.Name;
-                        attributeTypeNamespace = attributeTypeRef.Namespace;
-                    }
-                }
-                else if (attributeCtor.Kind == HandleKind.MethodDefinition)
-                {
-                    var attributeTypeDefHandle = reader.GetMethodDefinition((MethodDefinitionHandle)attributeCtor).GetDeclaringType();
-                    var attributeTypeDef = reader.GetTypeDefinition(attributeTypeDefHandle);
-                    attributeTypeName = attributeTypeDef.Name;
-                    attributeTypeNamespace = attributeTypeDef.Namespace;
-                }
-
-                if (!attributeTypeName.IsNil &&
-                    !attributeTypeNamespace.IsNil &&
-                    reader.StringComparer.Equals(attributeTypeName, "TagPrefixAttribute") &&
-                    reader.StringComparer.Equals(attributeTypeNamespace, "System.Web.UI"))
-                {
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
 
     public void Dispose() => _dispose?.Invoke();
 
@@ -135,4 +104,3 @@ internal sealed class StaticControlCollection : AssemblyLoadContext, IDisposable
         throw new NotImplementedException();
     }
 }
-
