@@ -10,15 +10,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNet.ScriptManager.WebForms" Version="5.0.0" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\src\Compiler.Dynamic\Compiler.Dynamic.csproj" />
     <ProjectReference Include="..\..\src\Config\Config.csproj" />
     <ProjectReference Include="..\..\src\Extensions\Extensions.csproj" />
-    <ProjectReference Include="..\..\src\Shim.Extensions\Shim.Extensions.csproj" />
-    <ProjectReference Include="..\..\src\Shim\Shim.csproj" />
     <ProjectReference Include="..\..\src\WebForms\WebForms.csproj" />
   </ItemGroup>
 
