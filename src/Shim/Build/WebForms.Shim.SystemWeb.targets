@@ -1,0 +1,7 @@
+<Project>
+  <Target Name="RemoveSystemWeb" BeforeTargets="ResolveAssemblyReferences">
+    <ItemGroup>
+      <Reference Remove="@(Reference)" Condition=" '%(Reference.AssemblyName)' == 'System.Web' AND '%(Reference.AssemblyVersion)' == '4.0.0.0' " />
+    </ItemGroup>
+  </Target>
+</Project>

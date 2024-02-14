@@ -7,10 +7,15 @@
     <Nullable>disable</Nullable>
     <PackageId>WebForms.Shim.SystemWeb</PackageId>
     <AssemblyName>System.Web</AssemblyName>
+    <Version>4.0.1.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\WebForms\WebForms.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Build\*" Pack="true" PackagePath="" />
   </ItemGroup>
 
 </Project>
