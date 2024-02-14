@@ -1,16 +1,18 @@
 // MIT License.
 
 using System.Reflection;
+using System.Reflection.Metadata;
 using System.Runtime.Loader;
 using System.Web;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SystemWebAdapters;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using WebForms;
 
-namespace Microsoft.AspNetCore.Builder;
+namespace Microsoft.Extensions.DependencyInjection;
 
 public static class PreApplicationStartMethodExtensions
 {
@@ -43,55 +45,43 @@ public static class PreApplicationStartMethodExtensions
 
         private void RunStartupMethods()
         {
-            if (Assembly.GetEntryAssembly() is not { } entry)
-            {
-                return;
-            }
-
-            AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
             var failOnError = options.Value.FailOnError;
 
-            ShimContext context = null;
-
-            foreach (var file in Directory.EnumerateFiles(AppContext.BaseDirectory, "*ScriptManager*.dll"))
+            foreach (var startMethod in GetStartMethodAttributes(AssemblyLoadContext.Default))
             {
-                context ??= new();
-
-                if (context.LoadFromAssemblyPath(file) is { } assembly && assembly.GetCustomAttributes<PreApplicationStartMethodAttribute>() is { } startMethods)
+                if (!InvokeStartMethod(startMethod) && failOnError)
                 {
-                    foreach (var startMethod in startMethods)
+                    throw new InvalidOperationException("Failed to run a requested PreApplicationStartMethodAttribute");
+                }
+            }
+        }
+
+        private IEnumerable<PreApplicationStartMethodAttribute> GetStartMethodAttributes(AssemblyLoadContext context)
+        {
+            var attributes = new List<PreApplicationStartMethodAttribute>();
+
+            foreach (var file in Directory.EnumerateFiles(AppContext.BaseDirectory, "*.dll"))
+            {
+                try
+                {
+                    using var stream = File.OpenRead(file);
+                    using var re = new System.Reflection.PortableExecutable.PEReader(stream);
+
+                    if (re.GetMetadataReader().HasAttribute(nameof(PreApplicationStartMethodAttribute), "System.Web"))
                     {
-                        if (!InvokeStartMethod(startMethod) && failOnError)
+                        foreach (var attribute in context.LoadFromAssemblyPath(file).GetCustomAttributes<PreApplicationStartMethodAttribute>())
                         {
-                            throw new InvalidOperationException("Failed to run a requested PreApplicationStartMethodAttribute");
+                            attributes.Add(attribute);
                         }
                     }
                 }
-            }
-        }
-
-        private sealed class ShimContext : AssemblyLoadContext
-        {
-            protected override Assembly Load(AssemblyName assemblyName)
-            {
-                if (assemblyName.Name == "System.Web")
+                catch (Exception ex)
                 {
-                    var a = LoadFromAssemblyPath(Path.Combine(AppContext.BaseDirectory, "System.Web.dll"));
-                    return a;
+                    logger.LogWarning(ex, "Failed to open {Path} to check for PreApplicationStartMethodAttribute", file);
                 }
-
-                return base.Load(assemblyName);
-            }
-        }
-
-        private Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
-        {
-            if (args.Name.Contains("System.Web"))
-            {
-
             }
 
-            return null;
+            return attributes;
         }
 
         private bool InvokeStartMethod(PreApplicationStartMethodAttribute startMethod)
@@ -123,6 +113,8 @@ public static class PreApplicationStartMethodExtensions
                     var instance = Activator.CreateInstance(startMethod.Type);
                     method.Invoke(instance, null);
                 }
+
+                logger.LogInformation("Invoked PreApplicationStartMethodAttribute {Type}.{Name} in {Assembly}", startMethod.Type.FullName, startMethod.MethodName, startMethod.Type.Assembly.FullName);
 
                 return true;
             }

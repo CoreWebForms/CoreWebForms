@@ -1,0 +1,48 @@
+// MIT License.
+
+using System.Reflection.Metadata;
+
+namespace WebForms;
+
+internal static class AssemblyAttributeUtility
+{
+    public static bool HasAttribute(this MetadataReader reader, string typeName, string typeNamespace)
+    {
+        foreach (var a in reader.CustomAttributes)
+        {
+            var attribute = reader.GetCustomAttribute(a);
+            var attributeCtor = attribute.Constructor;
+
+            StringHandle attributeTypeName = default;
+            StringHandle attributeTypeNamespace = default;
+
+            if (attributeCtor.Kind == HandleKind.MemberReference)
+            {
+                var attributeMemberParent = reader.GetMemberReference((MemberReferenceHandle)attributeCtor).Parent;
+                if (attributeMemberParent.Kind == HandleKind.TypeReference)
+                {
+                    var attributeTypeRef = reader.GetTypeReference((TypeReferenceHandle)attributeMemberParent);
+                    attributeTypeName = attributeTypeRef.Name;
+                    attributeTypeNamespace = attributeTypeRef.Namespace;
+                }
+            }
+            else if (attributeCtor.Kind == HandleKind.MethodDefinition)
+            {
+                var attributeTypeDefHandle = reader.GetMethodDefinition((MethodDefinitionHandle)attributeCtor).GetDeclaringType();
+                var attributeTypeDef = reader.GetTypeDefinition(attributeTypeDefHandle);
+                attributeTypeName = attributeTypeDef.Name;
+                attributeTypeNamespace = attributeTypeDef.Namespace;
+            }
+
+            if (!attributeTypeName.IsNil &&
+                !attributeTypeNamespace.IsNil &&
+                reader.StringComparer.Equals(attributeTypeName, typeName) &&
+                reader.StringComparer.Equals(attributeTypeNamespace, typeNamespace))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+}
