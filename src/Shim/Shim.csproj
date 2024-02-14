@@ -8,7 +8,7 @@
     <PackageId>WebForms.Shim.SystemWeb</PackageId>
     <AssemblyName>System.Web</AssemblyName>
 
-    <!-- Must be higher than 4.0.0.0 to override the in-built System.Web -->
+    <!-- Must be higher than 4.0.0.0 so resolution can occur -->
     <AssemblyVersion>4.0.1.0</AssemblyVersion>
   </PropertyGroup>
 

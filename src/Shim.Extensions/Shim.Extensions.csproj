@@ -7,6 +7,9 @@
     <Nullable>disable</Nullable>
     <PackageId>WebForms.Shim.SystemWeb.Extensions</PackageId>
     <AssemblyName>System.Web.Extensions</AssemblyName>
+
+    <!-- Must be higher than 4.0.0.0 so resolution can occur -->
+    <AssemblyVersion>4.0.1.0</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>
