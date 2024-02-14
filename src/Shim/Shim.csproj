@@ -7,7 +7,9 @@
     <Nullable>disable</Nullable>
     <PackageId>WebForms.Shim.SystemWeb</PackageId>
     <AssemblyName>System.Web</AssemblyName>
-    <Version>4.0.1.0</Version>
+
+    <!-- Must be higher than 4.0.0.0 to override the in-built System.Web -->
+    <AssemblyVersion>4.0.1.0</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>
