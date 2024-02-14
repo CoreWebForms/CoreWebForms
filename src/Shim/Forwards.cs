@@ -112,6 +112,7 @@ using System.Runtime.CompilerServices;
 [assembly: TypeForwardedTo(typeof(System.Web.ModelBinding.ValueProviderSourceAttribute))]
 [assembly: TypeForwardedTo(typeof(System.Web.ParserError))]
 [assembly: TypeForwardedTo(typeof(System.Web.ParserErrorCollection))]
+[assembly: TypeForwardedTo(typeof(System.Web.PreApplicationStartMethodAttribute))]
 [assembly: TypeForwardedTo(typeof(System.Web.ReadEntityBodyMode))]
 [assembly: TypeForwardedTo(typeof(System.Web.RequestNotification))]
 [assembly: TypeForwardedTo(typeof(System.Web.RequestNotificationStatus))]
