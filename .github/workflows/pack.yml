@@ -34,7 +34,7 @@ jobs:
           artifacts/webforms/package/release/*.nupkg
           artifacts/webforms/package/release/*.snupkg
     - name: Push nuget package to Azure storage
-      #if: github.ref == 'refs/heads/main'
+      if: github.ref == 'refs/heads/main'
       env:
         SLEET_FEED_TYPE: azure
         SLEET_FEED_CONTAINER: feed
