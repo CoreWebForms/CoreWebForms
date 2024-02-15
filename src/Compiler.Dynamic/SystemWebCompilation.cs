@@ -179,6 +179,7 @@ internal abstract class SystemWebCompilation<T> : IDisposable
         }
         catch (Exception e)
         {
+            _logger.LogError(e, "Failed to compile {Path}", path);
             return CreateErrorPage(path, e);
         }
     }
