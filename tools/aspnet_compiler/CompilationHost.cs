@@ -17,7 +17,7 @@ namespace WebForms.Compiler;
 
 internal sealed class CompilationHost
 {
-    public static Task RunAsync(DirectoryInfo path, DirectoryInfo targetDir, FileInfo[] references)
+    public static Task RunAsync(DirectoryInfo path, DirectoryInfo targetDir, FileInfo[] references, bool isDebug)
         => Host.CreateDefaultBuilder()
             .ConfigureAppConfiguration((ctx, _) =>
             {
@@ -58,6 +58,9 @@ internal sealed class CompilationHost
                     .AddPersistentWebFormsCompilation(references.Select(r => r.FullName));
 
                 services.AddHostedService<StaticCompilationService>();
+
+                services.AddOptions<PageCompilationOptions>()
+                    .Configure(options => options.IsDebug = isDebug);
 
                 services.AddOptions<SystemWebAdaptersOptions>().Configure(options =>
                 {
