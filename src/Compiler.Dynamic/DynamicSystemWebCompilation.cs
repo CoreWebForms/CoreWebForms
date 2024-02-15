@@ -59,11 +59,13 @@ internal sealed class DynamicSystemWebCompilation : SystemWebCompilation<Dynamic
 
         if (!result.Success)
         {
+            var errors = GetErrors(result.Diagnostics).ToList();
+
             _logger.LogWarning("{ErrorCount} error(s) found compiling {Route}", result.Diagnostics.Length, route);
 
             return new DynamicCompiledPage(this, new(route), [])
             {
-                Exception = new RoslynCompilationException(route, GetErrors(result.Diagnostics))
+                Exception = new RoslynCompilationException(route, errors)
             };
         }
 

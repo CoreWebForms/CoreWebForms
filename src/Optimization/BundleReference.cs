@@ -1,15 +1,9 @@
 // Copyright (c) Microsoft Corporation, Inc. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-using System;
 using System.ComponentModel;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Text;
 using System.Web.Optimization;
 using System.Web.UI;
-using MapPathDelegate = System.Func<System.IServiceProvider, string, string>;
 
 namespace Microsoft.AspNet.Web.Optimization.WebForms
 {
