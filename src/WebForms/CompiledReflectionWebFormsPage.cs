@@ -1,5 +1,7 @@
 // MIT License.
 
+using System.ComponentModel.Design;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Runtime.Loader;
 using System.Text.Json;
@@ -17,7 +19,55 @@ public static class CompiledWebFormsPageExtensions
     public static IWebFormsBuilder AddCompiledPages(this IWebFormsBuilder builder)
     {
         builder.Services.AddSingleton<IHttpHandlerCollection, CompiledReflectionWebFormsPage>();
+        builder.Services.AddSingleton<ITypeResolutionService, DefaultAssemblyLoadContextResolver>();
+
         return builder;
+    }
+
+    private sealed class DefaultAssemblyLoadContextResolver : ITypeResolutionService
+    {
+        private static AssemblyLoadContext Current => AssemblyLoadContext.Default;
+
+        public Assembly GetAssembly(AssemblyName name) => GetAssembly(name, throwOnError: false);
+
+        public Assembly GetAssembly(AssemblyName name, bool throwOnError)
+        {
+            try
+            {
+                return Current.LoadFromAssemblyName(name);
+            }
+            catch when (!throwOnError)
+            {
+                return null;
+            }
+        }
+
+        public string GetPathOfAssembly(AssemblyName name) => GetAssembly(name).Location;
+
+        [return: DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)]
+        public Type GetType([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)] string name) => GetType(name, throwOnError: false, ignoreCase: false);
+
+        [return: DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)]
+        public Type GetType([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)] string name, bool throwOnError) => GetType(name, throwOnError, ignoreCase: false);
+
+        [return: DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)]
+        public Type GetType([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)] string name, bool throwOnError, bool ignoreCase)
+        {
+            foreach (var assembly in Current.Assemblies)
+            {
+                if (assembly.GetType(name, throwOnError, ignoreCase) is { } found)
+                {
+                    return found;
+                }
+            }
+
+            return null;
+        }
+
+        public void ReferenceAssembly(AssemblyName name)
+        {
+            throw new NotSupportedException();
+        }
     }
 
     private sealed class CompiledReflectionWebFormsPage : IHttpHandlerCollection, IDisposable
