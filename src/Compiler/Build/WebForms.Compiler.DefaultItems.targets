@@ -9,6 +9,7 @@
   <ItemGroup>
     <Compile Remove="@(WebFormsCodeBehindFiles)" />
     <Compile Remove="@(UnsupportedWebFormsFiles)" />
+    <Compile Remove="@(WebFormsDesignerFiles)" />
   </ItemGroup>
 
   <Target Name="IdentifyUnsupportedWebFormsFiles" BeforeTargets="Build" Condition=" $(WarnOnUnsupportedWebForms) AND '@(UnsupportedWebFormsFiles)' != '' ">
