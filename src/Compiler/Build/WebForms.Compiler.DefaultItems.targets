@@ -4,6 +4,7 @@
     <Content Include="@(WebFormsFiles)" />
     <Content Include="@(WebFormsCodeBehindFiles)" />
     <Content Include="@(UnsupportedWebFormsFiles)" />
+    <Content Include="@(WebFormsDesignerFiles)" />
   </ItemGroup>
 
   <ItemGroup>
