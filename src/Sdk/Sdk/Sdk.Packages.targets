@@ -1,0 +1,16 @@
+<Project>
+
+  <ItemGroup>
+    <PackageReference Include="WebForms" Version="$(WebFormsVersion)" />
+    <PackageReference Include="WebForms.Compiler" Version="$(WebFormsVersion)" />
+    <PackageReference Include="WebForms.Extensions" Version="$(WebFormsVersion)" />
+    <PackageReference Include="WebForms.ConfigurationManager" Version="$(WebFormsVersion)" />
+    <PackageReference Include="WebForms.Shim.SystemWeb" Version="$(WebFormsVersion)" />
+    <PackageReference Include="WebForms.Shim.SystemWeb.Extensions" Version="$(WebFormsVersion)" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(EnableRuntimeAspxCompilation)' == 'true' ">
+    <PackageReference Include="WebForms.Compiler.Dynamic" Version="$(WebFormsVersion)" />
+  </ItemGroup>
+
+</Project>

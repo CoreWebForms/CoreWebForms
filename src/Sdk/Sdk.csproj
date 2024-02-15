@@ -1,0 +1,42 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <IsShipped>true</IsShipped>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
+    <IncludeSymbols>false</IncludeSymbols>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageId>WebForms.Sdk</PackageId>
+    <DevelopmentDependency>true</DevelopmentDependency>
+    <NoPackageAnalysis>true</NoPackageAnalysis>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="Sdk\*" Pack="true" PackagePath="Sdk\" TargetPath="Sdk\%(FileName)%(Extension)">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <Target Name="WriteVersionProps" BeforeTargets="AssignTargetPaths">
+    <ItemGroup>
+      <__VersionPropsLines Include="&lt;Project&gt;" />
+      <__VersionPropsLines Include="&lt;PropertyGroup&gt;" />
+      <__VersionPropsLines Include="&lt;WebFormsVersion&gt;$(Version)&lt;/WebFormsVersion&gt;" />
+      <__VersionPropsLines Include="&lt;/PropertyGroup&gt;" />
+      <__VersionPropsLines Include="&lt;/Project&gt;" />
+    </ItemGroup>
+
+    <WriteLinesToFile File="$(IntermediateOutputPath)/Sdk.Version.props" Lines="@(__VersionPropsLines)" Overwrite="true" />
+
+    <ItemGroup>
+      <Content Include="$(IntermediateOutputPath)/Sdk.Version.props" PackagePath="Sdk/Sdk.Version.Props" TargetPath="Sdk/Sdk.Version.Props" Pack="true">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
+
+  </Target>
+
+</Project>
+

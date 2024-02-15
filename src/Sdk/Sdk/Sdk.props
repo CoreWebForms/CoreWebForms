@@ -1,0 +1,7 @@
+<Project>
+  <PropertyGroup>
+    <WebFormsVersion />
+  </PropertyGroup>
+
+  <Import Project="Sdk.Version.props" Condition="Exists('Sdk.Version.props') "/>
+</Project>
