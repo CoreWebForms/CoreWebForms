@@ -1,5 +1,6 @@
 // MIT License.
 
+using System.Collections.Frozen;
 using System.Diagnostics.CodeAnalysis;
 
 namespace System.Web.ModelBinding;
@@ -10,7 +11,7 @@ public class ModelBindingContext
     private ModelMetadata _modelMetadata;
     private string _modelName;
     private ModelStateDictionary _modelState;
-    private Dictionary<string, ModelMetadata> _propertyMetadata;
+    private FrozenDictionary<string, ModelMetadata> _propertyMetadata;
     private ModelValidationNode _validationNode;
     private IValueProvider _valueProvider;
 
@@ -130,7 +131,7 @@ public class ModelBindingContext
         {
             if (_propertyMetadata == null)
             {
-                _propertyMetadata = ModelMetadata.Properties.ToDictionary(m => m.PropertyName, StringComparer.OrdinalIgnoreCase);
+                _propertyMetadata = ModelMetadata.Properties.ToFrozenDictionary(m => m.PropertyName, StringComparer.OrdinalIgnoreCase);
             }
 
             return _propertyMetadata;
