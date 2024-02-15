@@ -12,6 +12,9 @@
     <WebFormsFiles Include="$(MSBuildProjectDirectory)\**\*.aspx" Exclude="@(__DefaultExcludes)" />
     <WebFormsFiles Include="$(MSBuildProjectDirectory)\**\*.master" Exclude="@(__DefaultExcludes) "/>
 
+    <WebFormsDesignerFiles Include="$(MSBuildProjectDirectory)\**\*.aspx.designer.*" Exclude="@(__DefaultExcludes)" />
+    <WebFormsDesignerFiles Include="$(MSBuildProjectDirectory)\**\*.master.designer.*" Exclude="@(__DefaultExcludes) "/>
+
     <UnsupportedWebFormsFiles Include="$(MSBuildProjectDirectory)\**\*.ascx*" Exclude="@(__DefaultExcludes)" Description="Compiling custom controls is not yet supported" />
     <UnsupportedWebFormsFiles Include="$(MSBuildProjectDirectory)\**\*.ashx*" Exclude="@(__DefaultExcludes)" Description="Compiling handlers is not yet supported" />
 

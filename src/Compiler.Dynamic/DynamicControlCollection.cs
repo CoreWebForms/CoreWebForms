@@ -6,17 +6,20 @@ using System.Reflection;
 using System.Runtime.Loader;
 using System.Web.UI;
 using Microsoft.CodeAnalysis;
+using Microsoft.Extensions.Logging;
 
 namespace WebForms.Compiler.Dynamic;
 
 internal sealed class DynamicControlCollection : ITypeResolutionService, IMetadataProvider, IDisposable
 {
     private readonly AssemblyLoadContext _context;
+    private readonly ILogger<DynamicControlCollection> _logger;
     private ImmutableHashSet<Assembly> _controls;
     private ImmutableDictionary<AssemblyName, MetadataReference> _map;
 
-    public DynamicControlCollection()
+    public DynamicControlCollection(ILogger<DynamicControlCollection> logger)
     {
+        _logger = logger;
         _controls = ImmutableHashSet<Assembly>.Empty;
         _context = AssemblyLoadContext.Default;
         _map = ImmutableDictionary<AssemblyName, MetadataReference>.Empty;
@@ -39,8 +42,11 @@ internal sealed class DynamicControlCollection : ITypeResolutionService, IMetada
 
     private void ProcessAssembly(Assembly assembly)
     {
+        _logger.LogDebug("Searching {Assembly} for tag prefixes", assembly.FullName);
+
         if (assembly.GetCustomAttributes<TagPrefixAttribute>().Any())
         {
+            _logger.LogInformation("Found tag prefixes in {Assembly}", assembly.FullName);
             ImmutableInterlocked.Update(ref _controls, c => c.Add(assembly));
         }
 

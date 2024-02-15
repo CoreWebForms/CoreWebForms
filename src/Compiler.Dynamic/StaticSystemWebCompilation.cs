@@ -83,7 +83,7 @@ internal sealed class StaticSystemWebCompilation : SystemWebCompilation<Persiste
             {
                 if (file.FullPath.EndsWith(".aspx", StringComparison.OrdinalIgnoreCase))
                 {
-                    await CompilePageAsync(file.FullPath, token).ConfigureAwait(false);
+                    await CompilePageAsync("/" + file.FullPath, token).ConfigureAwait(false);
                 }
             }
 
