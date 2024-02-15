@@ -1,4 +1,6 @@
 <Project>
+  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk.Web"/>
+
   <PropertyGroup>
     <WebFormsVersion />
   </PropertyGroup>
