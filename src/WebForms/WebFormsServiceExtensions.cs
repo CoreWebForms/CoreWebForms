@@ -18,6 +18,7 @@ public static class WebFormsServiceExtensions
     {
         builder.AddHttpHandlers();
         builder.AddRouting();
+        builder.AddVirtualPathProvider();
 
         return new Builder(builder)
             .AddDefaultExpressionBuilders();
