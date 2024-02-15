@@ -1,7 +1,7 @@
 // MIT License.
 
 using System.Collections.Concurrent;
-using System.Collections.Frozen;
+using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.Loader;
 using Microsoft.Extensions.Logging;
@@ -10,7 +10,7 @@ namespace WebForms.Compiler.Dynamic;
 
 internal sealed class PageAssemblyLoadContext : AssemblyLoadContext
 {
-    private readonly FrozenDictionary<string, Assembly> _map;
+    private readonly Dictionary<string, Assembly> _map;
     private readonly ILogger<PageAssemblyLoadContext> _logger;
 
     private static readonly ConcurrentDictionary<string, int> _count = new();
@@ -25,7 +25,7 @@ internal sealed class PageAssemblyLoadContext : AssemblyLoadContext
     public PageAssemblyLoadContext(string route, IEnumerable<Assembly> assemblies, ILogger<PageAssemblyLoadContext> logger)
         : base(GetName(route), isCollectible: true)
     {
-        _map = assemblies.ToFrozenDictionary(a => a.FullName!);
+        _map = assemblies.ToDictionary(a => a.FullName!);
         _logger = logger;
 
         logger.LogInformation("Created assembly for {Path}", Name);

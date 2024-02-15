@@ -19,10 +19,6 @@
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
-    <PackageReference Include="System.Collections.Immutable" Version="8.0.0" />
-  </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\Handlers\Handlers.csproj" />
   </ItemGroup>
