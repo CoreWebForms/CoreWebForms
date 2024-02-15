@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.FileProviders;
 
-[assembly: TagPrefix("System.Web.Optimization", "webopt")]
+[assembly: TagPrefix("Microsoft.AspNet.Web.Optimization.WebForms", "webopt")]
 
 namespace Microsoft.Extensions.DependencyInjection;
 
