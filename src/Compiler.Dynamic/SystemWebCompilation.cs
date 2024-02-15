@@ -39,13 +39,14 @@ internal abstract class SystemWebCompilation<T> : IDisposable
         IOptions<PageCompilationOptions> pageCompilation)
     {
         _env = env;
-        _csharp = new CSharpCompiler();
-        _vb = new VisualBasicCompiler();
+        _csharp = new CSharpCompiler(pageCompilation.Value);
+        _vb = new VisualBasicCompiler(pageCompilation.Value);
 
         _metadata = metadata;
         _logger = logger.CreateLogger<SystemWebCompilation<T>>();
         _pageCompilation = pageCompilation;
 
+        _logger.LogInformation("Compiler set to IsDebug={IsDebug}", pageCompilation.Value.IsDebug);
     }
 
     protected IEnumerable<T> GetPages()
@@ -277,7 +278,7 @@ internal abstract class SystemWebCompilation<T> : IDisposable
         void IDisposable.Dispose() => Provider.Dispose();
     }
 
-    private sealed class CSharpCompiler : ICompiler
+    private sealed class CSharpCompiler(PageCompilationOptions options) : ICompiler
     {
         public CodeDomProvider Provider { get; } = CodeDomProvider.CreateProvider("CSharp");
 
@@ -288,17 +289,19 @@ internal abstract class SystemWebCompilation<T> : IDisposable
             => CSharpCompilation.Create($"WebForms.{typeName}",
               options: new CSharpCompilationOptions(
                   outputKind: OutputKind.DynamicallyLinkedLibrary,
-                  optimizationLevel: OptimizationLevel.Debug),
+                  optimizationLevel: options.IsDebug ? OptimizationLevel.Debug : OptimizationLevel.Release),
               syntaxTrees: trees,
               references: references);
     }
 
     private sealed class VisualBasicCompiler : ICompiler
     {
+        private readonly PageCompilationOptions _options;
         private readonly MetadataReference[] _vbReferences;
 
-        public VisualBasicCompiler()
+        public VisualBasicCompiler(PageCompilationOptions options)
         {
+            _options = options;
             _vbReferences = new[] { MetadataReference.CreateFromFile(Assembly.Load("Microsoft.VisualBasic.Core").Location) };
         }
 
@@ -311,7 +314,7 @@ internal abstract class SystemWebCompilation<T> : IDisposable
             => VisualBasicCompilation.Create($"WebForms.{typeName}",
               options: new VisualBasicCompilationOptions(
                   outputKind: OutputKind.DynamicallyLinkedLibrary,
-                  optimizationLevel: OptimizationLevel.Debug),
+                  optimizationLevel: _options.IsDebug ? OptimizationLevel.Debug : OptimizationLevel.Release),
               syntaxTrees: trees,
               references: references.Concat(_vbReferences));
     }

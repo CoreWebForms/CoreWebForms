@@ -4,7 +4,9 @@ using System.ComponentModel.Design;
 using System.Reflection;
 using System.Web.UI;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SystemWebAdapters.HttpHandlers;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using WebForms.Compiler.Dynamic;
 
@@ -51,6 +53,10 @@ public static class WebFormsCompilerExtensions
 
                 //TODO https://github.com/twsouthwick/systemweb-adapters-ui/issues/19 , keeping the code to tackle in next CR
                 //options.AddParser<UserControlParser>(".ascx");
+            })
+            .Configure<IWebHostEnvironment>((options, env) =>
+            {
+                options.IsDebug = env.IsDevelopment();
             })
             .Configure(configure);
 

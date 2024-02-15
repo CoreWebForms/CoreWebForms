@@ -6,6 +6,8 @@
 
   <Target Name="WebFormsCompilation" AfterTargets="CoreBuild" BeforeTargets="GetCopyToOutputDirectoryItems">
     <PropertyGroup>
+      <_WebFormsIsDebug>false</_WebFormsIsDebug>
+      <_WebFormsIsDebug Condition=" '$(Configuration.ToUpper())' == 'DEBUG' ">true</_WebFormsIsDebug>
       <_WebFormsTempDir>$(IntermediateOutputPath)webforms_compile/$([System.Guid]::NewGuid())</_WebFormsTempDir>
       <_WebFormsTempDir Condition="!$([System.IO.Path]::IsPathRooted($(_WebFormsTempDir)))">$(ProjectDir)$(_WebFormsTempDir)</_WebFormsTempDir>
       <_WebFormsTempDir>$([MSBuild]::NormalizeDirectory($(_WebFormsTempDir)))</_WebFormsTempDir>
@@ -21,6 +23,7 @@
 
     <ItemGroup>
       <__AspNetCompileRsp Include="-p &quot;$(MSBuildProjectDirectory)&quot;" />
+      <__AspNetCompileRsp Condition="$(_WebFormsIsDebug)" Include="-d" />
       <__AspNetCompileRsp Include="&quot;$(_WebFormsTempDir)&quot;" />
       <__AspNetCompileRsp Include="-r &quot;%(ReferencePath.Identity)&quot;" />
       <__AspNetCompileRsp Include="-r &quot;%(IntermediateAssembly.Identity)&quot;" />
@@ -37,19 +40,19 @@
     </PropertyGroup>
   </Target>
 
-  <Target Name="CollectWebFormsOutput" AfterTargets="InvokeAspNetCompiler" Condition="!$(_HasWebFormsError)" BeforeTargets="GetCopyToOutputDirectoryItems">
+  <Target Name="CollectWebFormsOutput" AfterTargets="InvokeAspNetCompiler" Condition="!$(_HasWebFormsError)" BeforeTargets="GetCopyToOutputDirectoryItems;GetCopyToPublishDirectoryItems">
     <ItemGroup>
       <AspxOutputFiles Include="$(_WebFormsTempDir)/*.pdb" />
       <AspxOutputFiles Include="$(_WebFormsTempDir)/*.dll" />
-        
+
       <ContentWithTargetPath Include="$(_WebFormsPagesFile)"
                              TargetPath="$(TargetName).webforms.json"
                              CopyToOutputDirectory="PreserveNewest"
-                             CopyToPublishDirectory="Never" />
+                             CopyToPublishDirectory="PreserveNewest" />
       <ContentWithTargetPath Include="@(AspxOutputFiles)"
                              TargetPath="webforms/%(FileName)%(Extension)"
                              CopyToOutputDirectory="PreserveNewest"
-                             CopyToPublishDirectory="Never" />
+                             CopyToPublishDirectory="PreserveNewest" />
     </ItemGroup>
   </Target>
 

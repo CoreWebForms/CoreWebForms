@@ -14,7 +14,6 @@ namespace WebForms.Compiler.Dynamic;
 internal sealed class StaticSystemWebCompilation : SystemWebCompilation<PersistedCompiledPage>, IWebFormsCompiler
 {
     private readonly IOptions<StaticCompilationOptions> _options;
-    private readonly IOptions<PageCompilationOptions> _pageOptions;
     private readonly ILogger _logger;
 
     public StaticSystemWebCompilation(
@@ -27,7 +26,6 @@ internal sealed class StaticSystemWebCompilation : SystemWebCompilation<Persiste
     {
         _logger = factory.CreateLogger<StaticSystemWebCompilation>();
         _options = options;
-        _pageOptions = pageOptions;
     }
 
     protected override PersistedCompiledPage CreateCompiledPage(

@@ -12,6 +12,8 @@ public class PageCompilationOptions
     {
     }
 
+    public bool IsDebug { get; set; }
+
     internal Dictionary<string, Func<string, BaseCodeDomTreeGenerator>> Parsers { get; } = new(StringComparer.OrdinalIgnoreCase);
 
     internal void AddParser<TParser>(string extension)
