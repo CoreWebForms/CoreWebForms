@@ -114,7 +114,7 @@ internal sealed class DynamicSystemWebCompilation : SystemWebCompilation<Dynamic
             {
                 if (file.FullPath.EndsWith(".aspx", StringComparison.OrdinalIgnoreCase))
                 {
-                    await CompilePageAsync(file.FullPath, token).ConfigureAwait(false);
+                    await CompilePageAsync("/" + file.FullPath, token).ConfigureAwait(false);
                 }
             }
 
