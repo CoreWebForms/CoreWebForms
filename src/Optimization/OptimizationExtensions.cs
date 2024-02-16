@@ -18,13 +18,19 @@ namespace Microsoft.Extensions.DependencyInjection;
 
 public static class OptimizationExtensions
 {
-    public static IWebFormsBuilder AddOptimization(this IWebFormsBuilder builder, Action<BundleCollection> configure)
+    public static IWebFormsBuilder AddOptimization(this IWebFormsBuilder builder)
     {
         builder.Services.AddTransient<IBundleResolver>(_ => BundleResolver.Current);
         builder.Services.AddSingleton<BundleTableEndpointDataSource>();
-        builder.Services.AddTransient<IStartupFilter>(_ => new OptimizationStartup(configure));
 
         return builder;
+    }
+
+    public static IWebFormsBuilder AddOptimization(this IWebFormsBuilder builder, Action<BundleCollection> configure)
+    {
+        builder.Services.AddTransient<IStartupFilter>(_ => new OptimizationStartup(configure));
+
+        return builder.AddOptimization();
     }
 
     public static void MapBundleTable(this IEndpointRouteBuilder endpoints)
