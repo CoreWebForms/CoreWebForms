@@ -2,6 +2,7 @@
 
 using System.Collections;
 using System.Text.RegularExpressions;
+using Microsoft.Extensions.FileProviders;
 
 /*
  * Implements the ASP.NET template parser
@@ -70,6 +71,8 @@ public partial class BaseParser
         }
     }
 
+    internal IFileProvider WebFormsFileProvider { get; set; } = default!;
+
     internal string CurrentVirtualPathString
     {
         get { return System.Web.VirtualPath.GetVirtualPathString(CurrentVirtualPath); }
@@ -97,6 +100,9 @@ public partial class BaseParser
      */
     internal VirtualPath ResolveVirtualPath(VirtualPath virtualPath)
     {
-        return VirtualPathProvider.CombineVirtualPathsInternal(CurrentVirtualPath, virtualPath);
+        var newVirtualPath = VirtualPathProvider.CombineVirtualPathsInternal(CurrentVirtualPath, virtualPath);
+        newVirtualPath.Files = virtualPath.Files;
+
+        return newVirtualPath;
     }
 }

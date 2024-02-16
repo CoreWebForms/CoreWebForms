@@ -282,7 +282,7 @@ public abstract class TemplateParser : BaseParser, IAssemblyDependencyParser
             throw new HttpParseException(ex.Message, ex);
         }
 
-        // If it is already a parser exception remember the location corresponding to 
+        // If it is already a parser exception remember the location corresponding to
         // the original error.
         ParserError parseError;
 
@@ -579,9 +579,9 @@ public abstract class TemplateParser : BaseParser, IAssemblyDependencyParser
         return c;
     }
 
-    public static ITemplate ParseTemplate(string content, string virtualPath, bool ignoreFilter)
+    public ITemplate ParseTemplate(string content, string virtualPath, bool ignoreFilter)
     {
-        return ParseTemplate(content, VirtualPath.Create(virtualPath), ignoreFilter);
+        return ParseTemplate(content, VirtualPath.Create(virtualPath, WebFormsFileProvider), ignoreFilter);
     }
 
     private static ITemplate ParseTemplate(string content, VirtualPath virtualPath, bool ignoreFilter)
@@ -835,7 +835,7 @@ public abstract class TemplateParser : BaseParser, IAssemblyDependencyParser
 
     protected void ParseFile(string physicalPath, string virtualPath)
     {
-        ParseFile(physicalPath, VirtualPath.Create(virtualPath));
+        ParseFile(physicalPath, VirtualPath.Create(virtualPath, WebFormsFileProvider));
     }
 
     internal void ParseFile(string physicalPath, VirtualPath virtualPath)
@@ -2289,7 +2289,7 @@ private Match RunTextRegex(string text, int textPos) {
 
                 try
                 {
-                    ProcessCodeFile(VirtualPath.Create(Util.GetNonEmptyAttribute(name, value)));
+                    ProcessCodeFile(VirtualPath.Create(Util.GetNonEmptyAttribute(name, value), WebFormsFileProvider));
                 }
                 catch (Exception ex)
                 {
@@ -2345,7 +2345,7 @@ private Match RunTextRegex(string text, int textPos) {
         {
             try
             {
-                assembly = ImportSourceFile(VirtualPath.Create(src));
+                assembly = ImportSourceFile(VirtualPath.Create(src, WebFormsFileProvider));
             }
             catch (Exception ex)
             {
@@ -2846,7 +2846,7 @@ private Match RunTextRegex(string text, int textPos) {
 
                 try
                 {
-                    newVirtualPath = ResolveVirtualPath(VirtualPath.Create(filename));
+                    newVirtualPath = ResolveVirtualPath(VirtualPath.Create(filename, WebFormsFileProvider));
                 }
                 catch
                 {
@@ -2873,7 +2873,7 @@ private Match RunTextRegex(string text, int textPos) {
         }
         else if (StringUtil.EqualsIgnoreCase(pathType, "virtual"))
         {
-            newVirtualPath = ResolveVirtualPath(VirtualPath.Create(filename));
+            newVirtualPath = ResolveVirtualPath(VirtualPath.Create(filename, WebFormsFileProvider));
 #if PORT_HOSTING
             HttpRuntime.CheckVirtualFilePermission(newVirtualPath.VirtualPathString);
 #endif
@@ -3166,7 +3166,7 @@ private Match RunTextRegex(string text, int textPos) {
             }
 
             // If this is a server ID, remember it
-            // 
+            //
 
             if (StringUtil.EqualsIgnoreCase(realAttributeName, "id"))
             {
@@ -3388,7 +3388,7 @@ private Match RunTextRegex(string text, int textPos) {
                 _pageParserFilter.OnDependencyAdded();
             }
 
-            AddSourceDependency2(VirtualPath.Create(virtualPath));
+            AddSourceDependency2(VirtualPath.Create(virtualPath, WebFormsFileProvider));
         }
     }
 
@@ -3515,7 +3515,7 @@ private Match RunTextRegex(string text, int textPos) {
     internal IImplicitResourceProvider GetImplicitResourceProvider()
     {
 
-        // 
+        //
         if (FInDesigner)
         {
             return null;

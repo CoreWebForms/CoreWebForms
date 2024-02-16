@@ -240,12 +240,12 @@ internal abstract class DependencyParser : BaseParser
             {
 
                 // If it's relative, just treat it as virtual
-                newVirtualPath = ResolveVirtualPath(VirtualPath.Create(filename));
+                newVirtualPath = ResolveVirtualPath(VirtualPath.Create(filename, WebFormsFileProvider));
             }
         }
         else if (StringUtil.EqualsIgnoreCase(pathType, "virtual"))
         {
-            newVirtualPath = ResolveVirtualPath(VirtualPath.Create(filename));
+            newVirtualPath = ResolveVirtualPath(VirtualPath.Create(filename, WebFormsFileProvider));
         }
         else
         {
@@ -348,7 +348,7 @@ internal abstract class DependencyParser : BaseParser
         if (name == "src")
         {
             string src = Util.GetNonEmptyAttribute(name, value);
-            AddDependency(VirtualPath.Create(src));
+            AddDependency(VirtualPath.Create(src, WebFormsFileProvider));
         }
     }
 
@@ -403,7 +403,7 @@ internal abstract class TemplateControlDependencyParser : DependencyParser
                 if (value.Length > 0)
                 {
                     // Add a dependency on the master, whether it has a device filter or not
-                    AddDependency(VirtualPath.Create(value));
+                    AddDependency(VirtualPath.Create(value, WebFormsFileProvider));
                 }
                 break;
 
@@ -428,7 +428,7 @@ internal class PageDependencyParser : TemplateControlDependencyParser
         {
             if (PagesConfig.MasterPageFileInternal != null && PagesConfig.MasterPageFileInternal.Length != 0)
             {
-                AddDependency(VirtualPath.Create(PagesConfig.MasterPageFileInternal));
+                AddDependency(VirtualPath.Create(PagesConfig.MasterPageFileInternal, WebFormsFileProvider));
             }
         }
     }

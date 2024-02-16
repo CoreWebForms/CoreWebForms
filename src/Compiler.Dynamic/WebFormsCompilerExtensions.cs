@@ -2,12 +2,14 @@
 
 using System.ComponentModel.Design;
 using System.Reflection;
+using System.Web;
 using System.Web.UI;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SystemWebAdapters.HttpHandlers;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
+using WebForms;
 using WebForms.Compiler.Dynamic;
 
 namespace Microsoft.Extensions.DependencyInjection;
@@ -46,8 +48,9 @@ public static class WebFormsCompilerExtensions
     private static void AddWebFormsCompilationCore(this IServiceCollection services, Action<PageCompilationOptions> configure)
     {
         services.AddOptions<PageCompilationOptions>()
-            .Configure(options =>
+            .Configure<IOptions<WebFormsOptions>>((options, webFormsOptions) =>
             {
+                options.WebFormsFileProvider = webFormsOptions.Value.WebFormsFileProvider;
                 options.AddParser<PageParser>(".aspx");
                 options.AddParser<MasterPageParser>(".Master");
 

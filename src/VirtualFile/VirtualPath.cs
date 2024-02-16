@@ -11,7 +11,12 @@ namespace System.Web;
 
 internal sealed class VirtualPath
 {
-    private static IFileProvider Files => HttpRuntimeHelper.Services.GetRequiredService<IHostEnvironment>().ContentRootFileProvider;
+    private IFileProvider _fileProvider;
+    internal IFileProvider Files
+    {
+        get => _fileProvider ??= HttpRuntimeHelper.Services.GetRequiredService<IHostEnvironment>().ContentRootFileProvider;
+        set => _fileProvider = value;
+    }
 
     public VirtualPath Parent
     {
@@ -29,9 +34,11 @@ internal sealed class VirtualPath
             return result + "/";
         }
     }
-    public VirtualPath(string path)
+
+    public VirtualPath(string path, IFileProvider fileProvider = null)
     {
         Path = Resolve(path);
+        _fileProvider = fileProvider;
     }
 
     public static string Resolve(string url)
@@ -145,6 +152,7 @@ internal sealed class VirtualPath
     internal Stream OpenFile() => Files.GetFileInfo(Path).CreateReadStream();
 
     internal static VirtualPath Create(string filename) => filename;
+    internal static VirtualPath Create(string filename, IFileProvider fileProvider) => new(filename, fileProvider);
 
     internal bool FileExists() => Files.GetFileInfo(Path).Exists;
 
