@@ -12,7 +12,9 @@ Supported so far:
 - `System.Web.Routing.*`
 - Master pages
 - Compilation of `aspx` pages (both VB and C#)
-- Binary compatibility (via the `WebForms.SystemWebShim` package) - limited support; needs testing
+- Binary compatibility with `System.Web.dll` and `System.Web.Extensions.dll` (if the API exists)
+- `ScriptManager` and ajax support
+- `System.Web.Optimization`
 
 What is *NOT* supported:
 
@@ -22,16 +24,6 @@ What is *NOT* supported:
 - Any `System.Web` concept not called out as in scope
 
 This will make use of `Microsoft.AspNetCore.SystemWebAdapters` to provide the `System.Web.HttpContext` that is at the core of the WebForms pipeline.
-
-## Packages
-
-- `WebForms` - Contains the majority of the page/control/etc methods required for WebForms
-- `WebForms.Compiler` - Build time compiler that will generate a `.dll` for each page in the project. This includes a Roslyn code generator that can generate a strongly-type file to include the compiled assemblies that will remove the need for runtime reflection to load them.
-- `WebForms.Compiler.Dynamic` - Run time compiler that will allow for updating `aspx` at run time and generating a new in-memory assembly
-- `WebForms.HttpHandler` - Contains `IHttpHandler` and related helpers to enable hooking them up to ASP.NET Core
-- `WebForms.Routing` - Contains APIs from the `System.Web.Routing` namespace
-- `WebForms.Extensions` - Contains APIs from the `System.Web.Extensions` namespace
-- `WebForms.SystemWebShim` - A package with a `System.Web.dll` assembly that will type forward to the new locations. This is build for .NET 6+ and would help with controls/assemblies/etc that are compiled and cannot be recompiled for some reason. If they use members/types not supported, they will throw at runtime, but can be a helpful step in migrating old projects (see the `TypeDumper` tool to regenerate the available types for the shim)
 
 ## Get Started
 
@@ -49,41 +41,56 @@ This will make use of `Microsoft.AspNetCore.SystemWebAdapters` to provide the `S
     </configuration>
     ```
 
-1. Add `WebForms` and `WebForms.Compiler` to your project
+1. Create a .NET 8 project similar to the following with the WebForms SDK:
+
+    ```xml
+    <Project Sdk="CoreWebForms.Sdk/0.2.0">
+
+        <PropertyGroup>
+            <TargetFrameworks>net8.0</TargetFrameworks>
+            <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+            <!-- Optional, but easier to debug at runtime than compile time -->
+            <EnableRuntimeAspxCompilation>true</EnableRuntimeAspxCompilation>
+        </PropertyGroup>
+
+    </Project>
+    ```
+
 1. Add WebForms to your services (this automatically will add the System.Web adapters - this can be configured independently if needed)
 
     ```cs
-    builder.Services.AddWebForms()
-        .AddCompiledPages();
-    
+        builder.Services.AddSystemWebAdapters()
+            .AddPreApplicationStartMethod(false) // Used if you want to run any pre application start methods
+            .AddJsonSessionSerializer()
+            .AddWrappedAspNetCoreSession()
+            .AddRouting()
+            .AddWebForms()
+            .AddScriptManager() // Remove if you don't use ScriptManager/AJAX
+            .AddOptimization() // Remove if you don't use System.Web.Optimization
+            .AddDynamicPages() // Remove if you don't have dynamic pages
+            .AddCompiledPages();
+
     builder.Services.AddSession();
     builder.Services.AddDistributedMemoryCache();
     ```
 
-1. Add the System.Web middleware and map the webforms pages:
+1. Add the System.Web middleware and map endpoints:
 
     ```cs
     ...
     app.UseSession();
     app.UseSystemWebAdapters();
     ...
-    app.MapWebForms();
+    app.MapWebForms(); // Required for pages
+    app.MapScriptManager(); // Required if you want to use ScriptManager
+    app.MapBundleTable(); // Required if you want to use BundleTable.Bundles
     ```
 
 1. Add any `.aspx` or `.aspx.cs`/`.aspx.vb` files to your project. They should be served up as expected when you run.
 
-### Alternate
+## Samples
 
-There is a dynamic compilation method that can be enabled by doing the following (continued from the above sample):
-
-1. Add `WebForms.Compiler.Dynamic` and `WebForms.Compiler`
-1. Add `<EnableRuntimeAspxCompilation>true</EnableRuntimeAspxCompilation>` to a property group in the project file
-1. Add dynamic compilation to the services:
-
-    ```csharp
-    builder.Services.AddWebForms()
-        .AddDynamicPages();
-    ``````
+For samples, please go to [the samples repo](https://github.com/CoreWebForms/Samples) for up-to-date examples.
 
 ## Design docs
 
