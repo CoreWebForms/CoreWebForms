@@ -1,16 +1,13 @@
 // MIT License.
 
-using System.Globalization;
-using System.Reflection;
-using System.Runtime.Loader;
 using System.Web.UI;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using WebForms.Extensions;
 
 [assembly: TagPrefix("System.Web.UI", "asp")]
 [assembly: TagPrefix("System.Web.UI.WebControls", "asp")]
@@ -40,62 +37,5 @@ public static class ScriptManagerExtensions
                 return TypedResults.NotFound();
             }
         });
-    }
-
-    private sealed class ScriptResourceHandler : IScriptResourceHandler
-    {
-        private readonly IDataProtector _protector;
-        private readonly AssemblyLoadContext _context = AssemblyLoadContext.Default;
-
-        public ScriptResourceHandler(IDataProtectionProvider protector)
-        {
-            _protector = protector.CreateProtector("ScriptResource");
-        }
-
-        public string Prefix { get; } = "__webforms/scripts";
-
-        public Stream Resolve(string file)
-        {
-            try
-            {
-                var decoded = AspNetCore.WebUtilities.WebEncoders.Base64UrlDecode(file);
-                var bytes = _protector.Unprotect(decoded);
-
-                var stream = new MemoryStream(bytes);
-                var reader = new BinaryReader(stream);
-
-                var name = new AssemblyName(reader.ReadString());
-                var resourceName = reader.ReadString();
-                var cultureName = reader.ReadString();
-                var zip = reader.ReadBoolean();
-
-                if (_context.LoadFromAssemblyName(name) is { } assembly && assembly.GetManifestResourceStream(resourceName) is { } resource)
-                {
-                    return resource;
-                }
-
-                return null;
-            }
-            catch
-            {
-                return null;
-            }
-        }
-
-        public string GetScriptResourceUrl(Assembly assembly, string resourceName, CultureInfo culture, bool zip)
-        {
-            using var ms = new MemoryStream();
-            using var writer = new BinaryWriter(ms);
-
-            writer.Write(assembly.FullName);
-            writer.Write(resourceName);
-            writer.Write(culture.Name);
-            writer.Write(zip);
-
-            var @protected = _protector.Protect(ms.ToArray());
-            var encoded = AspNetCore.WebUtilities.WebEncoders.Base64UrlEncode(@protected);
-
-            return Prefix + "?s=" + encoded;
-        }
     }
 }
