@@ -5,6 +5,7 @@ using System.Reflection;
 #nullable disable
 
 namespace System.Web.UI;
+
 internal interface IScriptResourceDefinition
 {
     string Path { get; }

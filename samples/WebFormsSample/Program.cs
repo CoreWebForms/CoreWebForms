@@ -1,6 +1,7 @@
 // MIT License.
 
 using System.Runtime.Loader;
+using System.Web.Optimization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +19,11 @@ builder.Services.AddSystemWebAdapters()
     .AddRouting()
     .AddWebForms()
     .AddScriptManager()
+    .AddOptimization(bundles =>
+    {
+        bundles.Add(new ScriptBundle("~/scriptbundle")
+            .Include("~/script.js"));
+    })
 #if WEBFORMS_DYNAMIC
     .AddDynamicPages();
 #else
@@ -49,5 +55,6 @@ app.MapGet("/acls", () => AssemblyLoadContext.All.Select(acl => new
 
 app.MapWebForms();
 app.MapScriptManager();
+app.MapBundleTable();
 
 app.Run();
