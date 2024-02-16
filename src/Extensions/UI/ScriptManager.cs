@@ -15,6 +15,7 @@ namespace System.Web.UI
     using System.Text;
     using System.Web;
     using System.Web.Globalization;
+    using System.Web.Optimization;
     using System.Web.Resources;
     using System.Web.Script.Serialization;
     using System.Web.Util;
@@ -1010,7 +1011,6 @@ namespace System.Web.UI
 
         private ScriptReferenceBase AddFrameworkScript(ScriptReference frameworkScript, List<ScriptReferenceBase> scripts, bool webFormsWithoutAjax)
         {
-#if PORT_FRAMEWORKSCRIPT
             int scriptIndex = 0;
             ScriptReferenceBase frameworkScriptBase = frameworkScript;
             // PERF: If scripts.Count <= scriptIndex, then there are no user-specified scripts that might match
@@ -1101,15 +1101,6 @@ namespace System.Web.UI
             frameworkScriptBase.AlwaysLoadBeforeUI = true;
             scripts.Insert(scriptIndex, frameworkScriptBase);
             return frameworkScriptBase;
-#else
-            frameworkScript.AlwaysLoadBeforeUI = true;
-            frameworkScript.ResourceUICultures = Array.Empty<string>();
-
-            scripts.Insert(0, frameworkScript);
-
-            Logger.LogError("AddFrameworkScript is not enabled: {Script}", frameworkScript.Name);
-            return frameworkScript;
-#endif
         }
 
         // Called by ScriptManagerDesigner.GetScriptReferences()
@@ -1813,9 +1804,9 @@ namespace System.Web.UI
         // If bundling is supported, look for references to bundles, eliminate duplicates, and get the true bundle url for the reference
         internal List<ScriptReferenceBase> ProcessBundleReferences(List<ScriptReferenceBase> scripts)
         {
-#if PORT_BUNDLES
             // If we have a bundle resolver, look through all the scripts and see which are bundles
-            object resolver = BundleReflectionHelper.BundleResolver;
+            var resolver = BundleResolver.Current;
+
             if (resolver != null)
             {
                 HashSet<string> virtualPathsInBundles = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -1824,11 +1815,11 @@ namespace System.Web.UI
                 foreach (ScriptReferenceBase scriptRef in scripts)
                 {
                     string effectivePath = GetEffectivePath(scriptRef);
-                    if (BundleReflectionHelper.IsBundleVirtualPath(effectivePath))
+                    if (resolver.IsBundleVirtualPath(effectivePath))
                     {
                         scriptRef.IsBundleReference = true;
 
-                        IEnumerable<string> bundleContents = BundleReflectionHelper.GetBundleContents(effectivePath);
+                        IEnumerable<string> bundleContents = resolver.GetBundleContents(effectivePath);
                         if (bundleContents != null)
                         {
                             foreach (string path in bundleContents)
@@ -1871,14 +1862,6 @@ namespace System.Web.UI
             }
 
             return scripts;
-#else
-            if (scripts.Count > 0)
-            {
-                Logger.LogError("ProcessBundleReferences not enabled: {Bundles}", string.Join(", ", scripts.Select(s => s.Path)));
-            }
-
-            return scripts;
-#endif
         }
 
         private void RegisterScripts()

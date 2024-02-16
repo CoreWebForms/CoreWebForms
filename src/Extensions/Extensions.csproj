@@ -17,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Optimization\Optimization.csproj" />
     <ProjectReference Include="..\WebForms\WebForms.csproj" />
   </ItemGroup>
 
@@ -43,7 +44,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <EmbeddedResource Include="@(MicrosoftAjaxFiles)" />
+      <EmbeddedResource Include="@(MicrosoftAjaxFiles)" LogicalName="%(FileName)%(Extension)" />
       <FileWrites Include="@(MicrosoftAjaxFiles->'%(FullPath)')" />
     </ItemGroup>
   </Target>

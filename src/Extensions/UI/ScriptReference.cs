@@ -9,9 +9,12 @@ namespace System.Web.UI
     using System.Globalization;
     using System.Reflection;
     using System.Web;
+    using System.Web.Optimization;
     using System.Web.Resources;
     using System.Web.Util;
-    using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.DependencyInjection;
+    using WebForms;
+
     using Debug = System.Diagnostics.Debug;
 
     [
@@ -48,7 +51,6 @@ namespace System.Web.UI
             Debug.Assert(!String.IsNullOrEmpty(name), "The script's name must be specified.");
             Debug.Assert(clientUrlResolver != null && clientUrlResolver is ScriptManager, "The clientUrlResolver must be the ScriptManager.");
             Name = name;
-            Path = "~/__webforms/scripts/" + name;
             ClientUrlResolver = clientUrlResolver;
             IsStaticReference = true;
             ContainingControl = containingControl;
@@ -62,6 +64,11 @@ namespace System.Web.UI
             set;
         }
 
+        // We need to map usage of System.Web[.Extensions] to the current assembly. We use typeof here as we're not committed to these
+        // names yet and don't want to have to find weird bugs later
+        private static readonly string SystemWebAssembly = typeof(Page).Assembly.GetName().Name;
+        private static readonly string SystemWebExtensionsAssembly = typeof(ScriptManager).Assembly.GetName().Name;
+
         [
         Category("Behavior"),
         DefaultValue(""),
@@ -69,12 +76,18 @@ namespace System.Web.UI
         ]
         public string Assembly
         {
-            get
-            {
-                return (_assembly == null) ? String.Empty : _assembly;
-            }
+            get => _assembly ?? string.Empty;
             set
             {
+                if (string.Equals("System.Web", value, StringComparison.OrdinalIgnoreCase))
+                {
+                    value = SystemWebAssembly;
+                }
+                else if (string.Equals("System.Web.Extensions", value, StringComparison.OrdinalIgnoreCase))
+                {
+                    value = SystemWebExtensionsAssembly;
+                }
+
                 _assembly = value;
                 _scriptInfo = null;
             }
@@ -290,7 +303,7 @@ namespace System.Web.UI
             {
                 Assembly assembly = GetAssembly(scriptManager);
                 string resourceName = EffectiveResourceName;
-#if PORT_SCRIPTREFERENCE
+#if PORT_DEBUGRESOURCES
                 isDebuggingEnabled = DetermineResourceNameAndAssembly(scriptManager, isDebuggingEnabled, ref resourceName, ref assembly);
 #else
                 isDebuggingEnabled = false;
@@ -434,7 +447,7 @@ namespace System.Web.UI
                     if (!String.IsNullOrEmpty(resourceName))
                     {
                         assembly = GetAssembly(scriptManager);
-#if PORT_SCRIPTREFERENCE
+#if PORT_DEBUGRESOURCES
                         hasDebugResource = DetermineResourceNameAndAssembly(scriptManager, IsDebuggingEnabled(scriptManager), ref resourceName, ref assembly);
 #else
                         hasDebugResource = false;
@@ -483,11 +496,14 @@ namespace System.Web.UI
 
         private string GetUrlFromName(ScriptManager scriptManager, IControl scriptManagerControl, bool zip, bool useCdnPath)
         {
-#if PORT_SCRIPTREFERENCE
             string resourceName = EffectiveResourceName;
             Assembly assembly = GetAssembly(scriptManager);
-            bool hasDebugResource = DetermineResourceNameAndAssembly(scriptManager, IsDebuggingEnabled(scriptManager),
-                ref resourceName, ref assembly);
+            bool hasDebugResource =
+#if PORT_DEBUGRESOURCES
+                DetermineResourceNameAndAssembly(scriptManager, IsDebuggingEnabled(scriptManager), ref resourceName, ref assembly);
+#else
+            false;
+#endif
 
             if (useCdnPath)
             {
@@ -498,13 +514,12 @@ namespace System.Web.UI
                 }
             }
 
-            CultureInfo culture = (scriptManager.EnableScriptLocalization ?
-                DetermineCulture(scriptManager) : CultureInfo.InvariantCulture);
+            CultureInfo culture = (scriptManager.EnableScriptLocalization ? DetermineCulture(scriptManager) : CultureInfo.InvariantCulture);
 #pragma warning disable 618
             // ScriptPath is obsolete but still functional
             if (IgnoreScriptPath || String.IsNullOrEmpty(scriptManager.ScriptPath))
             {
-                return ScriptResourceHandler.GetScriptResourceUrl(assembly, resourceName, culture, zip);
+                return HttpRuntimeHelper.Services.GetRequiredService<IScriptResourceHandler>().GetScriptResourceUrl(assembly, resourceName, culture, zip);
             }
             else
             {
@@ -512,7 +527,7 @@ namespace System.Web.UI
 
                 if (IsBundleReference)
                 {
-                    return scriptManager.BundleReflectionHelper.GetBundleUrl(path);
+                    return HttpRuntimeHelper.Services.GetRequiredService<IBundleResolver>().GetBundleUrl(path);
                 }
 
                 // Always want to resolve ScriptPath urls against the ScriptManager itself,
@@ -521,22 +536,16 @@ namespace System.Web.UI
                 return scriptManagerControl.ResolveClientUrl(path);
             }
 #pragma warning restore 618
-#else
-            scriptManager.Logger.LogWarning("Path requested for {Name}", Name);
-            return "/" + Name;
-#endif
         }
 
         private string GetUrlFromPath(ScriptManager scriptManager, string releasePath, string predeterminedDebugPath)
         {
             string path = GetPath(scriptManager, releasePath, predeterminedDebugPath, IsDebuggingEnabled(scriptManager));
 
-#if PORT_SCRIPTMANAGER
             if (IsBundleReference)
             {
-                return scriptManager.BundleReflectionHelper.GetBundleUrl(path);
+                return HttpRuntimeHelper.Services.GetRequiredService<IBundleResolver>().GetBundleUrl(path);
             }
-#endif
 
             return ClientUrlResolver.ResolveClientUrl(path);
         }
