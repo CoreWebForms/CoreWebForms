@@ -54,7 +54,8 @@ public static class OptimizationExtensions
                     return Task.CompletedTask;
                 }, RoutePatternFactory.Parse(bundle.Path), 0);
 
-                builder.Metadata.Add(new BufferResponseStreamAttribute());
+                // TODO: cannot buffer and have HttpApplication at the same time
+                //builder.Metadata.Add(new BufferResponseStreamAttribute());
 
                 yield return builder.Build();
             }
