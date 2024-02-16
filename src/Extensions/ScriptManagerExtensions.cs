@@ -1,20 +1,15 @@
 // MIT License.
 
 using System.Globalization;
-using System.Net;
 using System.Reflection;
 using System.Runtime.Loader;
-using System.Text.Encodings.Web;
 using System.Web.UI;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
-#if NET8_0_OR_GREATER
 using Microsoft.AspNetCore.Http.HttpResults;
-#endif
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
-using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
 [assembly: TagPrefix("System.Web.UI", "asp")]
@@ -34,12 +29,6 @@ public static class ScriptManagerExtensions
 
     public static void MapScriptManager(this IEndpointRouteBuilder endpoints)
     {
-        //var provider = new EmbeddedFileProvider(typeof(ScriptManager).Assembly, "System.Web.Script.js.dist");
-        //var path = "/__webforms/scripts";
-
-        //endpoints.MapStaticFiles(provider, path, name => $"AJAX [{name}]");
-
-#if NET8_0_OR_GREATER
         endpoints.Map($"{endpoints.ServiceProvider.GetRequiredService<ScriptResourceHandler>().Prefix}", Results<FileStreamHttpResult, NotFound> (HttpRequest request, [FromServices] ScriptResourceHandler handler) =>
         {
             if (request.Query["s"] is [{ } file] && handler.Resolve(file) is { } resource)
@@ -51,7 +40,6 @@ public static class ScriptManagerExtensions
                 return TypedResults.NotFound();
             }
         });
-#endif
     }
 
     private sealed class ScriptResourceHandler : IScriptResourceHandler
