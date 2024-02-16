@@ -44,7 +44,7 @@ This will make use of `Microsoft.AspNetCore.SystemWebAdapters` to provide the `S
 1. Create a .NET 8 project similar to the following with the WebForms SDK:
 
     ```xml
-    <Project Sdk="WebForms.Sdk/0.2.0">
+    <Project Sdk="CoreWebForms.Sdk/0.2.0">
 
         <PropertyGroup>
             <TargetFrameworks>net8.0</TargetFrameworks>
