@@ -14,4 +14,5 @@
     <PackageReference Include="WebForms.Compiler.Dynamic" Version="$(WebFormsVersion)" />
   </ItemGroup>
 
+  <Import Project="NuGetContent.targets"/>
 </Project>
