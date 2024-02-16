@@ -1,5 +1,7 @@
 <Project>
 
+  <!-- NOTE: This ships with the System.Web adapters, but doesn't seem to be included at compile time, so adding it here for now -->
+
   <!--
       Add NuGet content to the build output if specified:
       <PackageReference Include="..." CopyContent="true" ... />
