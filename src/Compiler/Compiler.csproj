@@ -23,28 +23,15 @@
       ReferenceOutputAssembly="false"
       Targets="Publish;PublishItemsOutputGroup"
       Private="false"
-      SetTargetFramework="TargetFramework=net6.0"
-      OutputItemType="AspNetCompilerOutputs6" />
-    <ProjectReference
-      Include="../../tools/aspnet_compiler/aspnet_compiler.csproj"
-      ReferenceOutputAssembly="false"
-      Targets="Publish;PublishItemsOutputGroup"
-      Private="false"
       SetTargetFramework="TargetFramework=net8.0"
       OutputItemType="AspNetCompilerOutputs8" />
   </ItemGroup>
 
   <Target Name="GetWebFormsCompiler" BeforeTargets="AssignTargetPaths" AfterTargets="ResolveProjectReferences">
     <PropertyGroup>
-      <_AspNetCompilerPrefix6>tools/net6.0/aspnet_compiler/</_AspNetCompilerPrefix6>
       <_AspNetCompilerPrefix8>tools/net8.0/aspnet_compiler/</_AspNetCompilerPrefix8>
     </PropertyGroup>
     <ItemGroup>
-      <None
-        Include="%(AspNetCompilerOutputs6.Identity)"
-        Link="$(_AspNetCompilerPrefix6)%(AspNetCompilerOutputs6.RelativePath)"
-        PackagePath="$(_AspNetCompilerPrefix6)%(AspNetCompilerOutputs6.RelativePath)"
-        Pack="true" />
       <None
         Include="%(AspNetCompilerOutputs8.Identity)"
         Link="$(_AspNetCompilerPrefix8)%(AspNetCompilerOutputs8.RelativePath)"

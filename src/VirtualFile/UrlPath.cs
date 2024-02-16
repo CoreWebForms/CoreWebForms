@@ -18,15 +18,9 @@ internal sealed class UrlPath2
     private const string Physical_path_not_allowed_format = "'{0}' is a physical path, but a virtual path was expected.";
     private const string Path_must_be_rooted_format = "The virtual path '{0}' is not rooted.";
 
-#if NET8_0_OR_GREATER
     internal static readonly CompositeFormat Path_must_be_rooted = CompositeFormat.Parse(Invalid_vpath_format);
     internal static readonly CompositeFormat Invalid_vpath = CompositeFormat.Parse(Path_must_be_rooted_format);
     internal static readonly CompositeFormat Physical_path_not_allowed = CompositeFormat.Parse(Physical_path_not_allowed_format);
-#else
-    internal const string Invalid_vpath = Invalid_vpath_format;
-    internal const string Physical_path_not_allowed = Physical_path_not_allowed_format;
-    internal const string Path_must_be_rooted = Path_must_be_rooted_format;
-#endif
 
     private static bool HasTrailingSlash(string virtualPath) => virtualPath[^1] == '/';
 

@@ -31,9 +31,7 @@ public sealed class ViewStateException : Exception, ISerializable
     public string Path { get { return _path; } }
     public bool IsConnected { get { return _isConnected; } }
 
-#if NET8_0_OR_GREATER
     [Obsolete]
-#endif
     private ViewStateException(SerializationInfo info, StreamingContext context)
         : base(info, context)
     {
@@ -79,9 +77,7 @@ public sealed class ViewStateException : Exception, ISerializable
         _message = SR.GetString(SR.ViewState_InvalidViewStatePlus, debugInfo);
     }
 
-#if NET8_0_OR_GREATER
     [Obsolete]
-#endif
     public override void GetObjectData(SerializationInfo info, StreamingContext context)
     {
         base.GetObjectData(info, context);

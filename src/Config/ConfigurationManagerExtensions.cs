@@ -13,7 +13,6 @@ public static class ConfigurationManagerExtensions
 {
     private static readonly object _appSettingsUpdateLock = new();
 
-#if NET8_0_OR_GREATER
     /// <summary>
     /// Adds a <c>web.config</c> to the host and optionally loads values into <see cref="System.Configuration.ConfigurationManager.AppSettings"/>.
     /// </summary>
@@ -32,7 +31,6 @@ public static class ConfigurationManagerExtensions
 
         return host;
     }
-#endif
 
     /// <summary>
     /// Adds a <c>web.config</c> to the host and optionally loads values into <see cref="System.Configuration.ConfigurationManager.AppSettings"/>.
