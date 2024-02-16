@@ -6,16 +6,14 @@ namespace System.Web.Globalization
     using System.Collections;
     using System.Collections.Specialized;
     using System.Globalization;
-    using System.Text;
-    using System.Web.Util;
     using System.Web.Script.Serialization;
 
-    internal class ClientCultureInfo
+    internal sealed class ClientCultureInfo
     {
 
         private static Hashtable cultureScriptBlockCache = Hashtable.Synchronized(new Hashtable());
         private static readonly CultureInfo enUS = CultureInfo.GetCultureInfo(0x409);
-        private static int eraNumber = 0;
+        private const int eraNumber = 0;
         private static int eraName = 1;
         private static int eraStart = 2;
         private static int eraYearOffset = 3;
@@ -110,7 +108,7 @@ namespace System.Web.Globalization
 
         }
 
-        internal Tuple<String, String> GetClientCultureScriptBlock()
+        internal static Tuple<String, String> GetClientCultureScriptBlock()
         {
             return GetClientCultureScriptBlock(CultureInfo.CurrentCulture);
         }

@@ -10,7 +10,7 @@ namespace System.Web.UI
     using System.Web.Resources;
     using System.Web.Util;
 
-    internal class ScriptResourceInfo
+    internal sealed class ScriptResourceInfo
     {
         private string _contentType;
         private bool _performSubstitution;

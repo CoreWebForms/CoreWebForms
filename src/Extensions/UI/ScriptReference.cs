@@ -191,11 +191,11 @@ namespace System.Web.UI
             }
         }
 
-        private string AddCultureName(ScriptManager scriptManager, string resourceName)
+        private static string AddCultureName(ScriptManager scriptManager, string resourceName)
         {
             Debug.Assert(!String.IsNullOrEmpty(resourceName));
             CultureInfo culture = (scriptManager.EnableScriptLocalization ?
-                DetermineCulture(scriptManager) : CultureInfo.InvariantCulture);
+                ScriptReference.DetermineCulture(scriptManager) : CultureInfo.InvariantCulture);
             if (!culture.Equals(CultureInfo.InvariantCulture))
             {
                 return AddCultureName(culture, resourceName);
@@ -210,13 +210,12 @@ namespace System.Web.UI
         {
             if (resourceName.EndsWith(".js", StringComparison.OrdinalIgnoreCase))
             {
-                resourceName = resourceName.Substring(0, resourceName.Length - 2) +
-                    culture.Name + ".js";
+                resourceName = string.Concat(resourceName.AsSpan(0, resourceName.Length - 2), culture.Name, ".js");
             }
             return resourceName;
         }
 
-        internal CultureInfo DetermineCulture(ScriptManager scriptManager)
+        internal static CultureInfo DetermineCulture(ScriptManager scriptManager)
         {
 #if PORT_SCRIPTREFERENCE
             if ((ResourceUICultures == null) || (ResourceUICultures.Length == 0))
@@ -283,8 +282,7 @@ namespace System.Web.UI
             // a debug/release naming perspective).
             if (!releaseName.EndsWith(".js", StringComparison.Ordinal))
             {
-                throw new InvalidOperationException(
-                    String.Format(CultureInfo.CurrentUICulture, AtlasWeb.ScriptReference_InvalidReleaseScriptName, releaseName));
+                throw new InvalidOperationException(SR.GetString(AtlasWeb.ScriptReference_InvalidReleaseScriptName, releaseName));
             }
 
             return ReplaceExtension(releaseName);
@@ -324,7 +322,7 @@ namespace System.Web.UI
             return AddCultureName(scriptManager, path);
         }
 
-        internal Assembly ApplyFallbackResource(Assembly assembly, string releaseName)
+        internal static Assembly ApplyFallbackResource(Assembly assembly, string releaseName)
         {
 #if PORT_SCRIPTREFERENCE
             // fall back to SWE if the assembly does not contain the requested resource
@@ -419,8 +417,7 @@ namespace System.Web.UI
             {
                 // it isnt an AjaxFrameworkScript but it might be from an assembly that is meant to
                 // be an ajax script assembly, in which case we should throw an error.
-                throw new InvalidOperationException(String.Format(CultureInfo.CurrentUICulture,
-                    AtlasWeb.ScriptReference_ResourceRequiresAjaxAssembly, EffectiveResourceName, GetAssembly(scriptManager)));
+                throw new InvalidOperationException(SR.GetString(AtlasWeb.ScriptReference_ResourceRequiresAjaxAssembly, EffectiveResourceName, GetAssembly(scriptManager)));
             }
 
             if (!String.IsNullOrEmpty(Path))
@@ -514,7 +511,7 @@ namespace System.Web.UI
                 }
             }
 
-            CultureInfo culture = (scriptManager.EnableScriptLocalization ? DetermineCulture(scriptManager) : CultureInfo.InvariantCulture);
+            CultureInfo culture = (scriptManager.EnableScriptLocalization ? ScriptReference.DetermineCulture(scriptManager) : CultureInfo.InvariantCulture);
 #pragma warning disable 618
             // ScriptPath is obsolete but still functional
             if (IgnoreScriptPath || String.IsNullOrEmpty(scriptManager.ScriptPath))
@@ -609,7 +606,7 @@ namespace System.Web.UI
             }
         }
 
-        internal class ScriptEffectiveInfo
+        internal sealed class ScriptEffectiveInfo
         {
             private string _resourceName;
             private Assembly _assembly;

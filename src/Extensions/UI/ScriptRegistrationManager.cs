@@ -127,7 +127,7 @@ namespace System.Web.UI
             }
         }
 
-        private Dictionary<ScriptKey, string> FallbackScripts
+        private static Dictionary<ScriptKey, string> FallbackScripts
         {
             get
             {
@@ -284,7 +284,14 @@ namespace System.Web.UI
             ScriptManager sm = ScriptManager.GetCurrent(control.Page);
             if (sm != null)
             {
+
+/* Unmerged change from project 'Extensions (net8.0)'
+Before:
                 sm.ScriptRegistration.FallbackScripts[new ScriptKey(type, key)] = fallbackPath;
+After:
+                FallbackScripts[new ScriptKey(type, key)] = fallbackPath;
+*/
+                ScriptRegistrationManager.FallbackScripts[new ScriptKey(type, key)] = fallbackPath;
             }
         }
 

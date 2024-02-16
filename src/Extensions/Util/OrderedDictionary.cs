@@ -10,7 +10,7 @@ namespace System.Web.Util
     // values (e.g., alphabetical order), but OrderedDictionary sorts by the order in which the keys
     // were inserted into the dictionary.
 
-    internal class OrderedDictionary<TKey, TValue> : IDictionary<TKey, TValue>
+    internal sealed class OrderedDictionary<TKey, TValue> : IDictionary<TKey, TValue>
     {
         private Dictionary<TKey, TValue> _dictionary;
         private List<TKey> _keys;

@@ -64,7 +64,7 @@ public static class ScriptManagerExtensions
             _protector = protector.CreateProtector("ScriptResource");
         }
 
-        public string Prefix => "__webforms/_scripts2";
+        public string Prefix { get; } = "__webforms/scripts";
 
         public Stream Resolve(string file)
         {
@@ -81,12 +81,9 @@ public static class ScriptManagerExtensions
                 var cultureName = reader.ReadString();
                 var zip = reader.ReadBoolean();
 
-                if (_context.LoadFromAssemblyName(name) is { } assembly)
+                if (_context.LoadFromAssemblyName(name) is { } assembly && assembly.GetManifestResourceStream(resourceName) is { } resource)
                 {
-                    if (assembly.GetManifestResourceStream(resourceName) is { } resource)
-                    {
-                        return resource;
-                    }
+                    return resource;
                 }
 
                 return null;
