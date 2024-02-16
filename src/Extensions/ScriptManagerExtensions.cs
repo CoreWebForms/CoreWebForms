@@ -1,5 +1,6 @@
 // MIT License.
 
+using System.Web.Script;
 using System.Web.UI;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -11,6 +12,7 @@ using WebForms.Extensions;
 
 [assembly: TagPrefix("System.Web.UI", "asp")]
 [assembly: TagPrefix("System.Web.UI.WebControls", "asp")]
+[assembly: AjaxFrameworkAssembly]
 
 namespace Microsoft.Extensions.DependencyInjection;
 
