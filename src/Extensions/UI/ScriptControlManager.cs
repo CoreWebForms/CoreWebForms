@@ -13,7 +13,7 @@ namespace System.Web.UI
 
     using Debug = System.Diagnostics.Debug;
 
-    internal class ScriptControlManager
+    internal sealed class ScriptControlManager
     {
         private OrderedDictionary<IExtenderControl, List<Control>> _extenderControls;
         private bool _pagePreRenderRaised;

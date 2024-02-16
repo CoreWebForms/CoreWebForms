@@ -4,12 +4,9 @@ namespace System.Web.UI
 {
     using System;
     using System.ComponentModel;
-    using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
     using System.Globalization;
     using System.Web;
-    using System.Web.Compilation;
-    using System.Web.UI;
     using System.Web.Resources;
 
     [
@@ -19,8 +16,6 @@ namespace System.Web.UI
     {
         private string _path;
         private bool _inlineScript;
-        // needed at design time to remember what control owns this service reference (SM or SMP)
-        internal Control _containingControl;
 
         public ServiceReference()
         {

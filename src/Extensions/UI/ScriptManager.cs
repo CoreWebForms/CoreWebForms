@@ -30,10 +30,13 @@ namespace System.Web.UI
     ]
     public class ScriptManager : Control, IPostBackDataHandler, IPostBackEventHandler, IControl, IScriptManager, IScriptManagerInternal
     {
+#if PORT_SCRIPTMANAGER
         private readonly new IPage _page;
         private readonly IControl _control;
         private static bool _ajaxFrameworkAssemblyConfigChecked;
         private static Assembly _defaultAjaxFrameworkAssembly = null;
+        private bool? _isRestMethodCall;
+#endif
 
         private const int AsyncPostBackTimeoutDefault = 90;
 
@@ -42,7 +45,6 @@ namespace System.Web.UI
         private CompositeScriptReference _compositeScript;
         private ScriptReferenceCollection _scripts;
         private ServiceReferenceCollection _services;
-        private bool? _isRestMethodCall;
         private bool? _isSecureConnection;
         private List<ScriptManagerProxy> _proxies;
         private AjaxFrameworkMode _ajaxFrameworkMode = AjaxFrameworkMode.Enabled;
@@ -89,6 +91,7 @@ namespace System.Web.UI
         private static readonly object NavigateEvent = new object();
         private bool _newPointCreated;
 
+        [SuppressMessage("Performance", "CA1810:Initialize reference type static fields inline", Justification = "This is a layering problem that should be addressed with DI")]
         static ScriptManager()
         {
             ClientScriptManager._scriptResourceMapping = new ScriptResourceMapping();
@@ -283,11 +286,13 @@ namespace System.Web.UI
         {
             get
             {
+#if PORT_SCRIPTMANAGER
                 if (_control != null)
                 {
                     return _control;
                 }
                 else
+#endif
                 {
                     return this;
                 }
@@ -653,11 +658,13 @@ namespace System.Web.UI
         {
             get
             {
+#if PORT_SCRIPTMANAGER
                 if (_page != null)
                 {
                     return _page;
                 }
                 else
+#endif
                 {
                     Page page = Page;
                     if (page == null)
@@ -1119,7 +1126,7 @@ namespace System.Web.UI
             AjaxFrameworkMode mode = AjaxFrameworkMode;
             if (mode != AjaxFrameworkMode.Disabled)
             {
-                _appServicesInitializationScript = GetApplicationServicesInitializationScript();
+                _appServicesInitializationScript = ScriptManager.GetApplicationServicesInitializationScript();
                 // only add the script explicitly in enabled mode -- in explicit mode, we will
                 // register the initialization script only after we find the reference that was included
                 // explicitly.
@@ -1190,7 +1197,7 @@ namespace System.Web.UI
             return "UniqueScript_" + _uniqueScriptCounter.ToString(CultureInfo.InvariantCulture);
         }
 
-        private string GetApplicationServicesInitializationScript()
+        private static string GetApplicationServicesInitializationScript()
         {
             StringBuilder sb = null;
 
@@ -1379,9 +1386,7 @@ namespace System.Web.UI
                         AssemblyCache.GetVersion(AssemblyCache.SystemWebExtensions))
                     {
                         // Must have a higher version number
-                        throw new InvalidOperationException(
-                            String.Format(CultureInfo.CurrentUICulture, AtlasWeb.ScriptManager_MustHaveGreaterVersion,
-                                ajaxFrameworkAssembly, AssemblyCache.GetVersion(AssemblyCache.SystemWebExtensions)));
+                        throw new InvalidOperationException(SR.GetString(AtlasWeb.ScriptManager_MustHaveGreaterVersion, ajaxFrameworkAssembly, AssemblyCache.GetVersion(AssemblyCache.SystemWebExtensions)));
                     }
                 }
 
@@ -2494,7 +2499,7 @@ namespace System.Web.UI
 
         // The following class will hijack the page's state persister with its current
         // settings so the history server state will be just as safe as the viewstate.
-        private class StatePersister : PageStatePersister
+        private sealed class StatePersister : PageStatePersister
         {
             public StatePersister(Page page) : base(page) { }
 

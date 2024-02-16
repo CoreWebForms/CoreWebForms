@@ -191,7 +191,7 @@ namespace System.Web.UI
             // an earlier RFC, which stated that FTP protocol allows '?' as path characters.
             string pathWithoutQuery;
             string query;
-            if (releasePath.IndexOf('?') >= 0)
+            if (releasePath.Contains('?'))
             {
                 int indexOfQuery = releasePath.IndexOf('?');
                 pathWithoutQuery = releasePath.Substring(0, indexOfQuery);
@@ -205,8 +205,7 @@ namespace System.Web.UI
 
             if (!pathWithoutQuery.EndsWith(".js", StringComparison.Ordinal))
             {
-                throw new InvalidOperationException(
-                    String.Format(CultureInfo.CurrentUICulture, AtlasWeb.ScriptReference_InvalidReleaseScriptPath, pathWithoutQuery));
+                throw new InvalidOperationException(SR.GetString(AtlasWeb.ScriptReference_InvalidReleaseScriptPath, pathWithoutQuery));
             }
 
             return ReplaceExtension(pathWithoutQuery) + query;
@@ -220,7 +219,7 @@ namespace System.Web.UI
         protected static string ReplaceExtension(string pathOrName)
         {
             Debug.Assert(pathOrName.EndsWith(".js", StringComparison.Ordinal));
-            return (pathOrName.Substring(0, pathOrName.Length - 2) + "debug.js");
+            return (string.Concat(pathOrName.AsSpan(0, pathOrName.Length - 2), "debug.js"));
         }
     }
 }

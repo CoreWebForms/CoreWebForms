@@ -123,7 +123,7 @@ namespace System.Web.UI
             int startIndex = 0;
             foreach (Match match in matches)
             {
-                output.Append(content.Substring(startIndex, match.Index - startIndex));
+                output.Append(content.AsSpan(startIndex, match.Index - startIndex));
 
                 Group group = match.Groups["resourceName"];
                 string embeddedResourceName = group.Value;
@@ -156,7 +156,7 @@ namespace System.Web.UI
 #endif
             }
 
-            output.Append(content.Substring(startIndex, content.Length - startIndex));
+            output.Append(content.AsSpan(startIndex, content.Length - startIndex));
         }
 
         internal static ResourceManager GetResourceManager(string resourceName, Assembly assembly)
@@ -188,7 +188,7 @@ namespace System.Web.UI
             {
                 // This is a debug script, we'll need to merge the debug resource
                 // with the release one.
-                string releaseResourceName = resourceName.Substring(0, resourceName.Length - 9) + ".js";
+                string releaseResourceName = string.Concat(resourceName.AsSpan(0, resourceName.Length - 9), ".js");
                 releaseResourceInfo = ScriptResourceInfo.GetInstance(assembly, releaseResourceName);
             }
             if ((resourceInfo == ScriptResourceInfo.Empty) &&
@@ -262,7 +262,7 @@ namespace System.Web.UI
             if (lastDot != -1)
             {
                 builder.Append("Type.registerNamespace('");
-                builder.Append(typeName.Substring(0, lastDot));
+                builder.Append(typeName.AsSpan(0, lastDot));
                 builder.Append("');");
                 if (isDebug) builder.AppendLine();
             }

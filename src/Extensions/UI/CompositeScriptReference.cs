@@ -86,7 +86,7 @@ namespace System.Web.UI
                     }
                     if (found)
                     {
-                        path = (path.Substring(0, path.Length - 2) + cultureName + ".js");
+                        path = (string.Concat(path.AsSpan(0, path.Length - 2), cultureName, ".js"));
                     }
                 }
 
@@ -134,8 +134,7 @@ namespace System.Web.UI
                         // is not meant to be an ajax script assembly.
                         // it isnt an AjaxFrameworkScript but it might be from an assembly that is meant to
                         // be an ajax script assembly, in which case we should throw an error.
-                        throw new InvalidOperationException(String.Format(CultureInfo.CurrentUICulture,
-                            AtlasWeb.ScriptReference_ResourceRequiresAjaxAssembly, resourceName, resourceAssembly));
+                        throw new InvalidOperationException(SR.GetString(AtlasWeb.ScriptReference_ResourceRequiresAjaxAssembly, resourceName, resourceAssembly));
                     }
                     if (!hasScriptPath)
                     {
@@ -147,7 +146,7 @@ namespace System.Web.UI
                     }
                 }
 
-                CultureInfo culture = reference.DetermineCulture(scriptManager);
+                CultureInfo culture = ScriptReference.DetermineCulture(scriptManager);
                 if ((resourceList == null) || (resourceList.Item1 != cacheAssembly))
                 {
                     resourceList = new Tuple<Assembly, List<Tuple<string, CultureInfo>>>(

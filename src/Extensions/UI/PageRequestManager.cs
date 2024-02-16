@@ -20,8 +20,8 @@ namespace System.Web.UI
     using System.Reflection;
     using System.Security.Permissions;
 
-internal sealed class PageRequestManager
-{
+    internal sealed class PageRequestManager
+    {
 
         // Type tokens for partial rendering format
         internal const string UpdatePanelVersionToken = "#";
@@ -49,12 +49,15 @@ internal sealed class PageRequestManager
         internal const string AsyncPostBackErrorHttpCodeKey = "System.Web.UI.PageRequestManager:AsyncPostBackErrorHttpCode";
         internal const string AsyncPostBackRedirectLocationKey = "System.Web.UI.PageRequestManager:AsyncPostBackRedirectLocation";
         private const string PageTitleToken = "pageTitle";
-        private const string FocusToken = "focus";
         private const string AsyncPostFormField = "__ASYNCPOST";
 
         private const char LengthEncodeDelimiter = '|';
+
+#if PORT_SCRIPTMANAGER
+        private const string FocusToken = "focus";
         private static readonly Version MinimumW3CDomVersion = new Version(1, 0);
         private static readonly Version MinimumEcmaScriptVersion = new Version(1, 0);
+#endif
 
         private ScriptManager _owner;
 
@@ -94,7 +97,7 @@ internal sealed class PageRequestManager
         }
 
         // Stolen from Whidbey Page.cs
-        private bool ClientSupportsFocus
+        private static bool ClientSupportsFocus
         {
             get
             {
@@ -109,7 +112,7 @@ internal sealed class PageRequestManager
             }
         }
 
-        private bool EnableLegacyRendering
+        private static bool EnableLegacyRendering
         {
             get
             {
@@ -118,7 +121,7 @@ internal sealed class PageRequestManager
         }
 
         [SecuritySafeCritical()]
-        private bool CustomErrorsSectionHasRedirect(int httpCode)
+        private static bool CustomErrorsSectionHasRedirect(int httpCode)
         {
 #if PORT_CUSTOMERROR
             bool hasRedirect = (_owner.CustomErrorsSection.DefaultRedirect != null);
@@ -156,8 +159,8 @@ internal sealed class PageRequestManager
             {
                 content = String.Empty;
             }
-            Debug.Assert(type.IndexOf(LengthEncodeDelimiter) == -1, "Should not be a " + LengthEncodeDelimiter + " in type");
-            Debug.Assert(id.IndexOf(LengthEncodeDelimiter) == -1, "Should not be a " + LengthEncodeDelimiter + " in id");
+            Debug.Assert(!type.Contains(LengthEncodeDelimiter), "Should not be a " + LengthEncodeDelimiter + " in type");
+            Debug.Assert(!id.Contains(LengthEncodeDelimiter), "Should not be a " + LengthEncodeDelimiter + " in id");
 
             // len|type|id|content|
             //             -------   len
@@ -426,7 +429,7 @@ internal sealed class PageRequestManager
 
                 if (postBackTarget != _owner.UniqueID)
                 {
-                    if (postBackTarget.IndexOf(',') != -1)
+                    if (postBackTarget.Contains(','))
                     {
                         _updatePanelRequiresUpdate = null;
                         _updatePanelsRequireUpdate = postBackTarget.Split(',');
@@ -481,7 +484,7 @@ internal sealed class PageRequestManager
                 {
                     // If we still think we want to support it, now do a more expensive
                     // check for XHTML legacy rendering support.
-                    supportsPartialRendering = !EnableLegacyRendering;
+                    supportsPartialRendering = !PageRequestManager.EnableLegacyRendering;
                 }
                 _owner.SupportsPartialRendering = supportsPartialRendering;
             }
@@ -517,7 +520,7 @@ internal sealed class PageRequestManager
             if (_owner.AllowCustomErrorsRedirect && isCustomErrorEnabled)
             {
                 // Figure out if there's going to be a redirect for this error
-                bool hasRedirect = CustomErrorsSectionHasRedirect(httpCode);
+                bool hasRedirect = PageRequestManager.CustomErrorsSectionHasRedirect(httpCode);
                 if (!hasRedirect)
                 {
                     // If there's no redirect, we need to send back the error message
@@ -552,7 +555,7 @@ internal sealed class PageRequestManager
             // Roughly stolen from Whidbey Page.cs
             if (_requireFocusScript)
             {
-                Debug.Assert(ClientSupportsFocus, "If ClientSupportsFocus is false then we never should have set _requireFocusScript to true.");
+                Debug.Assert(PageRequestManager.ClientSupportsFocus, "If ClientSupportsFocus is false then we never should have set _requireFocusScript to true.");
                 string focusedControlId = String.Empty;
 
                 // Someone calling SetFocus(controlId) has the most precedent
@@ -735,7 +738,7 @@ internal sealed class PageRequestManager
 
         private void RegisterFocusScript()
         {
-            if (ClientSupportsFocus && !_requireFocusScript)
+            if (PageRequestManager.ClientSupportsFocus && !_requireFocusScript)
             {
                 _requireFocusScript = true;
             }
@@ -1184,7 +1187,7 @@ Sys.WebForms.PageRequestManager._initialize('");
         }
 
         private enum IDType
-    {
+        {
             UniqueID,
             Both
         }
