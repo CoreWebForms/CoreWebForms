@@ -31,7 +31,7 @@
     <WriteLinesToFile File="$(IntermediateOutputPath)/Sdk.Version.props" Lines="@(__VersionPropsLines)" Overwrite="true" />
 
     <ItemGroup>
-      <Content Include="$(IntermediateOutputPath)/Sdk.Version.props" PackagePath="Sdk/Sdk.Version.Props" TargetPath="Sdk/Sdk.Version.Props" Pack="true">
+      <Content Include="$(IntermediateOutputPath)/Sdk.Version.props" PackagePath="Sdk/Sdk.Version.props" TargetPath="Sdk/Sdk.Version.props" Pack="true">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
     </ItemGroup>
