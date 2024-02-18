@@ -32,6 +32,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\EnterpriseServices\EnterpriseServices.csproj" />
     <ProjectReference Include="..\Handlers\Handlers.csproj" />
     <ProjectReference Include="..\HtmlTextWriter\HtmlTextWriter.csproj" />
     <ProjectReference Include="..\Profile\Profile.csproj" />
