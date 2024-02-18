@@ -529,6 +529,14 @@ public abstract class TemplateControl : Control, INamingContainer, IFilterResolu
     }
 
     /// <devdoc>
+    /// <para>Obtains a <see cref='System.Web.UI.UserControl'/> object from a user control file.</para>
+    /// </devdoc>
+    public Control LoadControl(string virtualPath) {
+
+        return LoadControl(VirtualPath.Create(virtualPath));
+    }
+
+    /// <devdoc>
     /// Used by simplified databinding methods to ensure they can only be called when the control is on a page.
     /// </devdoc>
     private void CheckPageExists()

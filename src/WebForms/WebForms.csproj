@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <IsShipped>true</IsShipped>
-    <TargetFrameworks>net8.0</TargetFrameworks>
+    <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>disable</Nullable>
     <AssemblyName>WebForms</AssemblyName>
@@ -38,5 +38,5 @@
     <ProjectReference Include="..\Routing\Routing.csproj" />
     <ProjectReference Include="..\VirtualFile\VirtualFile.csproj" />
   </ItemGroup>
-  
+
 </Project>
