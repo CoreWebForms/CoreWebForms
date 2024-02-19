@@ -1,12 +1,12 @@
 //------------------------------------------------------------------------------
 // <copyright file="SecurityUtil.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
-// </copyright>                                                                
+// </copyright>
 //------------------------------------------------------------------------------
 
 /*
  * SecurityUtil class
- * 
+ *
  * Copyright (c) 1999 Microsoft Corporation
  */
 
@@ -27,10 +27,10 @@ namespace System.Web.Util {
 
         internal static string GetDefaultAppName() {
             try {
-                string appName = HostingEnvironment.ApplicationVirtualPath;
+                string appName = HostingEnvironment.SiteName;
                 if (String.IsNullOrEmpty(appName)) {
 #if !FEATURE_PAL
-                    // ROTORTODO: enable Process.MainModule or support an alternative 
+                    // ROTORTODO: enable Process.MainModule or support an alternative
                     // naming scheme for (HttpRuntime.AppDomainAppVirtualPath == null)
 
                     appName = System.Diagnostics.Process.GetCurrentProcess().

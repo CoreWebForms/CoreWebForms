@@ -29,8 +29,9 @@ namespace System.Web.Configuration {
 
         internal static IConfigMapPath GetInstance() {
             IConfigMapPath iisConfigMapPath = IISMapPath.GetInstance();
-            IConfigMapPath hostingConfigMapPath = HostingEnvironment.ConfigMapPath;
-
+            // TODO: Migration
+            // IConfigMapPath hostingConfigMapPath = HostingEnvironment.ConfigMapPath;
+            IConfigMapPath hostingConfigMapPath = null;
             // Only delegate if the types implementing IConfigMapPath are different.
             if (hostingConfigMapPath == null || iisConfigMapPath.GetType() == hostingConfigMapPath.GetType())
                 return iisConfigMapPath;

@@ -24,8 +24,8 @@ namespace System.Web {
     class CachedPathData {
         internal const int FInited                  = 0x0001;
         internal const int FCompletedFirstRequest   = 0x0002;
-        internal const int FExists                  = 0x0004; 
-        internal const int FOwnsConfigRecord        = 0x0010;   // is this the highest ancestor pointing to the config record? 
+        internal const int FExists                  = 0x0004;
+        internal const int FOwnsConfigRecord        = 0x0010;   // is this the highest ancestor pointing to the config record?
         internal const int FClosed                  = 0x0020;   // Has item been closed already?
         internal const int FCloseNeeded             = 0x0040;   // Should we close?
         internal const int FAnonymousAccessChecked  = 0x0100;
@@ -115,7 +115,9 @@ namespace System.Web {
                 return GetRootWebPathData();
             }
 
-            return GetConfigPathData(HostingEnvironment.AppConfigPath);
+            // TODO: Migration
+            // return GetConfigPathData(HostingEnvironment.AppConfigPath);
+            return null;
         }
 
         //
@@ -133,7 +135,9 @@ namespace System.Web {
             }
 
             // Check if the path is within the application.
-            if (virtualPath == null || !virtualPath.IsWithinAppRoot) {
+            // TODO: Migration
+            // if (virtualPath == null || !virtualPath.IsWithinAppRoot) {
+            if (virtualPath == null || !virtualPath.IsRelative) {
                 if (permitPathsOutsideApp) {
                     return GetApplicationPathData();
                 }
@@ -144,7 +148,7 @@ namespace System.Web {
             }
 
             // Construct a configPath based on the unvalidated virtualPath.
-            string configPath = WebConfigurationHost.GetConfigPathFromSiteIDAndVPath(HostingEnvironment.SiteID, virtualPath);
+            string configPath = WebConfigurationHost.GetConfigPathFromSiteIDAndVPath(HostingEnvironment.ApplicationID, virtualPath);
 
             // Pass the virtualPath to GetConfigPathData to validate in the case where the
             // CachedPathData for the unsafeConfigPath is not found.
@@ -156,8 +160,10 @@ namespace System.Web {
             // have we initialized yet?
             if (s_appConfigPathLength == 0) {
                 // when hosted use AppConfigPath, otherwise use RootWebConfigPath
-                s_appConfigPathLength = (HostingEnvironment.IsHosted) ? HostingEnvironment.AppConfigPath.Length : WebConfigurationHost.RootWebConfigPath.Length;
-            }            
+                // TODO: Migration
+                // s_appConfigPathLength = (HostingEnvironment.IsHosted) ? HostingEnvironment.AppConfigPath.Length : WebConfigurationHost.RootWebConfigPath.Length;
+                s_appConfigPathLength = WebConfigurationHost.RootWebConfigPath.Length;
+            }
             // Only config paths beneath the application config path can be removed from the cache.
             return (configPath.Length > s_appConfigPathLength);
         }
@@ -165,7 +171,7 @@ namespace System.Web {
         // Example of configPath = "machine/webroot/1/fxtest/sub/foo.aspx"
         // The configPath parameter must be lower case.
         static private CachedPathData GetConfigPathData(string configPath) {
-            Debug.Assert(ConfigPathUtility.IsValid(configPath), "ConfigPathUtility.IsValid(configPath)");
+            // Debug.Assert(ConfigPathUtility.IsValid(configPath), "ConfigPathUtility.IsValid(configPath)");
             Debug.Assert(configPath == configPath.ToLower(CultureInfo.InvariantCulture), "configPath == configPath.ToLower(CultureInfo.InvariantCulture)");
             bool exists = false;
             bool isDirectory = false;
@@ -180,8 +186,10 @@ namespace System.Web {
 
                 string parentConfigPath = ConfigPathUtility.GetParent(configPath);
                 CachedPathData pathParentData = GetConfigPathData(parentConfigPath);
-                if (!String.IsNullOrEmpty(physicalFilePath)) {
-                    FileUtil.PhysicalPathStatus(physicalFilePath, false, false, out exists, out isDirectory);
+                if (!String.IsNullOrEmpty(physicalFilePath))
+                {
+                    isDirectory = FileUtil.IsValidDirectoryName(physicalFilePath);
+                    exists = FileUtil.DirectoryExists(physicalFilePath);
                 }
                 CachedPathData pathData = new CachedPathData(configPath, virtualFilePath, physicalFilePath, exists);
                 pathData.Init(pathParentData);
@@ -204,8 +212,8 @@ namespace System.Web {
                 data.WaitForInit();
                 return data;
             }
-            
-            // WOS 
+
+            // WOS
 
 
             bool cacheEntryIsNotRemovable = false;
@@ -224,7 +232,7 @@ namespace System.Web {
             }
             else {
                 // Make sure we have the parent data so we can create a dependency on the parent.
-                // The parent dependency will ensure that configuration data in the parent 
+                // The parent dependency will ensure that configuration data in the parent
                 // will be referenced by a cache hit on the child. (see UtcUpdateUsageRecursive in Cache.cs)
                 string parentConfigPath = ConfigPathUtility.GetParent(configPath);
                 parentData = GetConfigPathData(parentConfigPath);
@@ -244,7 +252,9 @@ namespace System.Web {
                     // to handle the case where a file is deleted and replaced
                     // with a directory of the same name.
                     if (!String.IsNullOrEmpty(physicalPath)) {
-                        FileUtil.PhysicalPathStatus(physicalPath, false, false, out exists, out isDirectory);
+                        // FileUtil.PhysicalPathStatus(physicalPath, false, false, out exists, out isDirectory);
+                        exists = FileUtil.DirectoryExists(physicalPath);
+                        isDirectory = FileUtil.IsValidDirectoryName(physicalPath);
                         if (exists && !isDirectory) {
                             fileDependencies = new string[1] {physicalPath};
                         }
@@ -278,7 +288,7 @@ namespace System.Web {
                             Priority = priority,
                             OnRemovedCallback = s_callback
                         });
-                        
+
                         if (data == null) {
                             isDataCreator = true;
                         }
@@ -300,12 +310,12 @@ namespace System.Web {
                     finally {
                         // free waiters
                         dataAdd._flags[FInited] = true;
-                
+
                         // Wake up waiters.
                         Monitor.PulseAll(dataAdd);
-                
+
                         if (dataAdd._flags[FCloseNeeded]) {
-                            // If we have received a call back to close, then lets 
+                            // If we have received a call back to close, then lets
                             // make sure that our config object is cleaned up
                             dataAdd.Close();
                         }
@@ -317,7 +327,7 @@ namespace System.Web {
                 // creator of the CachedPathData.
                 if (isDataCreator) {
 
-                    // 
+                    //
 
 
 
@@ -326,18 +336,18 @@ namespace System.Web {
                         lock (dataAdd) {
                             // free waiters
                             dataAdd._flags[FInited] = true;
-                    
+
                             // Wake up waiters.
                             Monitor.PulseAll(dataAdd);
-                            
+
                             if (dataAdd._flags[FCloseNeeded]) {
-                                // If we have received a call back to close, then lets 
+                                // If we have received a call back to close, then lets
                                 // make sure that our config object is cleaned up
                                 dataAdd.Close();
                             }
                         }
                     }
-                    
+
                     //
                     // Even though there is a try/catch handler surrounding the call to Init,
                     // a ThreadAbortException can still cause the handler to be bypassed.
@@ -346,10 +356,10 @@ namespace System.Web {
                     // file itself, we do want to leave the item cached for a short period
                     // so that we do not revisit the error and potentially reparse the config file
                     // on every request.
-                    // 
-                    // The reason we simply do not leave the item in the cache forever is that the 
+                    //
+                    // The reason we simply do not leave the item in the cache forever is that the
                     // problem that caused the configuration exception may be fixed without touching
-                    // the config file in a way that causes a file change notification (for example, an 
+                    // the config file in a way that causes a file change notification (for example, an
                     // acl change in a parent directory, or a change of path mapping in the metabase).
                     //
                     // NOTE: It is important to reinsert the item into the cache AFTER dropping
@@ -370,7 +380,7 @@ namespace System.Web {
                                 dependency = new CacheDependency(0, fileDependencies, cacheItemDependencies);
                             }
                         }
-                    
+
                         using (dependency) {
                             cacheInternal.Insert(key, dataAdd, new CacheInsertOptions() {
                                                                     Dependencies = dependency,
@@ -379,7 +389,7 @@ namespace System.Web {
                                                                 });
                         }
                     }
-                    
+
                 }
             }
 
@@ -408,7 +418,7 @@ namespace System.Web {
             }
 
             //
-            // Throw "404 Not Found" if the path is suspicious and 
+            // Throw "404 Not Found" if the path is suspicious and
             // the implementation of MapPath has not already done so.
             //
             FileUtil.CheckSuspiciousPhysicalPath(physicalPath);
@@ -416,10 +426,10 @@ namespace System.Web {
             return physicalPath;
         }
 
-        // Remove CachedPathData when the first request for the path results in a 
+        // Remove CachedPathData when the first request for the path results in a
         // 400 range error. We need to remove all data up the path to account for
         // virtual files.
-        // An example of a 400 range error is "path not found". 
+        // An example of a 400 range error is "path not found".
         static internal void RemoveBadPathData(CachedPathData pathData) {
             CacheStoreProvider cacheInternal = HttpRuntime.Cache.InternalCache;
 
@@ -438,7 +448,7 @@ namespace System.Web {
             }
         }
 
-        // Mark CachedPathData as completed when the first request for the path results in a 
+        // Mark CachedPathData as completed when the first request for the path results in a
         // status outside the 400 range. We need to mark all data up the path to account for
         // virtual files.
         static internal void MarkCompleted(CachedPathData pathData) {
@@ -459,7 +469,7 @@ namespace System.Web {
 
         // Close
         //
-        // Close the object.  This does not mean it can not be used anymore, 
+        // Close the object.  This does not mean it can not be used anymore,
         // it just means that the cleanup as been done, so we don't have
         // to worry about closing it anymore
         //
@@ -486,7 +496,7 @@ namespace System.Web {
         //
         static void OnCacheItemRemoved(string key, object value, CacheItemRemovedReason reason) {
             CachedPathData data = (CachedPathData) value;
-            
+
             data._flags[FCloseNeeded] = true;
             data.Close();
         }
@@ -503,7 +513,7 @@ namespace System.Web {
             Debug.Assert(_runtimeConfig == RuntimeConfig.GetErrorRuntimeConfig(), "_runtimeConfig == RuntimeConfig.GetErrorRuntimeConfig()");
 
             if (!HttpConfigurationSystem.UseHttpConfigurationSystem) {
-                // 
+                //
                 // configRecord may legitimately be null if we are not using the HttpConfigurationSystem.
                 //
                 _runtimeConfig = null;
@@ -541,9 +551,9 @@ namespace System.Web {
         }
 
         // Ensure that Request.PhysicalPath is valid (canonical, not too long, and contains valid characters).
-        // The work is done by CheckSuspiciousPhysicalPath, but as a perf optimization, we can compare 
-        // Request.PhysicalPath with the cached path result.  The cached path result is validated before 
-        // it is cached.  As long as the cached path result is identical to Request.PhysicalPath, we don't 
+        // The work is done by CheckSuspiciousPhysicalPath, but as a perf optimization, we can compare
+        // Request.PhysicalPath with the cached path result.  The cached path result is validated before
+        // it is cached.  As long as the cached path result is identical to Request.PhysicalPath, we don't
         // have to call CheckSuspiciousPhysicalPath again.
         internal void ValidatePath(String physicalPath) {
             if (String.IsNullOrEmpty(_physicalPath) && String.IsNullOrEmpty(physicalPath)) {
@@ -573,8 +583,8 @@ namespace System.Web {
             }
 
             // If we're here, the paths were different, which normally should not happen.
-            Debug.Assert(false, "ValidatePath optimization failed: Request.PhysicalPath=" 
-                         + physicalPath + "; _physicalPath=" + _physicalPath);            
+            Debug.Assert(false, "ValidatePath optimization failed: Request.PhysicalPath="
+                         + physicalPath + "; _physicalPath=" + _physicalPath);
             FileUtil.CheckSuspiciousPhysicalPath(physicalPath);
         }
 
@@ -630,14 +640,14 @@ namespace System.Web {
         // sliding expiration, unless DoNotCacheUrlMetadata is true.
         // This is currently used by CachedPathData, MapPathBasedVirtualPathProvider,
         // FileAuthorizationModule, ProcessHostMapPath and MetabaseServerConfig.
-        internal static TimeSpan UrlMetadataSlidingExpiration { 
-            get { 
-                return s_urlMetadataSlidingExpiration; 
-            } 
+        internal static TimeSpan UrlMetadataSlidingExpiration {
+            get {
+                return s_urlMetadataSlidingExpiration;
+            }
         }
 
-        // if true, do not cache at all.  
-        internal static bool DoNotCacheUrlMetadata { 
+        // if true, do not cache at all.
+        internal static bool DoNotCacheUrlMetadata {
             get { return s_doNotCacheUrlMetadata; }
         }
     }

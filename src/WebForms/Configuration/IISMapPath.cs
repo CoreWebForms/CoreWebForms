@@ -20,27 +20,29 @@ namespace System.Web.Configuration {
     //
     static internal class IISMapPath {
         static internal IConfigMapPath GetInstance() {
-            // IIS 7 bits on <= IIS 6.x: use the metabase
-            if (ServerConfig.UseMetabase) {
-                return (IConfigMapPath) MetabaseServerConfig.GetInstance();
-            }
-
-            if (ServerConfig.IISExpressVersion != null) {
-                return (IConfigMapPath) ServerConfig.GetInstance();
-            }
-            
-            ProcessHost host = ProcessHost.DefaultHost;
-            IProcessHostSupportFunctions functions = null;
-            
-            if (null != host) {
-                functions = host.SupportFunctions;                        
-            }
-            
-            if (functions == null) {
-                functions = HostingEnvironment.SupportFunctions;
-            }
-            
-            return new ProcessHostMapPath(functions);
+            // TODO: Migration
+            // // IIS 7 bits on <= IIS 6.x: use the metabase
+            // if (ServerConfig.UseMetabase) {
+            //     return (IConfigMapPath) MetabaseServerConfig.GetInstance();
+            // }
+            //
+            // if (ServerConfig.IISExpressVersion != null) {
+            //     return (IConfigMapPath) ServerConfig.GetInstance();
+            // }
+            //
+            // ProcessHost host = ProcessHost.DefaultHost;
+            // IProcessHostSupportFunctions functions = null;
+            //
+            // if (null != host) {
+            //     functions = host.SupportFunctions;
+            // }
+            //
+            // if (functions == null) {
+            //     functions = HostingEnvironment.SupportFunctions;
+            // }
+            //
+            // return new ProcessHostMapPath(functions);
+            return null;
         }
 
         // A site name might be an id if it is a number.

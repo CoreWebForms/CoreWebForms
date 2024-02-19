@@ -40,4 +40,8 @@
     <ProjectReference Include="..\VirtualFile\VirtualFile.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Web\Configuration\" />
+  </ItemGroup>
+
 </Project>

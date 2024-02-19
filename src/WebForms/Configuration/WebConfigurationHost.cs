@@ -6,6 +6,8 @@
 
 #define YES
 
+using System.Web.UI;
+
 namespace System.Web.Configuration {
     using System.Collections;
     using System.Configuration.Internal;
@@ -207,14 +209,14 @@ namespace System.Web.Configuration {
             string                  appSiteName = (string)              hostInitParams[4];
             string                  appSiteID = (string)                hostInitParams[5];
 
-            if (hostInitParams.Length > 6) {
-                // If VS sent a 7th param, it is the .Net Framwework Target version moniker
-                string fxMoniker = hostInitParams[6] as string;
-                _machineConfigFile = GetMachineConfigPathFromTargetFrameworkMoniker(fxMoniker);
-                if (!string.IsNullOrEmpty(_machineConfigFile)) {
-                    _rootWebConfigFile = Path.Combine(Path.GetDirectoryName(_machineConfigFile), "web.config");
-                }
-            }
+            // if (hostInitParams.Length > 6) {
+            //     // If VS sent a 7th param, it is the .Net Framwework Target version moniker
+            //     string fxMoniker = hostInitParams[6] as string;
+            //     _machineConfigFile = GetMachineConfigPathFromTargetFrameworkMoniker(fxMoniker);
+            //     if (!string.IsNullOrEmpty(_machineConfigFile)) {
+            //         _rootWebConfigFile = Path.Combine(Path.GetDirectoryName(_machineConfigFile), "web.config");
+            //     }
+            // }
 
             Debug.Assert(configMapPath == null || useConfigMapPath, "non-null configMapPath without useConfigMapPath == true");
 
@@ -242,7 +244,7 @@ namespace System.Web.Configuration {
 
             WebLevel                webLevel = (WebLevel)               hostInitConfigurationParams[0];
             ConfigurationFileMap    fileMap = (ConfigurationFileMap)    hostInitConfigurationParams[1];
-            VirtualPath             path = VirtualPath.CreateAbsoluteAllowNull((string)hostInitConfigurationParams[2]);
+            VirtualPath             path = VirtualPath.CreateNonRelativeAllowNull((string)hostInitConfigurationParams[2]);
             string                  site = (string)                     hostInitConfigurationParams[3];
 
             if (locationSubPath == null) {
@@ -366,7 +368,8 @@ namespace System.Web.Configuration {
             siteID = configPath.Substring(indexStart, length);
             if (indexVPath == -1) {
                 // Todo: Migration
-                //vpath = VirtualPath.RootVirtualPath;
+                // vpath = VirtualPath.RootVirtualPath;
+                vpath = "";
             }
             else {
                 vpath = VirtualPath.Create(configPath.Substring(indexVPath));
@@ -437,7 +440,7 @@ namespace System.Web.Configuration {
                 return true;
 
             // vpaths that correspond to directories are required
-            return FileUtil.DirectoryExists(physicalPath, true);
+            return FileUtil.DirectoryExists(physicalPath);
         }
 
         // stream support
@@ -466,8 +469,11 @@ namespace System.Web.Configuration {
                 if (directory == null)
                     return null;
 
-                bool exists, isDirectory;
-                FileUtil.PhysicalPathStatus(directory, true, false, out exists, out isDirectory);
+                // bool exists, isDirectory;
+                // FileUtil.(directory, true, false, out exists, out isDirectory);
+
+                bool exists = FileUtil.DirectoryExists(directory);
+                bool isDirectory = FileUtil.IsValidDirectoryName(directory);
                 if (exists && isDirectory) {
                     // DevDiv Bugs 152256:  Illegal characters {",|} in path prevent configuration system from working.
                     // We need to catch this exception and return null as System.IO.Path.Combine fails to combine paths
@@ -523,45 +529,48 @@ namespace System.Web.Configuration {
         }
 
         public override object StartMonitoringStreamForChanges(string streamName, StreamChangeCallback callback) {
-            WebConfigurationHostFileChange wrapper;
-
-            // Note: in theory it's possible for multiple config records to monitor the same stream.
-            // That's why we use the arraylist to store the callbacks.
-            lock (this) {
-                wrapper = new WebConfigurationHostFileChange(callback);
-                ArrayList list = (ArrayList) FileChangeCallbacks[streamName];
-                if (list == null) {
-                    list = new ArrayList(1);
-                    FileChangeCallbacks.Add(streamName, list);
-                }
-
-                list.Add(wrapper);
-            }
-
-            HttpRuntime.FileChangesMonitor.StartMonitoringFile(
-                    streamName, new FileChangeEventHandler(wrapper.OnFileChanged));
-
-            return wrapper;
+            // TODO: Migration
+            // WebConfigurationHostFileChange wrapper;
+            //
+            // // Note: in theory it's possible for multiple config records to monitor the same stream.
+            // // That's why we use the arraylist to store the callbacks.
+            // lock (this) {
+            //     wrapper = new WebConfigurationHostFileChange(callback);
+            //     ArrayList list = (ArrayList) FileChangeCallbacks[streamName];
+            //     if (list == null) {
+            //         list = new ArrayList(1);
+            //         FileChangeCallbacks.Add(streamName, list);
+            //     }
+            //
+            //     list.Add(wrapper);
+            // }
+            //
+            // HttpRuntime.FileChangesMonitor.StartMonitoringFile(
+            //         streamName, new FileChangeEventHandler(wrapper.OnFileChanged));
+            //
+            // return wrapper;
+            return null;
         }
 
         public override void StopMonitoringStreamForChanges(string streamName, StreamChangeCallback callback) {
-            WebConfigurationHostFileChange wrapper = null;
-            lock (this) {
-                ArrayList list = (ArrayList) FileChangeCallbacks[streamName];
-                for (int i = 0; i < list.Count; i++) {
-                    WebConfigurationHostFileChange item = (WebConfigurationHostFileChange) list[i];
-                    if (object.ReferenceEquals(item.Callback, callback)) {
-                        wrapper = item;
-                        list.RemoveAt(i);
-                        if (list.Count == 0) {
-                            FileChangeCallbacks.Remove(streamName);
-                        }
-                        break;
-                    }
-                }
-            }
-
-            HttpRuntime.FileChangesMonitor.StopMonitoringFile(streamName, wrapper);
+            // TODO: Migration
+            // WebConfigurationHostFileChange wrapper = null;
+            // lock (this) {
+            //     ArrayList list = (ArrayList) FileChangeCallbacks[streamName];
+            //     for (int i = 0; i < list.Count; i++) {
+            //         WebConfigurationHostFileChange item = (WebConfigurationHostFileChange) list[i];
+            //         if (object.ReferenceEquals(item.Callback, callback)) {
+            //             wrapper = item;
+            //             list.RemoveAt(i);
+            //             if (list.Count == 0) {
+            //                 FileChangeCallbacks.Remove(streamName);
+            //             }
+            //             break;
+            //         }
+            //     }
+            // }
+            //
+            // HttpRuntime.FileChangesMonitor.StopMonitoringFile(streamName, wrapper);
         }
 
         public override bool IsDefinitionAllowed(string configPath, ConfigurationAllowDefinition allowDefinition, ConfigurationAllowExeDefinition allowExeDefinition) {
@@ -690,11 +699,13 @@ namespace System.Web.Configuration {
                 int firstSlash = locationSubPath.IndexOf(PathSeparator);
                 if (firstSlash < 0) {
                     site = locationSubPath;
-                    virtualPath = VirtualPath.RootVirtualPath;
+                    // TODO: Migration
+                    // virtualPath = VirtualPath.RootVirtualPath;
+                    virtualPath = "";
                 }
                 else {
                     site = locationSubPath.Substring(0, firstSlash);
-                    virtualPath = VirtualPath.CreateAbsolute(locationSubPath.Substring(firstSlash));
+                    virtualPath = VirtualPath.CreateNonRelative(locationSubPath.Substring(firstSlash));
                 }
 
                 if (StringUtil.EqualsIgnoreCase(site, _appSiteID) || StringUtil.EqualsIgnoreCase(site, _appSiteName)) {
@@ -714,13 +725,14 @@ namespace System.Web.Configuration {
             return IsVirtualPathConfigPath(configPath);
         }
 
-        internal static void StaticGetRestrictedPermissions(IInternalConfigRecord configRecord, out PermissionSet permissionSet, out bool isHostReady) {
-            isHostReady = HttpRuntime.IsTrustLevelInitialized;
-            permissionSet = null;
-            if (isHostReady && IsVirtualPathConfigPath(configRecord.ConfigPath)) {
-                permissionSet = HttpRuntime.NamedPermissionSet;
-            }
-        }
+        // TODO: Migration
+        // internal static void StaticGetRestrictedPermissions(IInternalConfigRecord configRecord, out PermissionSet permissionSet, out bool isHostReady) {
+        //     isHostReady = HttpRuntime.IsTrustLevelInitialized;
+        //     permissionSet = null;
+        //     if (isHostReady && IsVirtualPathConfigPath(configRecord.ConfigPath)) {
+        //         permissionSet = HttpRuntime.NamedPermissionSet;
+        //     }
+        // }
 
         // we trust root config files - admins settings do not have security restrictions.
         public override bool IsTrustedConfigPath(string configPath) {
@@ -728,8 +740,11 @@ namespace System.Web.Configuration {
         }
 
         public override bool IsFullTrustSectionWithoutAptcaAllowed(IInternalConfigRecord configRecord) {
-            if (HostingEnvironment.IsHosted) {
-                return HttpRuntime.HasAspNetHostingPermission(AspNetHostingPermissionLevel.Unrestricted);
+            if (HostingEnvironment.IsHosted)
+            {
+                // TODO: Migration
+                return Host.IsFullTrustSectionWithoutAptcaAllowed(configRecord);
+                // return HttpRuntime.HasAspNetHostingPermission(AspNetHostingPermissionLevel.Unrestricted);
             }
             else {
                 return Host.IsFullTrustSectionWithoutAptcaAllowed(configRecord);
@@ -737,11 +752,16 @@ namespace System.Web.Configuration {
         }
 
         public override void GetRestrictedPermissions(IInternalConfigRecord configRecord, out PermissionSet permissionSet, out bool isHostReady) {
-            StaticGetRestrictedPermissions(configRecord, out permissionSet, out isHostReady);
+            // TODO: Migration
+            // StaticGetRestrictedPermissions(configRecord, out permissionSet, out isHostReady);
+            isHostReady = true;
+            permissionSet = null;
         }
 
         public override IDisposable Impersonate() {
-            return new ApplicationImpersonationContext();
+            // TODO: Check
+            return null;
+            // return new ApplicationImpersonationContext();
         }
 
         // prefetch support
@@ -796,11 +816,15 @@ namespace System.Web.Configuration {
         public override Type GetConfigType(string typeName, bool throwOnError) {
             // Go through BuildManager to allow simple references to types in the
             // code directory (VSWhidbey 284498)
-            return BuildManager.GetType(typeName, throwOnError);
+            // TODO: Check
+            // return BuildManager.GetType(typeName, throwOnError);
+            return Type.GetType(typeName, throwOnError);
         }
 
         public override string GetConfigTypeName(Type t) {
-            return BuildManager.GetNormalizedTypeName(t);
+            // TODO: Check
+            // return BuildManager.GetNormalizedTypeName(t);
+            return t.AssemblyQualifiedName;
         }
 
         // IsApplication
@@ -841,79 +865,81 @@ namespace System.Web.Configuration {
 
          // Create an instance of a Configuration object.
         // Used by design-time API to open a Configuration object.
-        static internal Configuration OpenConfiguration(
-                WebLevel webLevel, ConfigurationFileMap fileMap, VirtualPath path, string site, string locationSubPath,
-                string server, string userName, string password, IntPtr tokenHandle) {
+        // TODO: Migration
+        // static internal Configuration OpenConfiguration(
+        //         WebLevel webLevel, ConfigurationFileMap fileMap, VirtualPath path, string site, string locationSubPath,
+        //         string server, string userName, string password, IntPtr tokenHandle) {
+        //
+        //     Configuration configuration;
+        //
+        //     if (!IsValidSiteArgument(site)) {
+        //         throw ExceptionUtil.ParameterInvalid("site");
+        //     }
+        //
+        //     locationSubPath = ConfigurationFactory.NormalizeLocationSubPath(locationSubPath, null);
+        //
+        //     bool isRemote = !String.IsNullOrEmpty(server)
+        //         && server != "."
+        //         && !StringUtil.EqualsIgnoreCase(server, "127.0.0.1")
+        //         && !StringUtil.EqualsIgnoreCase(server, "::1")
+        //         && !StringUtil.EqualsIgnoreCase(server, "localhost")
+        //         && !StringUtil.EqualsIgnoreCase(server, Environment.MachineName);
+        //
+        //
+        //     if (isRemote) {
+        //         configuration = ConfigurationFactory.Create(typeof(RemoteWebConfigurationHost),
+        //             webLevel, null, VirtualPath.GetVirtualPathString(path), site, locationSubPath, server, userName, password, tokenHandle);
+        //     }
+        //     else {
+        //          if (String.IsNullOrEmpty(server)) {
+        //             if (!String.IsNullOrEmpty(userName))
+        //                 throw ExceptionUtil.ParameterInvalid("userName");
+        //
+        //             if (!String.IsNullOrEmpty(password))
+        //                 throw ExceptionUtil.ParameterInvalid("password");
+        //
+        //             if (tokenHandle != (IntPtr) 0)
+        //                 throw ExceptionUtil.ParameterInvalid("tokenHandle");
+        //         }
+        //
+        //         // Create a copy of the fileMap, so that it cannot be altered by
+        //         // its creator once we start using it.
+        //         if (fileMap != null) {
+        //             fileMap = (ConfigurationFileMap) fileMap.Clone();
+        //         }
+        //
+        //         WebConfigurationFileMap webFileMap = fileMap as WebConfigurationFileMap;
+        //         if (webFileMap != null && !String.IsNullOrEmpty(site)) {
+        //             webFileMap.Site = site;
+        //         }
+        //
+        //         configuration = ConfigurationFactory.Create(typeof(WebConfigurationHost),
+        //             webLevel, fileMap, VirtualPath.GetVirtualPathString(path), site, locationSubPath );
+        //      }
+        //
+        //     return configuration;
+        // }
 
-            Configuration configuration;
+        // TODO: Migration
+        // private static string GetMachineConfigPathFromTargetFrameworkMoniker(string moniker) {
+        //     TargetDotNetFrameworkVersion ver = GetTargetFrameworkVersionEnumFromMoniker(moniker);
+        //     if (ver == TargetDotNetFrameworkVersion.VersionLatest)
+        //         return null;
+        //
+        //     string machineConfig = ToolLocationHelper.GetPathToDotNetFrameworkFile(@"config\machine.config", ver);
+        //     new FileIOPermission(FileIOPermissionAccess.PathDiscovery, machineConfig).Demand();
+        //     return machineConfig;
+        // }
 
-            if (!IsValidSiteArgument(site)) {
-                throw ExceptionUtil.ParameterInvalid("site");
-            }
-
-            locationSubPath = ConfigurationFactory.NormalizeLocationSubPath(locationSubPath, null);
-
-            bool isRemote = !String.IsNullOrEmpty(server)
-                && server != "."
-                && !StringUtil.EqualsIgnoreCase(server, "127.0.0.1")
-                && !StringUtil.EqualsIgnoreCase(server, "::1")
-                && !StringUtil.EqualsIgnoreCase(server, "localhost")
-                && !StringUtil.EqualsIgnoreCase(server, Environment.MachineName);
-
-
-            if (isRemote) {
-                configuration = ConfigurationFactory.Create(typeof(RemoteWebConfigurationHost),
-                    webLevel, null, VirtualPath.GetVirtualPathString(path), site, locationSubPath, server, userName, password, tokenHandle);
-            }
-            else {
-                 if (String.IsNullOrEmpty(server)) {
-                    if (!String.IsNullOrEmpty(userName))
-                        throw ExceptionUtil.ParameterInvalid("userName");
-
-                    if (!String.IsNullOrEmpty(password))
-                        throw ExceptionUtil.ParameterInvalid("password");
-
-                    if (tokenHandle != (IntPtr) 0)
-                        throw ExceptionUtil.ParameterInvalid("tokenHandle");
-                }
-
-                // Create a copy of the fileMap, so that it cannot be altered by
-                // its creator once we start using it.
-                if (fileMap != null) {
-                    fileMap = (ConfigurationFileMap) fileMap.Clone();
-                }
-
-                WebConfigurationFileMap webFileMap = fileMap as WebConfigurationFileMap;
-                if (webFileMap != null && !String.IsNullOrEmpty(site)) {
-                    webFileMap.Site = site;
-                }
-
-                configuration = ConfigurationFactory.Create(typeof(WebConfigurationHost),
-                    webLevel, fileMap, VirtualPath.GetVirtualPathString(path), site, locationSubPath );
-             }
-
-            return configuration;
-        }
-
-
-        private static string GetMachineConfigPathFromTargetFrameworkMoniker(string moniker) {
-            TargetDotNetFrameworkVersion ver = GetTargetFrameworkVersionEnumFromMoniker(moniker);
-            if (ver == TargetDotNetFrameworkVersion.VersionLatest)
-                return null;
-
-            string machineConfig = ToolLocationHelper.GetPathToDotNetFrameworkFile(@"config\machine.config", ver);
-            new FileIOPermission(FileIOPermissionAccess.PathDiscovery, machineConfig).Demand();
-            return machineConfig;
-        }
-
-        private static TargetDotNetFrameworkVersion GetTargetFrameworkVersionEnumFromMoniker(string moniker)
-        {
-            //
-
-            if (moniker.Contains("3.5") || moniker.Contains("3.0") || moniker.Contains("2.0") ) {
-                return TargetDotNetFrameworkVersion.Version20;
-            }
-            return TargetDotNetFrameworkVersion.VersionLatest;
-        }
+        // TODO: Migration
+        // private static TargetDotNetFrameworkVersion GetTargetFrameworkVersionEnumFromMoniker(string moniker)
+        // {
+        //     //
+        //
+        //     if (moniker.Contains("3.5") || moniker.Contains("3.0") || moniker.Contains("2.0") ) {
+        //         return TargetDotNetFrameworkVersion.Version20;
+        //     }
+        //     return TargetDotNetFrameworkVersion.VersionLatest;
+        // }
     }
 }

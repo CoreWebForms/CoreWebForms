@@ -8,6 +8,7 @@ internal static class AssemblyRef
     public const string SystemDesign = nameof(SystemDesign);
     public const string MicrosoftVisualStudioWeb = nameof(MicrosoftVisualStudioWeb);
     public const string SystemWebDynamicData = nameof(SystemWebDynamicData);
+    public const string SystemConfiguration = nameof(SystemConfiguration);
 }
 
 internal static class SR
