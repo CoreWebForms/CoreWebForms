@@ -90,14 +90,16 @@ namespace System.Web.DataAccess
             // Step 1: Check <connectionStrings> config section for this connection string
             if (lookupConnectionString)
             {
-                RuntimeConfig config = (appLevel) ? RuntimeConfig.GetAppConfig() : RuntimeConfig.GetConfig();
-                ConnectionStringSettings
-                    connObj = config.ConnectionStrings.ConnectionStrings[specifiedConnectionString];
-                if (connObj != null)
-                    connectionString = connObj.ConnectionString;
+                // TODO: Migration
+                // RuntimeConfig config = (appLevel) ? RuntimeConfig.GetAppConfig() : RuntimeConfig.GetConfig();
 
-                if (connectionString == null)
-                    return null;
+                // ConnectionStringSettings
+                //     connObj = config.ConnectionStrings.ConnectionStrings[specifiedConnectionString];
+                // if (connObj != null)
+                //     connectionString = connObj.ConnectionString;
+                //
+                // if (connectionString == null)
+                //     return null;
 
                 //HandlerBase.CheckAndReadRegistryValue (ref connectionString, true);
             }

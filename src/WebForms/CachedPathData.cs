@@ -43,7 +43,6 @@ namespace System.Web {
         string                  _configPath;
         VirtualPath             _virtualPath;
         string                  _physicalPath;
-        RuntimeConfig           _runtimeConfig;
         HandlerMappingMemo      _handlerMemo;
 
 
@@ -53,7 +52,6 @@ namespace System.Web {
         internal CachedPathData(string configPath, VirtualPath virtualPath, string physicalPath, bool exists) {
             // Guarantee that we return a non-null config record
             // if an error occurs during initialization.
-            _runtimeConfig = RuntimeConfig.GetErrorRuntimeConfig();
             _configPath = configPath;
             _virtualPath = virtualPath;
             _physicalPath = physicalPath;
@@ -204,14 +202,16 @@ namespace System.Web {
             // the filesystem.
             //
             string key = CreateKey(configPath);
-            CacheStoreProvider cacheInternal = HttpRuntime.Cache.InternalCache;
+            // TODO: Migration
+            // CacheStoreProvider cacheInternal = HttpRuntime.Cache.InternalCache;
+            Cache cacheInternal = HttpRuntime.Cache;
             CachedPathData data = (CachedPathData) cacheInternal.Get(key);
 
             // if found, return the data
-            if (data != null) {
-                data.WaitForInit();
-                return data;
-            }
+            // if (data != null) {
+            //     data.WaitForInit();
+            //     return data;
+            // }
 
             // WOS
 
@@ -237,7 +237,7 @@ namespace System.Web {
                 string parentConfigPath = ConfigPathUtility.GetParent(configPath);
                 parentData = GetConfigPathData(parentConfigPath);
                 string parentKey = CreateKey(parentConfigPath);
-                cacheItemDependencies = new string[1] {parentKey};
+                cacheItemDependencies = new string[]{parentKey};
 
                 if (!WebConfigurationHost.IsVirtualPathConfigPath(configPath)) {
                     // assume hardcoded levels above the path, such as root web.config, exist
@@ -262,7 +262,7 @@ namespace System.Web {
                 }
 
                 try {
-                    dependency = new CacheDependency(0, fileDependencies, cacheItemDependencies);
+                    dependency = new CacheDependency(fileDependencies, cacheItemDependencies);
                 }
                 catch {
                     // CacheDependency ctor could fail because of bogus file path
@@ -282,12 +282,13 @@ namespace System.Web {
                     try {
                     }
                     finally {
-                        data = (CachedPathData)cacheInternal.Add(key, dataAdd, new CacheInsertOptions() {
-                            Dependencies = dependency,
-                            SlidingExpiration = slidingExpiration,
-                            Priority = priority,
-                            OnRemovedCallback = s_callback
-                        });
+                        // data = (CachedPathData)cacheInternal.Add(key, dataAdd, new CacheInsertOptions() {
+                        //     Dependencies = dependency,
+                        //     SlidingExpiration = slidingExpiration,
+                        //     Priority = priority,
+                        //     OnRemovedCallback = s_callback
+                        // });
+                        data = (CachedPathData)cacheInternal.Add(key, dataAdd, dependency, Cache.NoAbsoluteExpiration, slidingExpiration, priority, s_callback);
 
                         if (data == null) {
                             isDataCreator = true;
@@ -374,19 +375,20 @@ namespace System.Web {
                         //
                         if (dependency != null) {
                             if (!initCompleted) {
-                                dependency = new CacheDependency(0, null, cacheItemDependencies);
+                                dependency = new CacheDependency(null, cacheItemDependencies);
                             }
                             else {
-                                dependency = new CacheDependency(0, fileDependencies, cacheItemDependencies);
+                                dependency = new CacheDependency(fileDependencies, cacheItemDependencies);
                             }
                         }
 
                         using (dependency) {
-                            cacheInternal.Insert(key, dataAdd, new CacheInsertOptions() {
-                                                                    Dependencies = dependency,
-                                                                    AbsoluteExpiration = DateTime.UtcNow.AddSeconds(5),
-                                                                    OnRemovedCallback = s_callback
-                                                                });
+                            // cacheInternal.Insert(key, dataAdd, new CacheInsertOptions() {
+                            //                                         Dependencies = dependency,
+                            //                                         AbsoluteExpiration = DateTime.UtcNow.AddSeconds(5),
+                            //                                         OnRemovedCallback = s_callback
+                            //                                     });
+                            cacheInternal.Insert(key, dataAdd, dependency, DateTime.UtcNow.AddSeconds(5), Cache.NoSlidingExpiration, CacheItemPriority.Default, s_callback );
                         }
                     }
 
@@ -400,7 +402,7 @@ namespace System.Web {
         static private string GetPhysicalPath(VirtualPath virtualPath) {
             string physicalPath = null;
             try {
-                physicalPath = virtualPath.MapPathInternal(true);
+                physicalPath = virtualPath.MapPath();
             }
             catch (HttpException e) {
                 //
@@ -431,7 +433,7 @@ namespace System.Web {
         // virtual files.
         // An example of a 400 range error is "path not found".
         static internal void RemoveBadPathData(CachedPathData pathData) {
-            CacheStoreProvider cacheInternal = HttpRuntime.Cache.InternalCache;
+            Cache cacheInternal = HttpRuntime.Cache;
 
             string configPath = pathData._configPath;
             string key = CreateKey(configPath);
@@ -452,7 +454,7 @@ namespace System.Web {
         // status outside the 400 range. We need to mark all data up the path to account for
         // virtual files.
         static internal void MarkCompleted(CachedPathData pathData) {
-            CacheStoreProvider cacheInternal = HttpRuntime.Cache.InternalCache;
+            Cache cacheInternal = HttpRuntime.Cache;
 
             string configPath = pathData._configPath;
             do {
@@ -503,20 +505,18 @@ namespace System.Web {
 
         static string CreateKey(string configPath) {
             Debug.Assert(configPath == configPath.ToLower(CultureInfo.InvariantCulture), "configPath == configPath.ToLower(CultureInfo.InvariantCulture)");
-            return CacheInternal.PrefixPathData + configPath;
+            return configPath;
         }
 
         // Initialize the data
         void Init(CachedPathData parentData) {
             // Note that _runtimeConfig will be set to the singleton instance of ErrorRuntimeConfig
             // if a ThreadAbortException is thrown during this method.
-            Debug.Assert(_runtimeConfig == RuntimeConfig.GetErrorRuntimeConfig(), "_runtimeConfig == RuntimeConfig.GetErrorRuntimeConfig()");
 
             if (!HttpConfigurationSystem.UseHttpConfigurationSystem) {
                 //
                 // configRecord may legitimately be null if we are not using the HttpConfigurationSystem.
                 //
-                _runtimeConfig = null;
             }
             else {
                 IInternalConfigRecord configRecord = HttpConfigurationSystem.GetUniqueConfigRecord(_configPath);
@@ -527,14 +527,12 @@ namespace System.Web {
                     // The config is unique to this path, so this make this record the owner of the config.
                     //
                     _flags[FOwnsConfigRecord] = true;
-                    _runtimeConfig = new RuntimeConfig(configRecord);
                 }
                 else {
                     //
                     // The config record is the same as an ancestor's, so use the parent's RuntimeConfig.
                     //
                     Debug.Assert(parentData != null, "parentData != null");
-                    _runtimeConfig = parentData._runtimeConfig;
                 }
             }
         }
@@ -625,14 +623,10 @@ namespace System.Web {
 
         internal IInternalConfigRecord ConfigRecord {
             get {
+                // TODO: Migration
                 // _runtimeConfig may be null if we are not using the HttpConfigurationSystem.
-                return (_runtimeConfig != null) ? _runtimeConfig.ConfigRecord : null;
-            }
-        }
-
-        internal RuntimeConfig RuntimeConfig {
-            get {
-                return _runtimeConfig;
+                // return (_runtimeConfig != null) ? _runtimeConfig.ConfigRecord : null;
+                return null;
             }
         }
 
