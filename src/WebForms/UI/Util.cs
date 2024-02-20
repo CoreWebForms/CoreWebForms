@@ -1025,6 +1025,26 @@ internal static class Util
         }
     }
 
+    internal static string GetClientValidatedPostback(Control control, string validationGroup) {
+        return GetClientValidatedPostback(control, validationGroup, string.Empty);
+    }
+
+    internal static string GetClientValidatedPostback(Control control,
+        string validationGroup,
+        string argument) {
+        string postbackReference = control.Page.ClientScript.GetPostBackEventReference(control, argument, true);
+        return GetClientValidateEvent(validationGroup) + postbackReference;
+    }
+
+    internal static string GetClientValidateEvent(string validationGroup) {
+        if (validationGroup == null) {
+            validationGroup = String.Empty;
+        }
+        return "if (typeof(Page_ClientValidate) == 'function') Page_ClientValidate('" +
+               validationGroup +
+               "'); ";
+    }
+
     internal static bool TypeNameContainsAssembly(string typeName)
     {
         return CommaIndexInTypeName(typeName) > 0;
