@@ -4,6 +4,7 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
+using System.EnterpriseServices;
 using System.Transactions;
 
 namespace System.Web.Services {
@@ -60,7 +61,7 @@ namespace System.Web.Services {
         /// <para>Initializes a new instance of the <see cref='System.Web.Services.WebMethodAttribute'/>
         /// class.</para>
         /// </devdoc>
-        public WebMethodAttribute(bool enableSession, TransactionScopeOption transactionOption)
+        public WebMethodAttribute(bool enableSession, TransactionOption transactionOption)
             : this() {
             EnableSession = enableSession;
             this.transactionOption = (int)transactionOption;
@@ -72,7 +73,7 @@ namespace System.Web.Services {
         /// <para>Initializes a new instance of the <see cref='System.Web.Services.WebMethodAttribute'/>
         /// class.</para>
         /// </devdoc>
-        public WebMethodAttribute(bool enableSession, TransactionScopeOption transactionOption, int cacheDuration) {
+        public WebMethodAttribute(bool enableSession, TransactionOption transactionOption, int cacheDuration) {
             EnableSession = enableSession;
             this.transactionOption = (int)transactionOption;
             transactionOptionSpecified = true;
@@ -85,7 +86,7 @@ namespace System.Web.Services {
         /// <para>Initializes a new instance of the <see cref='System.Web.Services.WebMethodAttribute'/>
         /// class.</para>
         /// </devdoc>
-        public WebMethodAttribute(bool enableSession, TransactionScopeOption transactionOption, int cacheDuration, bool bufferResponse) {
+        public WebMethodAttribute(bool enableSession, TransactionOption transactionOption, int cacheDuration, bool bufferResponse) {
             EnableSession = enableSession;
             this.transactionOption = (int)transactionOption;
             transactionOptionSpecified = true;
@@ -164,9 +165,9 @@ namespace System.Web.Services {
         ///    <para>
         ///       Indicates the transaction participation mode of a Web Service Method. </para>
         /// </devdoc>
-        public TransactionScopeOption TransactionOption {
+        public TransactionOption TransactionOption {
             get {
-                return (TransactionScopeOption)transactionOption;
+                return (TransactionOption)transactionOption;
             }
             set {
                 transactionOption = (int)value;
