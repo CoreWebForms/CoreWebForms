@@ -10,6 +10,7 @@ using System.Runtime.CompilerServices;
 [assembly: TypeForwardedTo(typeof(System.Web.UI.HistoryEventArgs))]
 [assembly: TypeForwardedTo(typeof(System.Web.UI.IExtenderControl))]
 [assembly: TypeForwardedTo(typeof(System.Web.UI.IScriptControl))]
+[assembly: TypeForwardedTo(typeof(System.Web.UI.ScriptControl))]
 [assembly: TypeForwardedTo(typeof(System.Web.UI.RegisteredArrayDeclaration))]
 [assembly: TypeForwardedTo(typeof(System.Web.UI.RegisteredDisposeScript))]
 [assembly: TypeForwardedTo(typeof(System.Web.UI.RegisteredExpandoAttribute))]
