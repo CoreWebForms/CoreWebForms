@@ -110,7 +110,7 @@ Sys._Application.prototype.addHistoryPoint = function (state, title) {
     var value = state[key];
     if (value === null) {
       if (typeof initialState[key] !== "undefined") {
-        delete initialState[key];
+        initialState[key] = null;
       }
     } else {
       initialState[key] = value;
@@ -215,7 +215,7 @@ Sys._Application.prototype._navigate = function (entry) {
 };
 
 Sys._Application.prototype._onIdle = function () {
-  delete this._timerCookie;
+  this._timerCookie = null;
 
   var entry = this.get_stateString();
   if (entry !== this._currentEntry) {

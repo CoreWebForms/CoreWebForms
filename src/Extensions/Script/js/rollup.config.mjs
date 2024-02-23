@@ -1,4 +1,5 @@
 import preprocess from './rollup-plugin-preprocess.js'
+import terser from '@rollup/plugin-terser'
 
 export default [
   {
@@ -18,7 +19,19 @@ export default [
       format: "es",
     },
     plugins: [
-      preprocess()
+      preprocess(),
+      terser(),
     ]
-  }
- ];
+  },
+  {
+    input: ["MicrosoftAjax.jsa"],
+    output: {
+      dir: "dist/",
+      format: "es",
+    },
+    plugins: [
+      preprocess(),
+      terser(),
+    ]
+  },
+];

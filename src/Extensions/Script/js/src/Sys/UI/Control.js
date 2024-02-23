@@ -95,9 +95,9 @@ Sys.UI.Control.prototype = {
     Sys.UI.Control.callBaseMethod(this, "dispose");
     if (this._element) {
       this._element.control = null;
-      delete this._element;
+      this._element = null;
     }
-    if (this._parent) delete this._parent;
+    if (this._parent) this._parent = null;
   },
   onBubbleEvent: function (source, args) {
     /// <param name="source">The object that triggered the event.</param>

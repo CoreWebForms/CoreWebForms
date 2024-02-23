@@ -173,7 +173,7 @@ Sys.Net.WebServiceProxy.invoke = function (
         String.format(Sys.Res.webServiceTimedOut, methodName),
       );
       loader.dispose();
-      delete Sys[tempCallback];
+      Sys[tempCallback] = null;
       if (onFailure) {
         onFailure(error, userContext, methodName);
       }
@@ -185,7 +185,7 @@ Sys.Net.WebServiceProxy.invoke = function (
         timeoutcookie = null;
       }
       loader.dispose();
-      delete Sys[tempCallback];
+      Sys[tempCallback] = null;
       // the script's loaded handler knows the callback occurred if this was set to null.
       // If the loaded callback occurs before this is called, it means the script loaded but
       // did not execute the callback, an error condition.

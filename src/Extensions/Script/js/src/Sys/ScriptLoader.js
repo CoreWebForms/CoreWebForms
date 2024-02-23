@@ -17,7 +17,7 @@ Sys._ScriptLoader.prototype = {
     this._stopSession();
     this._loading = false;
     if (this._events) {
-      delete this._events;
+      this._events = null;
     }
     this._sessions = null;
     this._currentSession = null;
@@ -102,7 +102,7 @@ Sys._ScriptLoader.prototype = {
       var onLoad = this._scriptLoadedDelegate;
       if (nextScript.fallback) {
         var fallback = nextScript.fallback;
-        delete nextScript.fallback;
+        nextScript.fallback = null;
 
         var self = this;
         onLoad = function (scriptElement, loaded) {
@@ -126,7 +126,7 @@ Sys._ScriptLoader.prototype = {
       if (scriptElement.text && Sys.Browser.agent === Sys.Browser.Safari) {
         // Safari requires the inline script to be in the innerHTML attribute
         scriptElement.innerHTML = scriptElement.text;
-        delete scriptElement.text;
+        scriptElement.text = null;
       }
 
       // AtlasWhidbey 36149: If they queue an empty script block "", we can't tell the difference between

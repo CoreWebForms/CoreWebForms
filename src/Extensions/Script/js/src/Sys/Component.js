@@ -65,7 +65,7 @@ Sys.Component.prototype = {
         handler(this, Sys.EventArgs.Empty);
       }
     }
-    delete this._events;
+    this._events = null;
     Sys.Application.unregisterDisposableObject(this);
     Sys.Application.removeComponent(this);
   },
