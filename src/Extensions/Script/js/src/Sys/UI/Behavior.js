@@ -70,7 +70,7 @@ Sys.UI.Behavior.prototype = {
       if (behaviors.length === 0) {
         e._behaviors = null;
       }
-      delete this._element;
+      this._element = null;
     }
   },
 };

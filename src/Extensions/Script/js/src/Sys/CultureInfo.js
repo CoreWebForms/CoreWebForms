@@ -235,7 +235,7 @@ Sys.CultureInfo.InvariantCulture = Sys.CultureInfo._parse({
 });
 if (typeof __cultureInfo === "object") {
   Sys.CultureInfo.CurrentCulture = Sys.CultureInfo._parse(__cultureInfo);
-  delete __cultureInfo;
+  __cultureInfo = null;
 } else {
   Sys.CultureInfo.CurrentCulture = Sys.CultureInfo._parse({
     name: "en-US",
