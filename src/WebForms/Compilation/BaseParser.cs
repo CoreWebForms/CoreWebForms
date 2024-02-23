@@ -100,9 +100,6 @@ public partial class BaseParser
      */
     internal VirtualPath ResolveVirtualPath(VirtualPath virtualPath)
     {
-        var newVirtualPath = VirtualPathProvider.CombineVirtualPathsInternal(CurrentVirtualPath, virtualPath);
-        newVirtualPath.Files = virtualPath.Files;
-
-        return newVirtualPath;
+        return VirtualPathProvider.CombineVirtualPathsInternal(CurrentVirtualPath, virtualPath);
     }
 }

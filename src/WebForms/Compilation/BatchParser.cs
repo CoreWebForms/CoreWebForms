@@ -122,7 +122,7 @@ internal abstract class DependencyParser : BaseParser
             }
             else
             {
-                using (Stream stream = virtualPath.OpenFile())
+                using (Stream stream = virtualPath.OpenFile(WebFormsFileProvider))
                 {
                     reader = Util.ReaderFromStream(stream, virtualPath);
                     ParseReader(reader);
@@ -240,12 +240,12 @@ internal abstract class DependencyParser : BaseParser
             {
 
                 // If it's relative, just treat it as virtual
-                newVirtualPath = ResolveVirtualPath(VirtualPath.Create(filename, WebFormsFileProvider));
+                newVirtualPath = ResolveVirtualPath(VirtualPath.Create(filename));
             }
         }
         else if (StringUtil.EqualsIgnoreCase(pathType, "virtual"))
         {
-            newVirtualPath = ResolveVirtualPath(VirtualPath.Create(filename, WebFormsFileProvider));
+            newVirtualPath = ResolveVirtualPath(VirtualPath.Create(filename));
         }
         else
         {
@@ -348,7 +348,7 @@ internal abstract class DependencyParser : BaseParser
         if (name == "src")
         {
             string src = Util.GetNonEmptyAttribute(name, value);
-            AddDependency(VirtualPath.Create(src, WebFormsFileProvider));
+            AddDependency(VirtualPath.Create(src));
         }
     }
 
@@ -403,7 +403,7 @@ internal abstract class TemplateControlDependencyParser : DependencyParser
                 if (value.Length > 0)
                 {
                     // Add a dependency on the master, whether it has a device filter or not
-                    AddDependency(VirtualPath.Create(value, WebFormsFileProvider));
+                    AddDependency(VirtualPath.Create(value));
                 }
                 break;
 
@@ -428,7 +428,7 @@ internal class PageDependencyParser : TemplateControlDependencyParser
         {
             if (PagesConfig.MasterPageFileInternal != null && PagesConfig.MasterPageFileInternal.Length != 0)
             {
-                AddDependency(VirtualPath.Create(PagesConfig.MasterPageFileInternal, WebFormsFileProvider));
+                AddDependency(VirtualPath.Create(PagesConfig.MasterPageFileInternal));
             }
         }
     }

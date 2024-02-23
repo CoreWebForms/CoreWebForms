@@ -8,6 +8,7 @@ using System.Reflection;
 using System.Text;
 using System.Web.UI.WebControls;
 using System.Web.Util;
+using Microsoft.Extensions.FileProviders;
 
 /*
  * Implements various utility functions used by the template code
@@ -491,7 +492,7 @@ internal static class Util
 
         if (!string.IsNullOrEmpty(firstScript))
         {
-            // 
+            //
             return firstScript + secondScript;
         }
         else
@@ -875,7 +876,7 @@ internal static class Util
 
     internal static bool IsLateBoundComClassicType(Type t)
     {
-        // 
+        //
         return (String.Compare(t.FullName, "System.__ComObject", StringComparison.Ordinal) == 0);
     }
 
@@ -964,9 +965,9 @@ internal static class Util
         return type;
     }
 
-    internal static void CheckVirtualFileExists(VirtualPath virtualPath)
+    internal static void CheckVirtualFileExists(VirtualPath virtualPath, IFileProvider fileProvider = null)
     {
-        if (!virtualPath.FileExists())
+        if (!virtualPath.FileExists(fileProvider))
         {
             throw new HttpException(
                 //HttpStatus.NotFound,
@@ -1013,10 +1014,10 @@ internal static class Util
         }
     }
 
-    internal /*public*/ static String StringFromVirtualPath(VirtualPath virtualPath)
+    internal /*public*/ static String StringFromVirtualPath(VirtualPath virtualPath, IFileProvider fileProvider = null)
     {
 
-        using (Stream stream = virtualPath.OpenFile())
+        using (Stream stream = virtualPath.OpenFile(fileProvider))
         {
             // Create a reader on the file, and read the whole thing
             TextReader reader = Util.ReaderFromStream(stream, virtualPath);

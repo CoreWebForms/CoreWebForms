@@ -579,9 +579,9 @@ public abstract class TemplateParser : BaseParser, IAssemblyDependencyParser
         return c;
     }
 
-    public ITemplate ParseTemplate(string content, string virtualPath, bool ignoreFilter)
+    public static ITemplate ParseTemplate(string content, string virtualPath, bool ignoreFilter)
     {
-        return ParseTemplate(content, VirtualPath.Create(virtualPath, WebFormsFileProvider), ignoreFilter);
+        return ParseTemplate(content, VirtualPath.Create(virtualPath), ignoreFilter);
     }
 
     private static ITemplate ParseTemplate(string content, VirtualPath virtualPath, bool ignoreFilter)
@@ -835,7 +835,7 @@ public abstract class TemplateParser : BaseParser, IAssemblyDependencyParser
 
     protected void ParseFile(string physicalPath, string virtualPath)
     {
-        ParseFile(physicalPath, VirtualPath.Create(virtualPath, WebFormsFileProvider));
+        ParseFile(physicalPath, VirtualPath.Create(virtualPath));
     }
 
     internal void ParseFile(string physicalPath, VirtualPath virtualPath)
@@ -871,7 +871,7 @@ public abstract class TemplateParser : BaseParser, IAssemblyDependencyParser
             else
             {
                 // Open a TextReader for the virtualPath we're parsing
-                using (Stream stream = virtualPath.OpenFile())
+                using (Stream stream = virtualPath.OpenFile(WebFormsFileProvider))
                 {
                     reader = Util.ReaderFromStream(stream, CurrentVirtualPath);
                     ParseReader(reader, virtualPath);
@@ -1915,7 +1915,7 @@ private Match RunTextRegex(string text, int textPos) {
             ProcessLanguageAttribute((string)attribs["language"]);
             _currentScript = new ScriptBlockData(1, 1, virtualPath.VirtualPathString);
 
-            _currentScript.Script = Util.StringFromVirtualPath(virtualPath);
+            _currentScript.Script = Util.StringFromVirtualPath(virtualPath, WebFormsFileProvider);
 
             // Add this script to the script builder
             _scriptList.Add(_currentScript);
@@ -2289,7 +2289,7 @@ private Match RunTextRegex(string text, int textPos) {
 
                 try
                 {
-                    ProcessCodeFile(VirtualPath.Create(Util.GetNonEmptyAttribute(name, value), WebFormsFileProvider));
+                    ProcessCodeFile(VirtualPath.Create(Util.GetNonEmptyAttribute(name, value)));
                 }
                 catch (Exception ex)
                 {
@@ -2345,7 +2345,7 @@ private Match RunTextRegex(string text, int textPos) {
         {
             try
             {
-                assembly = ImportSourceFile(VirtualPath.Create(src, WebFormsFileProvider));
+                assembly = ImportSourceFile(VirtualPath.Create(src));
             }
             catch (Exception ex)
             {
@@ -2573,7 +2573,7 @@ private Match RunTextRegex(string text, int textPos) {
         BuildManager.ValidateCodeFileVirtualPath(_codeFileVirtualPath);
 
         // Make sure the file exists
-        Util.CheckVirtualFileExists(_codeFileVirtualPath);
+        Util.CheckVirtualFileExists(_codeFileVirtualPath, WebFormsFileProvider);
 
         _compilerType = compilerType;
 
@@ -2846,7 +2846,7 @@ private Match RunTextRegex(string text, int textPos) {
 
                 try
                 {
-                    newVirtualPath = ResolveVirtualPath(VirtualPath.Create(filename, WebFormsFileProvider));
+                    newVirtualPath = ResolveVirtualPath(VirtualPath.Create(filename));
                 }
                 catch
                 {
@@ -2873,7 +2873,7 @@ private Match RunTextRegex(string text, int textPos) {
         }
         else if (StringUtil.EqualsIgnoreCase(pathType, "virtual"))
         {
-            newVirtualPath = ResolveVirtualPath(VirtualPath.Create(filename, WebFormsFileProvider));
+            newVirtualPath = ResolveVirtualPath(VirtualPath.Create(filename));
 #if PORT_HOSTING
             HttpRuntime.CheckVirtualFilePermission(newVirtualPath.VirtualPathString);
 #endif
@@ -3388,7 +3388,7 @@ private Match RunTextRegex(string text, int textPos) {
                 _pageParserFilter.OnDependencyAdded();
             }
 
-            AddSourceDependency2(VirtualPath.Create(virtualPath, WebFormsFileProvider));
+            AddSourceDependency2(VirtualPath.Create(virtualPath));
         }
     }
 
