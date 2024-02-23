@@ -21,8 +21,8 @@ internal class UserControlParser : TemplateControlParser
     internal bool FSharedPartialCaching { get { return _fSharedPartialCaching; } }
     internal string Provider { get { return _provider; } }
 #else
-    internal static bool FSharedPartialCaching => false;
-    internal static string Provider => null;
+    internal bool FSharedPartialCaching => false;
+    internal string Provider => null;
 #endif
 
     internal override BaseCodeDomTreeGenerator GetGenerator() => new UserControlCodeDomTreeGenerator(this);

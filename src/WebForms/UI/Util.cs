@@ -5,7 +5,9 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.Reflection;
+using System.Security.Permissions;
 using System.Text;
+using System.Web.Compilation;
 using System.Web.UI.WebControls;
 using System.Web.Util;
 using Microsoft.Extensions.FileProviders;
@@ -56,6 +58,46 @@ internal static class Util
         }
 
         return propInfo.PropertyType;
+    }
+
+    internal /*public*/ static String StringFromFile(string path) {
+        Encoding encoding = Encoding.Default;
+        return StringFromFile(path, ref encoding);
+    }
+
+    /*
+     * Return a String which holds the contents of a file with specific encoding.
+     */
+    internal /*public*/ static String StringFromFile(string path, ref Encoding encoding) {
+
+        // Create a reader on the file.
+        // Generates an exception if the file can't be opened.
+        StreamReader reader = new StreamReader(path, encoding, true /*detectEncodingFromByteOrderMarks*/);
+
+        try {
+            string content = reader.ReadToEnd();
+            encoding = reader.CurrentEncoding;
+
+            return content;
+        }
+        finally {
+            // Make sure we always close the stream
+            if (reader != null)
+                reader.Close();
+        }
+    }
+
+    internal static void DeleteFileNoException(string path) {
+        Debug.Assert(File.Exists(path), path);
+        try {
+            File.Delete(path);
+        }
+        catch { } // Ignore all exceptions
+    }
+
+    internal static void DeleteFileIfExistsNoException(string path) {
+        if (File.Exists(path))
+            DeleteFileNoException(path);
     }
 
     internal static Type GetNonPrivateFieldType(Type classType, string fieldName)
@@ -128,6 +170,91 @@ internal static class Util
         return ((TemplateInstanceAttribute)instanceAttrs[0]).Instances == TemplateInstance.Multiple;
     }
 
+    internal static long GetRecompilationHash(PagesSection ps)
+    {
+        HashCodeCombiner recompilationHash = new HashCodeCombiner();
+
+        // TODO: Migration
+        // NamespaceCollection namespaces;
+        // TagPrefixCollection controls;
+        // TagMapCollection tagMapping;
+        //
+        // // Combine items from Pages section
+        // recompilationHash.AddObject(ps.Buffer);
+        // recompilationHash.AddObject(ps.EnableViewState);
+        // recompilationHash.AddObject(ps.EnableViewStateMac);
+        // recompilationHash.AddObject(ps.EnableEventValidation);
+        // recompilationHash.AddObject(ps.SmartNavigation);
+        // recompilationHash.AddObject(ps.ValidateRequest);
+        // recompilationHash.AddObject(ps.AutoEventWireup);
+        // if (ps.PageBaseTypeInternal != null) {
+        //     recompilationHash.AddObject(ps.PageBaseTypeInternal.FullName);
+        // }
+        // if (ps.UserControlBaseTypeInternal != null) {
+        //     recompilationHash.AddObject(ps.UserControlBaseTypeInternal.FullName);
+        // }
+        // if (ps.PageParserFilterTypeInternal != null) {
+        //     recompilationHash.AddObject(ps.PageParserFilterTypeInternal.FullName);
+        // }
+        // recompilationHash.AddObject(ps.MasterPageFile);
+        // recompilationHash.AddObject(ps.Theme);
+        // recompilationHash.AddObject(ps.StyleSheetTheme);
+        // recompilationHash.AddObject(ps.EnableSessionState);
+        // recompilationHash.AddObject(ps.CompilationMode);
+        // recompilationHash.AddObject(ps.MaxPageStateFieldLength);
+        // recompilationHash.AddObject(ps.ViewStateEncryptionMode);
+        // recompilationHash.AddObject(ps.MaintainScrollPositionOnPostBack);
+        //
+        // // Combine items from Namespaces collection
+        // namespaces = ps.Namespaces;
+        //
+        // recompilationHash.AddObject(namespaces.AutoImportVBNamespace);
+        // if (namespaces.Count == 0) {
+        //     recompilationHash.AddObject("__clearnamespaces");
+        // }
+        // else {
+        //     foreach (NamespaceInfo ni in namespaces) {
+        //         recompilationHash.AddObject(ni.Namespace);
+        //     }
+        // }
+        //
+        // // Combine items from the Controls collection
+        // controls = ps.Controls;
+        //
+        // if (controls.Count == 0) {
+        //     recompilationHash.AddObject("__clearcontrols");
+        // }
+        // else {
+        //     foreach (TagPrefixInfo tpi in controls) {
+        //         recompilationHash.AddObject(tpi.TagPrefix);
+        //
+        //         if (tpi.TagName != null && tpi.TagName.Length != 0) {
+        //             recompilationHash.AddObject(tpi.TagName);
+        //             recompilationHash.AddObject(tpi.Source);
+        //         }
+        //         else {
+        //             recompilationHash.AddObject(tpi.Namespace);
+        //             recompilationHash.AddObject(tpi.Assembly);
+        //         }
+        //     }
+        // }
+        //
+        // // Combine items from the TagMapping Collection
+        // tagMapping = ps.TagMapping;
+        //
+        // if (tagMapping.Count == 0) {
+        //     recompilationHash.AddObject("__cleartagmapping");
+        // }
+        // else {
+        //     foreach (TagMapInfo tmi in tagMapping) {
+        //         recompilationHash.AddObject(tmi.TagType);
+        //         recompilationHash.AddObject(tmi.MappedTagType);
+        //     }
+        // }
+
+        return recompilationHash.CombinedHash;
+    }
+
     internal static bool IsFalseString(string s)
     {
         return s != null && (StringUtil.EqualsIgnoreCase(s, "false"));
@@ -135,6 +262,33 @@ internal static class Util
     internal static bool IsTrueString(string s)
     {
         return s != null && (StringUtil.EqualsIgnoreCase(s, "true"));
+    }
+
+
+    internal static string GetAssemblyShortName(Assembly a) {
+
+        // Getting the short name is always safe, so Assert to get it (VSWhidbey 491895)
+        // InternalSecurityPermissions.Unrestricted.Assert();
+
+        return a.GetName().Name;
+    }
+
+    internal static string MakeValidFileName(string fileName) {
+
+        // TODO: Migration
+        // // If it's already valid, nothing to do
+        // if (IsValidFileName(fileName))
+        //     return fileName;
+        //
+        // // Replace all the invalid chars by '_'
+        // for (int i = 0; i < invalidFileNameChars.Length; ++i)  {
+        //     fileName = fileName.Replace(invalidFileNameChars[i], '_');
+        // }
+        //
+        // // Shoud always be valid now
+        // Debug.Assert(IsValidFileName(fileName));
+
+        return fileName;
     }
 
     internal static void CheckThemeAttribute(string themeName)
@@ -155,7 +309,7 @@ internal static class Util
 
     internal static bool ThemeExists(string themeName)
     {
-#if PORT_THEMES
+//#if PORT_THEMES
         VirtualPath virtualDir = ThemeDirectoryCompiler.GetAppThemeVirtualDir(themeName);
         if (!VirtualDirectoryExistsWithAssert(virtualDir))
         {
@@ -167,8 +321,22 @@ internal static class Util
         }
 
         return true;
-#endif
+//#endif
         throw new NotImplementedException("Themes are not available");
+    }
+
+    private static bool VirtualDirectoryExistsWithAssert(VirtualPath virtualDir) {
+        try {
+            String physicalDir = virtualDir.MapPath();
+            if (physicalDir != null) {
+                new FileIOPermission(FileIOPermissionAccess.Read, physicalDir).Assert();
+            }
+
+            return virtualDir.DirectoryExists();
+        }
+        catch {
+            return false;
+        }
     }
 
     internal static bool GetAndRemovePositiveIntegerAttribute(IDictionary directives,
@@ -199,6 +367,25 @@ internal static class Util
         }
 
         return true;
+    }
+
+    internal static VirtualPath GetScriptLocation() {
+        // Todo: Migration
+        // prepare script include
+        // Dev10 Bug564221: we need to detect if app level web.config overwrites the root web.conigf
+        // string location = (string) RuntimeConfig.GetAppConfig().WebControls["clientScriptsLocation"];
+        string location = "Scripts";
+        // If there is a formatter, as there will be for the default machine.config, insert the assembly name and version.
+        // if (location.IndexOf("{0}", StringComparison.Ordinal) >= 0) {
+        //     string assembly = "system_web";
+        //
+        //     // Todo: Migration
+        //     // QFE number is not included in client path
+        //     // string version = VersionInfo.SystemWebVersion.Substring(0, VersionInfo.SystemWebVersion.LastIndexOf('.')).Replace('.', '_');
+        //     location = String.Format(CultureInfo.InvariantCulture, location, assembly, version);
+        // }
+
+        return VirtualPath.Create(location);
     }
 
     internal static object GetAndRemoveEnumAttribute(IDictionary directives, Type enumType,
@@ -1048,5 +1235,105 @@ internal static class Util
     internal static bool TypeNameContainsAssembly(string typeName)
     {
         return CommaIndexInTypeName(typeName) > 0;
+    }
+
+    /*
+     * If the file doesn't exist, do nothing.  If it does try to delete it if possible.
+     * If that fails, rename it with by appending a .delete extension to it
+     */
+    internal static bool RemoveOrRenameFile(FileInfo f) {
+        try {
+            // First, just try to delete the file
+            f.Delete();
+
+            // It was successfully deleted, so return true
+            return true;
+        }
+        catch {
+
+            try {
+                // If the delete failed, rename it to ".delete"
+                // Don't do that if it already has the delete extension
+                if (f.Extension != ".delete") {
+
+                    // include a unique token as part of the new name, to avoid
+                    // conflicts with previous renames (VSWhidbey 79996)
+                    string uniqueToken = DateTime.Now.Ticks.GetHashCode().ToString("x", CultureInfo.InvariantCulture);
+                    string newName = f.FullName + "." + uniqueToken + ".delete";
+                    f.MoveTo(newName);
+                }
+            }
+            catch {
+                // Ignore all exceptions
+            }
+        }
+
+        // Return false because we couldn't delete it, and had to rename it
+        return false;
+    }
+
+    /*
+     * Return an assembly name from the name of an assembly dll.
+     * Basically, it strips the extension.
+     */
+    internal static string GetAssemblyNameFromFileName(string fileName) {
+        // Strip the .dll extension if any
+        if (StringUtil.EqualsIgnoreCase(Path.GetExtension(fileName), ".dll"))
+            return fileName.Substring(0, fileName.Length-4);
+
+        return fileName;
+    }
+
+    /*
+     * Return the culture name for a file (e.g. "fr" or "fr-fr").
+     * If no culture applies, return null.
+     */
+    internal static string GetCultureName(string virtualPath) {
+
+        if (virtualPath == null) return null;
+
+        // By default, extract the culture name from the file name (e.g. "foo.fr-fr.resx")
+
+        string fileNameNoExt = Path.GetFileNameWithoutExtension(virtualPath);
+
+        // If virtualPath is not a file, ie. above statement returns null, simply return null;
+        if (fileNameNoExt == null)
+            return null;
+
+        // If there a dot left
+        int dotIndex = fileNameNoExt.LastIndexOf('.');
+
+        if (dotIndex < 0) return null;
+
+        string cultureName = fileNameNoExt.Substring(dotIndex+1);
+
+        // If it doesn't look like a culture name (e.g. "fr" or "fr-fr"), return null
+        if (!IsCultureName(cultureName))
+            return null;
+
+        return cultureName;
+    }
+
+    /*
+     * Checks whether the passed in string is a valid culture name.
+     */
+    internal static bool IsCultureName(string s)
+    {
+        // Todo : Migration
+        return true;
+    }
+
+    /*
+     * Get the path to the (shadow copied) DLL behind an assembly
+     */
+    [FileIOPermission(SecurityAction.Assert, AllFiles = FileIOPermissionAccess.PathDiscovery)]
+    internal static string GetAssemblyCodeBase(Assembly assembly) {
+
+        string location = assembly.Location;
+        if (String.IsNullOrEmpty(location))
+            return null;
+
+        // Get the path to the assembly (from the cache if it got shadow copied)
+        return location;
     }
 }

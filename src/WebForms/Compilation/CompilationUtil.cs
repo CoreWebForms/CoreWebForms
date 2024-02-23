@@ -12,6 +12,7 @@ internal static class CompilationUtil
 {
 
     internal const string CodeDomProviderOptionPath = "system.codedom/compilers/compiler/ProviderOption/";
+    public static int MaxConcurrentCompilations { get; set; }
 
     internal static CompilerType GetCodeDefaultLanguageCompilerInfo()
     {
@@ -404,7 +405,7 @@ internal static class CompilationUtil
         // Skip the copying for asax and skin files, which are not static even though they
         // don't have a registered BuildProvider (but don't skip .skin files during
         // updatable precomp).
-        // 
+        //
         if (StringUtil.EqualsIgnoreCase(extension, ".asax"))
             return false;
         if (!updatable && StringUtil.EqualsIgnoreCase(extension, ThemeDirectoryCompiler.skinExtension))
@@ -489,7 +490,7 @@ internal static class CompilationUtil
         else if (MultiTargetingUtil.IsTargetFramework35)
         {
             // We need to explicitly set to v3.5, as it is possible for the
-            // user to only have specified it for one compiler but not 
+            // user to only have specified it for one compiler but not
             // the other.
             // Dev10 bug 809212
             providerOptions["CompilerVersion"] = "v3.5";
@@ -647,7 +648,7 @@ internal static class CompilationUtil
             return result;
         }
 
-        // Assume false if the value wasn't set 
+        // Assume false if the value wasn't set
         return false;
     }
 

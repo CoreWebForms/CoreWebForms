@@ -41,6 +41,40 @@ public class HttpRuntimeConsts
         }
     }
 
+
+
+    //
+    // App domain related
+    //
+
+    private String _tempDir;
+    private String _codegenDir;
+    private String _appDomainAppId;
+    private String _appDomainAppPath;
+    private VirtualPath _appDomainAppVPath;
+    private String _appDomainId;
+
+    /// <devdoc>
+    ///    <para>[To be supplied.]</para>
+    /// </devdoc>
+    public static String CodegenDir {
+        get {
+            String path = CodegenDirInternal;
+            // Todo : Migration
+            //InternalSecurityPermissions.PathDiscovery(path).Demand();
+            return path;
+        }
+    }
+
+    internal static string CodegenDirInternal {
+        get { return _theRuntime._codegenDir; }
+    }
+
+    internal static string TempDirInternal {
+        get { return _theRuntime._tempDir; }
+    }
+
+
     internal static bool HasAspNetHostingPermission(AspNetHostingPermissionLevel level) {
 
         // Make sure we have already initialized the trust level

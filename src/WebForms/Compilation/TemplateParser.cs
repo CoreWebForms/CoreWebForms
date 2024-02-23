@@ -1469,7 +1469,7 @@ private Match RunTextRegex(string text, int textPos) {
      */
     private void ProcessLiteral()
     {
-        // Debug.Trace("Template", "Literal text: \"" + _literalBuilder.ToString() + "\"");
+        // Debug.Write("Template", "Literal text: \"" + _literalBuilder.ToString() + "\"");
 
         // Get the current literal string
         string literal = GetLiteral();
@@ -2807,7 +2807,7 @@ private Match RunTextRegex(string text, int textPos) {
 
         string pathType = match.Groups["pathtype"].Value;
         string filename = match.Groups["filename"].Value;
-        //System.Web.Util.Debug.Trace("Template", "#Include " + pathType + "=" + filename);
+        //System.Web.Util.Debug.Write("Template", "#Include " + pathType + "=" + filename);
 
         if (filename.Length == 0)
         {

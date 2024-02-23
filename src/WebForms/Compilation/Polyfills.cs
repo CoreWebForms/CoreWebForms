@@ -104,12 +104,27 @@ internal class BaseResourcesBuildProvider
 
 internal static class BuildManager
 {
+
+    // All generated assemblies start with this prefix
+    internal const string AssemblyNamePrefix = "App_";
+
+    // Web assemblies are the assemblies generated from web files (aspx, ascx, ...)
+    internal const string WebAssemblyNamePrefix = AssemblyNamePrefix + "Web_";
+
+    internal const string AppThemeAssemblyNamePrefix = AssemblyNamePrefix + "Theme_";
+    internal const string GlobalThemeAssemblyNamePrefix = AssemblyNamePrefix + "GlobalTheme_";
+    internal const string AppBrowserCapAssemblyNamePrefix = AssemblyNamePrefix + "Browsers";
+
     public static bool PrecompilingForDeployment { get; internal set; }
     public static string UpdatableInheritReplacementToken { get; internal set; }
     public static Assembly AppResourcesAssembly { get; internal set; }
     public static bool PrecompilingForUpdatableDeployment { get; internal set; }
+    public static bool ThrowOnFirstParseError { get; set; } = true;
+    public static VirtualPath ScriptVirtualDir { get; set; } = new VirtualPath("/Scripts");
+    // TODO: Migration
+    public static string WebHashFilePath { get; set; } = "Web_Hash.webinfo";
 
-    internal static BuildResult GetBuildResultFromCache(string cacheKey)
+    internal static BuildResultCompiledType GetBuildResultFromCache(string cacheKey)
     {
         throw new NotImplementedException("GetBuildResultFromCache");
     }
@@ -139,6 +154,33 @@ internal static class BuildManager
 
     internal static void ValidateCodeFileVirtualPath(VirtualPath codeFileVirtualPath)
     {
+    }
+
+    public static ICollection GetReferencedAssemblies(CompilationSection compConfig, int? index = null)
+    {
+        throw new NotImplementedException();
+    }
+
+    public static Compilation.BuildResult GetVPathBuildResultFromCache(object virtualPathObject)
+    {
+        throw new NotImplementedException();
+    }
+
+    public static BuildProvider CreateBuildProvider(object virtualPathObject, CompilationSection compConfig, ICollection referencedAssemblies, bool b)
+    {
+        throw new NotImplementedException();
+    }
+
+    public static string GenerateRandomAssemblyName(string themeName)
+    {
+        // TODO: Migration
+        // Random name
+        return "RandomName";
+    }
+
+    public static void CacheBuildResult(string cacheKey, BuildResultCompiledType result, DateTime utcStart)
+    {
+        throw new NotImplementedException();
     }
 }
 

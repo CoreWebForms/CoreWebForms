@@ -1,5 +1,6 @@
 // MIT License.
 
+using System.Diagnostics;
 using System.Text;
 using System.Web.Hosting;
 using System.Web.Util;
@@ -7,7 +8,7 @@ using Microsoft.Extensions.FileProviders;
 
 namespace System.Web;
 
-internal sealed class VirtualPath
+public sealed class VirtualPath
 {
     public VirtualPath Parent
     {
@@ -29,6 +30,12 @@ internal sealed class VirtualPath
     public VirtualPath(string path)
     {
         Path = Resolve(path);
+    }
+
+    public bool DirectoryExists() {
+        // todo: migration
+        //return HostingEnvironment.VirtualPathProvider.DirectoryExists(this);
+        return true;
     }
 
     public static string Resolve(string url)
@@ -179,7 +186,29 @@ internal sealed class VirtualPath
 
     internal string GetAppRelativeVirtualPathString(VirtualPath templateControlVirtualPath)
     {
-        throw new NotImplementedException();
+        // Check if the current path is already application-relative
+        if (Path.StartsWith("~") || templateControlVirtualPath.IsRelative)
+        {
+            return Path; // Already application-relative, return as is.
+        }
+
+        if (templateControlVirtualPath != null && !string.IsNullOrEmpty(templateControlVirtualPath.Path))
+        {
+            // If a template control's virtual path is provided, use it to resolve the current path
+            // This assumes that templateControlVirtualPath is an application-relative path
+            var basePath = templateControlVirtualPath.Path;
+            if (!basePath.EndsWith("/"))
+            {
+                basePath += "/";
+            }
+
+            // Combine the base path with the current path to create a new application-relative path
+            var combinedPath = VirtualPathUtility.Combine(basePath, Path);
+            return "~" + combinedPath.TrimStart('/'); // Ensure the result is application-relative
+        }
+
+        // Fallback to converting the current path to an application-relative path using the root
+        return "~/" + Path.TrimStart('/');
     }
 
     internal static VirtualPath CreateNonRelative(string value)
@@ -201,5 +230,12 @@ internal sealed class VirtualPath
     internal static VirtualPath CreateTrailingSlash(string virtualPath)
     {
         throw new NotImplementedException();
+    }
+
+    public VirtualDirectory GetDirectory() {
+        // TODO: Migration
+        // Debug.Assert(this.HasTrailingSlash);
+        // return HostingEnvironment.VirtualPathProvider.GetDirectory(this);
+        return new FileProviderVirtualPathProvider(new PhysicalFileProvider(Environment.CurrentDirectory)).GetDirectory(this);
     }
 }

@@ -42,6 +42,7 @@
 
   <ItemGroup>
     <Folder Include="Web\Configuration\" />
+    <Folder Include="Web\Hosting\" />
   </ItemGroup>
 
 </Project>
