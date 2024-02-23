@@ -1,5 +1,7 @@
 // MIT License.
 
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection.Metadata;
 
 namespace WebForms;
@@ -7,6 +9,9 @@ namespace WebForms;
 internal static class AssemblyAttributeUtility
 {
     public static bool HasAttribute(this MetadataReader reader, string typeName, string typeNamespace)
+        => reader.GetAttributes(typeName, typeNamespace).Any();
+
+    public static IEnumerable<CustomAttribute> GetAttributes(this MetadataReader reader, string typeName, string typeNamespace)
     {
         foreach (var a in reader.CustomAttributes)
         {
@@ -39,10 +44,8 @@ internal static class AssemblyAttributeUtility
                 reader.StringComparer.Equals(attributeTypeName, typeName) &&
                 reader.StringComparer.Equals(attributeTypeNamespace, typeNamespace))
             {
-                return true;
+                yield return attribute;
             }
         }
-
-        return false;
     }
 }

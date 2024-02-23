@@ -5,9 +5,10 @@
     <ItemGroup>
       <SystemWebReference Include="@(Reference)" Condition=" '%(Reference.AssemblyName)' == 'System.Web' AND '%(Reference.AssemblyVersion)' == '4.0.0.0' " />
       <Reference Remove="@(SystemWebReference)" />
+      <_RemainingSystemWeb Include="@(Reference)" Condition=" '%(Reference.AssemblyName)' == 'System.Web' " />
     </ItemGroup>
 
-    <Message Importance="high" Text ="Removed in-box %(SystemWebReference.Identity)" Condition=" '@(SystemWebReference)' != '' " />
+    <Message Importance="high" Text="Removed in-box %(SystemWebReference.Identity)" Condition=" '@(SystemWebReference)' != '' " />
   </Target>
 
 </Project>

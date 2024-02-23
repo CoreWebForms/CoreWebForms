@@ -1,7 +1,6 @@
 // MIT License.
 
 using System.CodeDom.Compiler;
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
@@ -45,69 +44,45 @@ public class PreApplicationStartGenerator : IIncrementalGenerator
 
         var startMethods = context.CompilationProvider.Select((compilation, token) =>
         {
-            var startMethods = ImmutableArray.CreateBuilder<PreApplicationStartMethod>();
             var messages = ImmutableArray.CreateBuilder<Message>();
+            var startMethods = ImmutableArray.CreateBuilder<PreApplicationStartMethod>();
 
             messages.Add(new(RuntimeInformation.FrameworkDescription));
 
-            // We must search for all attributes as they may be type-forwarded from other assemblies (namely System.Web)
-            var set = new HashSet<INamedTypeSymbol?>(compilation.GetTypesByMetadataName("System.Web.PreApplicationStartMethodAttribute"), SymbolEqualityComparer.Default);
-
-            foreach (var found in set)
+            foreach (var (type, name) in compilation.FindPreApplicationStartAttributes())
             {
-                messages.Add(new Message($"Found attribute {found!.ContainingAssembly}"));
-            }
-
-            if (set.Count > 0)
-            {
-                foreach (var n in compilation.GlobalNamespace.ConstituentNamespaces)
+                if (IsValidMethod(type, name) is { } member)
                 {
-                    foreach (var a in n.ContainingAssembly.GetAttributes())
+                    startMethods.Add(new(type.ContainingAssembly.Name, type.ToString(), name, member.IsStatic, IsValid: true));
+                }
+                else
+                {
+                    startMethods.Add(new(type.ContainingAssembly.Name, type.ToString(), name, false, IsValid: false));
+                }
+
+                static IMethodSymbol? IsValidMethod(INamedTypeSymbol type, string name)
+                {
+                    if (!type.TypeParameters.IsDefaultOrEmpty)
                     {
-                        if (set.Contains(a.AttributeClass))
-                        {
-                            if (a.ConstructorArguments is [{ Kind: TypedConstantKind.Type, Value: INamedTypeSymbol type }, { Kind: TypedConstantKind.Primitive, Value: string name }])
-                            {
-                                if (IsValidMethod(type, name) is { } member)
-                                {
-                                    startMethods.Add(new(type.ContainingAssembly.Name, type.ToString(), name, member.IsStatic, IsValid: true));
-                                }
-                                else
-                                {
-                                    startMethods.Add(new(type.ContainingAssembly.Name, type.ToString(), name, false, IsValid: false));
-                                }
-
-                                static IMethodSymbol? IsValidMethod(INamedTypeSymbol type, string name)
-                                {
-                                    if (!type.TypeParameters.IsDefaultOrEmpty)
-                                    {
-                                        return null;
-                                    }
-
-                                    if (type.GetMembers(name) is not [IMethodSymbol method])
-                                    {
-                                        return null;
-                                    }
-
-                                    if (method is { IsStatic: false } && !type.Constructors.Any(c => c.Parameters.IsDefaultOrEmpty))
-                                    {
-                                        return null;
-                                    }
-
-                                    if (method is { TypeArguments.IsDefaultOrEmpty: true, Parameters.IsDefaultOrEmpty: true, ReturnsVoid: true } member)
-                                    {
-                                        return method;
-                                    }
-
-                                    return null;
-                                }
-                            }
-                            else
-                            {
-                                messages.Add(new Message($"Invalid signature: {string.Join(", ", a.ConstructorArguments)}"));
-                            }
-                        }
+                        return null;
                     }
+
+                    if (type.GetMembers(name) is not [IMethodSymbol method])
+                    {
+                        return null;
+                    }
+
+                    if (method is { IsStatic: false } && !type.Constructors.Any(c => c.Parameters.IsDefaultOrEmpty))
+                    {
+                        return null;
+                    }
+
+                    if (method is { TypeArguments.IsDefaultOrEmpty: true, Parameters.IsDefaultOrEmpty: true, ReturnsVoid: true } member)
+                    {
+                        return method;
+                    }
+
+                    return null;
                 }
             }
 
@@ -230,7 +205,7 @@ public class PreApplicationStartGenerator : IIncrementalGenerator
 
                     if (isValid)
                     {
-                        indented.WriteLine($"logger.LogWarning(\"Invoking PreApplicationStartMethod: {{TypeName}}.{{MethodName}}\", \"{typeName}\", \"{methodName}\");");
+                        indented.WriteLine($"logger.LogInformation(\"Invoking PreApplicationStartMethod: {{TypeName}}.{{MethodName}}\", \"{typeName}\", \"{methodName}\");");
                     }
 
                     if (!isValid)
