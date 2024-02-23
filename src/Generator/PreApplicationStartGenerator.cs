@@ -1,11 +1,10 @@
 // MIT License.
 
-using System;
 using System.CodeDom.Compiler;
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Operations;
 
@@ -21,6 +20,10 @@ public class PreApplicationStartGenerator : IIncrementalGenerator
         category: "WebForms",
         DiagnosticSeverity.Warning,
         isEnabledByDefault: true);
+
+    private sealed record Message(string Text);
+
+    private sealed record Results(ImmutableArray<PreApplicationStartMethod> StartMethods, ImmutableArray<Message> Messages);
 
     private sealed record PreApplicationStartMethod(string Assembly, string TypeName, string MethodName, bool IsStatic, bool IsValid);
 
@@ -41,63 +44,49 @@ public class PreApplicationStartGenerator : IIncrementalGenerator
 
         var startMethods = context.CompilationProvider.Select((compilation, token) =>
         {
-            // We must search for all attributes as they may be type-forwarded from other assemblies (namely System.Web)
-            var set = new HashSet<INamedTypeSymbol?>(
-                compilation.GetTypesByMetadataName("System.Web.PreApplicationStartMethodAttribute"),
-                SymbolEqualityComparer.Default);
+            var messages = ImmutableArray.CreateBuilder<Message>();
+            var startMethods = ImmutableArray.CreateBuilder<PreApplicationStartMethod>();
 
-            var builder = ImmutableArray.CreateBuilder<PreApplicationStartMethod>();
+            messages.Add(new(RuntimeInformation.FrameworkDescription));
 
-            if (set.Count > 0)
+            foreach (var (type, name) in compilation.FindPreApplicationStartAttributes())
             {
-                foreach (var n in compilation.GlobalNamespace.ConstituentNamespaces)
+                if (IsValidMethod(type, name) is { } member)
                 {
-                    foreach (var a in n.ContainingAssembly.GetAttributes())
+                    startMethods.Add(new(type.ContainingAssembly.Name, type.ToString(), name, member.IsStatic, IsValid: true));
+                }
+                else
+                {
+                    startMethods.Add(new(type.ContainingAssembly.Name, type.ToString(), name, false, IsValid: false));
+                }
+
+                static IMethodSymbol? IsValidMethod(INamedTypeSymbol type, string name)
+                {
+                    if (!type.TypeParameters.IsDefaultOrEmpty)
                     {
-                        if (set.Contains(a.AttributeClass))
-                        {
-                            if (a.ConstructorArguments is [{ Kind: TypedConstantKind.Type, Value: INamedTypeSymbol type }, { Kind: TypedConstantKind.Primitive, Value: string name }])
-                            {
-                                if (IsValidMethod(type, name) is { } member)
-                                {
-                                    builder.Add(new(type.ContainingAssembly.Name, type.ToString(), name, member.IsStatic, IsValid: true));
-                                }
-                                else
-                                {
-                                    builder.Add(new(type.ContainingAssembly.Name, type.ToString(), name, false, IsValid: false));
-                                }
-
-                                static IMethodSymbol? IsValidMethod(INamedTypeSymbol type, string name)
-                                {
-                                    if (!type.TypeParameters.IsDefaultOrEmpty)
-                                    {
-                                        return null;
-                                    }
-
-                                    if (type.GetMembers(name) is not [IMethodSymbol method])
-                                    {
-                                        return null;
-                                    }
-
-                                    if (method is { IsStatic: false } && !type.Constructors.Any(c => c.Parameters.IsDefaultOrEmpty))
-                                    {
-                                        return null;
-                                    }
-
-                                    if (method is { TypeArguments.IsDefaultOrEmpty: true, Parameters.IsDefaultOrEmpty: true, ReturnsVoid: true } member)
-                                    {
-                                        return method;
-                                    }
-
-                                    return null;
-                                }
-                            }
-                        }
+                        return null;
                     }
+
+                    if (type.GetMembers(name) is not [IMethodSymbol method])
+                    {
+                        return null;
+                    }
+
+                    if (method is { IsStatic: false } && !type.Constructors.Any(c => c.Parameters.IsDefaultOrEmpty))
+                    {
+                        return null;
+                    }
+
+                    if (method is { TypeArguments.IsDefaultOrEmpty: true, Parameters.IsDefaultOrEmpty: true, ReturnsVoid: true } member)
+                    {
+                        return method;
+                    }
+
+                    return null;
                 }
             }
 
-            return builder.ToImmutable();
+            return new Results(startMethods.ToImmutable(), messages.ToImmutable());
         });
 
         context.RegisterSourceOutput(invocation.Combine(startMethods), (context, source) =>
@@ -107,10 +96,11 @@ public class PreApplicationStartGenerator : IIncrementalGenerator
                 return;
             }
 
-            var startups = source.Right;
+            var startups = source.Right.StartMethods;
 
             using var str = new StringWriter();
             using var indented = new IndentedTextWriter(str);
+
             indented.WriteLine("﻿// <auto-generated />");
             indented.WriteLine();
             indented.WriteLine("using Microsoft.AspNetCore.Builder;");
@@ -126,6 +116,16 @@ public class PreApplicationStartGenerator : IIncrementalGenerator
             indented.WriteLine("using System;");
             indented.WriteLine();
             indented.WriteLine("#pragma warning disable");
+
+            if (source.Right.Messages is { IsDefaultOrEmpty: false } messages)
+            {
+                indented.WriteLine();
+                foreach (var message in messages)
+                {
+                    indented.WriteLine($"// {message.Text}");
+                }
+            }
+
             indented.WriteLine();
             indented.WriteLine("namespace WebForms.Generated");
             indented.WriteLine("{");
@@ -143,69 +143,94 @@ public class PreApplicationStartGenerator : IIncrementalGenerator
             indented.WriteLine("internal static ISystemWebAdapterBuilder AddPreApplicationStartMethod(this ISystemWebAdapterBuilder builder, bool failOnError = true)");
             indented.WriteLine("{");
             indented.Indent++;
-            indented.WriteLine("builder.Services.AddOptions<PreApplicationOptions>()");
-            indented.Indent++;
-            indented.WriteLine(".Configure(options => options.FailOnError = failOnError);");
-            indented.Indent--;
-            indented.WriteLine();
-            indented.WriteLine("builder.Services.TryAddEnumerable(ServiceDescriptor.Transient<IStartupFilter, PreApplicationStartMethodStartupFilter>());");
+
+            if (!startups.IsDefaultOrEmpty)
+            {
+                indented.WriteLine("builder.Services.AddOptions<PreApplicationOptions>()");
+                indented.Indent++;
+                indented.WriteLine(".Configure(options => options.FailOnError = failOnError);");
+                indented.Indent--;
+                indented.WriteLine();
+                indented.WriteLine("builder.Services.TryAddEnumerable(ServiceDescriptor.Transient<IStartupFilter, PreApplicationStartMethodStartupFilter>());");
+            }
+
             indented.WriteLine("return builder;");
             indented.Indent--;
             indented.WriteLine("}");
-            indented.WriteLine();
 
-            indented.WriteLine("private sealed class PreApplicationOptions");
-            indented.WriteLine("{");
-            indented.Indent++;
-            indented.WriteLine("public bool FailOnError { get; set; }");
-            indented.Indent--;
-            indented.WriteLine("}");
-            indented.WriteLine();
-
-            indented.WriteLine("private sealed class PreApplicationStartMethodStartupFilter(IOptions<PreApplicationOptions> options, ILogger<PreApplicationStartMethodStartupFilter> logger) : IStartupFilter");
-            indented.WriteLine("{");
-            indented.Indent++;
-            indented.WriteLine("public Action<IApplicationBuilder> Configure(Action<IApplicationBuilder> next)");
-            indented.Indent++;
-            indented.WriteLine("=> builder =>");
-            indented.WriteLine("{");
-            indented.Indent++;
-            indented.WriteLine("try");
-            indented.WriteLine("{");
-            indented.Indent++;
-            indented.WriteLine("RunStartupMethods();");
-            indented.Indent--;
-            indented.WriteLine("}");
-            indented.WriteLine("catch when (!options.Value.FailOnError)");
-            indented.WriteLine("{");
-            indented.WriteLine("}");
-            indented.WriteLine();
-            indented.WriteLine("next(builder);");
-            indented.Indent--;
-            indented.WriteLine("};");
-            indented.Indent--;
-            indented.WriteLine();
-            indented.WriteLine("private void RunStartupMethods()");
-            indented.WriteLine("{");
-
-            indented.Indent++;
-
-            foreach (var (assembly, typeName, methodName, isStatic, isValid) in startups)
+            if (!startups.IsDefaultOrEmpty)
             {
-                if (!isValid)
+                indented.WriteLine();
+                indented.WriteLine("private sealed class PreApplicationOptions");
+                indented.WriteLine("{");
+                indented.Indent++;
+                indented.WriteLine("public bool FailOnError { get; set; }");
+                indented.Indent--;
+                indented.WriteLine("}");
+                indented.WriteLine();
+
+                indented.WriteLine("private sealed class PreApplicationStartMethodStartupFilter(IOptions<PreApplicationOptions> options, ILogger<PreApplicationStartMethodStartupFilter> logger) : IStartupFilter");
+                indented.WriteLine("{");
+                indented.Indent++;
+                indented.WriteLine("public Action<IApplicationBuilder> Configure(Action<IApplicationBuilder> next)");
+                indented.Indent++;
+                indented.WriteLine("=> builder =>");
+                indented.WriteLine("{");
+                indented.Indent++;
+                indented.WriteLine("try");
+                indented.WriteLine("{");
+                indented.Indent++;
+                indented.WriteLine("RunStartupMethods();");
+                indented.Indent--;
+                indented.WriteLine("}");
+                indented.WriteLine("catch when (!options.Value.FailOnError)");
+                indented.WriteLine("{");
+                indented.WriteLine("}");
+                indented.WriteLine();
+                indented.WriteLine("next(builder);");
+                indented.Indent--;
+                indented.WriteLine("};");
+                indented.Indent--;
+                indented.WriteLine();
+                indented.WriteLine("private void RunStartupMethods()");
+                indented.WriteLine("{");
+
+                indented.Indent++;
+
+
+                foreach (var (assembly, typeName, methodName, isStatic, isValid) in startups)
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(InvalidPreApplicationStartMethod, location: null, assembly, typeName, methodName));
-                    indented.Write("// Invalid pre application start method: ");
+                    indented.WriteLine("{");
+                    indented.Indent++;
+
+                    if (isValid)
+                    {
+                        indented.WriteLine($"logger.LogInformation(\"Invoking PreApplicationStartMethod: {{TypeName}}.{{MethodName}}\", \"{typeName}\", \"{methodName}\");");
+                    }
+
+                    if (!isValid)
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(InvalidPreApplicationStartMethod, location: null, assembly, typeName, methodName));
+                        indented.Write("// Invalid pre application start method: ");
+                    }
+
+                    if (isStatic)
+                    {
+                        indented.WriteLine($"{typeName}.{methodName}();");
+                    }
+                    else
+                    {
+                        indented.WriteLine($"new {typeName}().{methodName}();");
+                    }
+
+                    indented.Indent--;
+                    indented.WriteLine("}");
                 }
 
-                if (isStatic)
-                {
-                    indented.WriteLine($"{typeName}.{methodName}();");
-                }
-                else
-                {
-                    indented.WriteLine($"new {typeName}().{methodName}();");
-                }
+                indented.Indent--;
+                indented.WriteLine("}");
+                indented.Indent--;
+                indented.WriteLine("}");
             }
 
             indented.Indent--;
@@ -213,11 +238,8 @@ public class PreApplicationStartGenerator : IIncrementalGenerator
             indented.Indent--;
             indented.WriteLine("}");
             indented.Indent--;
-            indented.WriteLine("}");
-            indented.Indent--;
-            indented.WriteLine("}");
-            indented.Indent--;
             indented.WriteLine();
+
             indented.Write("""
                     namespace System.Runtime.CompilerServices
                     {
@@ -228,7 +250,8 @@ public class PreApplicationStartGenerator : IIncrementalGenerator
                     }
                     """);
 
-            context.AddSource("PreApplicationStartMethod", str.ToString());
+            var result = str.ToString();
+            context.AddSource("PreApplicationStartMethod", result);
         });
     }
 }

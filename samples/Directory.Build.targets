@@ -8,6 +8,19 @@
       SetTargetFramework="TargetFramework=netstandard2.0" />
   </ItemGroup>
 
-  <Import Project="..\src\Compiler\Build\WebForms.Compiler.targets" />
-  <Import Project="..\Directory.Build.targets" />
+  <ItemGroup>
+    <ProjectReference Include="$(MSBuildThisFileDirectory)..\src\Shim.Extensions\Shim.Extensions.csproj" />
+    <ProjectReference Include="$(MSBuildThisFileDirectory)..\src\Shim\Shim.csproj" />
+    <ProjectReference Include="$(MSBuildThisFileDirectory)..\src\Compiler\Compiler.csproj" />
+    <ProjectReference Include="$(MSBuildThisFileDirectory)..\src\Config\Config.csproj" />
+    <ProjectReference Include="$(MSBuildThisFileDirectory)..\src\Extensions\Extensions.csproj" />
+    <ProjectReference Include="$(MSBuildThisFileDirectory)..\src\Optimization\Optimization.csproj" />
+    <ProjectReference Include="$(MSBuildThisFileDirectory)..\src\WebForms\WebForms.csproj" />
+
+    <ProjectReference Condition=" '$(EnableRuntimeAspxCompilation)' == 'true' " Include="$(MSBuildThisFileDirectory)..\src\Compiler.Dynamic\Compiler.Dynamic.csproj" />
+  </ItemGroup>
+
+  <Import Project="$(MSBuildThisFileDirectory)..\src\Shim\Build\WebForms.Shim.SystemWeb.targets" />
+  <Import Project="$(MSBuildThisFileDirectory)..\src\Compiler\Build\WebForms.Compiler.targets" />
+  <Import Project="$(MSBuildThisFileDirectory)..\Directory.Build.targets" />
 </Project>
