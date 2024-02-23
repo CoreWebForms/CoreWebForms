@@ -35,28 +35,44 @@
     </EmbeddedResource>
   </ItemGroup>
 
-  <Target Name="BuildAndIncludeAjax" BeforeTargets="AssignTargetPaths">
+  <PropertyGroup>
+    <BuildDependsOn>BuildAjax;$(BuildDependsOn)</BuildDependsOn>
+  </PropertyGroup>
+
+  <Target Name="IdentifyAjaxFiles" BeforeTargets="BuildAjax">
+    <ItemGroup>
+      <MicrosoftAjaxJsaFiles Include="$(MSBuildThisFileDirectory)Script/js/*.jsa" />
+      <MicrosoftAjaxDistFiles Include="$(MSBuildThisFileDirectory)Script/js/dist/%(MicrosoftAjaxJsaFiles.FileName).js" />
+      <MicrosoftAjaxInputFiles Include="$(MSBuildThisFileDirectory)Script/js/**/*" Exclude="@(MicrosoftAjaxDistFiles);@(NodeFiles)" />
+    </ItemGroup>
+    <Warning Text="Identitfy: @(MicrosoftAjaxDistFiles)" />
+  </Target>
+
+  <Target Name="BuildAjax" BeforeTargets="IncludeAjax" Inputs="@(MicrosoftAjaxInputFiles)" Outputs="@(MicrosoftAjaxDistFiles)">
     <Exec Command="npm run build" WorkingDirectory="$(MSBuildThisFileDirectory)Script/js" />
 
     <ItemGroup>
-      <MicrosoftAjaxFiles Include="$(MSBuildThisFileDirectory)Script/js/dist/*.js" />
+      <FileWrites Include="@(MicrosoftAjaxDistFiles->'%(FullPath)')" />
     </ItemGroup>
-
-    <ItemGroup>
-      <EmbeddedResource Include="@(MicrosoftAjaxFiles)" LogicalName="%(FileName)%(Extension)" />
-      <FileWrites Include="@(MicrosoftAjaxFiles->'%(FullPath)')" />
-    </ItemGroup> 
+    <Warning Text="Build: @(MicrosoftAjaxDistFiles)" />
   </Target>
 
-  <Target Name="RunNpmInstall" BeforeTargets="BuildAndIncludeAjax" Condition="!Exists('$(MSBuildThisFileDirectory)Script\js\node_modules')">
+  <Target Name="IncludeAjax" BeforeTargets="AssignTargetPaths">
+    <Warning Text="Include @(MicrosoftAjaxDistFiles)" />
+    <ItemGroup>
+      <EmbeddedResource Include="@(MicrosoftAjaxDistFiles)" LogicalName="%(FileName)%(Extension)" />
+    </ItemGroup>
+  </Target>
+
+  <Target Name="RunNpmInstall" BeforeTargets="IdentifyAjaxFiles" Condition="!Exists('$(MSBuildThisFileDirectory)Script\js\node_modules')">
     <Exec Command="npm install" WorkingDirectory="$(MSBuildThisFileDirectory)Script/js" />
   </Target>
 
   <ItemGroup>
-    <Compile Remove="Script\js\node_modules\**" />
-    <EmbeddedResource Remove="Script\js\node_modules\**" />
-    <None Remove="Script\js\node_modules\**" />
-    <Folder Include="Script\js\dist\" />
+    <NodeFiles Include="Script\js\node_modules\**" />
+    <Compile Remove="@(NodeFiles)" />
+    <EmbeddedResource Remove="@(NodeFiles)" />
+    <None Remove="@(NodeFiles)" />
   </ItemGroup>
 
 </Project>

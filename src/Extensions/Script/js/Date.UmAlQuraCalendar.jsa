@@ -1,5 +1,0 @@
-// MIT License.
-
-Type._registerScript("Date.UmAlQuraCalendar.js", ["MicrosoftAjaxGlobalization.js"]);
-
-#include "Date.UmAlQuraCalendar.js"
