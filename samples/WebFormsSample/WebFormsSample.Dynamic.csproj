@@ -21,6 +21,7 @@
     <ProjectReference Include="..\..\src\Extensions\Extensions.csproj" />
     <ProjectReference Include="..\..\src\Optimization\Optimization.csproj" />
     <ProjectReference Include="..\..\src\WebForms\WebForms.csproj" />
+    <ProjectReference Include="..\SharedLibrary\SharedLibrary.csproj" />
   </ItemGroup>
 
 </Project>
