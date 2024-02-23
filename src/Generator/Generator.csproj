@@ -4,6 +4,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
+    <AssemblyName>CoreWebForms.Generator</AssemblyName>
   </PropertyGroup>
 
   <PropertyGroup>
