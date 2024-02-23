@@ -67,6 +67,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shim.Extensions", "src\Shim
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sdk", "src\Sdk\Sdk.csproj", "{36CD698E-F68C-41AE-B02D-971125DA9736}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Generator", "src\Generator\Generator.csproj", "{1535544F-57A9-40E1-8EF0-82E47FAA4AE2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -153,6 +155,10 @@ Global
 		{36CD698E-F68C-41AE-B02D-971125DA9736}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{36CD698E-F68C-41AE-B02D-971125DA9736}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{36CD698E-F68C-41AE-B02D-971125DA9736}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1535544F-57A9-40E1-8EF0-82E47FAA4AE2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1535544F-57A9-40E1-8EF0-82E47FAA4AE2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1535544F-57A9-40E1-8EF0-82E47FAA4AE2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1535544F-57A9-40E1-8EF0-82E47FAA4AE2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -178,6 +184,7 @@ Global
 		{9ECAE339-247E-4C80-A58F-29461649DC6E} = {D3D2945C-76BA-4DE3-90D2-259E2B1406C5}
 		{728D74AE-9405-4C87-B4F6-2DB5A0E90360} = {D3D2945C-76BA-4DE3-90D2-259E2B1406C5}
 		{36CD698E-F68C-41AE-B02D-971125DA9736} = {D3D2945C-76BA-4DE3-90D2-259E2B1406C5}
+		{1535544F-57A9-40E1-8EF0-82E47FAA4AE2} = {D3D2945C-76BA-4DE3-90D2-259E2B1406C5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B89024DA-2E51-49B1-8D52-651372AB5C83}
