@@ -1,10 +1,13 @@
 <Project>
 
   <!-- Must remove the in-box System.Web as all it does is forward to HttpUtility which we do as well as forward to the adapters and webforms -->
-  <Target Name="RemoveSystemWeb" BeforeTargets="ResolveAssemblyReferences">
+  <Target Name="RemoveSystemWeb" BeforeTargets="ResolveAssemblyReferences;CoreCompile">
     <ItemGroup>
-      <Reference Remove="@(Reference)" Condition=" '%(Reference.AssemblyName)' == 'System.Web' AND '%(Reference.AssemblyVersion)' == '4.0.0.0' " />
+      <SystemWebReference Include="@(Reference)" Condition=" '%(Reference.AssemblyName)' == 'System.Web' AND '%(Reference.AssemblyVersion)' == '4.0.0.0' " />
+      <Reference Remove="@(SystemWebReference)" />
     </ItemGroup>
+
+    <Warning Text ="Removed in-box %(SystemWebReference.Identity)" Condition=" '@(SystemWebReference)' != '' " />
   </Target>
 
 </Project>
