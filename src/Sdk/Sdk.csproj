@@ -14,28 +14,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference
-      Include="../Generator/Generator.csproj"
-      ReferenceOutputAssembly="false"
-      Targets="Publish;PublishItemsOutputGroup"
-      Private="false"
-      OutputItemType="WebFormsGeneratorOutputs" />
-  </ItemGroup>
-
-  <Target Name="GetWebFormsGenerator" BeforeTargets="AssignTargetPaths" AfterTargets="ResolveProjectReferences">
-    <PropertyGroup>
-      <_AnalyzerPrefix>analyzers/dotnet/cs/roslyn4.8/</_AnalyzerPrefix>
-    </PropertyGroup>
-    <ItemGroup>
-      <None
-        Include="%(WebFormsGeneratorOutputs.Identity)"
-        Link="$(_AnalyzerPrefix)%(WebFormsGeneratorOutputs.RelativePath)"
-        PackagePath="$(_AnalyzerPrefix)%(WebFormsGeneratorOutputs.RelativePath)"
-        Pack="true" />
-    </ItemGroup>
-  </Target>
-
-  <ItemGroup>
     <Content Include="Sdk\*" Pack="true" PackagePath="Sdk\" TargetPath="Sdk\%(FileName)%(Extension)">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

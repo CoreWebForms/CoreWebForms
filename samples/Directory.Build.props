@@ -9,10 +9,6 @@
     <_AspNetCompilerRoot>$([MSBuild]::NormalizePath($(_AspNetCompilerRoot)))</_AspNetCompilerRoot>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <InterceptorsPreviewNamespaces>$(InterceptorsPreviewNamespaces);WebForms.Generated</InterceptorsPreviewNamespaces>
-  </PropertyGroup>
-
   <Import Project="..\src\Compiler\Build\WebForms.Compiler.props" />
 
   <PropertyGroup>

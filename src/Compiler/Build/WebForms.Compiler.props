@@ -11,4 +11,6 @@
     <EnableRuntimeAspxCompilation Condition=" '$(EnableRuntimeAspxCompilation)' == '' ">false</EnableRuntimeAspxCompilation>
   </PropertyGroup>
 
+  <Import Project="WebForms.Generator.props" />
+
 </Project>

@@ -6,5 +6,4 @@
   </PropertyGroup>
 
   <Import Project="Sdk.Version.props" Condition="Exists('Sdk.Version.props') "/>
-  <Import Project="Sdk.Generator.props" />
 </Project>
