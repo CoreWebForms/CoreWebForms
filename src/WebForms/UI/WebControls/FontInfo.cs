@@ -73,7 +73,9 @@ public sealed class FontInfo
     ///    <para>Indicates the name of the font.</para>
     /// </devdoc>
     [
+#if PORT_DRAWING_COMMON
         TypeConverterAttribute(typeof(FontConverter.FontNameConverter)),
+#endif
         WebCategory("Appearance"),
         DefaultValue(""),
         WebSysDescription(SR.FontInfo_Name),
