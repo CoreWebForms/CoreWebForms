@@ -2,6 +2,7 @@
 
 using System.Reflection;
 using System.Text.Json;
+using System.Web;
 using Microsoft.CodeAnalysis;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -14,18 +15,21 @@ namespace WebForms.Compiler.Dynamic;
 internal sealed class StaticSystemWebCompilation : SystemWebCompilation<PersistedCompiledPage>, IWebFormsCompiler
 {
     private readonly IOptions<StaticCompilationOptions> _options;
+    private readonly IOptions<PageCompilationOptions> _pageCompilationOptions;
     private readonly ILogger _logger;
 
     public StaticSystemWebCompilation(
         IHostEnvironment env,
         IOptions<StaticCompilationOptions> options,
-        IOptions<PageCompilationOptions> pageOptions,
+        IOptions<WebFormsOptions> webFormsOptions,
+        IOptions<PageCompilationOptions> pageCompilationOptions,
         IMetadataProvider metadataProvider,
         ILoggerFactory factory)
-        : base(env, factory, metadataProvider, pageOptions)
+        : base(env, factory, metadataProvider, webFormsOptions, pageCompilationOptions)
     {
         _logger = factory.CreateLogger<StaticSystemWebCompilation>();
         _options = options;
+        _pageCompilationOptions = pageCompilationOptions;
     }
 
     protected override PersistedCompiledPage CreateCompiledPage(

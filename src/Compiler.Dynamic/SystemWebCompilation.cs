@@ -28,7 +28,8 @@ internal abstract class SystemWebCompilation<T> : IDisposable
     private readonly ICompiler _vb;
     private readonly IMetadataProvider _metadata;
     private readonly ILogger<SystemWebCompilation<T>> _logger;
-    private readonly IOptions<PageCompilationOptions> _pageCompilation;
+    private readonly IOptions<WebFormsOptions> _webFormsOptions;
+    private readonly IOptions<PageCompilationOptions> _pageCompilationOptions;
 
     private Dictionary<string, Task<T>> _compiled = [];
 
@@ -36,17 +37,19 @@ internal abstract class SystemWebCompilation<T> : IDisposable
         IHostEnvironment env,
         ILoggerFactory logger,
         IMetadataProvider metadata,
-        IOptions<PageCompilationOptions> pageCompilation)
+        IOptions<WebFormsOptions> webFormsOptions,
+        IOptions<PageCompilationOptions> pageCompilationOptions)
     {
         _env = env;
-        _csharp = new CSharpCompiler(pageCompilation.Value);
-        _vb = new VisualBasicCompiler(pageCompilation.Value);
+        _csharp = new CSharpCompiler(pageCompilationOptions.Value);
+        _vb = new VisualBasicCompiler(pageCompilationOptions.Value);
 
         _metadata = metadata;
         _logger = logger.CreateLogger<SystemWebCompilation<T>>();
-        _pageCompilation = pageCompilation;
+        _webFormsOptions = webFormsOptions;
+        _pageCompilationOptions = pageCompilationOptions;
 
-        _logger.LogInformation("Compiler set to IsDebug={IsDebug}", pageCompilation.Value.IsDebug);
+        _logger.LogInformation("Compiler set to IsDebug={IsDebug}", pageCompilationOptions.Value.IsDebug);
     }
 
     protected IEnumerable<T> GetPages()
@@ -80,7 +83,7 @@ internal abstract class SystemWebCompilation<T> : IDisposable
         });
     }
 
-    public IFileProvider Files => _env.ContentRootFileProvider;
+    public IFileProvider Files => _webFormsOptions.Value.WebFormsFileProvider;
 
     protected void RemovePage(string path) => _compiled.Remove(path);
 
@@ -228,7 +231,7 @@ internal abstract class SystemWebCompilation<T> : IDisposable
     {
         var extension = Path.GetExtension(path);
 
-        if (_pageCompilation.Value.Parsers.TryGetValue(extension, out var parser))
+        if (_pageCompilationOptions.Value.Parsers.TryGetValue(extension, out var parser))
         {
             return parser(path);
         }

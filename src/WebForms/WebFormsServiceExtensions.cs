@@ -1,10 +1,12 @@
 // MIT License.
 
+using System.Web;
 using System.Web.Compilation;
 using System.Web.UI;
 using Microsoft.AspNetCore.SystemWebAdapters;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Hosting;
 using WebForms;
 
 [assembly: TagPrefix("System.Web.UI", "asp")]
@@ -14,8 +16,16 @@ namespace Microsoft.AspNetCore.Builder;
 
 public static class WebFormsServiceExtensions
 {
-    public static IWebFormsBuilder AddWebForms(this ISystemWebAdapterBuilder builder)
+    public static IWebFormsBuilder AddWebForms(this ISystemWebAdapterBuilder builder, Action<WebFormsOptions> configure = null)
     {
+        var optionsBuilder = builder.Services.AddOptions<WebFormsOptions>()
+            .Configure<IHostEnvironment>((options, env) => options.WebFormsFileProvider = env.ContentRootFileProvider);
+
+        if (configure is not null)
+        {
+            optionsBuilder.Configure(configure);
+        }
+
         builder.AddHttpHandlers();
         builder.AddRouting();
         builder.AddVirtualPathProvider();
@@ -24,11 +34,11 @@ public static class WebFormsServiceExtensions
             .AddDefaultExpressionBuilders();
     }
 
-    public static IWebFormsBuilder AddWebForms(this IServiceCollection builder)
+    public static IWebFormsBuilder AddWebForms(this IServiceCollection builder, Action<WebFormsOptions> configure = null)
         => builder
             .AddSystemWebAdapters()
             .AddWrappedAspNetCoreSession()
-            .AddWebForms();
+            .AddWebForms(configure);
 
     public static IWebFormsBuilder AddDefaultExpressionBuilders(this IWebFormsBuilder builder) => builder
         .AddExpressionBuilder<RouteUrlExpressionBuilder>("RouteUrl");

@@ -122,7 +122,7 @@ internal abstract class DependencyParser : BaseParser
             }
             else
             {
-                using (Stream stream = virtualPath.OpenFile())
+                using (Stream stream = virtualPath.OpenFile(WebFormsFileProvider))
                 {
                     reader = Util.ReaderFromStream(stream, virtualPath);
                     ParseReader(reader);

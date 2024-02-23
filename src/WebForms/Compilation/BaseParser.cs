@@ -2,6 +2,7 @@
 
 using System.Collections;
 using System.Text.RegularExpressions;
+using Microsoft.Extensions.FileProviders;
 
 /*
  * Implements the ASP.NET template parser
@@ -69,6 +70,8 @@ public partial class BaseParser
             _baseVirtualDir = value.Parent;
         }
     }
+
+    internal IFileProvider WebFormsFileProvider { get; set; } = default!;
 
     internal string CurrentVirtualPathString
     {
