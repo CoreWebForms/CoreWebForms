@@ -14,21 +14,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Build\WebForms.Generator.props" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="Build\WebForms.Generator.props" TargetPath="Sdk\%(FileName)%(Extension)">
-      <PackagePath>Sdk\</PackagePath>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Pack>true</Pack>
-    </Content>
-  </ItemGroup>
-
-  <ItemGroup>
     <None Update="Build\*" Pack="true" PackagePath="" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <ProjectReference Include="../Generator/Generator.csproj" ReferenceOutputAssembly="false" Targets="Publish;PublishItemsOutputGroup" Private="false" OutputItemType="WebFormsGeneratorOutputs" />
   </ItemGroup>
@@ -38,7 +26,10 @@
       <_AnalyzerPrefix>analyzers/dotnet/cs/roslyn4.8/</_AnalyzerPrefix>
     </PropertyGroup>
     <ItemGroup>
-      <None Include="%(WebFormsGeneratorOutputs.Identity)" Link="$(_AnalyzerPrefix)%(WebFormsGeneratorOutputs.RelativePath)" PackagePath="$(_AnalyzerPrefix)%(WebFormsGeneratorOutputs.RelativePath)" Pack="true" />
+      <None Include="%(WebFormsGeneratorOutputs.Identity)"
+            Link="$(_AnalyzerPrefix)%(WebFormsGeneratorOutputs.RelativePath)"
+            PackagePath="$(_AnalyzerPrefix)%(WebFormsGeneratorOutputs.RelativePath)"
+            Pack="true" />
     </ItemGroup>
   </Target>
 
@@ -51,7 +42,10 @@
       <_AspNetCompilerPrefix8>tools/net8.0/aspnet_compiler/</_AspNetCompilerPrefix8>
     </PropertyGroup>
     <ItemGroup>
-      <None Include="%(AspNetCompilerOutputs8.Identity)" Link="$(_AspNetCompilerPrefix8)%(AspNetCompilerOutputs8.RelativePath)" PackagePath="$(_AspNetCompilerPrefix8)%(AspNetCompilerOutputs8.RelativePath)" Pack="true" />
+      <None Include="%(AspNetCompilerOutputs8.Identity)"
+            Link="$(_AspNetCompilerPrefix8)%(AspNetCompilerOutputs8.RelativePath)"
+            PackagePath="$(_AspNetCompilerPrefix8)%(AspNetCompilerOutputs8.RelativePath)"
+            Pack="true" />
     </ItemGroup>
   </Target>
 
