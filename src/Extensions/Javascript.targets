@@ -1,0 +1,40 @@
+<Project>
+
+  <PropertyGroup>
+    <BuildDependsOn>BuildAjax;$(BuildDependsOn)</BuildDependsOn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <NodeFiles Include="Script\js\node_modules\**" />
+    <Compile Remove="@(NodeFiles)" />
+    <EmbeddedResource Remove="@(NodeFiles)" />
+    <None Remove="@(NodeFiles)" />
+  </ItemGroup>
+
+  <Target Name="IdentifyAjaxFiles" BeforeTargets="BuildAjax">
+    <ItemGroup>
+      <MicrosoftAjaxJsaFiles Include="$(MSBuildThisFileDirectory)Script/js/*.jsa" />
+      <MicrosoftAjaxDistFiles Include="$(MSBuildThisFileDirectory)Script/js/dist/%(MicrosoftAjaxJsaFiles.FileName).js" />
+      <MicrosoftAjaxInputFiles Include="$(MSBuildThisFileDirectory)Script/js/**/*" Exclude="@(MicrosoftAjaxDistFiles);@(NodeFiles)" />
+    </ItemGroup>
+  </Target>
+
+  <Target Name="BuildAjax" BeforeTargets="IncludeAjax" Inputs="@(MicrosoftAjaxInputFiles)" Outputs="@(MicrosoftAjaxDistFiles)">
+    <Exec Command="npm run build" WorkingDirectory="$(MSBuildThisFileDirectory)Script/js" />
+
+    <ItemGroup>
+      <FileWrites Include="@(MicrosoftAjaxDistFiles->'%(FullPath)')" />
+    </ItemGroup>
+  </Target>
+
+  <Target Name="IncludeAjax" BeforeTargets="AssignTargetPaths">
+    <ItemGroup>
+      <EmbeddedResource Include="@(MicrosoftAjaxDistFiles)" LogicalName="%(FileName)%(Extension)" />
+    </ItemGroup>
+  </Target>
+
+  <Target Name="RunNpmInstall" BeforeTargets="IdentifyAjaxFiles" Condition="!Exists('$(MSBuildThisFileDirectory)Script\js\node_modules')">
+    <Exec Command="npm install" WorkingDirectory="$(MSBuildThisFileDirectory)Script/js" />
+  </Target>
+
+</Project>
