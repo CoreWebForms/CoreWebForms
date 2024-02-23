@@ -1,6 +1,4 @@
-// MIT
-
-using System.Globalization;
+// MIT License.
 
 namespace System.Web;
 
@@ -14,8 +12,8 @@ internal static class AssemblyRef
 
 internal static class SR
 {
-    public static string GetString(string name, params object[] args) => string.Format(CultureInfo.InvariantCulture, name, args);
-
+    public static string GetString(string name, params object[] args) => name;
+    
     public const string Ambiguous_server_tag = "The server tag '{0}' is ambiguous. Please modify the associated registration that is causing ambiguity and pick a new tag prefix.";
     public const string Ambiguous_type = "The type '{0}' is ambiguous: it could come from assembly '{1}' or from assembly '{2}'. Please specify the assembly explicitly in the type name.";
     public const string App_session_only_valid_in_global_asax = "The Application and Session scopes are valid only in the global.asax file.";
@@ -89,6 +87,43 @@ internal static class SR
     public const string ButtonFieldBase_ValidationGroup = "The name of the validation group for which this button should cause validation.";
     public const string Cache_not_available = "Cache is not available";
     public const string CacheProfile_Not_Found = "The '{0}' cache profile is not defined.  Please define it in the configuration file.";
+    public const string Calendar_Caption = "The caption associated with the calendar.";
+    public const string Calendar_CellPadding = "The padding within cells.";
+    public const string Calendar_CellSpacing = "The spacing between cells.";
+    public const string Calendar_DayHeaderStyle = "The style applied to the day header row.";
+    public const string Calendar_DayNameFormat = "Format for day header text.";
+    public const string Calendar_DayStyle = "The style applied to days.";
+    public const string Calendar_FirstDayOfWeek = "Which day of the week is displayed first.";
+    public const string Calendar_NextMonthText = "Text for the next month button.";
+    public const string Calendar_NextMonthTitle = "Go to the next month";
+    public const string Calendar_NextPrevFormat = "Format for month navigation buttons.";
+    public const string Calendar_NextPrevStyle = "The style applied to month navigation buttons.";
+    public const string Calendar_OnDayRender = "Fires as a day is being rendered.";
+    public const string Calendar_OnSelectionChanged = "Fires when selection is changed by the user.";
+    public const string Calendar_OnVisibleMonthChanged = "Fires when visible month is changed by the user.";
+    public const string Calendar_OtherMonthDayStyle = "The style applied to days from adjacent months";
+    public const string Calendar_PreviousMonthTitle = "Go to the previous month";
+    public const string Calendar_PrevMonthText = "Text for the previous month button";
+    public const string Calendar_SelectedDate = "The currently selected date.";
+    public const string Calendar_SelectedDates = "The set of selected dates for use when range selection is enabled.";
+    public const string Calendar_SelectedDayStyle = "The style of currently selected days.";
+    public const string Calendar_SelectionMode = "Determines whether days, weeks and months are selectable.";
+    public const string Calendar_SelectMonthText = "Text for the select month button.";
+    public const string Calendar_SelectMonthTitle = "Select the whole month";
+    public const string Calendar_SelectorStyle = "The style applied to the week and month selector column.";
+    public const string Calendar_SelectWeekText = "Text for select week button.";
+    public const string Calendar_SelectWeekTitle = "Select week {0}";
+    public const string Calendar_ShowDayHeader = "True if showing days of week header.";
+    public const string Calendar_ShowGridLines = "True if showing grid lines.";
+    public const string Calendar_ShowNextPrevMonth = "True if showing the next/previous month buttons.";
+    public const string Calendar_ShowTitle = "True if showing the title.";
+    public const string Calendar_TitleFormat = "Format for month title in header.";
+    public const string Calendar_TitleStyle = "The style applied to the title.";
+    public const string Calendar_TitleText = "Calendar";
+    public const string Calendar_TodayDayStyle = "The style applied to today's date.";
+    public const string Calendar_TodaysDate = "The current date as displayed by the Calendar.";
+    public const string Calendar_VisibleDate = "The month to be displayed.";
+    public const string Calendar_WeekendDayStyle = "The style applied to weekend days.";
     public const string Cannot_add_value_not_collection = "'{0}' could not be added to the collection. Details: {1}";
     public const string Cannot_evaluate_expression = "Cannot have the expression '{0}' that does not support evaluate in a non-compiled page.";
     public const string Cannot_exit_up_top_directory = "Cannot use a leading .. to exit above the top directory.";
