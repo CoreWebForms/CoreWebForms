@@ -35,28 +35,6 @@
     </EmbeddedResource>
   </ItemGroup>
 
-  <Target Name="BuildAndIncludeAjax" BeforeTargets="AssignTargetPaths">
-    <Exec Command="npm run build" WorkingDirectory="$(MSBuildThisFileDirectory)Script/js" />
-
-    <ItemGroup>
-      <MicrosoftAjaxFiles Include="$(MSBuildThisFileDirectory)Script/js/dist/*.js" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <EmbeddedResource Include="@(MicrosoftAjaxFiles)" LogicalName="%(FileName)%(Extension)" />
-      <FileWrites Include="@(MicrosoftAjaxFiles->'%(FullPath)')" />
-    </ItemGroup> 
-  </Target>
-
-  <Target Name="RunNpmInstall" BeforeTargets="BuildAndIncludeAjax" Condition="!Exists('$(MSBuildThisFileDirectory)Script\js\node_modules')">
-    <Exec Command="npm install" WorkingDirectory="$(MSBuildThisFileDirectory)Script/js" />
-  </Target>
-
-  <ItemGroup>
-    <Compile Remove="Script\js\node_modules\**" />
-    <EmbeddedResource Remove="Script\js\node_modules\**" />
-    <None Remove="Script\js\node_modules\**" />
-    <Folder Include="Script\js\dist\" />
-  </ItemGroup>
+  <Import Project="Javascript.targets" />
 
 </Project>
