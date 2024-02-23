@@ -11,8 +11,6 @@ namespace System.Web;
 
 internal sealed class VirtualPath
 {
-    private static IFileProvider Files => HttpRuntimeHelper.Services.GetRequiredService<IHostEnvironment>().ContentRootFileProvider;
-
     public VirtualPath Parent
     {
         get
@@ -143,11 +141,11 @@ internal sealed class VirtualPath
         return value;
     }
 
-    internal Stream OpenFile(IFileProvider files = null) => (files ?? Files).GetFileInfo(Path).CreateReadStream();
+    internal Stream OpenFile(IFileProvider fileProvider) => fileProvider.GetFileInfo(Path).CreateReadStream();
 
     internal static VirtualPath Create(string filename) => filename;
 
-    internal bool FileExists(IFileProvider files = null) => (files ?? Files).GetFileInfo(Path).Exists;
+    internal bool FileExists(IFileProvider fileProvider) => fileProvider.GetFileInfo(Path).Exists;
 
     internal string MapPath()
     {

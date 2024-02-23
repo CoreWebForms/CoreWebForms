@@ -965,7 +965,7 @@ internal static class Util
         return type;
     }
 
-    internal static void CheckVirtualFileExists(VirtualPath virtualPath, IFileProvider fileProvider = null)
+    internal static void CheckVirtualFileExists(VirtualPath virtualPath, IFileProvider fileProvider)
     {
         if (!virtualPath.FileExists(fileProvider))
         {
@@ -1014,7 +1014,7 @@ internal static class Util
         }
     }
 
-    internal /*public*/ static String StringFromVirtualPath(VirtualPath virtualPath, IFileProvider fileProvider = null)
+    internal /*public*/ static String StringFromVirtualPath(VirtualPath virtualPath, IFileProvider fileProvider)
     {
 
         using (Stream stream = virtualPath.OpenFile(fileProvider))
