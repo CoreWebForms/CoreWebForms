@@ -7,7 +7,7 @@
       <Reference Remove="@(SystemWebReference)" />
     </ItemGroup>
 
-    <Warning Text ="Removed in-box %(SystemWebReference.Identity)" Condition=" '@(SystemWebReference)' != '' " />
+    <Message Importance="high" Text ="Removed in-box %(SystemWebReference.Identity)" Condition=" '@(SystemWebReference)' != '' " />
   </Target>
 
 </Project>
