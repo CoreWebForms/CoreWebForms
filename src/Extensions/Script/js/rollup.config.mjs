@@ -22,16 +22,5 @@ export default [
       preprocess(),
       terser(),
     ]
-  },
-  {
-    input: ["MicrosoftAjax.jsa"],
-    output: {
-      dir: "dist/",
-      format: "es",
-    },
-    plugins: [
-      preprocess(),
-      terser(),
-    ]
-  },
+  }
 ];
