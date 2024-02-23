@@ -1,5 +1,6 @@
 // MIT License.
 
+using System;
 using System.CodeDom.Compiler;
 using System.Collections.Immutable;
 using System.IO;
@@ -39,7 +40,13 @@ public class PreApplicationStartGenerator : IIncrementalGenerator
 
         var startMethods = context.CompilationProvider.Select((compilation, token) =>
         {
-            var attribute = compilation.GetTypeByMetadataName("System.Web.PreApplicationStartMethodAttribute");
+            // We must search this way as the type itself is type forwarded from System.Web and that causes problems with this search
+            var webFormsAssembly = compilation.GlobalNamespace.ConstituentNamespaces
+                .Select(n => n.ContainingAssembly)
+                .Where(a => a.Name.Equals("WebForms", StringComparison.Ordinal))
+                .SingleOrDefault();
+
+            var attribute = webFormsAssembly.GetTypeByMetadataName("System.Web.PreApplicationStartMethodAttribute");
             var builder = ImmutableArray.CreateBuilder<PreApplicationStartMethod>();
 
             if (attribute is { })
