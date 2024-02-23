@@ -368,7 +368,7 @@ public partial class Control : IComponent, IParserAccessor, IDataBindingsAccesso
     Browsable(false),
     DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)
     ]
-    protected internal virtual HttpContext Context => GetHierarchicalFeature<HttpContext>();
+    protected internal virtual HttpContext Context => HttpContext.Current;
 
     /// <devdoc>
     /// Indicates whether a control is being used in the context of a design surface.
@@ -915,7 +915,7 @@ public partial class Control : IComponent, IParserAccessor, IDataBindingsAccesso
     ]
     public Page Page
     {
-        get => page ??= GetHierarchicalFeature<Page>() ?? HttpContext.Current.GetFeature<IHttpHandlerFeature>()?.Current as Page ?? throw new InvalidOperationException();
+        get => page ??= HttpContext.Current.GetRequiredFeature<IHttpHandlerFeature>().Current as Page ?? throw new InvalidOperationException("No page available");
         set => page = value;
     }
 
