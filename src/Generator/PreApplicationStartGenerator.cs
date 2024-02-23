@@ -41,12 +41,10 @@ public class PreApplicationStartGenerator : IIncrementalGenerator
 
         var startMethods = context.CompilationProvider.Select((compilation, token) =>
         {
-            // We must search this way as the type itself is type forwarded from System.Web and there may be multiple symbol entries
-            var potentialAttributes = compilation.GlobalNamespace.ConstituentNamespaces
-                        .Select(n => n.ContainingAssembly)
-                        .Select(a => a.GetTypeByMetadataName("System.Web.PreApplicationStartMethodAttribute"));
-
-            var set = new HashSet<INamedTypeSymbol?>(potentialAttributes, SymbolEqualityComparer.Default);
+            // We must search for all attributes as they may be type-forwarded from other assemblies (namely System.Web)
+            var set = new HashSet<INamedTypeSymbol?>(
+                compilation.GetTypesByMetadataName("System.Web.PreApplicationStartMethodAttribute"),
+                SymbolEqualityComparer.Default);
 
             var builder = ImmutableArray.CreateBuilder<PreApplicationStartMethod>();
 
@@ -95,7 +93,6 @@ public class PreApplicationStartGenerator : IIncrementalGenerator
                                 }
                             }
                         }
-
                     }
                 }
             }
@@ -126,6 +123,7 @@ public class PreApplicationStartGenerator : IIncrementalGenerator
             indented.WriteLine("using Microsoft.Extensions.DependencyInjection.Extensions;");
             indented.WriteLine("using Microsoft.Extensions.Options;");
             indented.WriteLine("using Microsoft.Extensions.Logging;");
+            indented.WriteLine("using System;");
             indented.WriteLine();
             indented.WriteLine("#pragma warning disable");
             indented.WriteLine();
