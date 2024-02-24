@@ -101,6 +101,7 @@ public class PreApplicationStartGenerator : IIncrementalGenerator
             indented.WriteLine("using Microsoft.Extensions.Options;");
             indented.WriteLine("using Microsoft.Extensions.Logging;");
             indented.WriteLine("using System;");
+            indented.WriteLine("using System.Threading;");
             indented.WriteLine("using System.Threading.Tasks;");
             indented.WriteLine();
             indented.WriteLine("#pragma warning disable");
