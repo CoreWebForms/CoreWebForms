@@ -4,10 +4,8 @@ using System.Reflection;
 using System.Reflection.Metadata;
 using System.Runtime.Loader;
 using System.Web;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SystemWebAdapters;
-using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using WebForms;
@@ -25,7 +23,7 @@ public static class PreApplicationStartMethodExtensions
         builder.Services.AddOptions<PreApplicationOptions>()
             .Configure(options => options.FailOnError = failOnError);
 
-        builder.Services.TryAddEnumerable(ServiceDescriptor.Transient<IStartupFilter, PreApplicationStartMethodStartupFilter>());
+        builder.Services.AddHostedService<PreApplicationStartMethodBackgroundService>();
         return builder;
     }
 
@@ -34,19 +32,16 @@ public static class PreApplicationStartMethodExtensions
         public bool FailOnError { get; set; }
     }
 
-    private sealed class PreApplicationStartMethodStartupFilter(IOptions<PreApplicationOptions> options, ILogger<PreApplicationStartMethodStartupFilter> logger) : IStartupFilter
+    private sealed class PreApplicationStartMethodBackgroundService(IOptions<PreApplicationOptions> options, ILogger<PreApplicationStartMethodBackgroundService> logger) : BackgroundService
     {
-        public Action<IApplicationBuilder> Configure(Action<IApplicationBuilder> next)
-            => builder =>
-            {
-                RunStartupMethods();
-                next(builder);
-            };
-
-        private void RunStartupMethods()
+        protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            var failOnError = options.Value.FailOnError;
+            RunStartupMethods(options.Value.FailOnError);
+            return Task.CompletedTask;
+        }
 
+        private void RunStartupMethods(bool failOnError)
+        {
             foreach (var startMethod in GetStartMethodAttributes(AssemblyLoadContext.Default))
             {
                 if (!InvokeStartMethod(startMethod) && failOnError)
