@@ -4,7 +4,6 @@ using System.CodeDom.Compiler;
 using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Operations;
 
@@ -20,10 +19,6 @@ public class PreApplicationStartGenerator : IIncrementalGenerator
         category: "WebForms",
         DiagnosticSeverity.Warning,
         isEnabledByDefault: true);
-
-    private sealed record Message(string Text);
-
-    private sealed record Results(ImmutableArray<PreApplicationStartMethod> StartMethods, ImmutableArray<Message> Messages);
 
     private sealed record PreApplicationStartMethod(string Assembly, string TypeName, string MethodName, bool IsStatic, bool IsValid);
 
@@ -44,10 +39,7 @@ public class PreApplicationStartGenerator : IIncrementalGenerator
 
         var startMethods = context.CompilationProvider.Select((compilation, token) =>
         {
-            var messages = ImmutableArray.CreateBuilder<Message>();
             var startMethods = ImmutableArray.CreateBuilder<PreApplicationStartMethod>();
-
-            messages.Add(new(RuntimeInformation.FrameworkDescription));
 
             foreach (var (type, name) in compilation.FindPreApplicationStartAttributes())
             {
@@ -86,7 +78,7 @@ public class PreApplicationStartGenerator : IIncrementalGenerator
                 }
             }
 
-            return new Results(startMethods.ToImmutable(), messages.ToImmutable());
+            return startMethods.ToImmutable();
         });
 
         context.RegisterSourceOutput(invocation.Combine(startMethods), (context, source) =>
@@ -96,7 +88,7 @@ public class PreApplicationStartGenerator : IIncrementalGenerator
                 return;
             }
 
-            var startups = source.Right.StartMethods;
+            var startups = source.Right;
 
             using var str = new StringWriter();
             using var indented = new IndentedTextWriter(str);
@@ -116,16 +108,6 @@ public class PreApplicationStartGenerator : IIncrementalGenerator
             indented.WriteLine("using System;");
             indented.WriteLine();
             indented.WriteLine("#pragma warning disable");
-
-            if (source.Right.Messages is { IsDefaultOrEmpty: false } messages)
-            {
-                indented.WriteLine();
-                foreach (var message in messages)
-                {
-                    indented.WriteLine($"// {message.Text}");
-                }
-            }
-
             indented.WriteLine();
             indented.WriteLine("namespace WebForms.Generated");
             indented.WriteLine("{");
@@ -151,7 +133,7 @@ public class PreApplicationStartGenerator : IIncrementalGenerator
                 indented.WriteLine(".Configure(options => options.FailOnError = failOnError);");
                 indented.Indent--;
                 indented.WriteLine();
-                indented.WriteLine("builder.Services.TryAddEnumerable(ServiceDescriptor.Transient<IStartupFilter, PreApplicationStartMethodStartupFilter>());");
+                indented.WriteLine("builder.Services.AddHostedService<PreApplicationStartMethodBackgroundService>();");
             }
 
             indented.WriteLine("return builder;");
@@ -169,30 +151,18 @@ public class PreApplicationStartGenerator : IIncrementalGenerator
                 indented.WriteLine("}");
                 indented.WriteLine();
 
-                indented.WriteLine("private sealed class PreApplicationStartMethodStartupFilter(IOptions<PreApplicationOptions> options, ILogger<PreApplicationStartMethodStartupFilter> logger) : IStartupFilter");
+                indented.WriteLine("private sealed class PreApplicationStartMethodBackgroundService(IOptions<PreApplicationOptions> options, ILogger<PreApplicationStartMethodBackgroundService> logger) : BackgroundService");
                 indented.WriteLine("{");
                 indented.Indent++;
-                indented.WriteLine("public Action<IApplicationBuilder> Configure(Action<IApplicationBuilder> next)");
-                indented.Indent++;
-                indented.WriteLine("=> builder =>");
+                indented.WriteLine("protected override Task ExecuteAsync(CancellationToken stoppingToken)");
                 indented.WriteLine("{");
                 indented.Indent++;
-                indented.WriteLine("try");
-                indented.WriteLine("{");
-                indented.Indent++;
-                indented.WriteLine("RunStartupMethods();");
+                indented.WriteLine("RunStartupMethods(options.Value.FailOnError);");
+                indented.WriteLine("return Task.CompletedTask;");
                 indented.Indent--;
                 indented.WriteLine("}");
-                indented.WriteLine("catch when (!options.Value.FailOnError)");
-                indented.WriteLine("{");
-                indented.WriteLine("}");
                 indented.WriteLine();
-                indented.WriteLine("next(builder);");
-                indented.Indent--;
-                indented.WriteLine("};");
-                indented.Indent--;
-                indented.WriteLine();
-                indented.WriteLine("private void RunStartupMethods()");
+                indented.WriteLine("private void RunStartupMethods(bool failOnError)");
                 indented.WriteLine("{");
 
                 indented.Indent++;
@@ -205,6 +175,9 @@ public class PreApplicationStartGenerator : IIncrementalGenerator
 
                     if (isValid)
                     {
+                        indented.WriteLine("try");
+                        indented.WriteLine("{");
+                        indented.Indent++;
                         indented.WriteLine($"logger.LogInformation(\"Invoking PreApplicationStartMethod: {{TypeName}}.{{MethodName}}\", \"{typeName}\", \"{methodName}\");");
                     }
 
@@ -221,6 +194,18 @@ public class PreApplicationStartGenerator : IIncrementalGenerator
                     else
                     {
                         indented.WriteLine($"new {typeName}().{methodName}();");
+                    }
+
+                    if (isValid)
+                    {
+                        indented.Indent--;
+                        indented.WriteLine("}");
+                        indented.WriteLine("catch (Exception e) when (!failOnError)");
+                        indented.WriteLine("{");
+                        indented.Indent++;
+                        indented.WriteLine($"logger.LogError(e, \"Unexpected error invoking PreApplicationStartMethod: {{TypeName}}.{{MethodName}}\", \"{typeName}\", \"{methodName}\");");
+                        indented.Indent--;
+                        indented.WriteLine("}");
                     }
 
                     indented.Indent--;
