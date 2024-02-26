@@ -374,16 +374,16 @@ internal static class Util
         // prepare script include
         // Dev10 Bug564221: we need to detect if app level web.config overwrites the root web.conigf
         // string location = (string) RuntimeConfig.GetAppConfig().WebControls["clientScriptsLocation"];
-        string location = "Scripts";
+        string location = "/aspnet_client/{0}/{1}/";
         // If there is a formatter, as there will be for the default machine.config, insert the assembly name and version.
-        // if (location.IndexOf("{0}", StringComparison.Ordinal) >= 0) {
-        //     string assembly = "system_web";
-        //
-        //     // Todo: Migration
-        //     // QFE number is not included in client path
-        //     // string version = VersionInfo.SystemWebVersion.Substring(0, VersionInfo.SystemWebVersion.LastIndexOf('.')).Replace('.', '_');
-        //     location = String.Format(CultureInfo.InvariantCulture, location, assembly, version);
-        // }
+        if (location.IndexOf("{0}", StringComparison.Ordinal) >= 0) {
+            string assembly = "system_web";
+
+            // Todo: Migration
+            // QFE number is not included in client path
+            string version = VersionInfo.SystemWebVersion.Substring(0, VersionInfo.SystemWebVersion.LastIndexOf('.')).Replace('.', '_');
+            location = String.Format(CultureInfo.InvariantCulture, location, assembly, version);
+        }
 
         return VirtualPath.Create(location);
     }

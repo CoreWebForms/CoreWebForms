@@ -1,4 +1,4 @@
-﻿//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 // <copyright file="ThemeDirectoryCompiler.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
@@ -32,7 +32,7 @@ internal static class ThemeDirectoryCompiler {
     internal static VirtualPath GetGlobalThemeVirtualDir(string themeName) {
         // Todo: Migration
         //return BuildManager.ScriptVirtualDir.SimpleCombineWithDir(HttpRuntime.GlobalThemesDirectoryName + "/" + themeName);
-        return BuildManager.ScriptVirtualDir.ToString().TrimEnd('/') + $"/{HttpRuntimeConsts.GlobalThemesDirectoryName}/{themeName}";
+        return BuildManager.ScriptVirtualDir.Combine( $"/{HttpRuntimeConsts.GlobalThemesDirectoryName}/{themeName}");
     }
 
     // We need to Assert here since there could be user code on the stack (VSWhidbey 259563)
