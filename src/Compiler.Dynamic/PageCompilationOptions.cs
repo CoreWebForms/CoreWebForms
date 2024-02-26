@@ -18,27 +18,19 @@ public class PageCompilationOptions
 
     internal Dictionary<string, Func<string, ICompiledTypeAccessor, DependencyParser>> Parsers { get; } = new(StringComparer.OrdinalIgnoreCase);
 
-    internal void AddParser<DParser, TParser>(string extension)
+    internal void AddParser<DParser>(string extension)
         where DParser : DependencyParser, new()
-        where TParser : BaseTemplateParser, new()
     {
         DependencyParser Create(string path, ICompiledTypeAccessor compiledTypeAccessor)
         {
             var virtualPath = new System.Web.VirtualPath(path);
-            var templateParser = new TParser
-            {
-                CurrentVirtualPath = virtualPath,
-                WebFormsFileProvider = WebFormsFileProvider,
-                CompiledTypeAccessor = compiledTypeAccessor
-            };
-
             var dependencyParser = new DParser
             {
                 WebFormsFileProvider = WebFormsFileProvider,
-                TemplateParser = templateParser
+                CompiledTypeAccessor = compiledTypeAccessor,
             };
-
             dependencyParser.Init(virtualPath);
+
             return dependencyParser;
         }
 

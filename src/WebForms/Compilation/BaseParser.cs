@@ -53,10 +53,7 @@ public partial class BaseParser
 
     }
 
-    private ICompiledTypeAccessor _compiledTypeAccessor;
-
-    internal ICompiledTypeAccessor CompiledTypeAccessor { get => _compiledTypeAccessor; set => _compiledTypeAccessor = value; }
-
+    internal ICompiledTypeAccessor CompiledTypeAccessor { get; set; }
 
     // The virtual path to the file currently being processed
     private VirtualPath _currentVirtualPath;

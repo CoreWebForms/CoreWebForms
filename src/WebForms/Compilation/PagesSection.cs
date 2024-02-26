@@ -49,4 +49,6 @@ internal class PagesSection
     {
         return null;
     }
+
+    public Dictionary<string, Type> UserControlTypesDict { get; } = new Dictionary<string, Type>();
 }

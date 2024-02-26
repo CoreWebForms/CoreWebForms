@@ -51,9 +51,9 @@ public static class WebFormsCompilerExtensions
             .Configure<IOptions<WebFormsOptions>>((options, webFormsOptions) =>
             {
                 options.WebFormsFileProvider = webFormsOptions.Value.WebFormsFileProvider;
-                options.AddParser<PageDependencyParser, PageParser>(".aspx");
-                options.AddParser<MasterPageDependencyParser, MasterPageParser>(".Master");
-                options.AddParser<UserControlDependencyParser, UserControlParser>(".ascx");
+                options.AddParser<PageDependencyParser>(".aspx");
+                options.AddParser<MasterPageDependencyParser>(".Master");
+                options.AddParser<UserControlDependencyParser>(".ascx");
             })
             .Configure<IWebHostEnvironment>((options, env) =>
             {

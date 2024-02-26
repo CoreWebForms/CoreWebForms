@@ -68,6 +68,7 @@ public abstract class BaseTemplateParser : TemplateParser
     {
         var t = GetReferencedType(virtualPath, false /*allowNoCompile*/);
 
+        //This was done differently in original Webform
         t ??= CompiledTypeAccessor.GetForPath(virtualPath.Path);
 
         // Fail if it's a no compile uc, since it doesn't have a Type we can use
