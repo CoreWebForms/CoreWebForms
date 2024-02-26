@@ -7,6 +7,9 @@ using System.Web.UI;
  *
  * Copyright (c) 1999 Microsoft Corporation
  */
+
+using System.Web.Configuration;
+
 namespace System.Web.Compilation;
 internal static class CompilationUtil
 {
@@ -56,6 +59,14 @@ internal static class CompilationUtil
         }
 
         return CompilerType.GetByExtension(extension);
+    }
+
+    // Returns the list of buildProvider types associated to the specified appliesTo
+    internal static List<Type> GetFolderLevelBuildProviderTypes(CompilationSection config,
+        FolderLevelBuildProviderAppliesTo appliesTo)
+    {
+        FolderLevelBuildProviderCollection buildProviders = config.FolderLevelBuildProviders;
+        return buildProviders.GetBuildProviderTypes(appliesTo);
     }
 
 #if PORT_SUBDIRECTORIES
@@ -297,13 +308,6 @@ internal static class CompilationUtil
         return null;
     }
 
-    // Returns the list of buildProvider types associated to the specified appliesTo
-    internal static List<Type> GetFolderLevelBuildProviderTypes(CompilationSection config,
-        FolderLevelBuildProviderAppliesTo appliesTo)
-    {
-        FolderLevelBuildProviderCollection buildProviders = config.FolderLevelBuildProviders;
-        return buildProviders.GetBuildProviderTypes(appliesTo);
-    }
 
     // In partial trust, do not allow the CompilerDirectoryPath provider option in codedom settings (Dev10 bug 462348)
     internal static void CheckCompilerDirectoryPathAllowed(IDictionary<string, string> providerOptions)

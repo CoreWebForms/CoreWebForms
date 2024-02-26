@@ -787,10 +787,9 @@ internal class BuildResultResourceAssembly : BuildResultCompiledAssembly {
         if (_resourcesDependenciesHash != null)
             return;
 
-        // Todo : Migration
         // Even though we make it dependent on all res files, if we get here we know the neutral
         // ones are up to date, so effectively it's look the culture specific that matter.
-        //_resourcesDependenciesHash = HashCodeCombiner.GetDirectoryHash(VirtualPath);
+        _resourcesDependenciesHash = HashCodeCombiner.GetDirectoryHash(VirtualPath);
     }
 
     internal override void GetPreservedAttributes(PreservationFileReader pfr) {
