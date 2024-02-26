@@ -8,6 +8,7 @@ using System.Web.UI;
  * Copyright (c) 1999 Microsoft Corporation
  */
 
+using System.Configuration;
 using System.Web.Configuration;
 
 namespace System.Web.Compilation;
@@ -20,6 +21,68 @@ internal static class CompilationUtil
     internal static CompilerType GetCodeDefaultLanguageCompilerInfo()
     {
         return CompilerType.VisualBasic;
+    }
+
+     internal static Type GetBuildProviderTypeFromExtension(VirtualPath configPath, string extension,
+            BuildProviderAppliesTo neededFor, bool failIfUnknown) {
+
+            // Get the <compilation> config object
+            CompilationSection config = MTConfigUtil.GetCompilationConfig(configPath);
+
+            return GetBuildProviderTypeFromExtension(config, extension, neededFor, failIfUnknown);
+        }
+
+        internal static Type GetBuildProviderTypeFromExtension(CompilationSection config, string extension,
+            BuildProviderAppliesTo neededFor, bool failIfUnknown) {
+
+            BuildProviderInfo providerInfo = BuildProvider.GetBuildProviderInfo(config, extension);
+
+            Type buildProviderType = null;
+            // Never return an IgnoreFileBuildProvider/ForceCopyBuildProvider, since it's just a marker
+            if (providerInfo != null &&
+                providerInfo.Type != typeof(IgnoreFileBuildProvider) &&
+                providerInfo.Type != typeof(ForceCopyBuildProvider)) {
+                buildProviderType = providerInfo.Type;
+            }
+
+            // In updatable precomp mode, only aspx/ascx/master web files need processing.  Ignore the rest.
+            if (neededFor == BuildProviderAppliesTo.Web &&
+                BuildManager.PrecompilingForUpdatableDeployment &&
+                !typeof(BaseTemplateBuildProvider).IsAssignableFrom(buildProviderType)) {
+                buildProviderType = null;
+            }
+
+            if (buildProviderType != null) {
+                // Only return it if it applies to what it's needed for
+                if ((neededFor & providerInfo.AppliesTo) != 0)
+                    return buildProviderType;
+            }
+            // If the extension is registered as a compiler extension, use
+            // a SourceFileBuildProvider to handle it (not supported in Resources directory)
+            else if (neededFor != BuildProviderAppliesTo.Resources &&
+                config.GetCompilerInfoFromExtension(extension, false /*throwOnFail*/) != null) {
+                return typeof(SourceFileBuildProvider);
+            }
+
+            if (failIfUnknown) {
+                throw new HttpException( SR.GetString(SR.Unknown_buildprovider_extension, extension, neededFor.ToString()));
+            }
+
+            return null;
+        }
+
+
+    internal static Type LoadTypeWithChecks(string typeName, Type requiredBaseType, Type requiredBaseType2, ConfigurationElement elem, string propertyName) {
+        Type t = ConfigUtil.GetType(typeName, propertyName, elem);
+
+        if (requiredBaseType2 == null) {
+            ConfigUtil.CheckAssignableType(requiredBaseType, t, elem, propertyName);
+        }
+        else {
+            ConfigUtil.CheckAssignableType(requiredBaseType, requiredBaseType2, t, elem, propertyName);
+        }
+
+        return t;
     }
 
     internal static CompilerType GetDefaultLanguageCompilerInfo(CompilationSection compConfig, VirtualPath configPath)

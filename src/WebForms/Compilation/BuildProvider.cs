@@ -117,6 +117,19 @@ public abstract class BuildProvider {
     public virtual void ProcessCompileErrors(CompilerResults results) {
     }
 
+    internal static BuildProviderInfo GetBuildProviderInfo(CompilationSection config, string extension) {
+        Debug.Assert(extension != null);
+        // TODO: Migration
+        // var entry = config.BuildProviders[extension];
+        // if (entry != null) {
+        //     return entry.BuildProviderInfo;
+        // }
+
+        BuildProviderInfo info = null;
+        s_dynamicallyRegisteredProviders.TryGetValue(extension, out info);
+        return info;
+    }
+
     /// <devdoc>
     ///     Returns the list of files (virtual paths) that this provider depends on.
     ///     Those files need to be built before this BuildProvider.  The resulting assemblies

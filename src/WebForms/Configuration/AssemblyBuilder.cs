@@ -1,5 +1,6 @@
 ﻿// MIT License.
 
+using System.CodeDom;
 using System.CodeDom.Compiler;
 using System.Collections;
 
@@ -32,6 +33,11 @@ public class AssemblyBuilder
     }
 
     public void AddTypeNames(ICollection typeNames)
+    {
+        throw new NotImplementedException();
+    }
+
+    internal void AddCodeCompileUnit(SourceFileBuildProvider sourceFileBuildProvider, CodeSnippetCompileUnit snippetCompileUnit)
     {
         throw new NotImplementedException();
     }

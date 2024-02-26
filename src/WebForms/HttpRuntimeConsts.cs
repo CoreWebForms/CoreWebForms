@@ -4,12 +4,11 @@ using System.Security;
 
 namespace System.Web;
 
-public class HttpRuntimeConsts
+public static class HttpRuntimeConsts
 {
     internal const string codegenDirName = "Temporary ASP.NET Files";
     internal const string profileFileName = "profileoptimization.prof";
 
-    private static HttpRuntimeConsts _theRuntime;   // single instance of the class
     internal static byte[] s_autogenKeys = new byte[1024];
 
     //
@@ -30,14 +29,14 @@ public class HttpRuntimeConsts
     private static string DoubleDirectorySeparatorString = new string(Path.DirectorySeparatorChar, 2);
     private static char[] s_InvalidPhysicalPathChars = { '/', '?', '*', '<', '>', '|', '"' };
 
-    private NamedPermissionSet _namedPermissionSet;
+    private static NamedPermissionSet _namedPermissionSet;
     internal static NamedPermissionSet NamedPermissionSet {
         get {
             // Make sure we have already initialized the trust level
             //
 
 
-            return _theRuntime._namedPermissionSet;
+            return _namedPermissionSet;
         }
     }
 
@@ -47,12 +46,12 @@ public class HttpRuntimeConsts
     // App domain related
     //
 
-    private String _tempDir;
-    private String _codegenDir;
-    private String _appDomainAppId;
-    private String _appDomainAppPath;
-    private VirtualPath _appDomainAppVPath;
-    private String _appDomainId;
+    private static String _tempDir;
+    private static String _codegenDir;
+    private static String _appDomainAppId;
+    private static String _appDomainAppPath;
+    private static VirtualPath _appDomainAppVPath;
+    private static String _appDomainId;
 
     /// <devdoc>
     ///    <para>[To be supplied.]</para>
@@ -67,11 +66,19 @@ public class HttpRuntimeConsts
     }
 
     internal static string CodegenDirInternal {
-        get { return _theRuntime._codegenDir; }
+        get
+        {
+            if (_codegenDir == null)
+            {
+                _codegenDir = Thread.GetDomain().DynamicDirectory ?? throw new NullReferenceException("Thread.GetDomain().DynamicDirectory is null");
+                Directory.CreateDirectory(_codegenDir);
+            }
+            return _codegenDir;
+        }
     }
 
     internal static string TempDirInternal {
-        get { return _theRuntime._tempDir; }
+        get { return _tempDir; }
     }
 
 
@@ -93,4 +100,18 @@ public class HttpRuntimeConsts
 
         return (permission.Level >= level);
     }
+
+
+    internal static VirtualPath CodeDirectoryVirtualPath {
+        get { return _appDomainAppVPath.Combine(CodeDirectoryName); }
+    }
+
+    internal static VirtualPath ResourcesDirectoryVirtualPath {
+        get { return _appDomainAppVPath.Combine(ResourcesDirectoryName); }
+    }
+
+    internal static VirtualPath WebRefDirectoryVirtualPath {
+        get { return _appDomainAppVPath.Combine(WebRefDirectoryName); }
+    }
+
 }

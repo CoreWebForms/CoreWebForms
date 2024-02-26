@@ -310,7 +310,7 @@ internal class CodeDirectoryCompiler {
         if (_dirType == CodeDirectoryType.WebReferences) {
             // Create a build provider for the current directory
             BuildProvider buildProvider = new WebReferencesBuildProvider(vdir);
-            buildProvider.SetVirtualPath(vdir.VirtualPathObject);
+            buildProvider.SetVirtualPath(vdir.VirtualPath);
             _buildProviders.Add(buildProvider);
 
             AddFolderLevelBuildProviders(vdir, FolderLevelBuildProviderAppliesTo.WebReferences);

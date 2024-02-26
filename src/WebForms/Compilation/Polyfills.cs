@@ -94,9 +94,14 @@ internal class ResourceExpressionBuilder
     }
 }
 
-internal class BaseResourcesBuildProvider
+internal class BaseResourcesBuildProvider : BuildProvider
 {
     public static string DefaultResourcesNamespace { get; internal set; }
+
+    public void DontGenerateStronglyTypedClass()
+    {
+        throw new NotImplementedException();
+    }
 }
 
 internal static class BuildManager
@@ -112,9 +117,12 @@ internal static class BuildManager
     internal const string AppBrowserCapAssemblyNamePrefix = AssemblyNamePrefix + "Browsers";
 
 
-    private static BuildResultCache[] _caches = [];
-    private static StandardDiskBuildResultCache _codeGenCache;
-    private static MemoryBuildResultCache _memoryCache;
+    private static BuildResultCache[] _caches = new BuildResultCache[] {
+        _memoryCache,
+        _codeGenCache,
+    };
+    private static StandardDiskBuildResultCache _codeGenCache = new StandardDiskBuildResultCache(HttpRuntimeConsts.CodegenDirInternal);
+    private static MemoryBuildResultCache _memoryCache = new MemoryBuildResultCache();
 
     private static CompilationStage _compilationStage = CompilationStage.PreTopLevelFiles;
 
@@ -431,8 +439,9 @@ internal static class BuildManager
         List<Type> buildProviderTypes = CompilationUtil.GetFolderLevelBuildProviderTypes(compConfig, appliesTo);
         if (buildProviderTypes != null) {
             foreach (Type buildProviderType in buildProviderTypes) {
-                object o = HttpRuntime.CreatePublicInstanceByWebObjectActivator(buildProviderType);
-
+                // TODO: Migration
+                // object o = HttpRuntime.CreatePublicInstanceByWebObjectActivator(buildProviderType);
+                object o = Activator.CreateInstance(buildProviderType);
                 BuildProvider buildProvider = (BuildProvider)o;
 
                 buildProvider.SetVirtualPath(virtualPath);
@@ -520,9 +529,36 @@ internal static class BuildManager
         throw new NotImplementedException();
     }
 
-    public static BuildProvider CreateBuildProvider(object virtualPathObject, CompilationSection compConfig, ICollection referencedAssemblies, bool b)
-    {
-        throw new NotImplementedException();
+    internal static BuildProvider CreateBuildProvider(VirtualPath virtualPath,
+        CompilationSection compConfig, ICollection referencedAssemblies,
+        bool failIfUnknown) {
+
+        return CreateBuildProvider(virtualPath, BuildProviderAppliesTo.Web,
+            compConfig, referencedAssemblies, failIfUnknown);
+    }
+
+    internal static BuildProvider CreateBuildProvider(VirtualPath virtualPath,
+        BuildProviderAppliesTo neededFor,
+        CompilationSection compConfig, ICollection referencedAssemblies,
+        bool failIfUnknown) {
+
+        string extension = virtualPath.Extension;
+
+        Type buildProviderType = CompilationUtil.GetBuildProviderTypeFromExtension(compConfig,
+            extension, neededFor, failIfUnknown);
+        if (buildProviderType == null)
+            return null;
+
+        // TODO: Migration
+        // object o = HttpRuntime.CreatePublicInstanceByWebObjectActivator(buildProviderType);
+        object o = Activator.CreateInstance(buildProviderType);
+
+        BuildProvider buildProvider = (BuildProvider)o;
+
+        buildProvider.SetVirtualPath(virtualPath);
+        buildProvider.SetReferencedAssemblies(referencedAssemblies);
+
+        return buildProvider;
     }
 
     public static string GenerateRandomAssemblyName(string themeName)

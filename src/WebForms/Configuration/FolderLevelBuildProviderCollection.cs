@@ -24,7 +24,7 @@ namespace System.Web.Configuration {
             // Property initialization
             _properties = new ConfigurationPropertyCollection();
         }
-        
+
         public FolderLevelBuildProviderCollection()
             : base(StringComparer.OrdinalIgnoreCase) {
         }
@@ -35,11 +35,12 @@ namespace System.Web.Configuration {
             }
         }
 
-        public new BuildProvider this[string name] {
-            get {
-                return (BuildProvider)BaseGet(name);
-            }
-        }
+        // TODO: Migration
+        // public new BuildProvider this[string name] {
+        //     get {
+        //         return (BuildProvider)BaseGet(name);
+        //     }
+        // }
         public FolderLevelBuildProvider this[int index] {
             get {
                 return (FolderLevelBuildProvider)BaseGet(index);
@@ -54,19 +55,19 @@ namespace System.Web.Configuration {
         public void Add(FolderLevelBuildProvider buildProvider) {
             BaseAdd(buildProvider);
         }
-        
+
         public void Remove(String name) {
             BaseRemove(name);
         }
-        
+
         public void RemoveAt(int index) {
             BaseRemoveAt(index);
         }
-        
+
         public void Clear() {
             BaseClear();
         }
-        
+
         protected override ConfigurationElement CreateNewElement() {
             return new FolderLevelBuildProvider();
         }
