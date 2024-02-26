@@ -32,6 +32,10 @@ internal abstract class DependencyParser : BaseParser
     private VirtualPath _virtualPath;
     private StringSet _virtualPathDependencies;
 
+    private BaseTemplateParser _templateParser;
+
+    protected bool _isDependenciesCalled;
+
     // Used to detect circular references
     private readonly StringSet _circularReferenceChecker = new CaseInsensitiveStringSet();
 
@@ -52,6 +56,11 @@ internal abstract class DependencyParser : BaseParser
     internal ICollection GetVirtualPathDependencies()
     {
         // Always set the culture to Invariant when parsing (ASURT 99071)
+        if (_isDependenciesCalled)
+        {
+            return _virtualPathDependencies;
+        }
+
         Thread currentThread = Thread.CurrentThread;
         CultureInfo prevCulture = currentThread.CurrentCulture;
         Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
@@ -66,8 +75,25 @@ internal abstract class DependencyParser : BaseParser
             // Restore the previous culture
             currentThread.CurrentCulture = prevCulture;
         }
-
+        _isDependenciesCalled = true;
         return _virtualPathDependencies;
+    }
+
+    internal IEnumerable<string> GetDependencyPaths()
+    {
+        var dependentPaths = GetVirtualPathDependencies();
+        if (dependentPaths is not null)
+        {
+            foreach (string virtualPathString in dependentPaths)
+            {
+                yield return virtualPathString;
+            }
+        }
+    }
+
+    internal void Parse()
+    {
+        TemplateParser.Parse();
     }
 
     protected void AddDependency(VirtualPath virtualPath)
@@ -83,6 +109,8 @@ internal abstract class DependencyParser : BaseParser
     }
 
     internal abstract string DefaultDirectiveName { get; }
+
+    internal BaseTemplateParser TemplateParser { get => _templateParser; set => _templateParser = value; }
 
     protected virtual void PrepareParse() { }
 
