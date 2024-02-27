@@ -7,6 +7,7 @@ using System.Globalization;
 using System.Reflection;
 using System.Text;
 using System.Web.Compilation;
+using System.Web.Hosting;
 using System.Web.Util;
 
 namespace System.Web.UI;
@@ -104,8 +105,12 @@ internal class BaseResourcesBuildProvider : BuildProvider
     }
 }
 
-internal static class BuildManager
+internal class BuildManager
 {
+    public BuildManager()
+    {
+        CompileResourcesDirectory();
+    }
     // All generated assemblies start with this prefix
     internal const string AssemblyNamePrefix = "App_";
 
@@ -117,23 +122,23 @@ internal static class BuildManager
     internal const string AppBrowserCapAssemblyNamePrefix = AssemblyNamePrefix + "Browsers";
 
 
-    private static BuildResultCache[] _caches = new BuildResultCache[] {
-        _memoryCache,
-        _codeGenCache,
-    };
-    private static StandardDiskBuildResultCache _codeGenCache = new StandardDiskBuildResultCache(HttpRuntimeConsts.CodegenDirInternal);
-    private static MemoryBuildResultCache _memoryCache = new MemoryBuildResultCache();
+    private static BuildResultCache[] _caches => [_memoryCache, _codeGenCache];
+    private static StandardDiskBuildResultCache _codeGenCache = new(HttpRuntimeConsts.CodegenDirInternal);
+    private static MemoryBuildResultCache _memoryCache = new();
 
     private static CompilationStage _compilationStage = CompilationStage.PreTopLevelFiles;
 
     private static object _lock = new();
+    
+    private static bool _topLevelFilesCompiledStarted;
+    private static bool _topLevelFilesCompiledCompleted;
+    private Exception _topLevelFileCompilationException;
 
 
     internal static bool OptimizeCompilations { get; set; }
 
     public static bool PrecompilingForDeployment { get; internal set; }
     public static string UpdatableInheritReplacementToken { get; internal set; }
-    public static Assembly AppResourcesAssembly { get; internal set; }
     public static bool PrecompilingForUpdatableDeployment { get; internal set; }
     public static bool ThrowOnFirstParseError { get; set; } = true;
 
@@ -142,7 +147,10 @@ internal static class BuildManager
     public static bool IsPrecompiledApp { get; set;  }
 
     // TODO: Migration
+    public static Assembly AppResourcesAssembly { get; internal set; }
     public static string WebHashFilePath { get; set; } = "Web_Hash.webinfo";
+    
+    private const string ResourcesDirectoryAssemblyName = AssemblyNamePrefix + "GlobalResources";
 
     internal static BuildResult GetBuildResultFromCache(string cacheKey) {
         return GetBuildResultFromCacheInternal(cacheKey, false /*keyFromVPP*/, null /*virtualPath*/,
@@ -162,7 +170,6 @@ internal static class BuildManager
     private static BuildResult GetBuildResultFromCacheInternal(string cacheKey, bool keyFromVPP,
         VirtualPath virtualPath, long hashCode, bool ensureIsUpToDate = true)
     {
-
         BuildResult result = null;
 
         // Allow the possibility that BuildManager was not initialized due to
@@ -345,7 +352,7 @@ internal static class BuildManager
     };
 
 
-    private static ArrayList _codeAssemblies;
+    private static ArrayList _codeAssemblies = new();
     // TODO: Migration
     // public static IList CodeAssemblies {
     //     get {
@@ -353,9 +360,10 @@ internal static class BuildManager
     //         return _codeAssemblies;
     //     }
     // }
-    private static IDictionary _assemblyResolveMapping;
+    private static IDictionary _assemblyResolveMapping = new Hashtable(StringComparer.OrdinalIgnoreCase);
 
-    private static Dictionary<String, AssemblyReferenceInfo> _topLevelAssembliesIndexTable;
+    private static Dictionary<String, AssemblyReferenceInfo> _topLevelAssembliesIndexTable = 
+        new Dictionary<String, AssemblyReferenceInfo>(StringComparer.OrdinalIgnoreCase);
     private static IDictionary<String, AssemblyReferenceInfo> TopLevelAssembliesIndexTable { get { return _topLevelAssembliesIndexTable; } }
 
     private static Assembly CompileCodeDirectory(VirtualPath virtualDir, CodeDirectoryType dirType,
@@ -428,6 +436,15 @@ internal static class BuildManager
 
             return codeAssembly;
         }
+    
+    private static void CompileResourcesDirectory() {
+
+        VirtualPath virtualDir = HttpRuntimeConsts.ResourcesDirectoryVirtualPath;
+
+        Debug.Assert(AppResourcesAssembly == null);
+        AppResourcesAssembly = CompileCodeDirectory(virtualDir, CodeDirectoryType.AppResources,
+            ResourcesDirectoryAssemblyName, null /*excludedSubdirectories*/);
+    }
 
     internal static void AddFolderLevelBuildProviders(BuildProviderSet buildProviders, VirtualPath virtualPath,
         FolderLevelBuildProviderAppliesTo appliesTo, CompilationSection compConfig, ICollection referencedAssemblies) {
@@ -521,8 +538,96 @@ internal static class BuildManager
 
     public static ICollection GetReferencedAssemblies(CompilationSection compConfig, int? index = null)
     {
-        throw new NotImplementedException();
+        EnsureTopLevelFilesCompiled();
+        return GetReferencedAssemblies(compConfig);
     }
+    
+     internal static void EnsureTopLevelFilesCompiled() {
+            // if (PreStartInitStage != Compilation.PreStartInitStage.AfterPreStartInit) {
+            //     throw new InvalidOperationException(SR.GetString(SR.Method_cannot_be_called_during_pre_start_init));
+            // }
+
+            // This should never get executed in non-hosted appdomains
+            Debug.Assert(HostingEnvironment.IsHosted);
+
+            // If we already tried and got an exception, just rethrow it
+            // if (_topLevelFileCompilationException != null && !SkipTopLevelCompilationExceptions) {
+            //     ReportTopLevelCompilationException();
+            // }
+
+            if (_topLevelFilesCompiledStarted)
+                return;
+
+            // Set impersonation to hosting identity (process or UNC)
+            // using (new ApplicationImpersonationContext()) {
+            //     bool gotLock = false;
+            //     _parseErrorReported = false;
+            //
+            //     try {
+            //         // Grab the compilation mutex, since this method accesses the codegen files
+            //         CompilationLock.GetLock(ref gotLock);
+            //
+            //         // Check again if there is an exception
+            //         if (_topLevelFileCompilationException != null && !SkipTopLevelCompilationExceptions) {
+            //             ReportTopLevelCompilationException();
+            //         }
+            //
+            //         // Check again if we're done
+            //         if (_topLevelFilesCompiledStarted)
+            //             return;
+            //
+            //         _topLevelFilesCompiledStarted = true;
+            //         _topLevelAssembliesIndexTable =
+            //             new Dictionary<String, AssemblyReferenceInfo>(StringComparer.OrdinalIgnoreCase);
+            //
+            //         _compilationStage = CompilationStage.TopLevelFiles;
+            //
+            //         CompileResourcesDirectory();
+            //         CompileWebRefDirectory();
+            //         CompileCodeDirectories();
+            //
+            //         _compilationStage = CompilationStage.GlobalAsax;
+            //
+            //         CompileGlobalAsax();
+            //
+            //         _compilationStage = CompilationStage.BrowserCapabilities;
+            //
+            //         // Call GetBrowserCapabilitiesType() to make sure browserCap directory is compiled
+            //         // early on.  This avoids getting into potential deadlock situations later (VSWhidbey 530732).
+            //         // For the same reason, get the EmptyHttpCapabilitiesBase.
+            //         BrowserCapabilitiesCompiler.GetBrowserCapabilitiesType();
+            //         IFilterResolutionService dummy = HttpCapabilitiesBase.EmptyHttpCapabilitiesBase;
+            //
+            //         _compilationStage = CompilationStage.AfterTopLevelFiles;
+            //     }
+            //     catch (Exception e) {
+            //         // Remember the exception, and rethrow it
+            //         _topLevelFileCompilationException = e;
+            //
+            //         // Do not rethrow the exception since so CBM can still provide partial support
+            //         if (!SkipTopLevelCompilationExceptions) {
+            //
+            //             if (!_parseErrorReported) {
+            //                 // Report the error if this is not a CompileException. CompileExceptions are handled
+            //                 // directly by the AssemblyBuilder already.
+            //                 if (!(e is HttpCompileException)) {
+            //                     ReportTopLevelCompilationException();
+            //                 }
+            //             }
+            //
+            //             throw;
+            //         }
+            //     }
+            //     finally {
+            //         _topLevelFilesCompiledCompleted = true;
+            //
+            //         // Always release the mutex if we had taken it
+            //         if (gotLock) {
+            //             CompilationLock.ReleaseLock();
+            //         }
+            //     }
+            // }
+        }
 
     public static Compilation.BuildResult GetVPathBuildResultFromCache(object virtualPathObject)
     {

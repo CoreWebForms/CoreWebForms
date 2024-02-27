@@ -164,7 +164,7 @@ public sealed class VirtualPath
     public object AppRelativeVirtualPathString => Path;
 
     public static implicit operator VirtualPath(string path) => new(path);
-    public static implicit operator string(VirtualPath vpath) => vpath.Path;
+    public static implicit operator string(VirtualPath vpath) => vpath?.Path;
 
     public static VirtualPath CreateAllowNull(string path)
     {
@@ -226,7 +226,12 @@ public sealed class VirtualPath
 
     internal static VirtualPath CreateTrailingSlash(string virtualPath)
     {
-        throw new NotImplementedException();
+        // Ensure the virtual path ends with a slash
+        if (virtualPath.Length == 0 || virtualPath[virtualPath.Length - 1] != '/')
+        {
+            return new VirtualPath(virtualPath + "/");
+        }
+        return new VirtualPath(virtualPath);
     }
 
 

@@ -70,8 +70,17 @@ public static class HttpRuntimeConsts
         {
             if (_codegenDir == null)
             {
-                _codegenDir = Thread.GetDomain().DynamicDirectory ?? throw new NullReferenceException("Thread.GetDomain().DynamicDirectory is null");
-                Directory.CreateDirectory(_codegenDir);
+                string dynamicAssemblyPath = AppDomain.CurrentDomain.DynamicDirectory;
+                if (dynamicAssemblyPath == null)
+                {
+                    // TODO: Migration
+                    // DynamicDirectory is null, use a fallback directory
+                    dynamicAssemblyPath = Path.Combine(Path.GetTempPath(), "MyDynamicAssemblies");
+                    // Ensure the directory exists
+                    Directory.CreateDirectory(dynamicAssemblyPath);
+                }
+
+                _codegenDir = dynamicAssemblyPath;
             }
             return _codegenDir;
         }
