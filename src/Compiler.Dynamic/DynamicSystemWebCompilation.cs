@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SystemWebAdapters;
 using Microsoft.AspNetCore.SystemWebAdapters.HttpHandlers;
 using Microsoft.CodeAnalysis;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
@@ -29,11 +28,10 @@ internal sealed class DynamicSystemWebCompilation : SystemWebCompilation<Dynamic
 
     public DynamicSystemWebCompilation(
         ILoggerFactory factory,
-        IHostEnvironment env,
         IMetadataProvider metadataProvider,
         IOptions<WebFormsOptions> webFormsOptions,
         IOptions<PageCompilationOptions> pageCompilationOptions)
-        : base(env, factory, metadataProvider, webFormsOptions, pageCompilationOptions)
+        : base(factory, metadataProvider, webFormsOptions, pageCompilationOptions)
     {
         _logger = factory.CreateLogger<DynamicSystemWebCompilation>();
         _factory = factory;
@@ -105,23 +103,19 @@ internal sealed class DynamicSystemWebCompilation : SystemWebCompilation<Dynamic
 
     IChangeToken IHttpHandlerCollection.GetChangeToken() => _changeTokenSource.GetChangeToken();
 
-    async Task IWebFormsCompiler.CompilePagesAsync(CancellationToken token)
+    Task IWebFormsCompiler.CompilePagesAsync(CancellationToken token)
     {
         _event.Reset();
 
         using (MarkRecompile())
         {
-            foreach (var file in Files.GetFiles())
-            {
-                if (file.FullPath.EndsWith(".aspx", StringComparison.OrdinalIgnoreCase))
-                {
-                    await CompilePageAsync("/" + file.FullPath, token).ConfigureAwait(false);
-                }
-            }
+            CompileAllPages(token);
 
             _event.Set();
             _changeTokenSource.OnChange();
         }
+
+        return Task.CompletedTask;
     }
 
     protected override DynamicCompiledPage CreateErrorPage(string path, Exception e)
