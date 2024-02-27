@@ -44,8 +44,7 @@ internal static class HandlerExtensions
         }
         else if (endpoint.Metadata.GetMetadata<IHttpHandlerMetadata>() is { } metadata)
         {
-            // TODO: flow async
-            return metadata.Create(context).AsTask().GetAwaiter().GetResult();
+            return metadata.Create(context);
         }
         else
         {
