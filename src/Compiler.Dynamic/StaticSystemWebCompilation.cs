@@ -4,7 +4,6 @@ using System.Reflection;
 using System.Text.Json;
 using System.Web;
 using Microsoft.CodeAnalysis;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -15,21 +14,18 @@ namespace WebForms.Compiler.Dynamic;
 internal sealed class StaticSystemWebCompilation : SystemWebCompilation<PersistedCompiledPage>, IWebFormsCompiler
 {
     private readonly IOptions<StaticCompilationOptions> _options;
-    private readonly IOptions<PageCompilationOptions> _pageCompilationOptions;
     private readonly ILogger _logger;
 
     public StaticSystemWebCompilation(
-        IHostEnvironment env,
         IOptions<StaticCompilationOptions> options,
         IOptions<WebFormsOptions> webFormsOptions,
         IOptions<PageCompilationOptions> pageCompilationOptions,
         IMetadataProvider metadataProvider,
         ILoggerFactory factory)
-        : base(env, factory, metadataProvider, webFormsOptions, pageCompilationOptions)
+        : base(factory, metadataProvider, webFormsOptions, pageCompilationOptions)
     {
         _logger = factory.CreateLogger<StaticSystemWebCompilation>();
         _options = options;
-        _pageCompilationOptions = pageCompilationOptions;
     }
 
     protected override PersistedCompiledPage CreateCompiledPage(
@@ -75,27 +71,24 @@ internal sealed class StaticSystemWebCompilation : SystemWebCompilation<Persiste
         };
     }
 
-    async Task IWebFormsCompiler.CompilePagesAsync(CancellationToken token)
+    Task IWebFormsCompiler.CompilePagesAsync(CancellationToken token)
     {
         Environment.CurrentDirectory = _options.Value.InputDirectory;
 
         try
         {
-            foreach (var file in Files!.GetFiles())
-            {
-                if (file.FullPath.EndsWith(".aspx", StringComparison.OrdinalIgnoreCase))
-                {
-                    await CompilePageAsync("/" + file.FullPath, token).ConfigureAwait(false);
-                }
-            }
+            CompileAllPages(token);
 
             var pagesPath = Path.Combine(_options.Value.TargetDirectory, "webforms.pages.json");
+
             File.WriteAllText(pagesPath, JsonSerializer.Serialize(GetDetails()));
         }
         catch (Exception e)
         {
             _logger.LogError("Unexpected error: {Message} {Stacktrace}", e.Message, e.StackTrace);
         }
+
+        return Task.CompletedTask;
     }
 
     private IEnumerable<PageDetails> GetDetails()

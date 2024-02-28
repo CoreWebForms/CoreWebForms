@@ -11,6 +11,6 @@ public interface IHttpHandlerMetadata
 
     string Route { get; }
 
-    ValueTask<IHttpHandler> Create(HttpContextCore context);
+    IHttpHandler Create(HttpContextCore context);
 }
 

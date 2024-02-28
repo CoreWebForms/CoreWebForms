@@ -25,7 +25,7 @@ public static class HandlerMetadata
             _ => SessionStateBehavior.Default,
         };
 
-        public ValueTask<IHttpHandler> Create(HttpContextCore context) => ValueTask.FromResult(handler);
+        public IHttpHandler Create(HttpContextCore context) => handler;
     }
 
     private sealed class TypeHandlerMetadata(string path, Type type) : IHttpHandlerMetadata
@@ -53,11 +53,11 @@ public static class HandlerMetadata
             }
         }
 
-        public ValueTask<IHttpHandler> Create(HttpContextCore context)
+        public IHttpHandler Create(HttpContextCore context)
         {
             if (_handler is { } h)
             {
-                return ValueTask.FromResult(h);
+                return h;
             }
 
             var newHandler = (IHttpHandler)_factory(context.RequestServices, null);
@@ -67,7 +67,7 @@ public static class HandlerMetadata
                 Interlocked.Exchange(ref _handler, newHandler);
             }
 
-            return ValueTask.FromResult(newHandler);
+            return newHandler;
         }
     }
 }

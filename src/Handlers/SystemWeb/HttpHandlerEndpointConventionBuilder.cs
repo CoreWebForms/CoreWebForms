@@ -120,6 +120,6 @@ internal sealed class HttpHandlerEndpointConventionBuilder : EndpointDataSource,
 
         public string Route => route;
 
-        public ValueTask<IHttpHandler> Create(HttpContextCore context) => metadata.Create(context);
+        public IHttpHandler Create(HttpContextCore context) => metadata.Create(context);
     }
 }
