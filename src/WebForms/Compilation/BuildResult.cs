@@ -347,14 +347,14 @@ internal abstract class BuildResult {
         DateTime now = DateTime.Now;
         // Due to bug 214038, CBM can be called multiple times in a very short time.
         if (now < _nextUpToDateCheck && !BuildManagerHost.InClientBuildManager) {
-            Debug.Write("BuildResult", "IsUpToDate: true since called less than 2 seconds ago. "
+            Debug.WriteLine("BuildResult", "IsUpToDate: true since called less than 2 seconds ago. "
                 + _nextUpToDateCheck + "," + now);
             return true;
         }
 
         // If we don't get the lock, just say it's up to date without checking
         if (Interlocked.CompareExchange(ref _lock, 1, 0) != 0) {
-            Debug.Write("BuildResult", "IsUpToDate returning true because it didn't get the lock");
+            Debug.WriteLine("BuildResult", "IsUpToDate returning true because it didn't get the lock");
             return true;
         }
 
@@ -371,14 +371,14 @@ internal abstract class BuildResult {
 
         // Check if we're up to date.  A null hash code means the cache should not be used.
         if (newHashCode == null || newHashCode != _virtualPathDependenciesHash) {
-            Debug.Write("BuildResult", "IsUpToDate: '" + VirtualPath + "' is out of date");
+            Debug.WriteLine("BuildResult", "IsUpToDate: '" + VirtualPath + "' is out of date");
 
             // Set the lock to -1 to mark that we're not up to date
             _lock = -1;
             return false;
         }
 
-        Debug.Write("BuildResult", "IsUpToDate: '" + VirtualPath + "' is up to date");
+        Debug.WriteLine("BuildResult", "IsUpToDate: '" + VirtualPath + "' is up to date");
 
         // We're up to date.  Remember the time we checked, and reset the lock
         _nextUpToDateCheck = now.AddSeconds(UpdateInterval);
@@ -501,7 +501,7 @@ internal abstract class BuildResultCompiledAssemblyBase: BuildResult {
             return a;
         }
         catch {
-            Debug.Write("BuildResult", "GetPreservedAssembly: couldn't load assembly '" + assemblyName + "'; deleting associated files.");
+            Debug.WriteLine("BuildResult", "GetPreservedAssembly: couldn't load assembly '" + assemblyName + "'; deleting associated files.");
 
             // Remove the assembly and all the associated files
             pfr.DiskCache.RemoveAssemblyAndRelatedFiles(assemblyName);

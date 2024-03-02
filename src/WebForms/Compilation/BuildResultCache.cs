@@ -134,7 +134,7 @@ namespace System.Web.Compilation
         internal override BuildResult GetBuildResult(string cacheKey, VirtualPath virtualPath, long hashCode,
             bool ensureIsUpToDate)
         {
-            Debug.Write("BuildResultCache", "Looking for '" + cacheKey + "' in the memory cache");
+            Debug.WriteLine("BuildResultCache", "Looking for '" + cacheKey + "' in the memory cache");
 
             string key = GetMemoryCacheKey(cacheKey);
             BuildResult result = (BuildResult)HttpRuntime.Cache.Get(key);
@@ -142,7 +142,7 @@ namespace System.Web.Compilation
             // Not found in the cache
             if (result == null)
             {
-                Debug.Write("BuildResultCache", "'" + cacheKey + "' was not found in the memory cache");
+                Debug.WriteLine("BuildResultCache", "'" + cacheKey + "' was not found in the memory cache");
                 return null;
             }
 
@@ -152,7 +152,7 @@ namespace System.Web.Compilation
             if (!result.UsesCacheDependency && !result.IsUpToDate(virtualPath, ensureIsUpToDate))
             {
 
-                Debug.Write("BuildResultCache", "'" + cacheKey + "' was found but is out of date");
+                Debug.WriteLine("BuildResultCache", "'" + cacheKey + "' was found but is out of date");
 
                 // Remove it from the cache
                 HttpRuntime.Cache.Remove(key);
@@ -162,7 +162,7 @@ namespace System.Web.Compilation
                 return null;
             }
 
-            Debug.Write("BuildResultCache", "'" + cacheKey + "' was found in the memory cache");
+            Debug.WriteLine("BuildResultCache", "'" + cacheKey + "' was found in the memory cache");
 
             // It's up to date: return it
             return result;
@@ -174,7 +174,7 @@ namespace System.Web.Compilation
 
             ICollection virtualDependencies = result.VirtualPathDependencies;
 
-            Debug.Write("BuildResultCache", "Adding cache " + cacheKey + " in the memory cache");
+            Debug.WriteLine("BuildResultCache", "Adding cache " + cacheKey + " in the memory cache");
 
             CacheDependency cacheDependency = null;
 
@@ -210,7 +210,7 @@ namespace System.Web.Compilation
                 Assembly a = (Assembly)HttpRuntime.Cache.Get(assemblyKey);
                 // TODO: Migration
                 // if (a == null) {
-                //     Debug.Write("BuildResultCache", "Adding marker cache entry " + compiledResult.ResultAssembly);
+                //     Debug.WriteLine("BuildResultCache", "Adding marker cache entry " + compiledResult.ResultAssembly);
                 //     // VSWhidbey 500049 - add as NotRemovable to prevent the assembly from being prematurely deleted
                 //     HttpRuntime.Cache.Insert(assemblyKey, compiledResult.ResultAssembly,
                 //         new CacheInsertOptions() { Priority = CacheItemPriority.NotRemovable });
@@ -274,7 +274,7 @@ namespace System.Web.Compilation
             // Only handle case when the dependency is removed.
             if (reason == CacheItemRemovedReason.DependencyChanged)
             {
-                Debug.Write("BuildResultCache", "OnCacheItemRemoved Key=" + key);
+                Debug.WriteLine("BuildResultCache", "OnCacheItemRemoved Key=" + key);
 
                 // Remove the assembly if a buildresult becomes obsolete
                 // TODO: Migration
@@ -386,7 +386,7 @@ namespace System.Web.Compilation
             // Get the physical path to the assembly
             String assemblyPath = Util.GetAssemblyCodeBase(assembly);
 
-            Debug.Write("BuildResultCache",
+            Debug.WriteLine("BuildResultCache",
                 "removing cacheKey for assembly " + assemblyPath + " because of dependency change");
 
             // Remove the cache entry in order to kick out all the pages that are in that batch
@@ -486,7 +486,7 @@ namespace System.Web.Compilation
             bool ensureIsUpToDate)
         {
 
-            Debug.Write("BuildResultCache", "Looking for '" + cacheKey + "' in the disk cache");
+            Debug.WriteLine("BuildResultCache", "Looking for '" + cacheKey + "' in the disk cache");
 
             string preservationFile = GetPreservedDataFileName(cacheKey);
 
@@ -496,9 +496,9 @@ namespace System.Web.Compilation
             BuildResult result = pfr.ReadBuildResultFromFile(virtualPath, preservationFile, hashCode, ensureIsUpToDate);
 
             if (result != null)
-                Debug.Write("BuildResultCache", "'" + cacheKey + "' was found in the disk cache");
+                Debug.WriteLine("BuildResultCache", "'" + cacheKey + "' was found in the disk cache");
             else
-                Debug.Write("BuildResultCache", "'" + cacheKey + "' was not found in the disk cache");
+                Debug.WriteLine("BuildResultCache", "'" + cacheKey + "' was not found in the disk cache");
 
             return result;
         }
@@ -581,7 +581,7 @@ namespace System.Web.Compilation
         internal virtual void RemoveAssemblyAndRelatedFiles(string assemblyName)
         {
 
-            Debug.Write("DiskBuildResultCache", "RemoveAssemblyAndRelatedFiles(" + assemblyName + ")");
+            Debug.WriteLine("DiskBuildResultCache", "RemoveAssemblyAndRelatedFiles(" + assemblyName + ")");
 
             // If the name doesn't start with the prefix, the cleanup code doesn't apply
             if (!assemblyName.StartsWith(BuildManager.WebAssemblyNamePrefix, StringComparison.Ordinal))
@@ -672,7 +672,7 @@ namespace System.Web.Compilation
             // It had to be renamed, so increment the recompilations count,
             // and restart the appdomain if it reaches the limit
 
-            Debug.Write("DiskBuildResultCache", "RemoveAssembly: " + f.Name + " was renamed");
+            Debug.WriteLine("DiskBuildResultCache", "RemoveAssembly: " + f.Name + " was renamed");
 
             if (++s_recompilations == s_maxRecompilations)
             {
@@ -729,7 +729,7 @@ namespace System.Web.Compilation
             try
             {
                 f.Delete();
-                Debug.Write("DiskBuildResultCache", "TryDeleteFile removed " + f.Name);
+                Debug.WriteLine("DiskBuildResultCache", "TryDeleteFile removed " + f.Name);
                 return true;
             }
             catch
@@ -755,7 +755,7 @@ namespace System.Web.Compilation
                 try
                 {
                     File.Delete(baseName);
-                    Debug.Write("DiskBuildResultCache", "CheckAndRemoveDotDeleteFile deleted " + baseName);
+                    Debug.WriteLine("DiskBuildResultCache", "CheckAndRemoveDotDeleteFile deleted " + baseName);
                 }
                 catch
                 {
@@ -766,7 +766,7 @@ namespace System.Web.Compilation
             try
             {
                 f.Delete();
-                Debug.Write("DiskBuildResultCache", "CheckAndRemoveDotDeleteFile deleted " + f.Name);
+                Debug.WriteLine("DiskBuildResultCache", "CheckAndRemoveDotDeleteFile deleted " + f.Name);
             }
             catch
             {
@@ -790,11 +790,11 @@ namespace System.Web.Compilation
                 try
                 {
                     (new StreamWriter(newName)).Close();
-                    Debug.Write("DiskBuildResultCache", "CreateDotDeleteFile succeeded: " + newName);
+                    Debug.WriteLine("DiskBuildResultCache", "CreateDotDeleteFile succeeded: " + newName);
                 }
                 catch
                 {
-                    Debug.Write("DiskBuildResultCache", "CreateDotDeleteFile failed: " + newName);
+                    Debug.WriteLine("DiskBuildResultCache", "CreateDotDeleteFile failed: " + newName);
                 } // If we fail the .delete probably just got created by another process.
             }
         }
@@ -890,9 +890,9 @@ namespace System.Web.Compilation
 
             using (var writer = new StreamWriter(hashFilePath, false, Encoding.UTF8))
             {
-                writer.Write(hash.Item1.ToString("x", CultureInfo.InvariantCulture));
-                writer.Write(';');
-                writer.Write(hash.Item2.ToString("x", CultureInfo.InvariantCulture));
+                writer.WriteLine(hash.Item1.ToString("x", CultureInfo.InvariantCulture));
+                writer.WriteLine(';');
+                writer.WriteLine(hash.Item2.ToString("x", CultureInfo.InvariantCulture));
             }
         }
 
@@ -958,7 +958,7 @@ namespace System.Web.Compilation
 
          */
         // internal void RemoveOldTempFiles() {
-        //     Debug.Write("BuildResultCache", "Deleting old temporary files from " + _cacheDir);
+        //     Debug.WriteLine("BuildResultCache", "Deleting old temporary files from " + _cacheDir);
         //
         //     RemoveCodegenResourceDir();
         //
@@ -1009,7 +1009,7 @@ namespace System.Web.Compilation
         //             continue;
         //         }
         //
-        //         Debug.Write("BuildResultCache", "Deleting old temporary files: " + fileData.FullName);
+        //         Debug.WriteLine("BuildResultCache", "Deleting old temporary files: " + fileData.FullName);
         //         try {
         //             File.Delete(fileData.FullName);
         //         } catch { }
@@ -1018,7 +1018,7 @@ namespace System.Web.Compilation
 
         // private void RemoveCodegenResourceDir() {
         //     string path = BuildManager.CodegenResourceDir;
-        //     Debug.Write("BuildResultCache", "Deleting codegen temporary resource directory: " + path);
+        //     Debug.WriteLine("BuildResultCache", "Deleting codegen temporary resource directory: " + path);
         //     if (Directory.Exists(path)){
         //         try {
         //             Directory.Delete(path, recursive:true);
@@ -1033,7 +1033,7 @@ namespace System.Web.Compilation
         // [SuppressMessage("Microsoft.Usage","CA1806:DoNotIgnoreMethodResults", MessageId="System.Web.UnsafeNativeMethods.DeleteShadowCache(System.String,System.String)",
         //     Justification="Reviewed - we are just trying to clean up the codegen folder as much as possible, so it is ok to ignore any errors.")]
         // internal void RemoveAllCodegenFiles() {
-        //     Debug.Write("BuildResultCache", "Deleting all files from " + _cacheDir);
+        //     Debug.WriteLine("BuildResultCache", "Deleting all files from " + _cacheDir);
         //
         //     RemoveCodegenResourceDir();
         //

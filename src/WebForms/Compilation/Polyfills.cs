@@ -7,6 +7,7 @@ using System.Globalization;
 using System.Reflection;
 using System.Text;
 using System.Web.Compilation;
+using System.Web.Configuration;
 using System.Web.Hosting;
 using System.Web.Util;
 
@@ -129,7 +130,7 @@ internal class BuildManager
     private static CompilationStage _compilationStage = CompilationStage.PreTopLevelFiles;
 
     private static object _lock = new();
-    
+
     private static bool _topLevelFilesCompiledStarted;
     private static bool _topLevelFilesCompiledCompleted;
     private Exception _topLevelFileCompilationException;
@@ -144,12 +145,20 @@ internal class BuildManager
 
     public static VirtualPath ScriptVirtualDir = Util.GetScriptLocation();
 
+    private static List<Assembly> TopLevelReferencedAssemblies = new List<Assembly>() {
+        typeof(HttpRuntime).Assembly,
+        typeof(System.ComponentModel.Component).Assembly,
+    };
+
+    private static HashSet<Assembly> s_dynamicallyAddedReferencedAssembly = new HashSet<Assembly>();
+
+
     public static bool IsPrecompiledApp { get; set;  }
 
     // TODO: Migration
     public static Assembly AppResourcesAssembly { get; internal set; }
     public static string WebHashFilePath { get; set; } = "Web_Hash.webinfo";
-    
+
     private const string ResourcesDirectoryAssemblyName = AssemblyNamePrefix + "GlobalResources";
 
     internal static BuildResult GetBuildResultFromCache(string cacheKey) {
@@ -362,7 +371,7 @@ internal class BuildManager
     // }
     private static IDictionary _assemblyResolveMapping = new Hashtable(StringComparer.OrdinalIgnoreCase);
 
-    private static Dictionary<String, AssemblyReferenceInfo> _topLevelAssembliesIndexTable = 
+    private static Dictionary<String, AssemblyReferenceInfo> _topLevelAssembliesIndexTable =
         new Dictionary<String, AssemblyReferenceInfo>(StringComparer.OrdinalIgnoreCase);
     private static IDictionary<String, AssemblyReferenceInfo> TopLevelAssembliesIndexTable { get { return _topLevelAssembliesIndexTable; } }
 
@@ -436,7 +445,7 @@ internal class BuildManager
 
             return codeAssembly;
         }
-    
+
     private static void CompileResourcesDirectory() {
 
         VirtualPath virtualDir = HttpRuntimeConsts.ResourcesDirectoryVirtualPath;
@@ -536,12 +545,91 @@ internal class BuildManager
     {
     }
 
-    public static ICollection GetReferencedAssemblies(CompilationSection compConfig, int? index = null)
-    {
-        EnsureTopLevelFilesCompiled();
-        return GetReferencedAssemblies(compConfig);
-    }
-    
+    internal static ICollection GetReferencedAssemblies(CompilationSection compConfig, int removeIndex) {
+            AssemblySet referencedAssemblies = new AssemblySet();
+
+            // Add all the config assemblies to the list
+            foreach (AssemblyInfo a in compConfig.Assemblies) {
+                Assembly[] assemblies = a.AssemblyInternal;
+                if (assemblies == null) {
+                    lock (compConfig) {
+                        assemblies = a.AssemblyInternal;
+                        if (assemblies == null)
+                            //
+                            assemblies = a.AssemblyInternal = compConfig.LoadAssembly(a);
+                    }
+                }
+
+                for (int i = 0; i < assemblies.Length; i++) {
+                    if (assemblies[i] != null) {
+                        referencedAssemblies.Add(assemblies[i]);
+                    }
+                }
+            }
+
+            // Clone the top level referenced assemblies (code + global.asax + etc...), up to the removeIndex
+            for (int i = 0; i < removeIndex; i++) {
+                referencedAssemblies.Add(TopLevelReferencedAssemblies[i]);
+            }
+
+            //
+
+            foreach (Assembly assembly in s_dynamicallyAddedReferencedAssembly) {
+                referencedAssemblies.Add(assembly);
+            }
+
+            return referencedAssemblies;
+        }
+
+        internal static ICollection GetReferencedAssemblies(CompilationSection compConfig) {
+
+            // Start by cloning the top level referenced assemblies (code + global.asax + etc...)
+            AssemblySet referencedAssemblies = AssemblySet.Create(TopLevelReferencedAssemblies);
+
+            // Add all the config assemblies to the list
+            foreach (AssemblyInfo a in compConfig.Assemblies) {
+                Assembly[] assemblies = a.AssemblyInternal;
+                if (assemblies == null) {
+                    lock (compConfig) {
+                        assemblies = a.AssemblyInternal;
+                        if (assemblies == null)
+                            //
+                            assemblies = a.AssemblyInternal = compConfig.LoadAssembly(a);
+                    }
+                }
+
+                for (int i = 0; i < assemblies.Length; i++) {
+                    if (assemblies[i] != null) {
+                        referencedAssemblies.Add(assemblies[i]);
+                    }
+                }
+            }
+
+            //
+
+            foreach (Assembly assembly in s_dynamicallyAddedReferencedAssembly) {
+                referencedAssemblies.Add(assembly);
+            }
+
+            return referencedAssemblies;
+        }
+
+
+        /*
+         * Return the list of assemblies that all page compilations need to reference. This includes
+         * config assemblies (<assemblies> section), bin assemblies and assemblies built from the
+         * app App_Code and other top level folders.
+         */
+
+        /// <devdoc>
+        /// Returns the assemblies referenced at the root application level of the current appF
+        /// </devdoc>
+        public static ICollection GetReferencedAssemblies() {
+            CompilationSection compConfig = MTConfigUtil.GetCompilationAppConfig();
+            EnsureTopLevelFilesCompiled();
+            return GetReferencedAssemblies(compConfig);
+        }
+
      internal static void EnsureTopLevelFilesCompiled() {
             // if (PreStartInitStage != Compilation.PreStartInitStage.AfterPreStartInit) {
             //     throw new InvalidOperationException(SR.GetString(SR.Method_cannot_be_called_during_pre_start_init));
