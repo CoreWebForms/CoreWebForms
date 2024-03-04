@@ -1,6 +1,7 @@
 // MIT License.
 
 using System.Collections;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
@@ -23,6 +24,63 @@ using Microsoft.Extensions.FileProviders;
 namespace System.Web.UI;
 internal static class Util
 {
+    internal static void AddAssembliesToStringCollection(ICollection fromList, StringCollection toList) {
+
+        // Nothing to do if either is null
+        if (fromList == null || toList == null)
+            return;
+
+        foreach (Assembly assembly in fromList) {
+            AddAssemblyToStringCollection(assembly, toList);
+        }
+    }
+    internal static void AddAssemblyToStringCollection(Assembly assembly, StringCollection toList) {
+
+        string assemblyPath = null;
+
+        //Skip adding Mscorlib for versions from 4.0 as that is added by CodeDomProvider (because of CoreAssemblyFileName switch).
+        // TODO: Migration
+        // if (BuildManagerHost.InClientBuildManager && !MultiTargetingUtil.IsTargetFramework20 && !MultiTargetingUtil.IsTargetFramework35) {
+        //     if (assembly.FullName == typeof(string).Assembly.FullName) {
+        //         return;
+        //     }
+        // }
+
+        if (!MultiTargetingUtil.EnableReferenceAssemblyResolution) {
+            assemblyPath = Util.GetAssemblyCodeBase(assembly);
+
+        } else {
+            // TODO: Migration
+            // Get the full path to the reference assembly. For framework assemblies, this will be the path
+            // to the actual target reference assembly.
+            // ReferenceAssemblyType referenceAssemblyType = AssemblyResolver.GetPathToReferenceAssembly(assembly, out assemblyPath);
+
+            // If the assembly is only available in a higher framework version, skip it.
+            // If the user tries to use anything from such an assembly, he should be getting errors
+            // during actual csc/vbc compilation reporting that the type or method is not found.
+            // if (referenceAssemblyType == ReferenceAssemblyType.FrameworkAssemblyOnlyPresentInHigherVersion) {
+            //     return;
+            // }
+        }
+
+        Debug.Assert(!String.IsNullOrEmpty(assemblyPath));
+
+        // Unless it's already in the list, add it
+        if (!toList.Contains(assemblyPath)) {
+            toList.Add(assemblyPath);
+        }
+    }
+
+    /*
+     * Return a String which holds the contents of a file, or null if the file
+     * doesn't exist.
+     */
+    internal /*public*/ static String StringFromFileIfExists(string path) {
+
+        if (!File.Exists(path)) return null;
+
+        return StringFromFile(path);
+    }
     internal static Type GetNonPrivatePropertyType(Type classType, string propName)
     {
         PropertyInfo propInfo = null;
@@ -1237,6 +1295,12 @@ internal static class Util
         return CommaIndexInTypeName(typeName) > 0;
     }
 
+    internal static void RemoveOrRenameFile(string filename) {
+        FileInfo fi = new FileInfo(filename);
+        RemoveOrRenameFile(fi);
+    }
+
+
     /*
      * If the file doesn't exist, do nothing.  If it does try to delete it if possible.
      * If that fails, rename it with by appending a .delete extension to it
@@ -1335,5 +1399,19 @@ internal static class Util
 
         // Get the path to the assembly (from the cache if it got shadow copied)
         return location;
+    }
+
+    private static char[] invalidFileNameChars = new char[] { '/', '\\', '?', '*', ':' } ;
+    internal static bool IsValidFileName(string fileName) {
+
+        // Check for the special names "." and ".."
+        if (fileName == "." || fileName == "..")
+            return false;
+
+        // Check for invalid characters
+        if (fileName.IndexOfAny(invalidFileNameChars) >= 0)
+            return false;
+
+        return true;
     }
 }

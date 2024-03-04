@@ -36,6 +36,7 @@ BuildProvider
 
 
 using System.Reflection.Emit;
+using System.Web.Configuration;
 
 namespace System.Web.Compilation {
 

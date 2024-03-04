@@ -8,12 +8,16 @@ using System.Web.UI;
  * Copyright (c) 1999 Microsoft Corporation
  */
 
+using System.CodeDom.Compiler;
 using System.Configuration;
+using System.Reflection;
 using System.Web.Configuration;
+using System.Web.Util;
 
 namespace System.Web.Compilation;
 internal static class CompilationUtil
 {
+    private const string CompilerDirectoryPath = "CompilerDirectoryPath";
 
     internal const string CodeDomProviderOptionPath = "system.codedom/compilers/compiler/ProviderOption/";
     public static int MaxConcurrentCompilations { get; set; }
@@ -761,4 +765,254 @@ internal static class CompilationUtil
         }
     }
 #endif
+
+    internal static CompilerType GetCSharpCompilerInfo(
+        CompilationSection compConfig, VirtualPath configPath) {
+
+        if (compConfig == null) {
+            // Get the <compilation> config object
+            compConfig = MTConfigUtil.GetCompilationConfig(configPath);
+        }
+
+        if (compConfig.DefaultLanguage == null)
+            return new CompilerType(typeof(Microsoft.CSharp.CSharpCodeProvider), null);
+
+        return compConfig.GetCompilerInfoFromLanguage("c#");
+    }
+
+    private static IDictionary<string, string> GetProviderOptions(CompilerInfo ci) {
+        Debug.Assert(ci != null, "CompilerInfo ci should not be null");
+        PropertyInfo pi = ci.GetType().GetProperty("ProviderOptions",
+            BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.IgnoreCase | BindingFlags.Instance);
+        if (pi != null)
+            return (IDictionary<string, string>)pi.GetValue(ci, null);
+        return null;
+    }
+
+    internal static IDictionary<string, string> GetProviderOptions(Type codeDomProviderType) {
+        // Using reflection to get the property for the time being.
+        // This could simply return CompilerInfo.PropertyOptions if it goes public in future.
+        CodeDomProvider provider = (CodeDomProvider)Activator.CreateInstance(codeDomProviderType);
+        string extension = provider.FileExtension;
+        if (CodeDomProvider.IsDefinedExtension(extension)) {
+            CompilerInfo ci = CodeDomProvider.GetCompilerInfo(CodeDomProvider.GetLanguageFromExtension(extension));
+            return GetProviderOptions(ci);
+        }
+        return null;
+    }
+
+
+    internal static CodeDomProvider CreateCodeDomProviderNonPublic(Type codeDomProviderType) {
+        CodeDomProvider codeDomProvider = CreateCodeDomProviderWithPropertyOptions(codeDomProviderType);
+        if (codeDomProvider != null) {
+            return codeDomProvider;
+        }
+        return (CodeDomProvider)HttpRuntime2.CreateNonPublicInstance(codeDomProviderType);
+    }
+
+    private static CodeDomProvider CreateCodeDomProviderWithPropertyOptions(Type codeDomProviderType) {
+            // The following resembles the code in System.CodeDom.CompilerInfo.CreateProvider
+
+            // Make a copy to avoid modifying the original.
+            var originalProviderOptions = GetProviderOptions(codeDomProviderType);
+            IDictionary<string, string> providerOptions = null;
+            if (originalProviderOptions != null) {
+                providerOptions = new Dictionary<string, string>(originalProviderOptions);
+            } else {
+                providerOptions = new Dictionary<string, string>();
+            }
+
+            // Block CompilerDirectoryPath if we are in partial trust
+            // CheckCompilerDirectoryPathAllowed(providerOptions);
+
+            // Check whether the user supplied the compilerDirectoryPath or was it added by us
+            bool addedCompilerDirectoryPath = false;
+
+            // if (MultiTargetingUtil.IsTargetFramework20) {
+            //     // If the target framework is v2.0, there won't be any codedom settings, so we need
+            //     // to explicitly set the compiler to be the v2.0 compiler using compilerVersion=v2.0.
+            //     providerOptions["CompilerVersion"] = "v2.0";
+            // }
+            // else if (MultiTargetingUtil.IsTargetFramework35) {
+            //     // We need to explicitly set to v3.5, as it is possible for the
+            //     // user to only have specified it for one compiler but not
+            //     // the other.
+            //     // Dev10 bug 809212
+            //     providerOptions["CompilerVersion"] = "v3.5";
+            // }
+            // else {
+                // If we are targeting 4.0 but the compiler version is less than 4.0, set it to 4.0.
+                // This can happen if a user tries to run a 2.0/3.5 web site in a 4.0 application pool without
+                // upgrading it, and the codedom section still has 3.5 as the compilerVersion,
+                // so we have to set the compilerVersion to 4.0 explicitly.
+                // string version = GetCompilerVersion(codeDomProviderType);
+                // Version v = GetVersionFromVString(version);
+                // if (v != null && v < MultiTargetingUtil.Version40) {
+                    providerOptions["CompilerVersion"] = "v4.0";
+                // }
+            // }
+
+            if (providerOptions != null && providerOptions.Count > 0) {
+                Debug.Assert(codeDomProviderType != null, "codeDomProviderType should not be null");
+                // Check whether the codedom provider supports a constructor that takes in providerOptions.
+                // Currently only VB and C# support providerOptions for sure, while others such as JScript might not.
+                ConstructorInfo ci = codeDomProviderType.GetConstructor(new Type[] { typeof(IDictionary<string, string>) });
+                CodeDomProvider provider = null;
+                if (ci != null) {
+                    // First, obtain the language for the given codedom provider type.
+                    CodeDomProvider defaultProvider = (CodeDomProvider)Activator.CreateInstance(codeDomProviderType);
+                    string extension = defaultProvider.FileExtension;
+                    var language = CodeDomProvider.GetLanguageFromExtension(extension);
+                    // Then, use the new createProvider API to create an instance.
+                    provider = CodeDomProvider.CreateProvider(language, providerOptions);
+                }
+                // Restore the provider options if we previously manually added the compilerDirectoryPath.
+                // Otherwise, we might incorrectly invalidate the compilerDirectoryPath in medium trust (Dev10 bug 550299).
+                if (addedCompilerDirectoryPath) {
+                    providerOptions.Remove(CompilerDirectoryPath);
+                }
+                return provider;
+            }
+
+            return null;
+        }
+
+     internal static long GetRecompilationHash(CompilationSection ps) {
+            HashCodeCombiner recompilationHash = new HashCodeCombiner();
+            AssemblyCollection assemblies;
+            BuildProviderCollection builders;
+            FolderLevelBuildProviderCollection buildProviders;
+            CodeSubDirectoriesCollection codeSubDirs;
+
+            // Combine items from Compilation section
+            recompilationHash.AddObject(ps.Debug);
+            recompilationHash.AddObject(ps.TargetFramework);
+            recompilationHash.AddObject(ps.Strict);
+            recompilationHash.AddObject(ps.Explicit);
+            recompilationHash.AddObject(ps.Batch);
+            recompilationHash.AddObject(ps.OptimizeCompilations);
+            recompilationHash.AddObject(ps.BatchTimeout);
+            recompilationHash.AddObject(ps.MaxBatchGeneratedFileSize);
+            recompilationHash.AddObject(ps.MaxBatchSize);
+            recompilationHash.AddObject(ps.NumRecompilesBeforeAppRestart);
+            recompilationHash.AddObject(ps.DefaultLanguage);
+            recompilationHash.AddObject(ps.UrlLinePragmas);
+            recompilationHash.AddObject(ps.DisableObsoleteWarnings);
+            if (ps.AssemblyPostProcessorTypeInternal != null) {
+                recompilationHash.AddObject(ps.AssemblyPostProcessorTypeInternal.FullName);
+            }
+            if (!String.IsNullOrWhiteSpace(ps.ControlBuilderInterceptorType)) {
+                recompilationHash.AddObject(ps.ControlBuilderInterceptorType);
+            }
+
+            // Combine items from Compilers collection
+            foreach (Compiler compiler in ps.Compilers) {
+                recompilationHash.AddObject(compiler.Language);
+                recompilationHash.AddObject(compiler.Extension);
+                recompilationHash.AddObject(compiler.Type);
+                recompilationHash.AddObject(compiler.WarningLevel);
+                recompilationHash.AddObject(compiler.CompilerOptions);
+            }
+
+            // Combine items from <expressionBuilders> section
+            foreach (System.Web.Configuration.ExpressionBuilder eb in ps.ExpressionBuilders) {
+                recompilationHash.AddObject(eb.ExpressionPrefix);
+                recompilationHash.AddObject(eb.Type);
+            }
+
+            // Combine items from the Assembly collection
+            assemblies = ps.Assemblies;
+
+            if (assemblies.Count == 0) {
+                recompilationHash.AddObject("__clearassemblies");
+            }
+            else {
+                foreach (AssemblyInfo ai in assemblies) {
+                    recompilationHash.AddObject(ai.Assembly);
+                }
+            }
+
+            // Combine items from the Builders Collection
+            builders = ps.BuildProviders;
+
+            if (builders.Count == 0) {
+                recompilationHash.AddObject("__clearbuildproviders");
+            }
+            else {
+                foreach (System.Web.Configuration.BuildProvider bp in builders) {
+                    recompilationHash.AddObject(bp.Type);
+                    recompilationHash.AddObject(bp.Extension);
+                }
+            }
+
+            // Combine items from the FolderLevelBuildProviderCollection
+            buildProviders = ps.FolderLevelBuildProviders;
+
+            if (buildProviders.Count == 0) {
+                recompilationHash.AddObject("__clearfolderlevelbuildproviders");
+            }
+            else {
+                foreach (System.Web.Configuration.FolderLevelBuildProvider bp in buildProviders) {
+                    recompilationHash.AddObject(bp.Type);
+                    recompilationHash.AddObject(bp.Name);
+                }
+            }
+
+            codeSubDirs = ps.CodeSubDirectories;
+            if (codeSubDirs.Count == 0) {
+                recompilationHash.AddObject("__clearcodesubdirs");
+            }
+            else {
+                foreach (CodeSubDirectory csd in codeSubDirs) {
+                    recompilationHash.AddObject(csd.DirectoryName);
+                }
+            }
+
+            // Make sure the <system.CodeDom> section is hashed properly.
+            CompilerInfo[] compilerInfoArray = CodeDomProvider.GetAllCompilerInfo();
+            if (compilerInfoArray != null) {
+                CompilerInfo cppCodeProvider = CodeDomProvider.GetCompilerInfo("cpp");
+                foreach (CompilerInfo info in compilerInfoArray) {
+                    // Skip cpp code provider (Dev11 193323).
+                    if (info == cppCodeProvider) {
+                        continue;
+                    }
+
+                    // Ignore it if the type is not valid.
+                    if (!info.IsCodeDomProviderTypeValid) {
+                        continue;
+                    }
+
+                    CompilerParameters parameters = info.CreateDefaultCompilerParameters();
+                    string option = parameters.CompilerOptions;
+                    if (!String.IsNullOrEmpty(option)) {
+                        Type type = info.CodeDomProviderType;
+                        if (type != null) {
+                            recompilationHash.AddObject(type.FullName);
+                        }
+                        // compilerOptions need to be hashed.
+                        recompilationHash.AddObject(option);
+                    }
+
+                    // DevDiv 62998
+                    // The tag providerOption needs to be added to the hash,
+                    // as the user could switch between v2 and v3.5.
+                    if (info.CodeDomProviderType == null)
+                        continue;
+
+                    // Add a hash for each providerOption added, specific for each codeDomProvider, so that
+                    // if some codedom setting has changed, we know we have to recompile.
+                    IDictionary<string, string> providerOptions = GetProviderOptions(info);
+                    if (providerOptions != null && providerOptions.Count > 0) {
+                        string codeDomProviderType = info.CodeDomProviderType.FullName;
+                        foreach (string key in providerOptions.Keys) {
+                            string value = providerOptions[key];
+                            recompilationHash.AddObject(codeDomProviderType + ":" +  key + "=" + value);
+                        }
+                    }
+                }
+            }
+
+            return recompilationHash.CombinedHash;
+        }
 }

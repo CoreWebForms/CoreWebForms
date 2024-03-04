@@ -5,11 +5,13 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.Reflection;
+using System.Runtime.Versioning;
 using System.Text;
 using System.Web.Compilation;
 using System.Web.Configuration;
 using System.Web.Hosting;
 using System.Web.Util;
+using BuildProvider = System.Web.Compilation.BuildProvider;
 
 namespace System.Web.UI;
 
@@ -121,6 +123,35 @@ internal class BuildManager
     internal const string AppThemeAssemblyNamePrefix = AssemblyNamePrefix + "Theme_";
     internal const string GlobalThemeAssemblyNamePrefix = AssemblyNamePrefix + "GlobalTheme_";
     internal const string AppBrowserCapAssemblyNamePrefix = AssemblyNamePrefix + "Browsers";
+    private const string CodegenResourceDirectoryName = "ResX";
+
+    private static string _codegenResourceDir;
+
+
+    // TODO: Migration
+    internal static bool CompileWithAllowPartiallyTrustedCallersAttribute => false;
+    internal static bool CompileWithDelaySignAttribute => false;
+    internal static bool PrecompilingWithCodeAnalysisSymbol => false;
+    public static FrameworkName TargetFramework {
+        get {
+            return MultiTargetingUtil.TargetFrameworkName;
+        }
+    }
+
+
+    /// <summary>
+    /// Temporary subdirectory under the codegen folder for buildproviders to generate embedded resource files.
+    /// </summary>
+    internal static string CodegenResourceDir {
+        get {
+            string resxDir = _codegenResourceDir;
+            if (resxDir == null) {
+                resxDir = Path.Combine(HttpRuntimeConsts.CodegenDirInternal, CodegenResourceDirectoryName);
+                _codegenResourceDir = resxDir;
+            }
+            return resxDir;
+        }
+    }
 
 
     private static BuildResultCache[] _caches => [_memoryCache, _codeGenCache];
@@ -255,6 +286,84 @@ internal class BuildManager
 
             return result;
         }
+    }
+
+    private static Dictionary<String, String> _generatedFileTable;
+    internal static Dictionary<String, String> GenerateFileTable {
+        get {
+            if (_generatedFileTable == null) {
+                _generatedFileTable = new Dictionary<String, String>(StringComparer.OrdinalIgnoreCase);
+            }
+
+            return _generatedFileTable;
+        }
+    }
+
+    internal static string GetCacheKeyFromVirtualPath(VirtualPath virtualPath) {
+        bool keyFromVPP;
+        return GetCacheKeyFromVirtualPath(virtualPath, out keyFromVPP);
+    }
+
+    static SimpleRecyclingCache _keyCache = new SimpleRecyclingCache();
+    private static string GetCacheKeyFromVirtualPath(VirtualPath virtualPath, out bool keyFromVPP) {
+
+        // Check if the VirtualPathProvider needs to use a non-default cache key
+        string key = virtualPath.GetCacheKey();
+
+        // If so, just return it
+        if (key != null) {
+            keyFromVPP = true;
+            return key.ToLowerInvariant();
+        }
+
+        // The VPP didn't return a key, so use our standard key algorithm
+        keyFromVPP = false;
+
+        // Check if the key for this virtual path is already cached
+        key = _keyCache[virtualPath.VirtualPathString] as string;
+        if (key != null) return key;
+
+        // Compute the key
+        key = GetCacheKeyFromVirtualPathInternal(virtualPath);
+
+        // The key should always be lower case
+        Debug.Assert(key == key.ToLowerInvariant());
+
+        // Cache it for next time
+        _keyCache[virtualPath.VirtualPathString] = key;
+
+        return key;
+    }
+
+    private static string GetCacheKeyFromVirtualPathInternal(VirtualPath virtualPath) {
+
+        // We want the key to be app independent (for precompilation), so we
+        // change the virtual path to be app relative
+
+        /* Disable assertion since global theme needs to compile theme files in different vroot.
+        Debug.Assert(StringUtil.VirtualPathStartsWithAppPath(virtualPath),
+            String.Format("VPath {0} is outside the application: {1}", virtualPath, HttpRuntime.AppDomainAppVirtualPath));
+        */
+        string virtualPathString = virtualPath.AppRelativeVirtualPathString.ToLowerInvariant();
+        virtualPathString = UrlPath.RemoveSlashFromPathIfNeeded(virtualPathString);
+
+        // Split the path into the directory and the name
+        int slashIndex = virtualPathString.LastIndexOf('/');
+        Debug.Assert(slashIndex >= 0 || virtualPathString == "~");
+
+        if (virtualPathString == "~")
+            return "root";
+
+        Debug.Assert(slashIndex != virtualPathString.Length - 1);
+        string name = virtualPathString.Substring(slashIndex + 1);
+        string dir;
+        if (slashIndex <= 0)
+            dir = "/";
+        else {
+            dir = virtualPathString.Substring(0, slashIndex);
+        }
+
+        return name + "." + StringUtil.GetStringHashCode(dir).ToString("x", CultureInfo.InvariantCulture);
     }
 
     private static Hashtable _localResourcesAssemblies = new Hashtable();
@@ -787,9 +896,40 @@ internal class BuildManager
 
 internal static class HttpRuntime2
 {
-    internal static RootBuilder CreateNonPublicInstance(Type fileLevelBuilderType)
+    internal static object CreateNonPublicInstance(Type type)
     {
-        throw new NotImplementedException();
+        // Check if the type is null
+        if (type == null)
+        {
+            throw new ArgumentNullException(nameof(type));
+        }
+
+        // Check if the type is not public
+        if (!type.IsPublic)
+        {
+            // Use reflection to create an instance of the non-public class
+            return Activator.CreateInstance(type, true);
+        }
+
+        throw new ArgumentException("The type must be non-public.", nameof(type));
+    }
+
+    internal static object FastCreatePublicInstance(Type postProcessorType)
+    {
+        // Check if the type is null
+        if (postProcessorType == null)
+        {
+            throw new ArgumentNullException(nameof(postProcessorType));
+        }
+
+        // Check if the type is public
+        if (postProcessorType.IsPublic)
+        {
+            // Use Activator to create an instance of the public class
+            return Activator.CreateInstance(postProcessorType);
+        }
+
+        throw new ArgumentException("The type must be public.", nameof(postProcessorType));
     }
 }
 

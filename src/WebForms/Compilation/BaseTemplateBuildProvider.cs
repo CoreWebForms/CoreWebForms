@@ -18,10 +18,20 @@ using System.CodeDom.Compiler;
 using System.Web.Util;
 using System.Web.UI;
 
-internal abstract class BaseTemplateBuildProvider: InternalBuildProvider {
+internal abstract class BaseTemplateBuildProvider: InternalBuildProvider
+{
 
     private TemplateParser _parser;
-    internal TemplateParser Parser { get { return _parser; } }
+
+    internal TemplateParser Parser
+    {
+        get
+        {
+            if(_parser == null)
+                _parser = CreateParser();
+            return _parser;
+        }
+    }
 
     internal override IAssemblyDependencyParser AssemblyDependencyParser {
         get { return _parser; }
@@ -63,8 +73,9 @@ internal abstract class BaseTemplateBuildProvider: InternalBuildProvider {
     internal override ICollection GetCompileWithDependencies() {
 
         // If there is a code besides file, return it
-
-        if (_parser.CodeFileVirtualPath == null)
+        // TODO: Migration
+        // if (_parser.CodeFileVirtualPath == null)
+        if (_parser?.CodeFileVirtualPath == null)
             return null;
 
         // no-compile pages should not have any compile with dependencies

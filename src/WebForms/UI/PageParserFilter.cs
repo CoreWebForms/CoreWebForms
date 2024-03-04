@@ -9,6 +9,9 @@ using System.Globalization;
  *
  * Copyright (c) 2004 Microsoft Corporation
  */
+
+using System.Web.Configuration;
+
 namespace System.Web.UI;
 public abstract class PageParserFilter
 {

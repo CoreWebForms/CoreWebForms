@@ -32,6 +32,8 @@ public sealed class VirtualPath
         Path = Resolve(path);
     }
 
+    public string GetCacheKey() => null;
+
     public bool DirectoryExists() {
         // TODO: Check
         //return HostingEnvironment.VirtualPathProvider.DirectoryExists(this);
@@ -161,7 +163,7 @@ public sealed class VirtualPath
 
     public string FileName => IO.Path.GetFileName(Path);
 
-    public object AppRelativeVirtualPathString => Path;
+    public string AppRelativeVirtualPathString => Path;
 
     public static implicit operator VirtualPath(string path) => new(path);
     public static implicit operator string(VirtualPath vpath) => vpath?.Path;
