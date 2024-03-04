@@ -87,7 +87,7 @@ namespace System.Web.Configuration {
                     ElementInformation.Properties[dirNameAttribName].Source, ElementInformation.Properties[dirNameAttribName].LineNumber);
             }
 
-            VirtualPath codeVirtualSubDir = HttpRuntimeConsts.CodeDirectoryVirtualPath.Combine(directoryName);
+            VirtualPath codeVirtualSubDir = HttpRuntime2.CodeDirectoryVirtualPath.Combine(directoryName);
 
             VirtualPathProvider fileProvider = HttpRuntimeHelper.Services.GetRequiredService<VirtualPathProvider>();
             // Make sure the specified directory exists

@@ -50,7 +50,7 @@ internal class WebReferencesBuildProvider: BuildProvider {
         }
 
         // e.g "/MyApp/Application_WebReferences"
-        VirtualPath rootWebRefDirVirtualPath = HttpRuntimeConsts.WebRefDirectoryVirtualPath;
+        VirtualPath rootWebRefDirVirtualPath = HttpRuntime2.WebRefDirectoryVirtualPath;
 
         // e.g "/MyApp/Application_WebReferences/Foo/Bar"
         string currentWebRefDirVirtualPath = _vdir.VirtualPath;

@@ -99,7 +99,7 @@ public class AssemblyBuilder {
     }
 
     // Used to create temporary source files
-    private TempFileCollection _tempFiles = new TempFileCollection(HttpRuntimeConsts.CodegenDirInternal);
+    private TempFileCollection _tempFiles = new TempFileCollection(HttpRuntime2.CodegenDirInternal);
     private int _fileCount;
 
     private string _cultureName;

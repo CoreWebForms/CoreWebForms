@@ -4,6 +4,8 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
+using System.Web.UI;
+
 namespace System.Web.DataAccess
 {
 
@@ -115,7 +117,7 @@ namespace System.Web.DataAccess
         internal static string GetDataDirectory()
         {
             if (HostingEnvironment.IsHosted)
-                return Path.Combine(HttpRuntime.AppDomainAppPath, HttpRuntimeConsts.DataDirectoryName);
+                return Path.Combine(HttpRuntime.AppDomainAppPath, HttpRuntime2.DataDirectoryName);
 
             string dataDir = AppDomain.CurrentDomain.GetData(s_strDataDir) as string;
             if (string.IsNullOrEmpty(dataDir))
@@ -134,7 +136,7 @@ namespace System.Web.DataAccess
                 if (string.IsNullOrEmpty(appPath))
                     appPath = Environment.CurrentDirectory;
 
-                dataDir = Path.Combine(appPath, HttpRuntimeConsts.DataDirectoryName);
+                dataDir = Path.Combine(appPath, HttpRuntime2.DataDirectoryName);
                 // Todo: Migration
                 // AppDomain.CurrentDomain.SetData(s_strDataDir, dataDir, new FileIOPermission(FileIOPermissionAccess.PathDiscovery, dataDir));
             }
@@ -213,7 +215,7 @@ namespace System.Web.DataAccess
             if (File.Exists(fullFileName))
                 return;
 
-            if (!HttpRuntimeConsts.HasAspNetHostingPermission(AspNetHostingPermissionLevel.High))
+            if (!HttpRuntime2.HasAspNetHostingPermission(AspNetHostingPermissionLevel.High))
                 throw new ProviderException(SR.GetString(SR.Provider_can_not_create_file_in_this_trust_level));
 
             if (!connectionString.Contains("Database=master"))

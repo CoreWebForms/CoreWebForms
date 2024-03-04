@@ -837,7 +837,7 @@ namespace System.Web.Configuration {
             // Get the path to the bin directory
             // TODO: Migration !!!
             // string binPath = HttpRuntime.BinDirectoryInternal;
-            string binPath = HttpRuntimeConsts.BinDirectoryName;
+            string binPath = HttpRuntime2.BinDirectoryName;
             FileInfo[] binDlls;
             Assembly assembly = null;
             Assembly[] assemblies = null;

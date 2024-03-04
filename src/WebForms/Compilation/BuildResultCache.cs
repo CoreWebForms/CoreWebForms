@@ -813,7 +813,7 @@ namespace System.Web.Compilation
             : base(cacheDir)
         {
 
-            Debug.Assert(cacheDir == HttpRuntimeConsts.CodegenDirInternal);
+            Debug.Assert(cacheDir == HttpRuntime2.CodegenDirInternal);
 
             EnsureDiskCacheDirectoryCreated();
 

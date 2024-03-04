@@ -126,6 +126,7 @@ public sealed class VirtualPath
         return new VirtualPath(HttpRuntime.AppDomainAppPath).Combine(this);
     }
 
+    public VirtualPath SimpleCombineWithDir(VirtualPath relativePath) => Combine(relativePath);
     public VirtualPath Combine(VirtualPath relativePath)
     {
         if (relativePath == null)
@@ -225,6 +226,7 @@ public sealed class VirtualPath
     internal bool FileExists(IFileProvider fileProvider) => fileProvider.GetFileInfo(Path).Exists;
 
     public string MapPath() => Files.GetFileInfo(Path).PhysicalPath;
+    internal string MapPathInternal() => MapPath();
 
     internal static VirtualPath CreateTrailingSlash(string virtualPath)
     {

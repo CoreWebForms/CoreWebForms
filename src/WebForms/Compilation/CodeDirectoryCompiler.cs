@@ -253,7 +253,7 @@ internal class CodeDirectoryCompiler {
 
         // Compute the full path to the directory we'll use to generate all
         // the code files
-        generatedFilesDir = HttpRuntimeConsts.CodegenDirInternal + "\\" +
+        generatedFilesDir = HttpRuntime2.CodegenDirInternal + "\\" +
             sourcesDirectoryPrefix + virtualDir.FileName;
 
         bool supportLocalization = IsResourceCodeDirectoryType(dirType);

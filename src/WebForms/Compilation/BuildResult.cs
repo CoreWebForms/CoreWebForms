@@ -548,7 +548,7 @@ internal abstract class BuildResultCompiledAssemblyBase: BuildResult {
         FileInfo f = new FileInfo(path);
         string assemblyDir = FileUtil.RemoveTrailingDirectoryBackSlash(f.Directory.FullName);
         if (s_codegenDir == null) {
-            s_codegenDir = FileUtil.RemoveTrailingDirectoryBackSlash(HttpRuntimeConsts.CodegenDir);
+            s_codegenDir = FileUtil.RemoveTrailingDirectoryBackSlash(HttpRuntime2.CodegenDir);
         }
 
         // check if the assembly is directly under codegen
@@ -1287,7 +1287,7 @@ internal class BuildResultCodeCompileUnit : BuildResult {
         base.GetPreservedAttributes(pfr);
 
         String _ccuPreservationFileName = pfr.GetAttribute(fileNameAttribute);
-        _ccuPreservationFileName = Path.Combine(HttpRuntimeConsts.CodegenDirInternal, _ccuPreservationFileName);
+        _ccuPreservationFileName = Path.Combine(HttpRuntime2.CodegenDirInternal, _ccuPreservationFileName);
 
         Debug.Assert(FileUtil.FileExists(_ccuPreservationFileName), _ccuPreservationFileName);
 
@@ -1313,7 +1313,7 @@ internal class BuildResultCodeCompileUnit : BuildResult {
         string preservationFileName = GetPreservationFileName();
 
         pfw.SetAttribute(fileNameAttribute, preservationFileName);
-        preservationFileName = Path.Combine(HttpRuntimeConsts.CodegenDirInternal, preservationFileName);
+        preservationFileName = Path.Combine(HttpRuntime2.CodegenDirInternal, preservationFileName);
 
         using (FileStream stream = File.Open(preservationFileName, FileMode.Create)) {
             BinaryFormatter formatter = new BinaryFormatter();
@@ -1340,7 +1340,7 @@ internal class BuildResultCodeCompileUnit : BuildResult {
     internal override void RemoveOutOfDateResources(PreservationFileReader pfr) {
         // Remove the out-of-date .ccu file
         String ccuPreservationFileName = pfr.GetAttribute(fileNameAttribute);
-        ccuPreservationFileName = Path.Combine(HttpRuntimeConsts.CodegenDirInternal, ccuPreservationFileName);
+        ccuPreservationFileName = Path.Combine(HttpRuntime2.CodegenDirInternal, ccuPreservationFileName);
 
         File.Delete(ccuPreservationFileName);
     }
