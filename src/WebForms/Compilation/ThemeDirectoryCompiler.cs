@@ -68,8 +68,7 @@ internal static class ThemeDirectoryCompiler {
 
         try {
             // Grab the compilation mutex
-            // TODO: Migration
-            // CompilationLock.GetLock(ref gotLock);
+            CompilationLock.GetLock(ref gotLock);
 
             // Check the cache again now that we have the mutex
             result = (BuildResultCompiledType)BuildManager.GetBuildResultFromCache(appThemeCacheKey);
@@ -135,9 +134,9 @@ internal static class ThemeDirectoryCompiler {
         finally {
             // TODO: Migration
             // Always release the mutex if we had taken it
-            // if (gotLock) {
-            //     CompilationLock.ReleaseLock();
-            // }
+            if (gotLock) {
+                CompilationLock.ReleaseLock();
+            }
         }
         return result;
     }

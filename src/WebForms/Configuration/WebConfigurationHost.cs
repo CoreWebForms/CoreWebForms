@@ -817,8 +817,8 @@ namespace System.Web.Configuration {
             // Go through BuildManager to allow simple references to types in the
             // code directory (VSWhidbey 284498)
             // TODO: Check
-            // return BuildManager.GetType(typeName, throwOnError);
-            return Type.GetType(typeName, throwOnError);
+            return BuildManager.GetType(typeName, throwOnError);
+            // return Type.GetType(typeName, throwOnError);
         }
 
         public override string GetConfigTypeName(Type t) {

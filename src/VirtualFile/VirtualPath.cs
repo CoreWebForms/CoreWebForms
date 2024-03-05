@@ -34,6 +34,8 @@ public sealed class VirtualPath
 
     public string GetCacheKey() => null;
 
+    public bool HasTrailingSlash => Path.EndsWith("/");
+
     public bool DirectoryExists() {
         // TODO: Check
         //return HostingEnvironment.VirtualPathProvider.DirectoryExists(this);
@@ -294,5 +296,13 @@ public sealed class VirtualPath
 
     public override String ToString() {
         return VirtualPathString;
+    }
+
+    public void FailIfNotWithinAppRoot()
+    {
+        if (!IsWithinAppRoot)
+        {
+            throw new ArgumentException("Must be within app root");
+        }
     }
 }

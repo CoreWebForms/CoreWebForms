@@ -726,18 +726,17 @@ internal class BuildResultMainCodeAssembly: BuildResultCompiledAssembly {
     }
 
 
-    // Todo : Migration
     // Call the AppInitialize method if there is one
-    // internal void CallAppInitializeMethod() {
-    //     if (_appInitializeMethod != null) {
-    //         using (new ApplicationImpersonationContext()) {
-    //             // Todo : Migration
-    //             using (HostingEnvironment.SetCultures()) {
-    //                 _appInitializeMethod.Invoke(null, null);
-    //             }
-    //         }
-    //     }
-    // }
+    internal void CallAppInitializeMethod() {
+        if (_appInitializeMethod != null) {
+                // Todo : Migration
+            // using (new ApplicationImpersonationContext()) {
+                // using (HostingEnvironment.SetCultures()) {
+                    _appInitializeMethod.Invoke(null, null);
+                // }
+            // }
+        }
+    }
 }
 
 /*

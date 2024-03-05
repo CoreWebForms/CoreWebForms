@@ -27,6 +27,93 @@ internal static class CompilationUtil
         return CompilerType.VisualBasic;
     }
 
+
+    internal static bool IsBatchingEnabled(string configPath) {
+        CompilationSection config = MTConfigUtil.GetCompilationConfig(configPath);
+        return config.Batch;
+    }
+
+    // This is used to determine what files need to be copied, and what stub files
+        // need to be created during deployment precompilation.
+        // Note: createStub only applies if the method returns false.
+        internal static bool NeedToCopyFile(VirtualPath virtualPath, bool updatable, out bool createStub) {
+
+            createStub = false;
+
+            // Get the <compilation> config object
+            CompilationSection config = MTConfigUtil.GetCompilationConfig(virtualPath);
+
+            string extension = virtualPath.Extension;
+
+            BuildProviderInfo providerInfo = BuildProvider.GetBuildProviderInfo(config, extension);
+
+            if (providerInfo != null) {
+                // We only care about 'web' providers.  Everything else we treat as static
+                if ((BuildProviderAppliesTo.Web & providerInfo.AppliesTo) == 0)
+                    return true;
+
+                // If the provider is a ForceCopyBuildProvider, treat as static
+                if (providerInfo.Type == typeof(ForceCopyBuildProvider))
+                    return true;
+
+                // During updatable precomp, everything needs to be copied over.  However,
+                // aspx files that use code beside will later be overwritten by modified
+                // versions (see TemplateParser.CreateModifiedMainDirectiveFileIfNeeded)
+                if (providerInfo.Type != typeof(IgnoreFileBuildProvider) &&
+                    BuildManager.PrecompilingForUpdatableDeployment) {
+                    return true;
+                }
+
+                // There is a real provider, so don't copy the file.  We also need to determine whether
+                // a stub file needs to be created.
+
+                createStub = true;
+
+                // Skip the stub file for some non-requestable types
+                if (providerInfo.Type == typeof(UserControlBuildProvider) ||
+                    providerInfo.Type == typeof(MasterPageBuildProvider) ||
+                    providerInfo.Type == typeof(IgnoreFileBuildProvider)) {
+                    createStub = false;
+                }
+
+                return false;
+            }
+
+            // If the extension is registered as a compiler extension, don't copy
+            if (config.GetCompilerInfoFromExtension(extension, false /*throwOnFail*/) != null) {
+                return false;
+            }
+
+            // Skip the copying for asax and skin files, which are not static even though they
+            // don't have a registered BuildProvider (but don't skip .skin files during
+            // updatable precomp).
+            //
+            if (StringUtil.EqualsIgnoreCase(extension, ".asax"))
+                return false;
+            if (!updatable && StringUtil.EqualsIgnoreCase(extension, ThemeDirectoryCompiler.skinExtension))
+                return false;
+
+            //
+            // If there is no BuildProvider registered, it's a static file, and should be copied
+            //
+
+            return true;
+        }
+
+    internal static CodeSubDirectoriesCollection GetCodeSubDirectories() {
+        // Get the <compilation> config object
+        CompilationSection config = MTConfigUtil.GetCompilationAppConfig();
+
+        CodeSubDirectoriesCollection codeSubDirectories = config.CodeSubDirectories;
+
+        // Make sure the config data is valid
+        if (codeSubDirectories != null) {
+            codeSubDirectories.EnsureRuntimeValidation();
+        }
+
+        return codeSubDirectories;
+    }
+
      internal static Type GetBuildProviderTypeFromExtension(VirtualPath configPath, string extension,
             BuildProviderAppliesTo neededFor, bool failIfUnknown) {
 

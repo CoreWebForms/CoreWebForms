@@ -176,7 +176,7 @@ namespace System.Web.Compilation {
         private BuildManager() { }
 
         [PermissionSet(SecurityAction.Assert, Unrestricted = true)]
-        internal static bool InitializeBuildManager() {
+        public static bool InitializeBuildManager() {
 
             // If we already tried and got an exception, just rethrow it
             if (_initializeException != null) {
@@ -449,7 +449,8 @@ namespace System.Web.Compilation {
             _skipTopLevelCompilationExceptions = BuildManagerHost.InClientBuildManager;
 
             // Deal with precompilation if we're in that mode
-            SetPrecompilationInfo(HostingEnvironment.HostingParameters);
+            // TODO: Migration
+            // SetPrecompilationInfo(HostingEnvironment.HostingParameters);
 
             // TODO: Migration
             // MultiTargetingUtil.EnsureFrameworkNamesInitialized();
@@ -658,8 +659,10 @@ namespace System.Web.Compilation {
                 specialFilesHashCodeCombiner.AddFileContentHash(rootWebConfigFileName);
             }
 
-            RuntimeConfig appConfig = RuntimeConfig.GetAppConfig();
-            CompilationSection compConfig = appConfig.Compilation;
+            // TODO: Check
+            // RuntimeConfig appConfig = RuntimeConfig.GetAppConfig();
+            // CompilationSection compConfig = appConfig.Compilation;
+            CompilationSection compConfig = MTConfigUtil.GetCompilationAppConfig();
 
             // Ignore the OptimizeCompilations flag in ClientBuildManager mode
             if (!BuildManagerHost.InClientBuildManager) {
@@ -697,7 +700,9 @@ namespace System.Web.Compilation {
             // specialFilesHashCodeCombiner.AddObject(profileSection.RecompilationHash);
 
             // Add a dependency on file encoding (DevDiv 4560)
-            specialFilesHashCodeCombiner.AddObject(appConfig.Globalization.FileEncoding);
+            // TODO: Migration
+            // specialFilesHashCodeCombiner.AddObject(appConfig.Globalization.FileEncoding);
+            specialFilesHashCodeCombiner.AddObject(Encoding.UTF8);
 
             // Also add a dependency on the <trust> config section
             // TODO: Migration
@@ -939,7 +944,8 @@ namespace System.Web.Compilation {
             PreStartInitStage = Compilation.PreStartInitStage.DuringPreStartInit;
 
             try {
-                InvokePreStartInitMethodsCore(methods, HostingEnvironment.SetCultures);
+                // TODO: Migration
+                // InvokePreStartInitMethodsCore(methods, HostingEnvironment.SetCultures);
                 PreStartInitStage = Compilation.PreStartInitStage.AfterPreStartInit;
             }
             catch {
@@ -1095,8 +1101,9 @@ namespace System.Web.Compilation {
                     if (dirType == CodeDirectoryType.MainCode) {
                         // Profile gets built in the same assembly as the main code dir, so
                         // see whether we can get its type from the assembly.
-                        _profileType = ProfileBuildProvider.GetProfileTypeFromAssembly(
-                            codeAssembly, IsPrecompiledApp);
+                        // TODO: Migration
+                        // _profileType = ProfileBuildProvider.GetProfileTypeFromAssembly(
+                        //     codeAssembly, IsPrecompiledApp);
 
                         // To avoid breaking earlier Whidbey apps, allows the name "__code"
                         // to be used for the main code assembly.
@@ -1182,24 +1189,26 @@ namespace System.Web.Compilation {
                 CodeDirectoryAssemblyName, _excludedCodeSubdirectories);
         }
 
-        private void CompileGlobalAsax() {
-            _globalAsaxBuildResult = ApplicationBuildProvider.GetGlobalAsaxBuildResult(IsPrecompiledApp);
-
-            // Make sure that global.asax notifications are set up (VSWhidbey 267245)
-            HttpApplicationFactory.SetupFileChangeNotifications();
-
-            if (_globalAsaxBuildResult != null) {
-
-                // We need to add not only the global.asax type, but also its parent types to
-                // the top level assembly list.  This can happen when global.asax has a 'src'
-                // attribute pointing to a source file containing its base type.
-                Type type = _globalAsaxBuildResult.ResultType;
-                while (type.Assembly != typeof(HttpRuntime).Assembly) {
-                    _topLevelReferencedAssemblies.Add(type.Assembly);
-                    type = type.BaseType;
-                }
-            }
-        }
+        // TODO: Migration
+        // private void CompileGlobalAsax() {
+        //     _globalAsaxBuildResult = ApplicationBuildProvider.GetGlobalAsaxBuildResult(IsPrecompiledApp);
+        //
+        //     // Make sure that global.asax notifications are set up (VSWhidbey 267245)
+        //     // TODO: Migration
+        //     // HttpApplicationFactory.SetupFileChangeNotifications();
+        //
+        //     if (_globalAsaxBuildResult != null) {
+        //
+        //         // We need to add not only the global.asax type, but also its parent types to
+        //         // the top level assembly list.  This can happen when global.asax has a 'src'
+        //         // attribute pointing to a source file containing its base type.
+        //         Type type = _globalAsaxBuildResult.ResultType;
+        //         while (type.Assembly != typeof(HttpRuntime).Assembly) {
+        //             _topLevelReferencedAssemblies.Add(type.Assembly);
+        //             type = type.BaseType;
+        //         }
+        //     }
+        // }
 
         // Call the AppInitialize method in the Code assembly if there is one
         internal static void CallAppInitializeMethod() {
@@ -1228,7 +1237,7 @@ namespace System.Web.Compilation {
                 return;
 
             // Set impersonation to hosting identity (process or UNC)
-            using (new ApplicationImpersonationContext()) {
+            // using (new ApplicationImpersonationContext()) {
                 bool gotLock = false;
                 _parseErrorReported = false;
 
@@ -1257,15 +1266,17 @@ namespace System.Web.Compilation {
 
                     _compilationStage = CompilationStage.GlobalAsax;
 
-                    CompileGlobalAsax();
+                    // TODO: Migration
+                    // CompileGlobalAsax();
 
                     _compilationStage = CompilationStage.BrowserCapabilities;
 
                     // Call GetBrowserCapabilitiesType() to make sure browserCap directory is compiled
                     // early on.  This avoids getting into potential deadlock situations later (VSWhidbey 530732).
                     // For the same reason, get the EmptyHttpCapabilitiesBase.
-                    BrowserCapabilitiesCompiler.GetBrowserCapabilitiesType();
-                    IFilterResolutionService dummy = HttpCapabilitiesBase.EmptyHttpCapabilitiesBase;
+                    // TODO: Migration
+                    // BrowserCapabilitiesCompiler.GetBrowserCapabilitiesType();
+                    // IFilterResolutionService dummy = HttpCapabilitiesBase.EmptyHttpCapabilitiesBase;
 
                     _compilationStage = CompilationStage.AfterTopLevelFiles;
                 }
@@ -1295,7 +1306,7 @@ namespace System.Web.Compilation {
                         CompilationLock.ReleaseLock();
                     }
                 }
-            }
+            // }
         }
 
         // Generate a random file name with 8 characters
@@ -1620,13 +1631,13 @@ namespace System.Web.Compilation {
         internal static BuildResult GetVPathBuildResultWithNoAssert(
             HttpContext context, VirtualPath virtualPath, bool noBuild, bool allowCrossApp, bool allowBuildInPrecompile, bool throwIfNotFound, bool ensureIsUpToDate = true) {
 
-            using (new ApplicationImpersonationContext()) {
+            // TODO: Migration
+            // using (new ApplicationImpersonationContext()) {
                 return _theBuildManager.GetVPathBuildResultInternal(virtualPath, noBuild, allowCrossApp, allowBuildInPrecompile, throwIfNotFound, ensureIsUpToDate);
-            }
+            // }
         }
 
-        // name of the slot in call context
-        private const String CircularReferenceCheckerSlotName = "CircRefChk";
+        private static AsyncLocal<VirtualPathSet> circularReferenceChecker = new AsyncLocal<VirtualPathSet>();
 
         private BuildResult GetVPathBuildResultInternal(VirtualPath virtualPath, bool noBuild, bool allowCrossApp, bool allowBuildInPrecompile, bool throwIfNotFound, bool ensureIsUpToDate = true) {
 
@@ -1680,24 +1691,18 @@ namespace System.Web.Compilation {
                     return result;
 
                 // Get the circular reference checker (create it if needed)
-                VirtualPathSet circularReferenceChecker;
-                circularReferenceChecker = CallContext.GetData(CircularReferenceCheckerSlotName)
-                    as VirtualPathSet;
-                if (circularReferenceChecker == null) {
-                    circularReferenceChecker = new VirtualPathSet();
-
-                    // Create it and save it in the CallContext
-                    CallContext.SetData(CircularReferenceCheckerSlotName, circularReferenceChecker);
+                if (circularReferenceChecker.Value == null) {
+                    circularReferenceChecker.Value = new VirtualPathSet();
                 }
 
                 // If a circular reference is detected, throw an error
-                if (circularReferenceChecker.Contains(virtualPath)) {
+                if (circularReferenceChecker.Value.Contains(virtualPath)) {
                     throw new HttpException(
                         SR.GetString(SR.Circular_include));
                 }
 
                 // Add the current virtualPath to the circular reference checker
-                circularReferenceChecker.Add(virtualPath);
+                circularReferenceChecker.Value.Add(virtualPath);
 
                 try {
                     //
@@ -1706,8 +1711,8 @@ namespace System.Web.Compilation {
                 }
                 finally {
                     // Remove the current virtualPath from the circular reference checker
-                    Debug.Assert(circularReferenceChecker.Contains(virtualPath));
-                    circularReferenceChecker.Remove(virtualPath);
+                    Debug.Assert(circularReferenceChecker.Value.Contains(virtualPath));
+                    circularReferenceChecker.Value.Remove(virtualPath);
                 }
             }
             finally {
@@ -1907,17 +1912,15 @@ namespace System.Web.Compilation {
 
                 try {
                     // Grab the compilation mutex, since this method accesses the codegen files
-                    // TODO: Migration
-                    // CompilationLock.GetLock(ref gotLock);
+                    CompilationLock.GetLock(ref gotLock);
 
                     resourceAssembly = CompileCodeDirectory(localResDir, CodeDirectoryType.LocalResources,
                         localResAssemblyName, null /*excludedSubdirectories*/);
                 }
                 finally {
                     // Always release the mutex if we had taken it
-                    // TODO: Migration
                     if (gotLock) {
-                        // CompilationLock.ReleaseLock();
+                        CompilationLock.ReleaseLock();
                     }
                 }
             }
@@ -1996,6 +1999,8 @@ namespace System.Web.Compilation {
             return CompilationUtil.IsBatchingEnabled(virtualDir.VirtualPathString);
         }
 
+        private static AsyncLocal<CaseInsensitiveStringSet> directoryBatchCompilerChecker = new AsyncLocal<CaseInsensitiveStringSet>();
+
         private bool BatchCompileWebDirectory(VirtualDirectory vdir, VirtualPath virtualDir, bool ignoreErrors) {
 
             // Exactly one of vdir and virtualDir should be non-null.  The idea is to avoid calling
@@ -2009,23 +2014,16 @@ namespace System.Web.Compilation {
 
             // Then, check if we're already tried batch compiling this directory on this same request
 
-            CaseInsensitiveStringSet directoryBatchCompilerChecker;
-            directoryBatchCompilerChecker = CallContext.GetData(BatchCompilationSlotName)
-                as CaseInsensitiveStringSet;
-
-            if (directoryBatchCompilerChecker == null) {
-                directoryBatchCompilerChecker = new CaseInsensitiveStringSet();
-
-                // Create it and save it in the CallContext
-                CallContext.SetData(BatchCompilationSlotName, directoryBatchCompilerChecker);
+            if (directoryBatchCompilerChecker.Value == null) {
+                directoryBatchCompilerChecker.Value = new CaseInsensitiveStringSet();
             }
 
             // If we've already tried batch compiling this directory, don't do anything
-            if (directoryBatchCompilerChecker.Contains(vdir.VirtualPath))
+            if (directoryBatchCompilerChecker.Value.Contains(vdir.VirtualPath))
                 return false;
 
             // Add the current virtualDir to the batch compiler checker
-            directoryBatchCompilerChecker.Add(vdir.VirtualPath);
+            directoryBatchCompilerChecker.Value.Add(vdir.VirtualPath);
 
             // If we're in the process of precompiling an app, never ignore errors.
             if (_precompilingApp)
@@ -2061,18 +2059,18 @@ namespace System.Web.Compilation {
             Justification = "Global Asax is a well-known concept")]
         [SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate",
             Justification = "This might cick off top-level compilation so it's too big for a property")]
-        public static Type GetGlobalAsaxType() {
-            return _theBuildManager.GetGlobalAsaxTypeInternal();
-        }
-
-        private Type GetGlobalAsaxTypeInternal() {
-            EnsureTopLevelFilesCompiled();
-
-            if (_globalAsaxBuildResult == null)
-                return PageParser.DefaultApplicationBaseType ?? typeof(HttpApplication);
-
-            return _globalAsaxBuildResult.ResultType;
-        }
+        // TODO: Migration
+        // public static Type GetGlobalAsaxType() {
+        //     return _theBuildManager.GetGlobalAsaxTypeInternal();
+        // }
+        // private Type GetGlobalAsaxTypeInternal() {
+        //     EnsureTopLevelFilesCompiled();
+        //
+        //     if (_globalAsaxBuildResult == null)
+        //         return PageParser.DefaultApplicationBaseType ?? typeof(HttpApplication);
+        //
+        //     return _globalAsaxBuildResult.ResultType;
+        // }
 
         internal static BuildResultCompiledGlobalAsaxType GetGlobalAsaxBuildResult() {
             return _theBuildManager.GetGlobalAsaxBuildResultInternal();
@@ -2227,7 +2225,9 @@ namespace System.Web.Compilation {
 
         public static ICollection GetVirtualPathDependencies(string virtualPath) {
 
-            CompilationSection compConfig = RuntimeConfig.GetRootWebConfig().Compilation;
+            // TODO: Migration
+            // CompilationSection compConfig = RuntimeConfig.GetRootWebConfig().Compilation;
+            CompilationSection compConfig = MTConfigUtil.GetCompilationAppConfig();
 
             // Create a BuildProvider based on the virtual path
             BuildProvider buildProvider = CreateBuildProvider(VirtualPath.Create(virtualPath), compConfig,
@@ -2526,62 +2526,63 @@ namespace System.Web.Compilation {
         // Precompilation related code
         //
 
-        internal void SetPrecompilationInfo(HostingEnvironmentParameters hostingParameters) {
-
-            if (hostingParameters == null || hostingParameters.ClientBuildManagerParameter == null)
-                return;
-
-            _precompilationFlags = hostingParameters.ClientBuildManagerParameter.PrecompilationFlags;
-
-            _strongNameKeyFile = hostingParameters.ClientBuildManagerParameter.StrongNameKeyFile;
-            _strongNameKeyContainer = hostingParameters.ClientBuildManagerParameter.StrongNameKeyContainer;
-
-            // Check if we're precompiling to a target directory
-            _precompTargetPhysicalDir = hostingParameters.PrecompilationTargetPhysicalDirectory;
-            if (_precompTargetPhysicalDir == null)
-                return;
-
-            // Check if the target dir already exists and is not empty
-            if (Util.IsNonEmptyDirectory(_precompTargetPhysicalDir)) {
-
-                // If it's not empty and OverwriteTarget is off, fail
-                if ((_precompilationFlags & PrecompilationFlags.OverwriteTarget) == 0) {
-                    throw new HttpException(SR.GetString(SR.Dir_not_empty));
-                }
-
-                // Does it contain the precomp marker file
-                bool updatable;
-                bool precompiled = ReadPrecompMarkerFile(_precompTargetPhysicalDir, out updatable);
-
-                // If not, refuse to delete the directory, even if OverwriteTarget is on (VSWhidbey 425095)
-                if (!precompiled) {
-                    throw new HttpException(SR.GetString(SR.Dir_not_empty_not_precomp));
-                }
-
-                // The OverwriteTarget flag was specified, so delete the directory
-                if (!DeletePrecompTargetDirectory()) {
-                    // If we failed to delete it, sleep 250 ms and try again, in case there is
-                    // an appdomain in the process of shutting down (the shut down would
-                    // have been triggered by the first delete attempt)
-                    Debug.WriteLine("BuildManager", "Failed to delete " + _precompTargetPhysicalDir + ".  Sleeping and trying once more...");
-                    Thread.Sleep(250);
-
-                    if (!DeletePrecompTargetDirectory()) {
-                        Debug.WriteLine("BuildManager", "Failed to delete " + _precompTargetPhysicalDir + ".  Sleeping and trying once more...");
-                        // Try again after 1 second.
-                        Thread.Sleep(1000);
-
-                        // If we still couldn't delete it, fail
-                        if (!DeletePrecompTargetDirectory()) {
-                            throw new HttpException(SR.GetString(SR.Cant_delete_dir));
-                        }
-                    }
-                }
-            }
-
-            // Create a marker file to mark the fact that this is a precompiled app
-            CreatePrecompMarkerFile();
-        }
+        // TODO: Migration
+        // internal void SetPrecompilationInfo(HostingEnvironmentParameters hostingParameters) {
+        //
+        //     if (hostingParameters == null || hostingParameters.ClientBuildManagerParameter == null)
+        //         return;
+        //
+        //     _precompilationFlags = hostingParameters.ClientBuildManagerParameter.PrecompilationFlags;
+        //
+        //     _strongNameKeyFile = hostingParameters.ClientBuildManagerParameter.StrongNameKeyFile;
+        //     _strongNameKeyContainer = hostingParameters.ClientBuildManagerParameter.StrongNameKeyContainer;
+        //
+        //     // Check if we're precompiling to a target directory
+        //     _precompTargetPhysicalDir = hostingParameters.PrecompilationTargetPhysicalDirectory;
+        //     if (_precompTargetPhysicalDir == null)
+        //         return;
+        //
+        //     // Check if the target dir already exists and is not empty
+        //     if (Util.IsNonEmptyDirectory(_precompTargetPhysicalDir)) {
+        //
+        //         // If it's not empty and OverwriteTarget is off, fail
+        //         if ((_precompilationFlags & PrecompilationFlags.OverwriteTarget) == 0) {
+        //             throw new HttpException(SR.GetString(SR.Dir_not_empty));
+        //         }
+        //
+        //         // Does it contain the precomp marker file
+        //         bool updatable;
+        //         bool precompiled = ReadPrecompMarkerFile(_precompTargetPhysicalDir, out updatable);
+        //
+        //         // If not, refuse to delete the directory, even if OverwriteTarget is on (VSWhidbey 425095)
+        //         if (!precompiled) {
+        //             throw new HttpException(SR.GetString(SR.Dir_not_empty_not_precomp));
+        //         }
+        //
+        //         // The OverwriteTarget flag was specified, so delete the directory
+        //         if (!DeletePrecompTargetDirectory()) {
+        //             // If we failed to delete it, sleep 250 ms and try again, in case there is
+        //             // an appdomain in the process of shutting down (the shut down would
+        //             // have been triggered by the first delete attempt)
+        //             Debug.WriteLine("BuildManager", "Failed to delete " + _precompTargetPhysicalDir + ".  Sleeping and trying once more...");
+        //             Thread.Sleep(250);
+        //
+        //             if (!DeletePrecompTargetDirectory()) {
+        //                 Debug.WriteLine("BuildManager", "Failed to delete " + _precompTargetPhysicalDir + ".  Sleeping and trying once more...");
+        //                 // Try again after 1 second.
+        //                 Thread.Sleep(1000);
+        //
+        //                 // If we still couldn't delete it, fail
+        //                 if (!DeletePrecompTargetDirectory()) {
+        //                     throw new HttpException(SR.GetString(SR.Cant_delete_dir));
+        //                 }
+        //             }
+        //         }
+        //     }
+        //
+        //     // Create a marker file to mark the fact that this is a precompiled app
+        //     CreatePrecompMarkerFile();
+        // }
 
         private bool DeletePrecompTargetDirectory() {
             try {
@@ -3078,8 +3079,7 @@ namespace System.Web.Compilation {
             if (CompilationUtil.NeedToCopyFile(vfile.VirtualPathObject, PrecompilingForUpdatableDeployment,
                 out createStub)) {
 
-                //
-                string sourcePhysicalPath = HostingEnvironment.MapPathInternal(vfile.VirtualPath);
+                string sourcePhysicalPath = vfile.VirtualPathObject.MapPathInternal();
 
                 // The file could already exist with updatable precompilation, since we would create the modified file
                 // earlier during processing of a code beside page.
@@ -3134,7 +3134,9 @@ namespace System.Web.Compilation {
                 return false;
             }
 
-            string sourcePhysicalDir = HostingEnvironment.MapPathInternal(sourceDir.VirtualPath);
+            // TODO: Check
+            // string sourcePhysicalDir = HostingEnvironment.MapPathInternal(sourceDir.VirtualPath);
+            string sourcePhysicalDir = new VirtualPath(sourceDir.VirtualPath).MapPathInternal();
 
             // Make sure they're normalized and end with a '\' before comparing (VSWhidbey 452554)
             sourcePhysicalDir = FileUtil.FixUpPhysicalDirectory(sourcePhysicalDir);
@@ -3239,9 +3241,10 @@ namespace System.Web.Compilation {
             // (compilation is done while not impersonating client)
 
             Object instance;
-            using (new ClientImpersonationContext(context)) {
+            // TODO: Migration
+            // using (new ClientImpersonationContext(context)) {
                 instance = objectFactory.CreateInstance();
-            }
+            // }
 
             return instance;
         }

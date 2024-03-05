@@ -5,6 +5,7 @@
 //------------------------------------------------------------------------------
 
 
+using System.Runtime.InteropServices;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using WebForms;
@@ -47,6 +48,11 @@ internal class CodeDirectoryCompiler {
 
     internal static bool IsResourceCodeDirectoryType(CodeDirectoryType dirType) {
         return dirType == CodeDirectoryType.AppResources || dirType == CodeDirectoryType.LocalResources;
+    }
+
+    internal static void CallAppInitializeMethod() {
+        if (_mainCodeBuildResult != null)
+            _mainCodeBuildResult.CallAppInitializeMethod();
     }
 
     internal static Assembly GetCodeDirectoryAssembly(VirtualPath virtualDir,
@@ -181,21 +187,28 @@ internal class CodeDirectoryCompiler {
             // Otherwise, we would end up loading this old assembly instead of the new one (VSWhidbey 554697)
             DateTime waitLimit = DateTime.UtcNow.AddMilliseconds(3000);
             // TODO: Migration
-            // for (;;) {
-            //     IntPtr hModule = UnsafeNativeMethods.GetModuleHandle(results.PathToAssembly);
-            //     if (hModule == IntPtr.Zero)
-            //         break;
-            //
-            //     Debug.Trace("CodeDirectoryCompiler", results.PathToAssembly + " is already loaded. Waiting a bit");
-            //
-            //     System.Threading.Thread.Sleep(250);
-            //
-            //     // Stop trying if the timeout was reached
-            //     if (DateTime.UtcNow > waitLimit) {
-            //         Debug.Trace("CodeDirectoryCompiler", "Timeout waiting for old assembly to unload: " + results.PathToAssembly);
-            //         throw new HttpException(SR.GetString(SR.Assembly_already_loaded, results.PathToAssembly));
-            //     }
-            // }
+            for (;;)
+            {
+                // TODO: Check
+                // IntPtr hModule = UnsafeNativeMethods.GetModuleHandle(results.PathToAssembly);
+                IntPtr hModule = NativeLibrary.Load(results.PathToAssembly);
+                if (hModule == IntPtr.Zero)
+                {
+                    NativeLibrary.Free(hModule);
+                    break;
+                }
+                NativeLibrary.Free(hModule);
+
+                Debug.WriteLine("CodeDirectoryCompiler", results.PathToAssembly + " is already loaded. Waiting a bit");
+
+                System.Threading.Thread.Sleep(250);
+
+                // Stop trying if the timeout was reached
+                if (DateTime.UtcNow > waitLimit) {
+                    Debug.WriteLine("CodeDirectoryCompiler", "Timeout waiting for old assembly to unload: " + results.PathToAssembly);
+                    throw new HttpException(SR.GetString(SR.Assembly_already_loaded, results.PathToAssembly));
+                }
+            }
 
             resultAssembly = results.CompiledAssembly;
         }
@@ -293,9 +306,7 @@ internal class CodeDirectoryCompiler {
         //
         // }        `
 
-        VirtualPathProvider fileProvider = HttpRuntimeHelper.Services.GetRequiredService<VirtualPathProvider>();
-        VirtualDirectory vdir = fileProvider.GetDirectory(_virtualDir);
-        ProcessDirectoryRecursive(vdir, true /*topLevel*/);
+        ProcessDirectoryRecursive(_virtualDir.GetDirectory(), true /*topLevel*/);
     }
 
     private void AddFolderLevelBuildProviders(VirtualDirectory vdir, FolderLevelBuildProviderAppliesTo appliesTo) {

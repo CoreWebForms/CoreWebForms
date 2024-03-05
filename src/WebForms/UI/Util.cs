@@ -24,6 +24,90 @@ using Microsoft.Extensions.FileProviders;
 namespace System.Web.UI;
 internal static class Util
 {
+    internal static string GetAssemblyQualifiedTypeName(Type t) {
+        if (t.Assembly.GlobalAssemblyCache)
+            return t.AssemblyQualifiedName;
+
+        // For non-GAC types, t.AssemblyQualifiedName still returns a big ugly type string,
+        // so return a simpler one instead with just "typename, assemblyName".
+        return t.FullName + ", " + t.Assembly.GetName().Name;
+    }
+
+
+    /*
+     * Extract a namespace and typename from a virtualPath
+     * We use all but the last two chunks as the namespace
+     * e.g. Aaa.Bbb.Ccc.Wsdl will use the "Aaa.Bbb" namespace, and Ccc as the type.
+     * chunksToIgnore is the number of ending chunks to ignore (e.g. 1 for the extension)
+     */
+    internal static string GetNamespaceAndTypeNameFromVirtualPath(VirtualPath virtualPath,
+        int chunksToIgnore, out string typeName) {
+
+        // Get the file name (with no path)
+        string filename = virtualPath.FileName;
+
+        // Split it into chunks separated by '.'
+        string[] chunks = filename.Split('.');
+
+        int chunkCount = chunks.Length - chunksToIgnore;
+        Debug.Assert(chunkCount >= 1);
+
+        if (IsWhiteSpaceString(chunks[chunkCount-1])) {
+            throw new HttpException(SR.GetString(SR.Unsupported_filename, filename));
+        }
+
+        typeName = MakeValidTypeNameFromString(chunks[chunkCount-1]);
+
+        // Turn all the relevant chunks into valid namespace chunks
+        for (int i=0; i<chunkCount-1; i++) {
+
+            if (IsWhiteSpaceString(chunks[i])) {
+                throw new HttpException(SR.GetString(SR.Unsupported_filename, filename));
+            }
+
+            chunks[i] = MakeValidTypeNameFromString(chunks[i]);
+        }
+
+        // Put the relevant chunks back together
+        return String.Join(".", chunks, 0, chunkCount-1);
+    }
+
+
+
+    /*
+     * Returns true if the type string contains an assembly specification
+     */
+    internal static bool TypeNameContainsAssembly(string typeName) {
+        return CommaIndexInTypeName(typeName) > 0;
+    }
+
+    /*
+     * Clears a file's readonly attribute if it has one
+     */
+    internal static void ClearReadOnlyAttribute(string path) {
+
+        FileAttributes attribs = File.GetAttributes(path);
+        if ((attribs & FileAttributes.ReadOnly) != 0) {
+            File.SetAttributes(path, attribs & ~FileAttributes.ReadOnly);
+        }
+    }
+
+    internal static bool IsNonEmptyDirectory(string dir) {
+
+        // Does it exist
+        if (!Directory.Exists(dir))
+            return false;
+
+        // It exists, but maybe it's empty
+        try {
+            string[] entries = Directory.GetFileSystemEntries(dir);
+            return entries.Length > 0;
+        }
+        catch {
+            // If it throws, assume it's non-empty
+            return true;
+        }
+    }
     internal static void AddAssembliesToStringCollection(ICollection fromList, StringCollection toList) {
 
         // Nothing to do if either is null

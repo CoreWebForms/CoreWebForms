@@ -35,8 +35,8 @@ internal class WebReferencesBuildProvider: BuildProvider {
         // Only attempt to get the Indigo provider once
         if (!s_triedToGetWebRefType) {
             // TODO: Migration
-            // s_indigoWebRefProviderType = BuildManager.GetType(IndigoWebRefProviderTypeName, false /*throwOnError*/);
-            s_indigoWebRefProviderType = Type.GetType(IndigoWebRefProviderTypeName, false /*throwOnError*/);
+            s_indigoWebRefProviderType = BuildManager.GetType(IndigoWebRefProviderTypeName, false /*throwOnError*/);
+            // s_indigoWebRefProviderType = Type.GetType(IndigoWebRefProviderTypeName, false /*throwOnError*/);
             s_triedToGetWebRefType = true;
         }
 

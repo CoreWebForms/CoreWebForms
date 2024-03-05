@@ -4,6 +4,7 @@ using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Web;
+using System.Web.Compilation;
 using System.Web.Routing;
 using System.Web.SessionState;
 using Microsoft.AspNetCore.Http;
@@ -71,6 +72,9 @@ internal sealed class DynamicSystemWebCompilation : IHttpHandlerCollection
 
     public void CompilePages(CancellationToken token)
     {
+        // Init build manager
+        BuildManager.InitializeBuildManager();
+
         _event.Reset();
 
         var result = _compiler.CompilePages(new DynamicCompilationProvider(_factory.CreateLogger<DynamicCompilationProvider>()), token);
