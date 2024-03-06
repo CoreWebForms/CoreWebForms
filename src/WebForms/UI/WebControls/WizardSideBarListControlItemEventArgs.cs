@@ -4,7 +4,6 @@ namespace System.Web.UI.WebControls;
 
 internal sealed class WizardSideBarListControlItemEventArgs : EventArgs
 {
-#if PORT_WIZARD
     public WizardSideBarListControlItem Item
     {
         get;
@@ -15,5 +14,4 @@ internal sealed class WizardSideBarListControlItemEventArgs : EventArgs
     {
         Item = item;
     }
-#endif
 }

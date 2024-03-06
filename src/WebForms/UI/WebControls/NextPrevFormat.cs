@@ -2,7 +2,6 @@
 
 namespace System.Web.UI.WebControls {
 
-
     /// <devdoc>
     ///    <para> Specifies the display format of the month on the Previous Month
     ///       and Next Month buttons within the <see cref='Calendar'/> control.</para>
