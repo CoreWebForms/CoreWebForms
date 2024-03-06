@@ -6,6 +6,8 @@ using System.Collections;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Reflection;
+using System.Web.Util;
+using Microsoft.Extensions.Logging;
 
 namespace System.Web.UI;
 
@@ -500,6 +502,20 @@ public abstract class TemplateControl : Control, INamingContainer, IFilterResolu
             throwOnBindFailure: false);
 
         return (del != null) ? del.Method : null;
+    }
+
+    internal Control LoadControl(string virtualPath)
+    {
+        Logger.LogWarning("Trying to load control for '{Path}'", virtualPath);
+        return new LoadedControl(virtualPath);
+    }
+
+    private sealed class LoadedControl(string virtualPath) : Control
+    {
+        protected internal override void Render(HtmlTextWriter writer)
+        {
+            writer.InnerWriter.Write($"<!-- Failed to load control for {virtualPath} --> ");
+        }
     }
 
     /// <devdoc>

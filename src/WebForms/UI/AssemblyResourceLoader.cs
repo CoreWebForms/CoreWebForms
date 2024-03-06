@@ -17,4 +17,9 @@ internal class AssemblyResourceLoader
     {
         return $"/__webforms/scripts/{resourceName}";
     }
+
+    internal static string GetWebResourceUrl(Type type, string path)
+    {
+        return $"/__webforms/scripts/{path}";
+    }
 }
