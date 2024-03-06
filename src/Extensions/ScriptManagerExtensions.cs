@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.FileProviders;
 using WebForms.Extensions;
 
 [assembly: TagPrefix("System.Web.UI", "asp")]
@@ -28,7 +29,10 @@ public static class ScriptManagerExtensions
 
     public static void MapScriptManager(this IEndpointRouteBuilder endpoints)
     {
-        endpoints.Map($"{endpoints.ServiceProvider.GetRequiredService<ScriptResourceHandler>().Prefix}", Results<FileStreamHttpResult, NotFound> (HttpRequest request, [FromServices] ScriptResourceHandler handler) =>
+        var extensionsProvider = new EmbeddedFileProvider(typeof(ScriptResourceHandler).Assembly, "");
+        endpoints.MapStaticFiles(extensionsProvider, "/Scripts/WebForms/MSAjax", path => $"AJAX Static Files [{path}]");
+
+        endpoints.Map(endpoints.ServiceProvider.GetRequiredService<ScriptResourceHandler>().Prefix, Results<FileStreamHttpResult, NotFound> (HttpRequest request, [FromServices] ScriptResourceHandler handler) =>
         {
             if (request.Query["s"] is [{ } file] && handler.Resolve(file) is { } resource)
             {
