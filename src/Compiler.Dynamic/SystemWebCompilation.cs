@@ -15,6 +15,7 @@ using Microsoft.CodeAnalysis.VisualBasic;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using WebForms.Internal;
 
 namespace WebForms.Compiler.Dynamic;
 
@@ -28,7 +29,13 @@ internal abstract class SystemWebCompilation<T> : IDisposable
     private readonly IOptions<WebFormsOptions> _webFormsOptions;
     private readonly IOptions<PageCompilationOptions> _pageCompilationOptions;
 
-    private Dictionary<string, T> _compiled = [];
+    private SystemWebCompilationUnit _compiled = [];
+
+    private sealed class SystemWebCompilationUnit : Dictionary<string, T>, ICompiledTypeAccessor
+    {
+        public Type? GetForPath(string virtualPath)
+            => TryGetValue(virtualPath, out var page) && page.Type is { } type ? type : null;
+    }
 
     public SystemWebCompilation(
         ILoggerFactory logger,
@@ -46,6 +53,8 @@ internal abstract class SystemWebCompilation<T> : IDisposable
 
         _logger.LogInformation("Compiler set to IsDebug={IsDebug}", pageCompilationOptions.Value.IsDebug);
     }
+
+    protected ICompiledTypeAccessor TypeAccessor => _compiled;
 
     protected IEnumerable<T> GetPages()
     {
@@ -75,17 +84,18 @@ internal abstract class SystemWebCompilation<T> : IDisposable
 
     public IFileProvider Files => _webFormsOptions.Value.WebFormsFileProvider;
 
-    protected void RemovePage(string path) => _compiled.Remove(path);
-
     protected void CompileAllPages(CancellationToken token)
     {
         var aspxFiles = Files.GetFiles().Where(t => t.FullPath.EndsWith(".aspx"))
             .Select(t => t.FullPath);
+        var compilation = new SystemWebCompilationUnit();
 
         foreach (var parser in GetParsersToCompile(aspxFiles))
         {
-            _compiled[parser.CurrentVirtualPath.Path] = InternalCompilePage(parser, token);
+            compilation[parser.CurrentVirtualPath.Path] = InternalCompilePage(compilation, parser, token);
         }
+
+        _compiled = compilation;
     }
 
     /// <summary>
@@ -106,6 +116,7 @@ internal abstract class SystemWebCompilation<T> : IDisposable
 
             if (!parsers.TryGetValue(currentPath, out var parser))
             {
+                // TODO: should pass ICompiledTypeAccessor to the parser
                 parsers[currentPath] = parser = CreateParser(currentPath);
                 parser.Parse();
             }
@@ -127,7 +138,7 @@ internal abstract class SystemWebCompilation<T> : IDisposable
         }
     }
 
-    private T InternalCompilePage(BaseTemplateParser parser, CancellationToken token)
+    private T InternalCompilePage(SystemWebCompilationUnit compiledPages, BaseTemplateParser parser, CancellationToken token)
     {
         var currentPath = parser.CurrentVirtualPath.Path;
 
@@ -169,7 +180,7 @@ internal abstract class SystemWebCompilation<T> : IDisposable
                 }
             }
 
-            var dependencies = parser.GetDependencyPaths().Select(p => _compiled[p]).ToList();
+            var dependencies = parser.GetDependencyPaths().Select(p => compiledPages[p]).ToList();
             var assemblies = dependencies.Select(d => d.Type?.Assembly).Where(a => a is not null);
             var references = _metadata.References
                 .Concat(dependencies.Select(d => d.MetadataReference).Where(d => d is not null));
