@@ -81,7 +81,7 @@ This will make use of `Microsoft.AspNetCore.SystemWebAdapters` to provide the `S
     app.UseSession();
     app.UseSystemWebAdapters();
     ...
-    app.MapWebForms(); // Required for pages
+    app.MapHttpHandlers(); // Required for pages (or other configured handlers)
     app.MapScriptManager(); // Required if you want to use ScriptManager
     app.MapBundleTable(); // Required if you want to use BundleTable.Bundles
     ```
