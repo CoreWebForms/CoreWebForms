@@ -13,7 +13,11 @@ internal interface ICompiledTypeAccessor
 {
     Type? GetForPath(string virtualPath);
 
-    Type GetRequiredType(string virtualPath) => GetForPath(virtualPath) ?? throw new InvalidOperationException($"Type not available for {virtualPath}");
+    Type? GetForName(string typeName);
+
+    Type GetRequiredForPath(string virtualPath) => GetForPath(virtualPath) ?? throw new InvalidOperationException($"Type not available for {virtualPath}");
+
+    Type GetRequiredForName(string virtualPath) => GetForPath(virtualPath) ?? throw new InvalidOperationException($"Type not available for {virtualPath}");
 }
 
 internal static class CompiledTypeAccessExtensions
@@ -44,6 +48,13 @@ internal static class CompiledTypeAccessExtensions
     private sealed class ContextWrappedAccessor(HttpContextCore context, ICompiledTypeAccessor other) : ICompiledTypeAccessor
     {
         private readonly ILogger _logger = context.RequestServices.GetRequiredService<ILogger<ContextWrappedAccessor>>();
+
+        public Type? GetForName(string typeName)
+        {
+            _logger.LogDebug($"{context.Request.Path} is searching for compiled type {typeName}");
+
+            return other.GetForName(typeName);
+        }
 
         Type? ICompiledTypeAccessor.GetForPath(string virtualPath)
         {

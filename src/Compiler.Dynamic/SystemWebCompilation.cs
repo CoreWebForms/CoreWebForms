@@ -29,12 +29,38 @@ internal abstract class SystemWebCompilation<T> : IDisposable
     private readonly IOptions<WebFormsOptions> _webFormsOptions;
     private readonly IOptions<PageCompilationOptions> _pageCompilationOptions;
 
-    private SystemWebCompilationUnit _compiled = [];
+    private SystemWebCompilationUnit _compiled = new();
 
-    private sealed class SystemWebCompilationUnit : Dictionary<string, T>, ICompiledTypeAccessor
+    private sealed class SystemWebCompilationUnit : ICompiledTypeAccessor
     {
-        public Type? GetForPath(string virtualPath)
-            => TryGetValue(virtualPath, out var page) && page.Type is { } type ? type : null;
+        private readonly Dictionary<string, T> _cache = [];
+        private readonly Dictionary<string, Type> _typeMap = [];
+
+        public IEnumerable<T> Values => _cache.Values;
+
+        public T this[string path]
+        {
+            get => _cache[path];
+            set
+            {
+                _cache[path] = value;
+
+                if (value.Type is { } type)
+                {
+                    _typeMap[path] = type;
+                }
+                else if (value is null)
+                {
+                    _typeMap.Remove(path);
+                }
+            }
+        }
+
+        Type? ICompiledTypeAccessor.GetForPath(string virtualPath)
+            => _cache.TryGetValue(virtualPath, out var page) && page.Type is { } type ? type : null;
+
+        Type? ICompiledTypeAccessor.GetForName(string typeName)
+            => _typeMap.TryGetValue(typeName, out var type) ? type : null;
     }
 
     public SystemWebCompilation(
@@ -71,7 +97,7 @@ internal abstract class SystemWebCompilation<T> : IDisposable
     {
         var before = _compiled;
 
-        _compiled = [];
+        _compiled = new();
 
         return new DelegateDisposable(() =>
         {

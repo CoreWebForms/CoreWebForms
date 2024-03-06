@@ -169,6 +169,8 @@ internal sealed class DynamicSystemWebCompilation : SystemWebCompilation<Dynamic
 
         string IHttpHandlerMetadata.Route => metadata.Route;
 
+        Type? ICompiledTypeAccessor.GetForName(string typeName) => compiledTypes.GetForName(typeName);
+
         IHttpHandler IHttpHandlerMetadata.Create(Microsoft.AspNetCore.Http.HttpContext context) => metadata.Create(context);
 
         Type? ICompiledTypeAccessor.GetForPath(string virtualPath) => compiledTypes.GetForPath(virtualPath);
