@@ -42,7 +42,7 @@ internal sealed class DynamicControlCollection : ITypeResolutionService, IMetada
 
     private void ProcessAssembly(Assembly assembly)
     {
-        _logger.LogDebug("Searching {Assembly} for tag prefixes", assembly.FullName);
+        _logger.LogTrace("Searching {Assembly} for tag prefixes", assembly.FullName);
 
         if (assembly.GetCustomAttributes<TagPrefixAttribute>().Any())
         {
