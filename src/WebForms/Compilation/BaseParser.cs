@@ -3,6 +3,7 @@
 using System.Collections;
 using System.Text.RegularExpressions;
 using Microsoft.Extensions.FileProviders;
+using WebForms.Internal;
 
 /*
  * Implements the ASP.NET template parser
@@ -51,6 +52,11 @@ public partial class BaseParser
         get { return _baseVirtualDir; }
 
     }
+
+    private ICompiledTypeAccessor _compiledTypeAccessor;
+
+    internal ICompiledTypeAccessor CompiledTypeAccessor { get => _compiledTypeAccessor; set => _compiledTypeAccessor = value; }
+
 
     // The virtual path to the file currently being processed
     private VirtualPath _currentVirtualPath;

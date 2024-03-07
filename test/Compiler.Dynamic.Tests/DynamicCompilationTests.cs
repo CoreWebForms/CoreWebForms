@@ -34,6 +34,7 @@ public class DynamicCompilationTests
     [DataRow("test06", "route_url_expressionbuilder.aspx")]
     [DataRow("test07", "redirect_page.aspx")]
     [DataRow("test08", "scripts.aspx")]
+    [DataRow("test09", "basic_page_with_usercontrol.aspx")]
     public async Task CompiledPageRuns(string test, params string[] pages)
     {
         if (test == "test08")
