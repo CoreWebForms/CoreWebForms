@@ -13,7 +13,9 @@ internal static class AssemblyRef
 
 internal static class SR
 {
-    public static string GetString(string name, params object[] args) => name;
+    public static string GetString(string name) => name;
+    
+    public static string GetString(string name, params object[] args) => string.Format(System.Globalization.CultureInfo.InvariantCulture, name, args);
     
     public const string Ambiguous_server_tag = "The server tag '{0}' is ambiguous. Please modify the associated registration that is causing ambiguity and pick a new tag prefix.";
     public const string Ambiguous_type = "The type '{0}' is ambiguous: it could come from assembly '{1}' or from assembly '{2}'. Please specify the assembly explicitly in the type name.";
@@ -259,7 +261,6 @@ internal static class SR
     public const string Common_PropertyNotFound = "The property {0}.{1} could not be found.";
     public const string Common_TypeMustImplementInterface = "The type '{0}' does not implement the interface '{1}'.";
     public const string Compilmode_not_allowed = "The compilation mode cannot be set to 'Never', because an earlier construct in the page requires compilation.";
-    public const string Config_provider_must_exist = "The provider '{0}' specified for the defaultProvider does not exist in the providers collection.";
     public const string ConnectionConsumerAttribute_InvalidConnectionPointType = "Type '{0}' is not a valid consumer connection point.  It must be public, a subclass of ConsumerConnectionPoint, and have a public constructor with the same parameters as the ConsumerConnectionPoint constructor.";
     public const string ConnectionPoint_InvalidControlType = "Type must be a subclass of Control.";
     public const string ConnectionProviderAttribute_InvalidConnectionPointType = "Type '{0}' is not a valid provider connection point.  It must be public, a subclass of ProviderConnectionPoint, and have a public constructor with the same parameters as the ProviderConnectionPoint constructor.";
@@ -574,7 +575,6 @@ internal static class SR
     public const string FactoryGenerator_TypeHasNoParameterlessConstructor = "Cannot instantiate type '{0}' because there is no public parameterless constructor.";
     public const string FactoryGenerator_TypeNotPublic = "Cannot instantiate type '{0}' because it is not public.";
     public const string FactoryInterface = "factoryInterface";
-    public const string Feature_not_supported_at_this_level = "This feature is not supported at the configured trust level.";
     public const string Field_Not_Found = "A field or property with the name '{0}' was not found on the selected data source.";
     public const string FileName_does_not_exist = "The file '{0}' does not exist.";
     public const string FileUpload_AllowMultiple = "Whether to enable multi-file uploads.";

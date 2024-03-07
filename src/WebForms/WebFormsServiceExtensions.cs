@@ -31,6 +31,7 @@ public static class WebFormsServiceExtensions
         builder.AddVirtualPathProvider();
 
         return new Builder(builder)
+            .AddWebParts()
             .AddDefaultExpressionBuilders();
     }
 

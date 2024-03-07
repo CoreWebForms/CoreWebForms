@@ -12,6 +12,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Security.Principal;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Web.Caching;
 using System.Web.Configuration;
 using System.Web.ModelBinding;
@@ -19,7 +20,12 @@ using System.Web.Routing;
 using System.Web.SessionState;
 using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
+using System.Web.UI.WebControls.WebParts;
 using System.Web.Util;
+using System.Xml;
+using Microsoft.AspNetCore.SystemWebAdapters;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 // Uncomment out this line to display rare field statistics at the end of the page
 //#define DISPLAYRAREFIELDSTATISTICS
@@ -183,7 +189,7 @@ DesignerCategory("ASPXCodeBehind"),
 DesignerSerializer("Microsoft.VisualStudio.Web.WebForms.WebFormCodeDomSerializer, " + AssemblyRef.MicrosoftVisualStudioWeb, "System.ComponentModel.Design.Serialization.TypeCodeDomSerializer, " + AssemblyRef.SystemDesign),
 ToolboxItem(false)
 ]
-public class Page : TemplateControl, IHttpAsyncHandler
+public partial class Page : TemplateControl, IHttpAsyncHandler
 {
     private const string HiddenClassName = "aspNetHidden";
     private const string PageID = "__Page";
@@ -2105,6 +2111,19 @@ public class Page : TemplateControl, IHttpAsyncHandler
             return (dontReturnNull || adapter.Request.QueryString.HasValue) ? _request.QueryString : null;
         }
 #endif
+    }
+
+    private bool DetermineIsExportingWebPart()
+    {
+        if (Request.AsAspNetCore().Query.TryGetValue("__WEBPARTEXPORT", out var value) && value is [{ } s] && bool.TryParse(s, out var webPartExport))
+        {
+            // Setting the export flag so that personalization can know not to toggle modes,
+            // which would create a new subrequest and kill the export.
+            _pageFlags.Set(isExportingWebPart);
+
+            return webPartExport;
+        }
+        return false;
     }
 
     internal const String RedirectQueryStringVariable = "__redir";
@@ -5038,6 +5057,7 @@ window.onload = WebForm_RestoreScrollPosition;
         {
             HttpContext con = Context;
 
+            string exportedWebPartID = null;
             if (includeStagesBeforeAsyncPoint)
             {
                 // Is it a GET, POST or initial request?
@@ -5058,13 +5078,12 @@ window.onload = WebForm_RestoreScrollPosition;
 
                 string callbackControlId = String.Empty;
 
-#if PORT_WEBPART
-                string exportedWebPartID = null;
-
                 // Special-case Web Part Export so it executes in the same security context as the page itself (VSWhidbey 426574)
                 if (DetermineIsExportingWebPart())
                 {
-                    if (!RuntimeConfig.GetAppConfig().WebParts.EnableExport)
+                    var enableExports = Request.AsAspNetCore().HttpContext.RequestServices.GetRequiredService<IOptions<WebPartsOptions>>().Value.EnableExports;
+
+                    if (!enableExports)
                     {
                         throw new InvalidOperationException(SR.GetString(SR.WebPartExportHandler_DisabledExportHandler));
                     }
@@ -5085,10 +5104,9 @@ window.onload = WebForm_RestoreScrollPosition;
                     {
                         queryString = String.Empty;
                     }
-                    Request.QueryStringText = queryString;
+                    Request.AsAspNetCore().QueryString = new(queryString);
                     con.Trace.IsEnabled = false;
                 }
-#endif
 
                 if (_requestValueCollection != null)
                 {
@@ -5234,14 +5252,12 @@ window.onload = WebForm_RestoreScrollPosition;
                 SaveAllState();
                 OnSaveStateComplete(EventArgs.Empty);
 
-#if PORT_WEBPART
                 // Special-case Web Part Export so it executes in the same security context as the page itself (VSWhidbey 426574)
                 if (exportedWebPartID != null)
                 {
                     ExportWebPart(exportedWebPartID);
                 }
                 else
-#endif
                 {
                     RenderControl(CreateHtmlTextWriter(Response.Output));
                 }
@@ -5320,7 +5336,9 @@ window.onload = WebForm_RestoreScrollPosition;
         }
     }
 
-#if PORT_WEBPART
+    [GeneratedRegex(@"\W")]
+    private static partial Regex NonWordRegex();
+
     private void ExportWebPart(string exportedWebPartID)
     {
         WebPart webPartToExport = null;
@@ -5344,14 +5362,16 @@ window.onload = WebForm_RestoreScrollPosition;
         {
             // We'll be writing Xml to the response -> Prepare the response
             Response.Cache.SetCacheability(HttpCacheability.NoCache);
+#if PORT_EXPIRES
             Response.Expires = 0;
+#endif
             Response.ContentType = "application/mswebpart";
             string title = webPartToExport.DisplayTitle;
             if (String.IsNullOrEmpty(title))
             {
                 title = SR.GetString(SR.Part_Untitled);
             }
-            NonWordRegex nonWordRegex = new NonWordRegex();
+            var nonWordRegex = NonWordRegex();
             Response.AddHeader("content-disposition", "attachment; filename=" +
                                 nonWordRegex.Replace(title, "") +
                                 ".WebPart");
@@ -5365,7 +5385,6 @@ window.onload = WebForm_RestoreScrollPosition;
             }
         }
     }
-#endif
 
     private static void InitializeWriter(HtmlTextWriter writer)
     {

@@ -6,13 +6,27 @@ namespace System.Web.UI.WebControls.WebParts
     using System.Collections.Specialized;
     using System.Diagnostics;
     using System.Globalization;
+    using System.Security.Principal;
     using System.Web.Util;
+    using Microsoft.Extensions.DependencyInjection;
+    using WebForms;
+
+    internal class WebPartsOptions
+    {
+        public WebPartsOptions()
+        {
+            IsUserAllowed = (_, name) => AllowedCapabilities.Contains(name);
+        }
+
+        public ICollection<string> AllowedCapabilities { get; } = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+        public Func<IPrincipal, string, bool> IsUserAllowed { get; set; }
+
+        public bool EnableExports { get; set; } = true;
+    }
 
     public static class PersonalizationAdministration
     {
-        private static PersonalizationProvider _provider;
-        private static PersonalizationProviderCollection _providers;
-
         internal static readonly DateTime DefaultInactiveSinceDate = DateTime.MaxValue;
         private const int _defaultPageIndex = 0;
         private const int _defaultPageSize = Int32.MaxValue;
@@ -29,64 +43,9 @@ namespace System.Web.UI.WebControls.WebParts
             }
         }
 
-        public static PersonalizationProvider Provider
-        {
-            get
-            {
-                Initialize();
-                return _provider;
-            }
-        }
+        public static PersonalizationProvider Provider => HttpRuntimeHelper.Services.GetRequiredService<PersonalizationProvider>();
 
-        public static PersonalizationProviderCollection Providers
-        {
-            get
-            {
-                Initialize();
-                return _providers;
-            }
-        }
-
-        private static void Initialize()
-        {
-#if PORT_WEBPARTS_CONFIG
-            HttpRuntime.CheckAspNetHostingPermission(AspNetHostingPermissionLevel.Low, SR.Feature_not_supported_at_this_level);
-
-            if (_initialized)
-            {
-                return;
-            }
-
-            lock (_initializationLock)
-            {
-                if (_initialized)
-                {
-                    return;
-                }
-
-                WebPartsSection webPartsSection = RuntimeConfig.GetAppConfig().WebParts;
-                WebPartsPersonalization personalization = webPartsSection.Personalization;
-
-                Debug.Assert(_providers == null);
-                _providers = new PersonalizationProviderCollection();
-
-                ProvidersHelper.InstantiateProviders(personalization.Providers, _providers, typeof(PersonalizationProvider));
-                _providers.SetReadOnly();
-                _provider = _providers[personalization.DefaultProvider];
-                if (_provider == null)
-                {
-                    throw new ConfigurationErrorsException(
-                        SR.GetString(SR.Config_provider_must_exist, personalization.DefaultProvider),
-                        personalization.ElementInformation.Properties["defaultProvider"].Source,
-                        personalization.ElementInformation.Properties["defaultProvider"].LineNumber);
-                }
-
-                _initialized = true;
-            }
-#endif
-            _providers = null;
-            _provider = null;
-        }
+        public static PersonalizationProviderCollection Providers => HttpRuntimeHelper.Services.GetRequiredService<PersonalizationProviderCollection>();
 
         public static int ResetAllState(PersonalizationScope scope)
         {
@@ -187,8 +146,7 @@ namespace System.Web.UI.WebControls.WebParts
         // This private method assumes input parameters have been checked
         private static int ResetStatePrivate(PersonalizationScope scope, string[] paths, string[] usernames)
         {
-            Initialize();
-            int count = _provider.ResetState(scope, paths, usernames);
+            int count = Provider.ResetState(scope, paths, usernames);
             PersonalizationProviderHelper.CheckNegativeReturnedInteger(count, "ResetState");
             return count;
         }
@@ -208,8 +166,7 @@ namespace System.Web.UI.WebControls.WebParts
         // This private method assumes input parameters have been checked
         private static int ResetInactiveUserStatePrivate(string path, DateTime userInactiveSinceDate)
         {
-            Initialize();
-            int count = _provider.ResetUserState(path, userInactiveSinceDate);
+            int count = Provider.ResetUserState(path, userInactiveSinceDate);
             PersonalizationProviderHelper.CheckNegativeReturnedInteger(count, "ResetUserState");
             return count;
         }
@@ -232,8 +189,7 @@ namespace System.Web.UI.WebControls.WebParts
         private static int GetCountOfStatePrivate(PersonalizationScope scope,
                                                   PersonalizationStateQuery stateQuery)
         {
-            Initialize();
-            int count = _provider.GetCountOfState(scope, stateQuery);
+            int count = Provider.GetCountOfState(scope, stateQuery);
             PersonalizationProviderHelper.CheckNegativeReturnedInteger(count, "GetCountOfState");
             return count;
         }
@@ -269,8 +225,7 @@ namespace System.Web.UI.WebControls.WebParts
                                                     int pageSize,
                                                     out int totalRecords)
         {
-            Initialize();
-            return _provider.FindState(scope, stateQuery, pageIndex, pageSize, out totalRecords);
+            return Provider.FindState(scope, stateQuery, pageIndex, pageSize, out totalRecords);
         }
 
         public static PersonalizationStateInfoCollection GetAllState(PersonalizationScope scope)
