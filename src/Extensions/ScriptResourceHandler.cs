@@ -22,7 +22,7 @@ internal sealed class ScriptResourceHandler : IScriptResourceHandler
         _protector = protector.CreateProtector("ScriptResource");
     }
 
-    public string Prefix { get; } = "__webforms/_scripts";
+    public string Prefix { get; } = "__webforms/resource";
 
     public Stream Resolve(string encodedFile)
     {
@@ -48,7 +48,7 @@ internal sealed class ScriptResourceHandler : IScriptResourceHandler
                 }
             }
 
-            _logger.LogTrace("Failed to find script for {Assembly}/{ResourceName}/{Culture}/{Zip} at {Encoded}", assemblyName, resourceName, cultureName, zip, encodedFile);
+            _logger.LogWarning("Failed to find script for {Assembly}/{ResourceName}/{Culture}/{Zip} at {Encoded}", assemblyName, resourceName, cultureName, zip, encodedFile);
 
             return null;
         }
