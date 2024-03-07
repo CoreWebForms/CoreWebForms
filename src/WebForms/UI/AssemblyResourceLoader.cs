@@ -19,4 +19,9 @@ internal class AssemblyResourceLoader
     {
         return HttpRuntimeHelper.Services.GetRequiredService<IScriptResourceHandler>().GetWebResourceUrl(type, resourceName, htmlEncoded, scriptManager, enableCdn);
     }
+
+    internal static string GetWebResourceUrl(Type type, string path)
+    {
+        return $"/__webforms/scripts/{path}";
+    }
 }
