@@ -1,6 +1,7 @@
 // MIT License.
 
 using System.Runtime.Loader;
+using System.Security.Claims;
 using System.Web.Optimization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -43,6 +44,16 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseRouting();
+
+// Add a fake user so things like WebParts has an authenticated user
+app.Use((ctx, next) =>
+{
+    if (ctx.User is not { Identity.IsAuthenticated: true })
+    {
+        ctx.User = new ClaimsPrincipal([new ClaimsIdentity([new Claim(ClaimTypes.Name, "myName")], "LocalAuth", ClaimTypes.Name, ClaimTypes.Role)]);
+    }
+    return next(ctx);
+});
 
 app.UseSession();
 app.UseSystemWebAdapters();
