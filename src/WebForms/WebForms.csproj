@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <EmbeddedResource Include="UI\WebControls\RuntimeScripts\*" LogicalName="%(FileName)%(Extension)" />
+    <EmbeddedResource Include="Resources\WebControls\**\*" LogicalName="%(FileName)%(Extension)" />
   </ItemGroup>
 
   <ItemGroup>
