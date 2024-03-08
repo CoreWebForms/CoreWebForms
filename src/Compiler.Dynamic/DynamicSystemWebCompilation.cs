@@ -74,12 +74,14 @@ internal sealed class DynamicSystemWebCompilation : SystemWebCompilation<Compile
         var context = new PageAssemblyLoadContext(route, assemblies, _factory.CreateLogger<PageAssemblyLoadContext>());
         var assembly = context.LoadFromStream(peStream, pdbStream);
 
+        peStream.Position = 0;
+
         if (assembly.GetType(typeName) is Type type)
         {
             return new(new(route), embedded.Select(t => t.FilePath).ToArray())
             {
                 Type = type,
-                MetadataReference = compilation.ToMetadataReference()
+                MetadataReference = MetadataReference.CreateFromStream(peStream),
             };
         }
 
