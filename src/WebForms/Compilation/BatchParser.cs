@@ -20,6 +20,9 @@ internal static class MTConfigUtil
     internal static PagesSection GetPagesConfig() => HttpRuntime.WebObjectActivator.GetRequiredService<IOptions<PagesSection>>().Value;
 
     internal static PagesSection GetPagesConfig(VirtualPath virtualPath) => GetPagesConfig();
+
+    // Counterpart for RuntimeConfig.GetAppConfig().Profile;
+    internal static ProfileSection GetProfileAppConfig() => HttpRuntimeHelper.Services.GetRequiredService<IOptions<ProfileSection>>().Value;
 }
 
 internal abstract class DependencyParser : BaseParser
