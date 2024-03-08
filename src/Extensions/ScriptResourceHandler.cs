@@ -76,4 +76,9 @@ internal sealed class ScriptResourceHandler : IScriptResourceHandler
 
         return Prefix + "?s=" + encoded;
     }
+
+    public string GetWebResourceUrl(Type type, string resourceName, bool htmlEncoded, IScriptManager scriptManager, bool enableCdn)
+    {
+        return GetScriptResourceUrl(type.Assembly, resourceName, CultureInfo.InvariantCulture, zip: false);
+    }
 }
