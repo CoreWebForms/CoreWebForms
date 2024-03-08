@@ -13,6 +13,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\WebForms.SqlClient\WebForms.SqlClient.csproj" />
     <ProjectReference Include="..\WebForms\WebForms.csproj" />
   </ItemGroup>
 
