@@ -6,14 +6,12 @@ namespace System.Web.UI.WebControls.WebParts
     using System;
     using System.Collections;
     using System.Collections.Specialized;
-    using System.ComponentModel;
-    using System.Configuration;
     using System.Configuration.Provider;
     using System.Security.Principal;
     using System.Web;
-    using System.Web.Configuration;
-    using System.Web.Hosting;
-    using System.Web.Util;
+    using Microsoft.AspNetCore.SystemWebAdapters;
+    using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.Options;
 
     /// <devdoc>
     /// The provider used to access the personalization store for WebPart pages.
@@ -170,28 +168,21 @@ namespace System.Web.UI.WebControls.WebParts
                     _supportedUserCapabilities = CreateSupportedUserCapabilities();
                 }
 
-                if ((_supportedUserCapabilities != null) && (_supportedUserCapabilities.Count != 0))
-                {
-#if PORT_WEBPARTS_CONFIG
-                    WebPartsSection configSection = RuntimeConfig.GetConfig().WebParts;
-                    if (configSection != null)
-                    {
-                        WebPartsPersonalizationAuthorization authConfig = configSection.Personalization.Authorization;
-                        if (authConfig != null)
-                        {
-                            IDictionary capabilities = new HybridDictionary();
+                var isUserAllowed = request.AsAspNetCore().HttpContext.RequestServices.GetRequiredService<IOptions<WebPartsOptions>>().Value.IsUserAllowed;
 
-                            foreach (WebPartUserCapability capability in _supportedUserCapabilities)
-                            {
-                                if (authConfig.IsUserAllowed(user, capability.Name))
-                                {
-                                    capabilities[capability] = capability;
-                                }
-                            }
-                            return capabilities;
+                if (_supportedUserCapabilities is { Count: > 0 } && isUserAllowed is { })
+                {
+                    IDictionary capabilities = new HybridDictionary();
+
+                    foreach (WebPartUserCapability capability in _supportedUserCapabilities)
+                    {
+                        if (isUserAllowed(user, capability.Name))
+                        {
+                            capabilities[capability] = capability;
                         }
                     }
-#endif
+
+                    return capabilities;
                 }
             }
 

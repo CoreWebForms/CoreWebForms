@@ -91,11 +91,13 @@ internal static class FastPropertyAccessor
 {
     internal static object GetProperty(object obj, string name, bool inDesigner)
     {
-        throw new NotImplementedException();
+        // TODO: Make "fast"
+        return obj.GetType().GetProperty(name).GetValue(obj);
     }
 
     internal static void SetProperty(object obj, string name, object objectValue, bool inDesigner)
     {
-        throw new NotImplementedException();
+        // TODO: Make "fast"
+        obj.GetType().GetProperty(name).SetValue(obj, objectValue);
     }
 }

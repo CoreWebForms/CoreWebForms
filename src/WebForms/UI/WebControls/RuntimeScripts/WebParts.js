@@ -1,6 +1,20 @@
 // Globals
 var __wpm = null;
 
+// Thie file uses attachEvent which is a non-standard property. This is a polyfill for
+// a translation to the more standard addEventListener
+if (EventTarget.prototype.attachEvent == null) {
+    Object.defineProperty(EventTarget.prototype, 'attachEvent', {
+        value: function (event, func) {
+            if ('string' !== typeof event || event.indexOf('on') !== 0) {
+                return;
+            }
+            this.addEventListener(event.substring(2), func, false);
+        },
+        enumerable: false
+    });
+}
+
 // Utility Methods
 
 function Point(x, y) {

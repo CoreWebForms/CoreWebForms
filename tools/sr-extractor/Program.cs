@@ -1,6 +1,7 @@
 // MIT License.
 
 using System.CodeDom.Compiler;
+using System.Globalization;
 using System.Text.RegularExpressions;
 
 public partial class Program
@@ -96,7 +97,10 @@ public partial class Program
         indented.WriteLine("{");
 
         indented.Indent++;
-        indented.WriteLine("public static string GetString(string name, params object[] args) => name;");
+
+        indented.WriteLine("public static string GetString(string name) => name;");
+        indented.WriteLine();
+        indented.WriteLine("public static string GetString(string name, params object[] args) => string.Format(System.Globalization.CultureInfo.InvariantCulture, name, args);");
         indented.WriteLine();
 
         foreach (var item in sr.OrderBy(s => s))
