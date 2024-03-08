@@ -35,7 +35,9 @@ namespace System.Web.UI.WebControls {
     Designer("System.Web.UI.Design.WebControls.SqlDataSourceDesigner, " + AssemblyRef.SystemDesign),
     ParseChildren(true),
     PersistChildren(false),
+#if PORT_BITMAP
     ToolboxBitmap(typeof(SqlDataSource)),
+#endif
     WebSysDescription(SR.SqlDataSource_Description),
     WebSysDisplayName(SR.SqlDataSource_DisplayName)
     ]
