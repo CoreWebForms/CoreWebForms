@@ -2,6 +2,7 @@
 
 using System.CodeDom.Compiler;
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Reflection;
 using System.Text;
@@ -33,8 +34,8 @@ internal abstract class SystemWebCompilation<T> : IDisposable
 
     private sealed class SystemWebCompilationUnit : ICompiledTypeAccessor
     {
-        private readonly Dictionary<string, T> _cache = [];
-        private readonly Dictionary<string, Type> _typeMap = [];
+        private readonly Dictionary<string, T> _cache = new(PathComparer.Instance);
+        private readonly Dictionary<string, Type> _typeMap = new(PathComparer.Instance);
 
         public IEnumerable<T> Values => _cache.Values;
 
@@ -58,9 +59,6 @@ internal abstract class SystemWebCompilation<T> : IDisposable
 
         Type? ICompiledTypeAccessor.GetForPath(string virtualPath)
             => _cache.TryGetValue(virtualPath, out var page) && page.Type is { } type ? type : null;
-
-        Type? ICompiledTypeAccessor.GetForName(string typeName)
-            => _typeMap.TryGetValue(typeName, out var type) ? type : null;
     }
 
     public SystemWebCompilation(
@@ -81,6 +79,8 @@ internal abstract class SystemWebCompilation<T> : IDisposable
     }
 
     protected ICompiledTypeAccessor TypeAccessor => _compiled;
+
+    protected IEnumerable<T> GetAllCompiledObjects() => _compiled.Values;
 
     protected IEnumerable<T> GetPages()
     {
