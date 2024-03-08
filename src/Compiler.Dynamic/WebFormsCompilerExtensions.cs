@@ -51,11 +51,9 @@ public static class WebFormsCompilerExtensions
             .Configure<IOptions<WebFormsOptions>>((options, webFormsOptions) =>
             {
                 options.WebFormsFileProvider = webFormsOptions.Value.WebFormsFileProvider;
-                options.AddParser<PageParser>(".aspx");
-                options.AddParser<MasterPageParser>(".Master");
-
-                //TODO https://github.com/twsouthwick/systemweb-adapters-ui/issues/19 , keeping the code to tackle in next CR
-                //options.AddParser<UserControlParser>(".ascx");
+                options.AddParser<PageDependencyParser>(".aspx");
+                options.AddParser<MasterPageDependencyParser>(".Master");
+                options.AddParser<UserControlDependencyParser>(".ascx");
             })
             .Configure<IWebHostEnvironment>((options, env) =>
             {

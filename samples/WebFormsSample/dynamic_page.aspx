@@ -1,5 +1,8 @@
 <%@ Page Title="Home Page" Language="C#" AutoEventWireup="true" MasterPageFile="~/Site.Master" CodeBehind="dynamic_page.aspx.cs" Inherits="SystemWebUISample.Pages.DynamicPage" %>
 
+<%@ Register Src="~/TestUserControl.ascx" TagPrefix="uc" TagName="TestUserControl" %>
+
+
 <script runat="server">
 
     protected void Page_Load(object sender, EventArgs e) {  
@@ -56,6 +59,11 @@
                     <PagerStyle BackColor="#FFCC66" ForeColor="#333333" HorizontalAlign="Center" Mode="NumericPages" />  
                     <AlternatingItemStyle BackColor="White" />  
                     <ItemStyle BackColor="#FFFBD6" ForeColor="#333333" />  
-                    <HeaderStyle BackColor="#990000" Font-Bold="True" ForeColor="White" /> </asp:DataGrid> <br /> <br /> 
+                    <HeaderStyle BackColor="#990000" Font-Bold="True" ForeColor="White" /> </asp:DataGrid> <br /> <br />
 
+       <div class="col-md-4">
+            <section id="socialLoginForm">
+                <uc:TestUserControl runat="server" ID="OpenAuthLogin" />
+            </section>
+        </div>
 </asp:Content>
