@@ -2,6 +2,8 @@
 
 #nullable enable
 
+using System.Diagnostics.CodeAnalysis;
+using System.Web.UI;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SystemWebAdapters;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,16 +14,63 @@ namespace WebForms.Internal;
 internal interface ICompiledTypeAccessor
 {
     Type? GetForPath(string virtualPath);
+}
 
-    Type? GetForName(string typeName);
+/// <summary>
+/// A string comparer comparer that ignores any '~' or '/' at the beginning.
+/// </summary>
+internal sealed class PathComparer : IEqualityComparer<string>
+{
+    private PathComparer()
+    {
+    }
 
-    Type GetRequiredForPath(string virtualPath) => GetForPath(virtualPath) ?? throw new InvalidOperationException($"Type not available for {virtualPath}");
+    public static IEqualityComparer<string> Instance { get; } = new PathComparer();
 
-    Type GetRequiredForName(string virtualPath) => GetForPath(virtualPath) ?? throw new InvalidOperationException($"Type not available for {virtualPath}");
+    public bool Equals(string? x, string? y)
+    {
+        if (x is null && y is null)
+        {
+            return true;
+        }
+
+        if (x is null || y is null)
+        {
+            return false;
+        }
+
+        return Normalized(x).Equals(Normalized(y), StringComparison.OrdinalIgnoreCase);
+    }
+
+    public int GetHashCode([DisallowNull] string obj)
+        => string.GetHashCode(Normalized(obj), StringComparison.OrdinalIgnoreCase);
+
+    private static ReadOnlySpan<char> Normalized(string s) => s.AsSpan().TrimStart("~/");
 }
 
 internal static class CompiledTypeAccessExtensions
 {
+    public static Control? GetControlByPath(this System.Web.HttpContext context, string virtualPath) => context.AsAspNetCore().GetControlByPath(virtualPath);
+
+    public static Control? GetControlByPath(this HttpContextCore context, string virtualPath)
+    {
+        var type = context.GetRequiredCompiledTypes().GetForPath(virtualPath);
+
+        if (type is null)
+        {
+            context.RequestServices.GetRequiredService<ILogger<ICompiledTypeAccessor>>().LogError("Type for {VirtualPath} could not be found", virtualPath);
+            return null;
+        }
+
+        if (!type.IsAssignableTo(typeof(Control)))
+        {
+            context.RequestServices.GetRequiredService<ILogger<ICompiledTypeAccessor>>().LogError("Path {VirtualPath} is not a valid control", virtualPath);
+            return null;
+        }
+
+        return (Control)ActivatorUtilities.CreateInstance(context.RequestServices, type);
+    }
+
     public static ICompiledTypeAccessor GetCompiledTypes(this System.Web.HttpContext context) => context.AsAspNetCore().GetRequiredCompiledTypes();
 
     public static ICompiledTypeAccessor GetRequiredCompiledTypes(this HttpContextCore context) => context.GetCompiledTypes() ?? throw new InvalidOperationException("Compiled types not available");
@@ -48,13 +97,6 @@ internal static class CompiledTypeAccessExtensions
     private sealed class ContextWrappedAccessor(HttpContextCore context, ICompiledTypeAccessor other) : ICompiledTypeAccessor
     {
         private readonly ILogger _logger = context.RequestServices.GetRequiredService<ILogger<ContextWrappedAccessor>>();
-
-        public Type? GetForName(string typeName)
-        {
-            _logger.LogDebug($"{context.Request.Path} is searching for compiled type {typeName}");
-
-            return other.GetForName(typeName);
-        }
 
         Type? ICompiledTypeAccessor.GetForPath(string virtualPath)
         {

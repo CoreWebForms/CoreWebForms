@@ -94,7 +94,7 @@ internal sealed class StaticSystemWebCompilation : SystemWebCompilation<Persiste
 
             var pagesPath = Path.Combine(_options.Value.TargetDirectory, "webforms.pages.json");
 
-            File.WriteAllText(pagesPath, JsonSerializer.Serialize(GetDetails()));
+            File.WriteAllText(pagesPath, JsonSerializer.Serialize(GetDetails(), new JsonSerializerOptions { WriteIndented = true }));
         }
         catch (Exception e)
         {
@@ -106,7 +106,7 @@ internal sealed class StaticSystemWebCompilation : SystemWebCompilation<Persiste
 
     private IEnumerable<PageDetails> GetDetails()
     {
-        foreach (var page in GetPages())
+        foreach (var page in GetAllCompiledObjects())
         {
             yield return new PageDetails(page.Path, page.TypeName, page.Assembly);
         }
