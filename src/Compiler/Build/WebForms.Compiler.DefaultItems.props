@@ -11,17 +11,20 @@
   <ItemGroup>
     <WebFormsFiles Include="$(MSBuildProjectDirectory)\**\*.aspx" Exclude="@(__DefaultExcludes)" />
     <WebFormsFiles Include="$(MSBuildProjectDirectory)\**\*.master" Exclude="@(__DefaultExcludes) "/>
+    <WebFormsFiles Include="$(MSBuildProjectDirectory)\**\*.ascx" Exclude="@(__DefaultExcludes)" />
 
     <WebFormsDesignerFiles Include="$(MSBuildProjectDirectory)\**\*.aspx.designer.*" Exclude="@(__DefaultExcludes)" />
+    <WebFormsDesignerFiles Include="$(MSBuildProjectDirectory)\**\*.ascx.designer.*" Exclude="@(__DefaultExcludes)" />
     <WebFormsDesignerFiles Include="$(MSBuildProjectDirectory)\**\*.master.designer.*" Exclude="@(__DefaultExcludes) "/>
 
-    <UnsupportedWebFormsFiles Include="$(MSBuildProjectDirectory)\**\*.ascx*" Exclude="@(__DefaultExcludes)" Description="Compiling custom controls is not yet supported" />
     <UnsupportedWebFormsFiles Include="$(MSBuildProjectDirectory)\**\*.ashx*" Exclude="@(__DefaultExcludes)" Description="Compiling handlers is not yet supported" />
 
     <WebFormsCodeBehindFiles Include="$(MSBuildProjectDirectory)\**\*.aspx.vb" Exclude="@(__DefaultExcludes)" />
     <WebFormsCodeBehindFiles Include="$(MSBuildProjectDirectory)\**\*.aspx.cs" Exclude="@(__DefaultExcludes)" />
     <WebFormsCodeBehindFiles Include="$(MSBuildProjectDirectory)\**\*.master.vb" Exclude="@(__DefaultExcludes)" />
     <WebFormsCodeBehindFiles Include="$(MSBuildProjectDirectory)\**\*.master.cs" Exclude="@(__DefaultExcludes)" />
+    <WebFormsCodeBehindFiles Include="$(MSBuildProjectDirectory)\**\*.ascx.cs" Exclude="@(__DefaultExcludes)" />
+    <WebFormsCodeBehindFiles Include="$(MSBuildProjectDirectory)\**\*.ascx.vb" Exclude="@(__DefaultExcludes)" />
   </ItemGroup>
  
 </Project>

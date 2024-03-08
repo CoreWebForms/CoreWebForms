@@ -6,7 +6,6 @@ using System.Web;
 using Microsoft.CodeAnalysis;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-
 using static WebForms.Compiler.Dynamic.StaticSystemWebCompilation;
 
 namespace WebForms.Compiler.Dynamic;
@@ -39,36 +38,45 @@ internal sealed class StaticSystemWebCompilation : SystemWebCompilation<Persiste
         CancellationToken token)
     {
         // TODO: Handle output better
-        using var peStream = File.OpenWrite(Path.Combine(_options.Value.TargetDirectory, $"WebForms.{typeName}.dll"));
-        using var pdbStream = File.OpenWrite(Path.Combine(_options.Value.TargetDirectory, $"WebForms.{typeName}.pdb"));
-
-        peStream.SetLength(0);
-        pdbStream.SetLength(0);
-
-        var result = compilation.Emit(
-            embeddedTexts: embedded,
-            peStream: peStream,
-            pdbStream: pdbStream,
-            cancellationToken: token);
-
-        if (!result.Success)
+        using (var peStream = File.OpenWrite(Path.Combine(_options.Value.TargetDirectory, $"WebForms.{typeName}.dll")))
         {
-            _logger.LogError("{ErrorCount} error(s) found compiling {Route}", result.Diagnostics.Length, route);
+            using var pdbStream = File.OpenWrite(Path.Combine(_options.Value.TargetDirectory, $"WebForms.{typeName}.pdb"));
+            peStream.SetLength(0);
+            pdbStream.SetLength(0);
 
-            var errors = GetErrors(result.Diagnostics).ToList();
-            var errorResult = JsonSerializer.Serialize(errors);
+            var result = compilation.Emit(
+                embeddedTexts: embedded,
+                peStream: peStream,
+                pdbStream: pdbStream,
+                cancellationToken: token);
 
-            File.WriteAllText(Path.Combine(_options.Value.TargetDirectory, $"{typeName}.errors.json"), errorResult);
+            if (!result.Success)
+            {
+                _logger.LogError("{ErrorCount} error(s) found compiling {Route}", result.Diagnostics.Length, route);
 
-            throw new RoslynCompilationException(route, errors);
+                var errors = GetErrors(result.Diagnostics).ToList();
+                var errorResult = JsonSerializer.Serialize(errors);
+
+                File.WriteAllText(Path.Combine(_options.Value.TargetDirectory, $"{typeName}.errors.json"), errorResult);
+
+                throw new RoslynCompilationException(route, errors);
+            }
         }
 
-        return new PersistedCompiledPage(new(route), embedded.Select(t => t.FilePath).ToArray())
+        var assembly = Assembly.LoadFile(Path.Combine(_options.Value.TargetDirectory, $"WebForms.{typeName}.dll"));
+
+        if (assembly.GetType(typeName) is Type type)
         {
-            TypeName = typeName,
-            Assembly = $"WebForms.{typeName}",
-            MetadataReference = compilation.ToMetadataReference(),
-        };
+            return new PersistedCompiledPage(new(route), embedded.Select(t => t.FilePath).ToArray())
+            {
+                TypeName = typeName,
+                Assembly = $"WebForms.{typeName}",
+                MetadataReference = compilation.ToMetadataReference(),
+                Type = type,
+            };
+        }
+
+        throw new InvalidOperationException("No type found");
     }
 
     Task IWebFormsCompiler.CompilePagesAsync(CancellationToken token)
@@ -113,5 +121,6 @@ internal sealed class StaticSystemWebCompilation : SystemWebCompilation<Persiste
         public string TypeName { get; init; } = null!;
 
         public string Assembly { get; init; } = null!;
+
     }
 }

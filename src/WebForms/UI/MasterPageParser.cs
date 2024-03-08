@@ -23,6 +23,7 @@ internal sealed class MasterPageParser : UserControlParser
     internal override Type DefaultBaseType { get { return typeof(System.Web.UI.MasterPage); } }
 
     internal new const string defaultDirectiveName = "master";
+
     internal override string DefaultDirectiveName
     {
         get { return defaultDirectiveName; }
