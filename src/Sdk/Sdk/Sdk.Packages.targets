@@ -14,5 +14,9 @@
     <PackageReference Include="WebForms.Compiler.Dynamic" Version="$(WebFormsVersion)" />
   </ItemGroup>
 
+  <ItemGroup Condition=" '$(IncludeSQLControls)' == 'true' ">
+    <PackageReference Include="WebForms.SqlClient" Version="$(WebFormsVersion)" />
+  </ItemGroup>
+
   <Import Project="NuGetContent.targets"/>
 </Project>
