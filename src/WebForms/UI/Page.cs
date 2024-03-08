@@ -2115,7 +2115,9 @@ public partial class Page : TemplateControl, IHttpAsyncHandler
 
     private bool DetermineIsExportingWebPart()
     {
-        if (Request.AsAspNetCore().Query.TryGetValue("__WEBPARTEXPORT", out var value) && value is [{ } s] && bool.TryParse(s, out var webPartExport))
+        if (Request.AsAspNetCore().Query.TryGetValue("__WEBPARTEXPORT", out var value) &&
+            value is [{ } s] &&
+            bool.TryParse(s, out var webPartExport))
         {
             // Setting the export flag so that personalization can know not to toggle modes,
             // which would create a new subrequest and kill the export.
@@ -2123,6 +2125,7 @@ public partial class Page : TemplateControl, IHttpAsyncHandler
 
             return webPartExport;
         }
+
         return false;
     }
 
