@@ -33,7 +33,7 @@ internal class CompiledPage : ICompiledPage
 
     public string AspxFile { get; }
 
-    public MetadataReference? MetadataReference { get; set; }
+    public MetadataReference? MetadataReference { get; init; }
 
     public virtual void Dispose()
     {

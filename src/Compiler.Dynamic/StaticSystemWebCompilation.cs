@@ -76,7 +76,7 @@ internal sealed class StaticSystemWebCompilation : SystemWebCompilation<Persiste
             {
                 TypeName = typeName,
                 Assembly = $"WebForms.{typeName}",
-                MetadataReference = compilation.ToMetadataReference(),
+                MetadataReference = MetadataReference.CreateFromFile(peFile),
                 Type = type,
             };
         }
