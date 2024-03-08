@@ -147,7 +147,6 @@ namespace System.Web.Profile
       // if (!HttpRuntime.DisableProcessRequestInApplicationTrust && HttpRuntime.NamedPermissionSet != null && HttpRuntime.ProcessRequestInApplicationTrust)
       //   HttpRuntime.NamedPermissionSet.PermitOnly();
       this.SaveWithAssert();
-      throw new NotImplementedException();
     }
 
     [SecurityPermission(SecurityAction.Assert, Flags = SecurityPermissionFlag.SerializationFormatter)]
@@ -247,7 +246,6 @@ namespace System.Web.Profile
       else
       {
         //HttpRuntime.CheckAspNetHostingPermission(AspNetHostingPermissionLevel.Low, "Feature_not_supported_at_this_level");
-        throw new NotImplementedException();
         return CreateMyInstance(username, isAuthenticated);
       }
     }
