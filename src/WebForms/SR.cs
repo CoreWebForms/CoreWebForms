@@ -319,6 +319,7 @@ internal static class SR
     public const string ConnectionsZone_WarningMessage = "The message that is displayed when an existing connection is no longer valid.";
     public const string Content_allowed_in_top_level_only = "Content controls have to be top-level controls in a content page or a nested master page that references a master page.";
     public const string Content_ContentPlaceHolderID = "The ID of the corresponding ContentPlaceHolder in the master page.";
+    public const string Content_only_allowed_in_content_page = "Content controls are allowed only in content page that references a master page.";
     public const string Content_only_one_contentPlaceHolderID_allowed = "Only one ContentPlaceHolderID attribute is allowed.";
     public const string ContentDirection_LeftToRight = "Left to Right";
     public const string ContentDirection_NotSet = "Not Set";

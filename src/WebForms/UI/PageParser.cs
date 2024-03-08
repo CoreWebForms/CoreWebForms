@@ -10,7 +10,6 @@ namespace System.Web.UI;
 
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Web.Compilation;
@@ -26,20 +25,6 @@ using System.Web.Util;
 ///    <para>[To be supplied.]</para>
 /// </devdoc>
 ///
-
-internal class TypeReference
-{
-    public TypeReference(string name, string path)
-    {
-        Name = name;
-        Path = path;
-    }
-
-    public string Name { get; }
-
-    public string Path { get; }
-}
-
 public sealed class PageParser : TemplateControlParser
 {
 #if PORT_TRANSACTIONS
@@ -86,7 +71,8 @@ public sealed class PageParser : TemplateControlParser
     private Type _previousPageType;
     internal Type PreviousPageType { get { return _previousPageType; } }
 
-    internal TypeReference MasterPage { get; private set; }
+    private Type _masterPageType;
+    internal Type MasterPageType { get { return _masterPageType; } }
 
     private string _configMasterPageFile;
 
@@ -328,15 +314,14 @@ public sealed class PageParser : TemplateControlParser
         }
         else if (StringUtil.EqualsIgnoreCase(directiveName, "masterType"))
         {
-
-            if (MasterPage != null)
+            if (_masterPageType != null)
             {
                 ProcessError(SR.GetString(SR.Only_one_directive_allowed, directiveName));
                 return;
             }
 
-            //MasterPage = Util.MakeFullTypeName("ASP", Util.MakeValidTypeNameFromString(directive));
-            //Util.CheckAssignableType(typeof(MasterPage), MasterPage);
+            _masterPageType = GetDirectiveType(directive, directiveName);
+            Util.CheckAssignableType(typeof(MasterPage), _masterPageType);
         }
         else
         {
@@ -624,10 +609,7 @@ public sealed class PageParser : TemplateControlParser
                     // Make sure it has the correct base type
                     if (!typeof(MasterPage).IsAssignableFrom(type))
                     {
-                        var path = VirtualPathProvider.CombineVirtualPathsInternal(this.CurrentVirtualPath, value);
-                        MasterPage = new(Util.MakeFullTypeName("ASP", Util.MakeValidTypeNameFromString(path)), path);
-                        //ProcessError(SR.GetString(SR.Invalid_master_base, value));
-
+                        ProcessError(SR.GetString(SR.Invalid_master_base, value));
                     }
 
                     if (deviceName.Length > 0)

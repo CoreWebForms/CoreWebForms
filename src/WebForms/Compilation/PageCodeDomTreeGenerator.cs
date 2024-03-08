@@ -20,6 +20,7 @@ internal class PageCodeDomTreeGenerator : TemplateControlCodeDomTreeGenerator
     private const string dependenciesLocalName = "dependencies";
     private const string outputCacheSettingsLocalName = "outputCacheSettings";
     private const string _previousPagePropertyName = "PreviousPage";
+    private const string _masterPropertyName = "Master";
     private const string _styleSheetThemePropertyName = "StyleSheetTheme";
     private const string outputCacheSettingsFieldName = "__outputCacheSettings";
 
@@ -362,15 +363,10 @@ internal class PageCodeDomTreeGenerator : TemplateControlCodeDomTreeGenerator
             BuildStronglyTypedProperty(_previousPagePropertyName, Parser.PreviousPageType);
         }
 
-        if (Parser.MasterPage is { } master)
+        if (Parser.MasterPageType != null)
         {
-            BuildMasterPageFactory(master);
+            BuildStronglyTypedProperty(_masterPropertyName, Parser.MasterPageType);
         }
-
-        //if (Parser.MasterPage != null)
-        //{
-        //    BuildStronglyTypedProperty(_masterPropertyName, Parser.MasterPage);
-        //}
     }
 
     /*
