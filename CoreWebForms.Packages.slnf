@@ -15,6 +15,7 @@
       "src\\Shim\\Shim.csproj",
       "src\\VirtualFile\\VirtualFile.csproj",
       "src\\WebForms\\WebForms.csproj",
+      "src\\WebForms.SqlClient\\WebForms.SqlClient.csproj",
       "test\\Compiler.Dynamic.Tests\\Compiler.Dynamic.Tests.csproj",
       "test\\Webforms.Tests\\Webforms.Tests.csproj",
       "tools\\TypeDumper\\TypeDumper.csproj",

@@ -6,6 +6,7 @@ using System.Text;
 using System.Web;
 using System.Web.Routing;
 using System.Web.UI;
+using System.Web.UI.WebControls;
 
 var assemblies = new[] {
     ("System.Web", "Shim"),
@@ -15,6 +16,7 @@ var assemblies = new[] {
 // Load up types to include
 var toInclude = new[]
 {
+    typeof(IHtmlString).Assembly,
     typeof(HttpContext).Assembly,
     typeof(HtmlTextWriter).Assembly,
     typeof(IHttpHandler).Assembly,
@@ -22,6 +24,7 @@ var toInclude = new[]
     typeof(VirtualFile).Assembly,
     typeof(Page).Assembly,
     typeof(ScriptManager).Assembly,
+    typeof(SqlDataSourceView).Assembly,
 }
 .SelectMany(a => a.GetTypes())
 .Where(t => t.IsPublic)
