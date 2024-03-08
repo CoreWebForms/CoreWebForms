@@ -111,13 +111,10 @@ internal sealed class DynamicSystemWebCompilation : SystemWebCompilation<Dynamic
     {
         _event.Reset();
 
-        using (MarkRecompile())
-        {
-            CompileAllPages(token);
+        CompileAllPages(token);
 
-            _event.Set();
-            _changeTokenSource.OnChange();
-        }
+        _event.Set();
+        _changeTokenSource.OnChange();
 
         return Task.CompletedTask;
     }
@@ -168,8 +165,6 @@ internal sealed class DynamicSystemWebCompilation : SystemWebCompilation<Dynamic
         SessionStateBehavior IHttpHandlerMetadata.Behavior => metadata.Behavior;
 
         string IHttpHandlerMetadata.Route => metadata.Route;
-
-        Type? ICompiledTypeAccessor.GetForName(string typeName) => compiledTypes.GetForName(typeName);
 
         IHttpHandler IHttpHandlerMetadata.Create(Microsoft.AspNetCore.Http.HttpContext context) => metadata.Create(context);
 

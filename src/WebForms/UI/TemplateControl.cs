@@ -6,8 +6,7 @@ using System.Collections;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Reflection;
-using System.Web.Util;
-using Microsoft.Extensions.Logging;
+using WebForms.Internal;
 
 namespace System.Web.UI;
 
@@ -504,10 +503,21 @@ public abstract class TemplateControl : Control, INamingContainer, IFilterResolu
         return (del != null) ? del.Method : null;
     }
 
-    internal Control LoadControl(string virtualPath)
+    public Control LoadControl(string virtualPath)
     {
-        Logger.LogWarning("Trying to load control for '{Path}'", virtualPath);
-        return new LoadedControl(virtualPath);
+        var control = Context.GetControlByPath(virtualPath);
+
+        if (control is null)
+        {
+            return null;
+        }
+
+        if (control is UserControl userControl)
+        {
+            userControl.InitializeAsUserControl(Page);
+        }
+
+        return control;
     }
 
     private sealed class LoadedControl(string virtualPath) : Control

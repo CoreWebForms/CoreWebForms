@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Primitives;
+using WebForms.Internal;
 
 namespace Microsoft.AspNetCore.Builder;
 
@@ -18,10 +19,27 @@ public static class CompiledWebFormsPageExtensions
 {
     public static IWebFormsBuilder AddCompiledPages(this IWebFormsBuilder builder)
     {
-        builder.Services.AddSingleton<IHttpHandlerCollection, CompiledReflectionWebFormsPage>();
+        builder.Services.AddSingleton<CompiledReflectionWebFormsPage>();
+        builder.Services.AddSingleton<IHttpHandlerCollection>(sp => sp.GetRequiredService<CompiledReflectionWebFormsPage>());
         builder.Services.AddSingleton<ITypeResolutionService, DefaultAssemblyLoadContextResolver>();
+        builder.Services.AddTransient<IStartupFilter, CompiledStartupFilter>();
 
         return builder;
+    }
+
+    private sealed class CompiledStartupFilter(CompiledReflectionWebFormsPage compiledPages) : IStartupFilter
+    {
+        Action<IApplicationBuilder> IStartupFilter.Configure(Action<IApplicationBuilder> next)
+            => builder =>
+            {
+                builder.Use((ctx, next) =>
+                {
+                    ctx.Features.Set<ICompiledTypeAccessor>(compiledPages);
+                    return next(ctx);
+                });
+
+                next(builder);
+            };
     }
 
     private sealed class DefaultAssemblyLoadContextResolver : ITypeResolutionService
@@ -70,25 +88,27 @@ public static class CompiledWebFormsPageExtensions
         }
     }
 
-    private sealed class CompiledReflectionWebFormsPage : IHttpHandlerCollection, IDisposable
+    private sealed class CompiledReflectionWebFormsPage : IHttpHandlerCollection, ICompiledTypeAccessor, IDisposable
     {
-        private readonly Lazy<IEnumerable<IHttpHandlerMetadata>> _metadata;
+        private readonly Lazy<Dictionary<string, (IHttpHandlerMetadata Metadata, Type type)>> _metadata;
         private readonly IWebHostEnvironment _env;
 
         public CompiledReflectionWebFormsPage(IWebHostEnvironment env)
         {
             _env = env;
-            _metadata = new(() => ParseHandlers().ToList(), isThreadSafe: true);
+            _metadata = new(() => ParseHandlers(), isThreadSafe: true);
         }
 
         IEnumerable<NamedHttpHandlerRoute> IHttpHandlerCollection.NamedRoutes => [];
 
         IChangeToken IHttpHandlerCollection.GetChangeToken() => NullChangeToken.Singleton;
 
-        IEnumerable<IHttpHandlerMetadata> IHttpHandlerCollection.GetHandlerMetadata() => _metadata.Value;
+        IEnumerable<IHttpHandlerMetadata> IHttpHandlerCollection.GetHandlerMetadata() => _metadata.Value.Values.Select(v => v.Metadata);
 
-        private IEnumerable<IHttpHandlerMetadata> ParseHandlers()
+        private Dictionary<string, (IHttpHandlerMetadata, Type)> ParseHandlers()
         {
+            var result = new Dictionary<string, (IHttpHandlerMetadata, Type)>(PathComparer.Instance);
+
             if (GetWebFormsFile(_env) is { } path)
             {
                 var results = JsonSerializer.Deserialize<WebFormsDetails[]>(File.ReadAllText(path));
@@ -100,11 +120,13 @@ public static class CompiledWebFormsPageExtensions
                     {
                         if (context.LoadFromAssemblyName(new AssemblyName($"{type.Assembly}")).GetType(type.Type) is { } pageType)
                         {
-                            yield return HandlerMetadata.Create(type.Path, pageType);
+                            result.Add(type.Path, (HandlerMetadata.Create(type.Path, pageType), pageType));
                         }
                     }
                 }
             }
+
+            return result;
         }
 
         private static string GetWebFormsFile(IWebHostEnvironment env)
@@ -133,6 +155,8 @@ public static class CompiledWebFormsPageExtensions
                 context.Unload();
             }
         }
+
+        Type ICompiledTypeAccessor.GetForPath(string virtualPath) => _metadata.Value.TryGetValue(virtualPath, out var result) ? result.type : null;
 
         private sealed class WebFormsAssemblyLoadContext : AssemblyLoadContext
         {

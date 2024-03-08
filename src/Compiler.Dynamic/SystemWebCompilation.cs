@@ -31,36 +31,30 @@ internal abstract class SystemWebCompilation<T> : IDisposable
 
     private SystemWebCompilationUnit _compiled = new();
 
-    private sealed class SystemWebCompilationUnit : ICompiledTypeAccessor
+    private sealed class SystemWebCompilationUnit : ICompiledTypeAccessor, IDisposable
     {
-        private readonly Dictionary<string, T> _cache = [];
-        private readonly Dictionary<string, Type> _typeMap = [];
+        private readonly Dictionary<string, T> _cache = new(PathComparer.Instance);
 
         public IEnumerable<T> Values => _cache.Values;
 
         public T this[string path]
         {
             get => _cache[path];
-            set
-            {
-                _cache[path] = value;
-
-                if (value.Type is { } type)
-                {
-                    _typeMap[path] = type;
-                }
-                else if (value is null)
-                {
-                    _typeMap.Remove(path);
-                }
-            }
+            set => _cache[path] = value;
         }
 
         Type? ICompiledTypeAccessor.GetForPath(string virtualPath)
             => _cache.TryGetValue(virtualPath, out var page) && page.Type is { } type ? type : null;
 
-        Type? ICompiledTypeAccessor.GetForName(string typeName)
-            => _typeMap.TryGetValue(typeName, out var type) ? type : null;
+        public void Dispose()
+        {
+            foreach (var page in _cache.Values)
+            {
+                page.Dispose();
+            }
+
+            _cache.Clear();
+        }
     }
 
     public SystemWebCompilation(
@@ -82,6 +76,8 @@ internal abstract class SystemWebCompilation<T> : IDisposable
 
     protected ICompiledTypeAccessor TypeAccessor => _compiled;
 
+    protected IEnumerable<T> GetAllCompiledObjects() => _compiled.Values;
+
     protected IEnumerable<T> GetPages()
     {
         foreach (var page in _compiled.Values)
@@ -91,21 +87,6 @@ internal abstract class SystemWebCompilation<T> : IDisposable
                 yield return page;
             }
         }
-    }
-
-    protected IDisposable MarkRecompile()
-    {
-        var before = _compiled;
-
-        _compiled = new();
-
-        return new DelegateDisposable(() =>
-        {
-            foreach (var page in before.Values)
-            {
-                page.Dispose();
-            }
-        });
     }
 
     public IFileProvider Files => _webFormsOptions.Value.WebFormsFileProvider;
@@ -121,7 +102,9 @@ internal abstract class SystemWebCompilation<T> : IDisposable
             compilation[parser.CurrentVirtualPath.Path] = InternalCompilePage(compilation, parser, token);
         }
 
+        var original = _compiled;
         _compiled = compilation;
+        original.Dispose();
     }
 
     /// <summary>
