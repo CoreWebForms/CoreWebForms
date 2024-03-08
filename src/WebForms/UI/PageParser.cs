@@ -51,17 +51,8 @@ public sealed class PageParser : TemplateControlParser
 
     internal override BaseCodeDomTreeGenerator GetGenerator() => new PageCodeDomTreeGenerator(this);
 
-    internal override IEnumerable<string> GetDependencyPaths()
-    {
-        if (MasterPage is { Path: { } masterPath })
-        {
-            return [masterPath, .. base.GetDependencyPaths()];
-        }
-
-        return base.GetDependencyPaths();
-    }
-
     private readonly TraceMode _traceMode = System.Web.TraceMode.Default;
+
     internal TraceMode TraceMode { get { return _traceMode; } }
 
     private readonly TraceEnable _traceEnabled = TraceEnable.Default;

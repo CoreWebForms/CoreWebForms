@@ -31,6 +31,7 @@ internal abstract class DependencyParser : BaseParser
 {
     private VirtualPath _virtualPath;
     private StringSet _virtualPathDependencies;
+    private BaseTemplateParser _baseTemplateParser;
 
     // Used to detect circular references
     private readonly StringSet _circularReferenceChecker = new CaseInsensitiveStringSet();
@@ -49,9 +50,39 @@ internal abstract class DependencyParser : BaseParser
         _pagesConfig = MTConfigUtil.GetPagesConfig(virtualPath);
     }
 
+    internal BaseTemplateParser TemplateParser
+    {
+        get
+        {
+            if (_baseTemplateParser is { })
+            {
+                return _baseTemplateParser;
+            }
+            
+            _baseTemplateParser = InitializeBaseTemplateParser();
+            return _baseTemplateParser;
+        }
+    }
+
+    private BaseTemplateParser InitializeBaseTemplateParser()
+    {
+        var baseTemplateParser = CreateTemplateParser();
+        baseTemplateParser.CurrentVirtualPath = _virtualPath;
+        baseTemplateParser.WebFormsFileProvider = WebFormsFileProvider;
+        baseTemplateParser.CompiledTypeAccessor = CompiledTypeAccessor;
+        return baseTemplateParser;
+    }
+
+    protected abstract BaseTemplateParser CreateTemplateParser();
+
     internal ICollection GetVirtualPathDependencies()
     {
         // Always set the culture to Invariant when parsing (ASURT 99071)
+        if (_virtualPathDependencies is { })
+        {
+            return _virtualPathDependencies;
+        }
+
         Thread currentThread = Thread.CurrentThread;
         CultureInfo prevCulture = currentThread.CurrentCulture;
         Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
@@ -66,8 +97,24 @@ internal abstract class DependencyParser : BaseParser
             // Restore the previous culture
             currentThread.CurrentCulture = prevCulture;
         }
-
         return _virtualPathDependencies;
+    }
+
+    internal IEnumerable<string> GetDependencyPaths()
+    {
+        var dependentPaths = GetVirtualPathDependencies();
+        if (dependentPaths is not null)
+        {
+            foreach (string virtualPathString in dependentPaths)
+            {
+                yield return virtualPathString;
+            }
+        }
+    }
+
+    internal void Parse()
+    {
+        TemplateParser.Parse();
     }
 
     protected void AddDependency(VirtualPath virtualPath)
@@ -433,6 +480,8 @@ internal class PageDependencyParser : TemplateControlDependencyParser
         }
     }
 
+    protected override BaseTemplateParser CreateTemplateParser() => new PageParser();
+   
     internal override void ProcessDirective(string directiveName, IDictionary directive)
     {
         base.ProcessDirective(directiveName, directive);
@@ -456,6 +505,8 @@ internal class UserControlDependencyParser : TemplateControlDependencyParser
     {
         get { return UserControlParser.defaultDirectiveName; }
     }
+
+    protected override BaseTemplateParser CreateTemplateParser() => new UserControlParser();
 }
 
 internal class MasterPageDependencyParser : UserControlDependencyParser
@@ -478,4 +529,6 @@ internal class MasterPageDependencyParser : UserControlDependencyParser
             }
         }
     }
+
+    protected override BaseTemplateParser CreateTemplateParser() => new MasterPageParser();
 }

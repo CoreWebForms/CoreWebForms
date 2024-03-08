@@ -116,7 +116,7 @@ internal abstract class SystemWebCompilation<T> : IDisposable
             .Select(t => t.FullPath);
         var compilation = new SystemWebCompilationUnit();
 
-        foreach (var parser in GetParsersToCompile(aspxFiles))
+        foreach (var parser in GetParsersToCompile(aspxFiles, compilation))
         {
             compilation[parser.CurrentVirtualPath.Path] = InternalCompilePage(compilation, parser, token);
         }
@@ -129,9 +129,9 @@ internal abstract class SystemWebCompilation<T> : IDisposable
     /// by using <see cref="TemplateParser.GetDependencyPaths"/>, but we want to ensure we only compile something if its
     /// dependencies have already been compiled.
     /// </summary>
-    private IEnumerable<BaseTemplateParser> GetParsersToCompile(IEnumerable<string> files)
+    private IEnumerable<DependencyParser> GetParsersToCompile(IEnumerable<string> files, SystemWebCompilationUnit compilationUnit)
     {
-        var parsers = new Dictionary<string, BaseTemplateParser>();
+        var parsers = new Dictionary<string, DependencyParser>();
 
         var stack = new Stack<string>(files);
         var visited = new HashSet<string>();
@@ -142,9 +142,7 @@ internal abstract class SystemWebCompilation<T> : IDisposable
 
             if (!parsers.TryGetValue(currentPath, out var parser))
             {
-                // TODO: should pass ICompiledTypeAccessor to the parser
-                parsers[currentPath] = parser = CreateParser(currentPath);
-                parser.Parse();
+                parsers[currentPath] = parser = CreateParser(currentPath, compilationUnit);
             }
 
             foreach (var dependency in parser.GetDependencyPaths())
@@ -159,12 +157,13 @@ internal abstract class SystemWebCompilation<T> : IDisposable
             if (ReferenceEquals(stack.Peek(), currentPath))
             {
                 stack.Pop();
+                parser.Parse();
                 yield return parser;
             }
         }
     }
 
-    private T InternalCompilePage(SystemWebCompilationUnit compiledPages, BaseTemplateParser parser, CancellationToken token)
+    private T InternalCompilePage(SystemWebCompilationUnit compiledPages, DependencyParser parser, CancellationToken token)
     {
         var currentPath = parser.CurrentVirtualPath.Path;
 
@@ -173,8 +172,8 @@ internal abstract class SystemWebCompilation<T> : IDisposable
             var embedded = new List<EmbeddedText>();
             var trees = new List<SyntaxTree>();
 
-            var compiler = GetProvider(parser.CompilerType);
-            var generator = parser.GetGenerator();
+            var compiler = GetProvider(parser.TemplateParser.CompilerType);
+            var generator = parser.TemplateParser.GetGenerator();
             var cu = generator.GetCodeDomTree(compiler.Provider, new StringResourceBuilder(), currentPath);
 
             using var writer = new StringWriter();
@@ -259,13 +258,13 @@ internal abstract class SystemWebCompilation<T> : IDisposable
         throw new NotSupportedException($"Unknown language {compiler.Language}");
     }
 
-    private BaseTemplateParser CreateParser(string path)
+    private DependencyParser CreateParser(string path, SystemWebCompilationUnit compilationUnit)
     {
         var extension = Path.GetExtension(path);
 
         if (_pageCompilationOptions.Value.Parsers.TryGetValue(extension, out var parser))
         {
-            return parser(path);
+            return parser(path, compilationUnit);
         }
 
         throw new NotImplementedException($"Unknown extension for compilation: {extension}");
