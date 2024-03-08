@@ -1,6 +1,5 @@
 // MIT License.
 
-// MIT License.
 using System.Web.UI;
 using System;
 using System.ComponentModel;

@@ -13,6 +13,7 @@ namespace WebForms.Compiler.Dynamic;
 internal sealed class StaticSystemWebCompilation : SystemWebCompilation<PersistedCompiledPage>, IWebFormsCompiler
 {
     private readonly IOptions<StaticCompilationOptions> _options;
+    private readonly ILoggerFactory _factory;
     private readonly ILogger _logger;
 
     public StaticSystemWebCompilation(
@@ -23,6 +24,7 @@ internal sealed class StaticSystemWebCompilation : SystemWebCompilation<Persiste
         ILoggerFactory factory)
         : base(factory, metadataProvider, webFormsOptions, pageCompilationOptions)
     {
+        _factory = factory;
         _logger = factory.CreateLogger<StaticSystemWebCompilation>();
         _options = options;
     }
@@ -38,7 +40,9 @@ internal sealed class StaticSystemWebCompilation : SystemWebCompilation<Persiste
         CancellationToken token)
     {
         // TODO: Handle output better
-        using (var peStream = File.OpenWrite(Path.Combine(_options.Value.TargetDirectory, $"WebForms.{typeName}.dll")))
+        var peFile = Path.Combine(_options.Value.TargetDirectory, $"WebForms.{typeName}.dll");
+
+        using (var peStream = File.OpenWrite(peFile))
         {
             using var pdbStream = File.OpenWrite(Path.Combine(_options.Value.TargetDirectory, $"WebForms.{typeName}.pdb"));
             peStream.SetLength(0);
@@ -63,7 +67,8 @@ internal sealed class StaticSystemWebCompilation : SystemWebCompilation<Persiste
             }
         }
 
-        var assembly = Assembly.LoadFile(Path.Combine(_options.Value.TargetDirectory, $"WebForms.{typeName}.dll"));
+        var context = new PageAssemblyLoadContext(route, assemblies, _factory.CreateLogger<PageAssemblyLoadContext>());
+        var assembly = context.LoadFromAssemblyPath(peFile);
 
         if (assembly.GetType(typeName) is Type type)
         {
@@ -89,7 +94,7 @@ internal sealed class StaticSystemWebCompilation : SystemWebCompilation<Persiste
 
             var pagesPath = Path.Combine(_options.Value.TargetDirectory, "webforms.pages.json");
 
-            File.WriteAllText(pagesPath, JsonSerializer.Serialize(GetDetails()));
+            File.WriteAllText(pagesPath, JsonSerializer.Serialize(GetDetails(), new JsonSerializerOptions { WriteIndented = true }));
         }
         catch (Exception e)
         {
@@ -101,7 +106,7 @@ internal sealed class StaticSystemWebCompilation : SystemWebCompilation<Persiste
 
     private IEnumerable<PageDetails> GetDetails()
     {
-        foreach (var page in GetPages())
+        foreach (var page in GetAllCompiledObjects())
         {
             yield return new PageDetails(page.Path, page.TypeName, page.Assembly);
         }

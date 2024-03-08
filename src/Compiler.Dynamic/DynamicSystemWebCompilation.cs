@@ -13,13 +13,11 @@ using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
 using WebForms.Internal;
 
-using static WebForms.Compiler.Dynamic.DynamicSystemWebCompilation;
-
 using HttpContext = System.Web.HttpContext;
 
 namespace WebForms.Compiler.Dynamic;
 
-internal sealed class DynamicSystemWebCompilation : SystemWebCompilation<DynamicCompiledPage>, IHttpHandlerCollection, IWebFormsCompiler
+internal sealed class DynamicSystemWebCompilation : SystemWebCompilation<CompiledPage>, IHttpHandlerCollection, IWebFormsCompiler
 {
     private readonly ILoggerFactory _factory;
     private readonly ILogger _logger;
@@ -39,7 +37,7 @@ internal sealed class DynamicSystemWebCompilation : SystemWebCompilation<Dynamic
         _factory = factory;
     }
 
-    protected override DynamicCompiledPage CreateCompiledPage(
+    protected override CompiledPage CreateCompiledPage(
       Compilation compilation,
       string route,
       string typeName,
@@ -64,7 +62,7 @@ internal sealed class DynamicSystemWebCompilation : SystemWebCompilation<Dynamic
 
             _logger.LogWarning("{ErrorCount} error(s) found compiling {Route}", result.Diagnostics.Length, route);
 
-            return new DynamicCompiledPage(new(route), [])
+            return new(new(route), [])
             {
                 Exception = new RoslynCompilationException(route, errors)
             };
@@ -78,7 +76,7 @@ internal sealed class DynamicSystemWebCompilation : SystemWebCompilation<Dynamic
 
         if (assembly.GetType(typeName) is Type type)
         {
-            return new DynamicCompiledPage(new(route), embedded.Select(t => t.FilePath).ToArray())
+            return new(new(route), embedded.Select(t => t.FilePath).ToArray())
             {
                 Type = type,
                 MetadataReference = compilation.ToMetadataReference()
@@ -111,35 +109,19 @@ internal sealed class DynamicSystemWebCompilation : SystemWebCompilation<Dynamic
     {
         _event.Reset();
 
-        using (MarkRecompile())
-        {
-            CompileAllPages(token);
+        CompileAllPages(token);
 
-            _event.Set();
-            _changeTokenSource.OnChange();
-        }
+        _event.Set();
+        _changeTokenSource.OnChange();
 
         return Task.CompletedTask;
     }
 
-    protected override DynamicCompiledPage CreateErrorPage(string path, Exception e)
+    protected override CompiledPage CreateErrorPage(string path, Exception e)
         => new(new(path), [])
         {
             Exception = e
         };
-
-    internal sealed class DynamicCompiledPage(PagePath path, string[] dependencies) : CompiledPage(path, dependencies)
-    {
-        public override void Dispose()
-        {
-            foreach (var d in PageDependencies)
-            {
-                d.Dispose();
-            }
-
-            base.Dispose();
-        }
-    }
 
     private sealed class ErrorHandler(Exception e) : HttpTaskAsyncHandler
     {
@@ -168,8 +150,6 @@ internal sealed class DynamicSystemWebCompilation : SystemWebCompilation<Dynamic
         SessionStateBehavior IHttpHandlerMetadata.Behavior => metadata.Behavior;
 
         string IHttpHandlerMetadata.Route => metadata.Route;
-
-        Type? ICompiledTypeAccessor.GetForName(string typeName) => compiledTypes.GetForName(typeName);
 
         IHttpHandler IHttpHandlerMetadata.Create(Microsoft.AspNetCore.Http.HttpContext context) => metadata.Create(context);
 
