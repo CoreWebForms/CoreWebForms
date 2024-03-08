@@ -118,7 +118,7 @@ public static class CompiledWebFormsPageExtensions
                 {
                     foreach (var type in results)
                     {
-                        if (context.LoadFromAssemblyName(new AssemblyName($"{type.Assembly}")).GetType(type.Type) is { } pageType)
+                        if (context.LoadFromAssemblyName(new AssemblyName(type.Assembly)).GetType(type.Type) is { } pageType)
                         {
                             result.Add(type.Path, (HandlerMetadata.Create(type.Path, pageType), pageType));
                         }
