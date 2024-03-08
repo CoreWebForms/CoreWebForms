@@ -51,15 +51,13 @@ namespace System.Web.Profile
       get
       {
         // if (!HttpRuntime.DisableProcessRequestInApplicationTrust && HttpRuntime.NamedPermissionSet != null && HttpRuntime.ProcessRequestInApplicationTrust)
-        //   HttpRuntime.NamedPermissionSet.PermitOnly();
-        throw new NotImplementedException();
+        //    HttpRuntime.NamedPermissionSet.PermitOnly();
         return this.GetInternal(propertyName);
       }
       set
       {
         // if (!HttpRuntime.DisableProcessRequestInApplicationTrust && HttpRuntime.NamedPermissionSet != null && HttpRuntime.ProcessRequestInApplicationTrust)
         //   HttpRuntime.NamedPermissionSet.PermitOnly();
-        throw new NotImplementedException();
         this.SetInternal(propertyName, value);
       }
     }
