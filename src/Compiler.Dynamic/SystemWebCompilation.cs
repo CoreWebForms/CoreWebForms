@@ -264,9 +264,6 @@ internal abstract class SystemWebCompilation<T> : IDisposable
 
         if (_pageCompilationOptions.Value.Parsers.TryGetValue(extension, out var parser))
         {
-            //check with Taylor why _compiled is set after compilation is done, else below could be simplified.
-            //return parser(path, _compiled);
-
             return parser(path, compilationUnit);
         }
 
