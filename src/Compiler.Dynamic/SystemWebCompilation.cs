@@ -12,50 +12,22 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.CodeAnalysis.VisualBasic;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using WebForms.Internal;
 
 namespace WebForms.Compiler.Dynamic;
 
-internal abstract class SystemWebCompilation<T> : IDisposable
-    where T : ICompiledPage
+internal sealed class SystemWebCompilation : IDisposable, IWebFormsCompiler
 {
     private readonly ICompiler _csharp;
     private readonly ICompiler _vb;
     private readonly IMetadataProvider _metadata;
-    private readonly ILogger<SystemWebCompilation<T>> _logger;
+    private readonly ILoggerFactory _factory;
+    private readonly ILogger<SystemWebCompilation> _logger;
     private readonly IOptions<WebFormsOptions> _webFormsOptions;
     private readonly IOptions<PageCompilationOptions> _pageCompilationOptions;
-
-    private SystemWebCompilationUnit _compiled = new();
-
-    private sealed class SystemWebCompilationUnit : ICompiledTypeAccessor, IDisposable
-    {
-        private readonly Dictionary<string, T> _cache = new(PathComparer.Instance);
-
-        public IEnumerable<T> Values => _cache.Values;
-
-        public T this[string path]
-        {
-            get => _cache[path];
-            set => _cache[path] = value;
-        }
-
-        Type? ICompiledTypeAccessor.GetForPath(string virtualPath)
-            => _cache.TryGetValue(virtualPath, out var page) && page.Type is { } type ? type : null;
-
-        public void Dispose()
-        {
-            foreach (var page in _cache.Values)
-            {
-                page.Dispose();
-            }
-
-            _cache.Clear();
-        }
-    }
 
     public SystemWebCompilation(
         ILoggerFactory logger,
@@ -67,44 +39,28 @@ internal abstract class SystemWebCompilation<T> : IDisposable
         _vb = new VisualBasicCompiler(pageCompilationOptions.Value);
 
         _metadata = metadata;
-        _logger = logger.CreateLogger<SystemWebCompilation<T>>();
+        _factory = logger;
+        _logger = logger.CreateLogger<SystemWebCompilation>();
         _webFormsOptions = webFormsOptions;
         _pageCompilationOptions = pageCompilationOptions;
 
         _logger.LogInformation("Compiler set to IsDebug={IsDebug}", pageCompilationOptions.Value.IsDebug);
     }
 
-    protected ICompiledTypeAccessor TypeAccessor => _compiled;
-
-    protected IEnumerable<T> GetAllCompiledObjects() => _compiled.Values;
-
-    protected IEnumerable<T> GetPages()
-    {
-        foreach (var page in _compiled.Values)
-        {
-            if (page.AspxFile.EndsWith(".aspx", StringComparison.OrdinalIgnoreCase))
-            {
-                yield return page;
-            }
-        }
-    }
-
     public IFileProvider Files => _webFormsOptions.Value.WebFormsFileProvider;
 
-    protected void CompileAllPages(CancellationToken token)
+    private SystemWebCompilationUnit CompileAllPages(ICompilationStrategy output, CancellationToken token)
     {
         var aspxFiles = Files.GetFiles().Where(t => t.FullPath.EndsWith(".aspx"))
             .Select(t => t.FullPath);
-        var compilation = new SystemWebCompilationUnit();
+        var compilation = new SystemWebCompilationUnit(output);
 
         foreach (var parser in GetParsersToCompile(aspxFiles, compilation))
         {
             compilation[parser.CurrentVirtualPath.Path] = InternalCompilePage(compilation, parser, token);
         }
 
-        var original = _compiled;
-        _compiled = compilation;
-        original.Dispose();
+        return compilation;
     }
 
     /// <summary>
@@ -146,7 +102,7 @@ internal abstract class SystemWebCompilation<T> : IDisposable
         }
     }
 
-    private T InternalCompilePage(SystemWebCompilationUnit compiledPages, DependencyParser parser, CancellationToken token)
+    private CompiledPage InternalCompilePage(SystemWebCompilationUnit compiledPages, DependencyParser parser, CancellationToken token)
     {
         var currentPath = parser.CurrentVirtualPath.Path;
 
@@ -196,7 +152,7 @@ internal abstract class SystemWebCompilation<T> : IDisposable
 
             var compilation = compiler.CreateCompilation(typeName, trees, references!);
 
-            var compiled = CreateCompiledPage(compilation, currentPath, typeName, trees, references!, embedded, assemblies!, token);
+            var compiled = CreateCompiledPage(compiledPages, compilation, currentPath, typeName, embedded, assemblies!, token);
 
             foreach (var dependency in dependencies)
             {
@@ -210,21 +166,77 @@ internal abstract class SystemWebCompilation<T> : IDisposable
         catch (Exception e)
         {
             _logger.LogError(e, "Failed to compile {Path}", currentPath);
-            return CreateErrorPage(currentPath, e);
+
+            if (compiledPages.OutputProvider.HandleExceptions)
+            {
+                return new(new(currentPath), [])
+                {
+                    Exception = e
+                };
+            }
+            else
+            {
+                throw;
+            }
         }
     }
 
-    protected abstract T CreateErrorPage(string path, Exception e);
+    private CompiledPage CreateCompiledPage(
+        SystemWebCompilationUnit cu,
+           Compilation compilation,
+           string route,
+           string typeName,
+           IEnumerable<EmbeddedText> embedded,
+           IEnumerable<Assembly> assemblies,
+           CancellationToken token)
+    {
+        using var peStream = cu.OutputProvider.CreatePeStream(route, typeName);
+        using var pdbStream = cu.OutputProvider.CreatePdbStream(route, typeName);
 
-    protected abstract T CreateCompiledPage(
-        Compilation compilation,
-        string route,
-        string typeName,
-        IEnumerable<SyntaxTree> trees,
-        IEnumerable<MetadataReference> references,
-        IEnumerable<EmbeddedText> embedded,
-        IEnumerable<Assembly> assemblies,
-        CancellationToken token);
+        var result = compilation.Emit(
+            embeddedTexts: embedded,
+            peStream: peStream,
+            pdbStream: pdbStream,
+            cancellationToken: token);
+
+        if (!result.Success)
+        {
+            _logger.LogError("{ErrorCount} error(s) found compiling {Route}", result.Diagnostics.Length, route);
+
+            if (!cu.OutputProvider.HandleErrors(route, result.Diagnostics))
+            {
+                throw new RoslynCompilationException(route, result.Diagnostics.ConvertToErrors());
+            }
+            else
+            {
+                return new(new(route), [])
+                {
+                    Exception = new RoslynCompilationException(route, result.Diagnostics.ConvertToErrors())
+                };
+            }
+        }
+        else
+        {
+            peStream.Position = 0;
+            pdbStream.Position = 0;
+
+            var context = new PageAssemblyLoadContext(route, assemblies, _factory.CreateLogger<PageAssemblyLoadContext>());
+            var assembly = context.LoadFromStream(peStream, pdbStream);
+
+            peStream.Position = 0;
+
+            if (assembly.GetType(typeName) is Type type)
+            {
+                return new CompiledPage(new(route), embedded.Select(t => t.FilePath).ToArray())
+                {
+                    MetadataReference = MetadataReference.CreateFromStream(peStream),
+                    Type = type,
+                };
+            }
+        }
+
+        throw new InvalidOperationException("No type found");
+    }
 
     private ICompiler GetProvider(CompilerType compiler)
     {
@@ -253,35 +265,16 @@ internal abstract class SystemWebCompilation<T> : IDisposable
         throw new NotImplementedException($"Unknown extension for compilation: {extension}");
     }
 
-    protected IEnumerable<RoslynError> GetErrors(ImmutableArray<Diagnostic> diagnostics)
-    {
-        foreach (var d in diagnostics)
-        {
-            var logLevel = d.Severity switch
-            {
-                DiagnosticSeverity.Hidden => LogLevel.Trace,
-                DiagnosticSeverity.Info => LogLevel.Debug,
-                DiagnosticSeverity.Warning => LogLevel.Warning,
-                DiagnosticSeverity.Error => LogLevel.Error,
-                _ => LogLevel.Critical,
-            };
-
-            _logger.Log(logLevel, "[{Id}] {Message} @{Location}", d.Id, d.GetMessage(CultureInfo.CurrentCulture), d.Location);
-
-            yield return new RoslynError()
-            {
-                Id = d.Id,
-                Message = d.GetMessage(CultureInfo.CurrentCulture),
-                Severity = d.Severity,
-                Location = d.Location.ToString(),
-            };
-        }
-    }
-
     public void Dispose()
     {
         _csharp.Dispose();
         _vb.Dispose();
+    }
+
+    ICompilationResult IWebFormsCompiler.CompilePages(ICompilationStrategy outputProvider, CancellationToken token)
+    {
+        var result = CompileAllPages(outputProvider, token);
+        return result.Build();
     }
 
     private interface ICompiler : IDisposable
@@ -334,10 +327,5 @@ internal abstract class SystemWebCompilation<T> : IDisposable
                   optimizationLevel: _options.IsDebug ? OptimizationLevel.Debug : OptimizationLevel.Release),
               syntaxTrees: trees,
               references: references.Concat(_vbReferences));
-    }
-
-    private sealed class DelegateDisposable(Action action) : IDisposable
-    {
-        public void Dispose() => action();
     }
 }

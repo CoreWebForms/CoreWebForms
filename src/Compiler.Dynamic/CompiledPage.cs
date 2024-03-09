@@ -6,7 +6,7 @@ using Microsoft.CodeAnalysis;
 
 namespace WebForms.Compiler.Dynamic;
 
-internal class CompiledPage : ICompiledPage
+internal sealed class CompiledPage
 {
     public CompiledPage(PagePath path, string[] dependencies)
     {
@@ -14,12 +14,6 @@ internal class CompiledPage : ICompiledPage
         FileDependencies = dependencies;
         AspxFile = path.FilePath;
     }
-
-    public static ICompiledPage FromError(PagePath page, Exception ex)
-        => new CompiledPage(page, [])
-        {
-            Exception = ex,
-        };
 
     public Type? Type { get; set; }
 
@@ -29,13 +23,13 @@ internal class CompiledPage : ICompiledPage
 
     public IReadOnlyCollection<string> FileDependencies { get; }
 
-    public ICollection<ICompiledPage> PageDependencies { get; } = new HashSet<ICompiledPage>();
+    public ICollection<CompiledPage> PageDependencies { get; } = new HashSet<CompiledPage>();
 
     public string AspxFile { get; }
 
     public MetadataReference? MetadataReference { get; init; }
 
-    public virtual void Dispose()
+    public void Dispose()
     {
         if (Type is not null)
         {

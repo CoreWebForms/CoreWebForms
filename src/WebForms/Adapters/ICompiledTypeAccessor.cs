@@ -13,41 +13,13 @@ using Microsoft.Extensions.Logging;
 
 namespace WebForms.Internal;
 
-internal interface ICompiledTypeAccessor
+public interface ICompiledTypeAccessor
 {
+    IReadOnlyCollection<string> Paths { get; }
+
+    bool TryGetException(string path, [MaybeNullWhen(false)] out Exception exception);
+
     Type? GetForPath(string virtualPath);
-}
-
-/// <summary>
-/// A string comparer comparer that ignores any '~' or '/' at the beginning.
-/// </summary>
-internal sealed class PathComparer : IEqualityComparer<string>
-{
-    private PathComparer()
-    {
-    }
-
-    public static IEqualityComparer<string> Instance { get; } = new PathComparer();
-
-    public bool Equals(string? x, string? y)
-    {
-        if (x is null && y is null)
-        {
-            return true;
-        }
-
-        if (x is null || y is null)
-        {
-            return false;
-        }
-
-        return Normalized(x).Equals(Normalized(y), StringComparison.OrdinalIgnoreCase);
-    }
-
-    public int GetHashCode([DisallowNull] string obj)
-        => string.GetHashCode(Normalized(obj), StringComparison.OrdinalIgnoreCase);
-
-    private static ReadOnlySpan<char> Normalized(string s) => s.AsSpan().TrimStart("~/");
 }
 
 internal static class CompiledTypeAccessExtensions
@@ -104,28 +76,16 @@ internal static class CompiledTypeAccessExtensions
         {
             return feature;
         }
-        var metadata = context.GetEndpoint()?.Metadata;
-        var accessor = metadata?.GetMetadata<ICompiledTypeAccessor>();
 
-        if (accessor is null)
+        var metadata = context.GetEndpoint()?.Metadata;
+        feature = metadata?.GetMetadata<ICompiledTypeAccessor>();
+
+        if (feature is null)
         {
             return null;
         }
 
-        feature = new ContextWrappedAccessor(context, accessor);
-        context.Features.Set<ICompiledTypeAccessor>(feature);
+        context.Features.Set(feature);
         return feature;
-    }
-
-    private sealed class ContextWrappedAccessor(HttpContextCore context, ICompiledTypeAccessor other) : ICompiledTypeAccessor
-    {
-        private readonly ILogger _logger = context.RequestServices.GetRequiredService<ILogger<ContextWrappedAccessor>>();
-
-        Type? ICompiledTypeAccessor.GetForPath(string virtualPath)
-        {
-            _logger.LogDebug($"{context.Request.Path} is searching for compiled type {virtualPath}");
-
-            return other.GetForPath(virtualPath);
-        }
     }
 }

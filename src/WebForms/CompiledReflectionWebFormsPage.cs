@@ -101,6 +101,8 @@ public static class CompiledWebFormsPageExtensions
 
         IEnumerable<NamedHttpHandlerRoute> IHttpHandlerCollection.NamedRoutes => [];
 
+        IReadOnlyCollection<string> ICompiledTypeAccessor.Paths => _metadata.Value.Keys;
+
         IChangeToken IHttpHandlerCollection.GetChangeToken() => NullChangeToken.Singleton;
 
         IEnumerable<IHttpHandlerMetadata> IHttpHandlerCollection.GetHandlerMetadata() => _metadata.Value.Values.Select(v => v.Metadata);
@@ -157,6 +159,12 @@ public static class CompiledWebFormsPageExtensions
         }
 
         Type ICompiledTypeAccessor.GetForPath(string virtualPath) => _metadata.Value.TryGetValue(virtualPath, out var result) ? result.type : null;
+
+        bool ICompiledTypeAccessor.TryGetException(string path, [MaybeNullWhen(false)] out Exception exception)
+        {
+            exception = null;
+            return false;
+        }
 
         private sealed class WebFormsAssemblyLoadContext : AssemblyLoadContext
         {
