@@ -39,11 +39,6 @@ public class DynamicCompilationTests
     [DataRow("test11", "cspage.aspx")]
     public async Task CompiledPageRuns(string test, params string[] pages)
     {
-        if (test == "test08")
-        {
-            Assert.Inconclusive("Currently broken on CI");
-        }
-
         // Arrange
         using var cts = Debugger.IsAttached ? new CancellationTokenSource() : new CancellationTokenSource(TimeSpan.FromSeconds(30));
         var contentProvider = new EmbeddedFileProvider(typeof(DynamicCompilationTests).Assembly, $"Compiler.Dynamic.Tests.assets.{test}");
