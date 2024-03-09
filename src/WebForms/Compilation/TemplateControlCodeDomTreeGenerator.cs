@@ -113,36 +113,6 @@ internal abstract class TemplateControlCodeDomTreeGenerator : BaseTemplateCodeDo
      * Build the strongly typed new property
      */
     // e.g. public new {propertyType} Master { get { return ({propertyType})base.Master; } }
-
-    internal void BuildStronglyTypedProperty(string propertyName, TypeReference type)
-    {
-        CodeMemberProperty prop = new CodeMemberProperty();
-        prop.Attributes &= ~MemberAttributes.AccessMask;
-        prop.Attributes &= ~MemberAttributes.ScopeMask;
-        prop.Attributes |= MemberAttributes.Final | MemberAttributes.New | MemberAttributes.Public;
-        prop.Name = propertyName;
-        prop.Type = new CodeTypeReference(type.Name);
-
-        CodePropertyReferenceExpression propRef = new CodePropertyReferenceExpression(
-            new CodeBaseReferenceExpression(), propertyName);
-
-        prop.GetStatements.Add(new CodeMethodReturnStatement(new CodeCastExpression(type.Name, propRef)));
-        _intermediateClass.Members.Add(prop);
-    }
-
-    internal void BuildMasterPageFactory(TypeReference type)
-    {
-        var prop = new CodeMemberMethod();
-        prop.Attributes &= ~MemberAttributes.AccessMask;
-        prop.Attributes &= ~MemberAttributes.ScopeMask;
-        prop.Attributes |= MemberAttributes.Override | MemberAttributes.Family;
-        prop.Name = "CreateMasterPage";
-        prop.ReturnType = new CodeTypeReference(typeof(MasterPage));
-        prop.Statements.Add(new CodeMethodReturnStatement(new CodeObjectCreateExpression(type.Name)));
-
-        _sourceDataClass.Members.Add(prop);
-    }
-
     internal void BuildStronglyTypedProperty(string propertyName, Type propertyType)
     {
         // VSWhidbey 321818.

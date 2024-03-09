@@ -68,9 +68,6 @@ public abstract class BaseTemplateParser : TemplateParser
     {
         var t = GetReferencedType(virtualPath, false /*allowNoCompile*/);
 
-        //This was done differently in original Webform
-        t ??= CompiledTypeAccessor.GetForPath(virtualPath.Path);
-
         // Fail if it's a no compile uc, since it doesn't have a Type we can use
         if (t == null)
         {
@@ -110,7 +107,6 @@ public abstract class BaseTemplateParser : TemplateParser
 
     internal Type GetReferencedType(VirtualPath virtualPath, bool allowNoCompile)
     {
-
         virtualPath = ResolveVirtualPath(virtualPath);
 
         // If we have a page parser filter, make sure the reference is allowed
@@ -190,8 +186,9 @@ public abstract class BaseTemplateParser : TemplateParser
 
         return t;
 #else
-        //.RequestServices.GetRequiredService<ILogger<BaseTemplateParser>>().LogWarning("GetReferenceType {Path}", virtualPath);
-        return null;
+        var t = CompiledTypeAccessor.GetForPath(virtualPath);
+        AddTypeDependency(t);
+        return t;
 #endif
     }
 

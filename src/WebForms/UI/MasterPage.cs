@@ -5,6 +5,8 @@ using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Diagnostics;
 using System.Globalization;
+using System.Web.Util;
+using WebForms.Internal;
 
 /*
  * MasterPage class definition
@@ -106,14 +108,12 @@ public class MasterPage : UserControl
         {
             if (_master == null && !_masterPageApplied)
             {
-                _master = CreateMasterPage();
+                _master = MasterPage.CreateMaster(this, Context, _masterPageFile, _contentTemplateCollection);
             }
 
             return _master;
         }
     }
-
-    protected virtual MasterPage CreateMasterPage() => null;
 
     /// <devdoc>
     ///    <para>Gets and sets the masterPageFile of this control.</para>
@@ -167,11 +167,39 @@ public class MasterPage : UserControl
         }
     }
 
-    internal static MasterPage CreateMaster(TemplateControl owner, MasterPage master, IDictionary contentTemplateCollection)
+    internal static MasterPage CreateMaster(TemplateControl owner, HttpContext context, VirtualPath masterPageFile, IDictionary contentTemplateCollection)
     {
         Debug.Assert(owner is MasterPage || owner is Page);
+        if (masterPageFile == null)
+        {
+            if (contentTemplateCollection != null && contentTemplateCollection.Count > 0)
+            {
+                throw new HttpException(SR.GetString(SR.Content_only_allowed_in_content_page));
+            }
 
-        master.TemplateControlVirtualPath = "~/Site.Master";
+            return null;
+        }
+
+        // If it's relative, make it *app* relative.  Treat is as relative to this
+        // user control (ASURT 55513)
+        VirtualPath virtualPath = VirtualPathProvider.CombineVirtualPathsInternal(owner.TemplateControlVirtualPath, masterPageFile);
+
+        // Compile the declarative control and get its Type
+        ITypedWebObjectFactory result = context.GetTypedWebObjectForPath(virtualPath);
+
+        if (result is null)
+        {
+            return null;
+        }
+
+        // Make sure it has the correct base type
+        if (!typeof(MasterPage).IsAssignableFrom(result.InstantiatedType))
+        {
+            throw new HttpException(SR.GetString(SR.Invalid_master_base, masterPageFile));
+        }
+
+        var master = (MasterPage)result.CreateInstance();
+        master.TemplateControlVirtualPath = virtualPath;
 
         if (owner.HasControls())
         {
@@ -200,7 +228,7 @@ public class MasterPage : UserControl
             {
                 if (!master.ContentPlaceHolders.Contains(contentName.ToLower(CultureInfo.InvariantCulture)))
                 {
-                    throw new HttpException(SR.GetString(SR.MasterPage_doesnt_have_contentplaceholder, contentName));
+                    throw new HttpException(SR.GetString(SR.MasterPage_doesnt_have_contentplaceholder, contentName, masterPageFile));
                 }
             }
             master._contentTemplates = contentTemplateCollection;

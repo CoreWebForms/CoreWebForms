@@ -946,16 +946,14 @@ public partial class Page : TemplateControl, IHttpAsyncHandler
     {
         get
         {
-            if (_master == null && !_preInitWorkComplete && CreateMasterPage() is { } master)
+            if (_master == null && !_preInitWorkComplete)
             {
-                _master = MasterPage.CreateMaster(this, master, _contentTemplateCollection);
+                _master = MasterPage.CreateMaster(this, Context, _masterPageFile, _contentTemplateCollection);
             }
 
             return _master;
         }
     }
-
-    protected virtual MasterPage CreateMasterPage() => null;
 
     private VirtualPath _masterPageFile;
 
