@@ -106,6 +106,22 @@ internal class BaseResourcesBuildProvider : BuildProvider
 
 internal static class HttpRuntime2
 {
+
+
+    internal static string GetSafePath(string path) {
+        if (String.IsNullOrEmpty(path))
+            return path;
+
+        try {
+            // if (HasPathDiscoveryPermission(path)) // could throw on bad filenames
+            return path;
+        }
+        catch {
+        }
+
+        return Path.GetFileName(path);
+    }
+
     internal static object CreateNonPublicInstance(Type type)
     {
         // Check if the type is null

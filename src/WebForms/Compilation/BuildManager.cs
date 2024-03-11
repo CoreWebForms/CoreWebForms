@@ -695,9 +695,8 @@ namespace System.Web.Compilation {
             // we may as well, start all over.
             specialFilesHashCodeCombiner.AddObject(compConfig.RecompilationHash);
 
-            // TODO: Migration
-            // ProfileSection profileSection = appConfig.Profile;
-            // specialFilesHashCodeCombiner.AddObject(profileSection.RecompilationHash);
+            ProfileSection profileSection = MTConfigUtil.GetProfileAppConfig();
+            specialFilesHashCodeCombiner.AddObject(profileSection.RecompilationHash);
 
             // Add a dependency on file encoding (DevDiv 4560)
             // TODO: Migration
@@ -711,8 +710,7 @@ namespace System.Web.Compilation {
             // specialFilesHashCodeCombiner.AddObject(casConfig.OriginUrl);
 
             // Add a dependency on whether profile is enabled
-            // TODO: Migration
-            // specialFilesHashCodeCombiner.AddObject(ProfileManager.Enabled);
+            specialFilesHashCodeCombiner.AddObject(ProfileManager.Enabled);
 
             // Add a dependency to the force debug flag.
             specialFilesHashCodeCombiner.AddObject(PrecompilingWithDebugInfo);
@@ -1101,9 +1099,8 @@ namespace System.Web.Compilation {
                     if (dirType == CodeDirectoryType.MainCode) {
                         // Profile gets built in the same assembly as the main code dir, so
                         // see whether we can get its type from the assembly.
-                        // TODO: Migration
-                        // _profileType = ProfileBuildProvider.GetProfileTypeFromAssembly(
-                        //     codeAssembly, IsPrecompiledApp);
+                        _profileType = ProfileBuildProvider.GetProfileTypeFromAssembly(
+                            codeAssembly, IsPrecompiledApp);
 
                         // To avoid breaking earlier Whidbey apps, allows the name "__code"
                         // to be used for the main code assembly.
@@ -2503,7 +2500,9 @@ namespace System.Web.Compilation {
         }
 
         private bool CacheBuildResultInternal(string cacheKey, BuildResult result,
-            long hashCode, DateTime utcStart) {
+            long hashCode, DateTime utcStart)
+        {
+            if (result == null) return false;
 
             // Before caching it, make sure the hash has been computed
             result.EnsureVirtualPathDependenciesHashComputed();
