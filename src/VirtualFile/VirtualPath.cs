@@ -209,7 +209,7 @@ public sealed class VirtualPath
 
             // Combine the base path with the current path to create a new application-relative path
             var combinedPath = VirtualPathUtility.Combine(basePath, Path);
-            return "~" + combinedPath.TrimStart('/'); // Ensure the result is application-relative
+            return "~/" + combinedPath.TrimStart('/'); // Ensure the result is application-relative
         }
 
         // Fallback to converting the current path to an application-relative path using the root
