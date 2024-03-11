@@ -6,11 +6,11 @@ namespace WebForms.Compiler.Dynamic;
 
 internal sealed class RoslynError
 {
-    public string Id { get; internal set; } = null!;
+    public required string Id { get; init; }
 
-    public string Message { get; internal set; } = null!;
+    public required string Message { get; init; }
 
-    public DiagnosticSeverity Severity { get; internal set; } 
+    public required DiagnosticSeverity Severity { get; init; }
 
-    public string Location { get; internal set; } = null!;
+    public required string Location { get; init; }
 }

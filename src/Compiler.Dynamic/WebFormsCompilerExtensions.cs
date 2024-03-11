@@ -1,15 +1,17 @@
 // MIT License.
 
+using System.Collections.Immutable;
 using System.ComponentModel.Design;
+using System.Globalization;
 using System.Reflection;
 using System.Web;
 using System.Web.UI;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SystemWebAdapters.HttpHandlers;
+using Microsoft.CodeAnalysis;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
-using WebForms;
 using WebForms.Compiler.Dynamic;
 
 namespace Microsoft.Extensions.DependencyInjection;
@@ -22,8 +24,6 @@ public static class WebFormsCompilerExtensions
         builder.Services.AddSingleton<ITypeResolutionService>(ctx => ctx.GetRequiredService<StaticControlCollection>());
         builder.Services.AddSingleton<IMetadataProvider>(ctx => ctx.GetRequiredService<StaticControlCollection>());
         builder.Services.AddWebFormsCompilationCore(_ => { });
-        builder.Services.AddSingleton<StaticSystemWebCompilation>();
-        builder.Services.AddSingleton<IWebFormsCompiler>(ctx => ctx.GetRequiredService<StaticSystemWebCompilation>());
 
         return builder;
     }
@@ -39,7 +39,6 @@ public static class WebFormsCompilerExtensions
         services.Services.AddWebFormsCompilationCore(configure);
         services.Services.AddHostedService<WebFormsCompilationService>();
         services.Services.AddSingleton<DynamicSystemWebCompilation>();
-        services.Services.AddSingleton<IWebFormsCompiler>(ctx => ctx.GetRequiredService<DynamicSystemWebCompilation>());
         services.Services.AddSingleton<IHttpHandlerCollection>(ctx => ctx.GetRequiredService<DynamicSystemWebCompilation>());
 
         return services;
@@ -47,6 +46,7 @@ public static class WebFormsCompilerExtensions
 
     private static void AddWebFormsCompilationCore(this IServiceCollection services, Action<PageCompilationOptions> configure)
     {
+        services.AddSingleton<IWebFormsCompiler, SystemWebCompilation>();
         services.AddOptions<PageCompilationOptions>()
             .Configure<IOptions<WebFormsOptions>>((options, webFormsOptions) =>
             {
@@ -76,5 +76,19 @@ public static class WebFormsCompilerExtensions
                     }
                 }
             });
+    }
+
+    internal static IEnumerable<RoslynError> ConvertToErrors(this ImmutableArray<Diagnostic> diagnostics)
+    {
+        foreach (var d in diagnostics)
+        {
+            yield return new RoslynError()
+            {
+                Id = d.Id,
+                Message = d.GetMessage(CultureInfo.CurrentCulture),
+                Severity = d.Severity,
+                Location = d.Location.ToString(),
+            };
+        }
     }
 }

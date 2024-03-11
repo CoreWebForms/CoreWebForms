@@ -12,11 +12,11 @@ internal sealed class WebFormsCompilationService : BackgroundService
 {
     private readonly ILogger<WebFormsCompilationService> _logger;
     private readonly ManualResetEventSlim _event;
-    private readonly IWebFormsCompiler _compiler;
+    private readonly DynamicSystemWebCompilation _compiler;
     private readonly IOptions<PageCompilationOptions> _options;
 
     public WebFormsCompilationService(
-        IWebFormsCompiler compiler,
+        DynamicSystemWebCompilation compiler,
         IOptions<PageCompilationOptions> options,
         ILogger<WebFormsCompilationService> logger)
     {
@@ -58,7 +58,7 @@ internal sealed class WebFormsCompilationService : BackgroundService
         {
             await _event.WaitHandle.WaitAsync(token).ConfigureAwait(false);
 
-            await _compiler.CompilePagesAsync(token).ConfigureAwait(false);
+            _compiler.CompilePages(token);
 
             _event.Reset();
         }
