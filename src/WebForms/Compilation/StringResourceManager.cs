@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Text;
 
 namespace System.Web;
+
 internal class StringResourceManager
 {
 
@@ -157,9 +158,7 @@ internal class StringResourceBuilder
             writer.Write(0x00000000);
             writer.Write(0x00000000);
 
-#if DEBUG
             long startPos = strm.Position;
-#endif
 
             foreach (string s in _literalStrings)
             {
@@ -168,9 +167,7 @@ internal class StringResourceBuilder
             }
 
             // Make sure the stream has the size we expect
-#if DEBUG
             Debug.Assert(strm.Position - startPos == _offset, "strm.Position-startPos == _offset");
-#endif
         }
     }
 
