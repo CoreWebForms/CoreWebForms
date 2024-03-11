@@ -1,8 +1,5 @@
 // MIT License.
 
-namespace System.Web.Compilation;
-
-using System;
 using System.CodeDom;
 using System.Diagnostics;
 using System.Reflection;
@@ -10,6 +7,7 @@ using System.Web.SessionState;
 using System.Web.UI;
 using System.Web.Util;
 
+namespace System.Web.Compilation;
 internal class PageCodeDomTreeGenerator : TemplateControlCodeDomTreeGenerator
 {
 

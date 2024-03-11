@@ -1,20 +1,20 @@
 // MIT License.
 
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+
 namespace System.Web.UI
 {
-    using System.Diagnostics;
-    using System.Diagnostics.CodeAnalysis;
-
     [
     SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix", Justification = "Consistent with RegisterExpandoAttribute API."),
     ]
     public sealed class RegisteredExpandoAttribute
     {
-        private Control _control;
-        private string _name;
-        private string _value;
-        private string _controlId;
-        private bool _encode;
+        private readonly Control _control;
+        private readonly string _name;
+        private readonly string _value;
+        private readonly string _controlId;
+        private readonly bool _encode;
 
         internal RegisteredExpandoAttribute(Control control,
             string controlId,

@@ -1,9 +1,8 @@
 // MIT License.
 
-namespace System.Web.UI;
-
 using System.CodeDom;
 
+namespace System.Web.UI;
 /// <summary>
 /// A ControlBuilder implementation that generates Code DOM statements
 /// </summary>

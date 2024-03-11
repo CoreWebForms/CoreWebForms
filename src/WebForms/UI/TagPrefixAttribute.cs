@@ -1,10 +1,8 @@
 // MIT License.
 
-namespace System.Web.UI;
-
-using System;
 using System.Web.Util;
 
+namespace System.Web.UI;
 [AttributeUsage(AttributeTargets.Assembly, AllowMultiple = true)]
 public sealed class TagPrefixAttribute : Attribute
 {

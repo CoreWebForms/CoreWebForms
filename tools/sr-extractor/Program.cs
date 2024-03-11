@@ -1,7 +1,6 @@
 // MIT License.
 
 using System.CodeDom.Compiler;
-using System.Globalization;
 using System.Text.RegularExpressions;
 
 public partial class Program

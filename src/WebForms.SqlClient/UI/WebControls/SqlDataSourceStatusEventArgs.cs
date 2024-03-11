@@ -1,18 +1,15 @@
 // MIT License.
 
-using System;
-using System.Collections.Specialized;
-using System.Data;
 using System.Data.Common;
 
 namespace System.Web.UI.WebControls;
 public class SqlDataSourceStatusEventArgs : EventArgs
 {
 
-    private DbCommand _command;
-    private Exception _exception;
+    private readonly DbCommand _command;
+    private readonly Exception _exception;
     private bool _exceptionHandled;
-    private int _affectedRows;
+    private readonly int _affectedRows;
 
     public SqlDataSourceStatusEventArgs(DbCommand command, int affectedRows, Exception exception) : base()
     {

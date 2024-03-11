@@ -1,19 +1,13 @@
 // MIT License.
 
+using System.Collections;
+using System.Collections.Specialized;
+using System.Diagnostics;
+using System.Reflection;
+using System.Web.Util;
+
 namespace System.Web.UI.WebControls.WebParts
 {
-
-    using System;
-    using System.Collections;
-    using System.Collections.Specialized;
-    using System.Diagnostics;
-    using System.Globalization;
-    using System.IO;
-    using System.Reflection;
-    using System.Web;
-    using System.Web.UI;
-    using System.Web.Util;
-
     /// <devdoc>
     /// </devdoc>
     internal sealed class BlobPersonalizationState : PersonalizationState
@@ -36,7 +30,6 @@ namespace System.Web.UI.WebControls.WebParts
         public BlobPersonalizationState(WebPartManager webPartManager) : base(webPartManager)
         {
             // 
-
 
             // Note that we don't use the IsPostBack property of Page because that
             // is based on the presence of view state, which could be on the query string
@@ -1112,7 +1105,6 @@ namespace System.Web.UI.WebControls.WebParts
             return customProperties;
         }
 
-
         private void RoundTripWebPartPersonalization(string ID, string genericWebPartID)
         {
             if (String.IsNullOrEmpty(ID))
@@ -1392,7 +1384,6 @@ namespace System.Web.UI.WebControls.WebParts
                             /* forceSetDirty */ false);
         }
 
-
         /// <devdoc>
         /// Used to track personalization information, i.e. the data,
         /// and the associated object type and ID.
@@ -1438,7 +1429,6 @@ namespace System.Web.UI.WebControls.WebParts
                 }
             }
         }
-
 
         /// <devdoc>
         /// Used to track personalization information for a Control instance.

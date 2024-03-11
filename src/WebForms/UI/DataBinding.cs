@@ -1,15 +1,13 @@
 // MIT License.
 
-/*
- */
-
-namespace System.Web.UI;
-
-using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.Web.Util;
 
+/*
+ */
+
+namespace System.Web.UI;
 /// <devdoc>
 ///    <para>Enables RAD designers to create data binding expressions 
 ///       at design time. This class cannot be inherited.</para>

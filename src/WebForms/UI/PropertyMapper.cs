@@ -1,5 +1,8 @@
 // MIT License.
 
+using System.ComponentModel;
+using System.Reflection;
+
 /*
  * PropertyMapper.cs
  *
@@ -7,11 +10,6 @@
  */
 
 namespace System.Web.UI;
-
-using System;
-using System.ComponentModel;
-using System.Reflection;
-
 internal sealed class PropertyMapper
 {
     private const char PERSIST_CHAR = '-';

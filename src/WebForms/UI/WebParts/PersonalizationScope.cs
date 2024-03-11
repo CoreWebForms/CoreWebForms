@@ -1,9 +1,7 @@
 // MIT License.
 
-namespace System.Web.UI.WebControls.WebParts {
-
-    using System;
-
+namespace System.Web.UI.WebControls.WebParts
+{
     /// <devdoc>
     /// Represents the personalization scope of an object or some data.
     /// </devdoc>

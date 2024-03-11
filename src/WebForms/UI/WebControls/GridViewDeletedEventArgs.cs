@@ -10,8 +10,8 @@ namespace System.Web.UI.WebControls;
 
 public class GridViewDeletedEventArgs : EventArgs {
 
-    private int _affectedRows;
-    private Exception _exception;
+    private readonly int _affectedRows;
+    private readonly Exception _exception;
     private bool _exceptionHandled;
     private IOrderedDictionary _keys;
     private IOrderedDictionary _values;

@@ -1,11 +1,11 @@
 // MIT License.
 
-namespace System.Web.UI;
 
 using System.Collections;
 using System.Collections.Specialized;
 using System.Diagnostics;
 
+namespace System.Web.UI;
 public class ObjectPersistData
 {
     private readonly Type _objectType;

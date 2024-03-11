@@ -1,17 +1,15 @@
 // MIT License.
 
+using System.Diagnostics.CodeAnalysis;
+
 namespace System.Web.UI
 {
-    using System;
-    using System.Diagnostics.CodeAnalysis;
-    using System.Web;
-
     [
     AttributeUsage(AttributeTargets.Class, AllowMultiple = true)
     ]
     public sealed class TargetControlTypeAttribute : Attribute
     {
-        private Type _targetControlType;
+        private readonly Type _targetControlType;
 
         public TargetControlTypeAttribute(Type targetControlType)
         {

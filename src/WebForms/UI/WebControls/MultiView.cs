@@ -4,13 +4,11 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-namespace System.Web.UI.WebControls {
+using System.ComponentModel;
+using System.Globalization;
 
-    using System;
-    using System.ComponentModel;
-    using System.Globalization;
-    using System.Web.UI;
-
+namespace System.Web.UI.WebControls
+{
     /// <devdoc>
     /// <para></para>
     /// </devdoc>

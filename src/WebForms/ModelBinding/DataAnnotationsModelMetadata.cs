@@ -1,11 +1,11 @@
-﻿namespace System.Web.ModelBinding {
-    using System;
-    using System.ComponentModel.DataAnnotations;
-    using System.Globalization;
-    using System.Reflection;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Globalization;
+using System.Reflection;
 
+namespace System.Web.ModelBinding
+{
     public class DataAnnotationsModelMetadata : ModelMetadata {
-        private DisplayColumnAttribute _displayColumnAttribute;
+        private readonly DisplayColumnAttribute _displayColumnAttribute;
 
         public DataAnnotationsModelMetadata(DataAnnotationsModelMetadataProvider provider, Type containerType,
                                             Func<object> modelAccessor, Type modelType, string propertyName,

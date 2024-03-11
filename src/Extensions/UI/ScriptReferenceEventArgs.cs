@@ -1,9 +1,7 @@
 // MIT License.
 
-namespace System.Web.UI {
-    using System;
-    using System.Web;
-
+namespace System.Web.UI
+{
     public class ScriptReferenceEventArgs : EventArgs {
         private readonly ScriptReference _script;
 

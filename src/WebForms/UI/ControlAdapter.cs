@@ -1,16 +1,15 @@
 //How to set the _control
 
+using System.ComponentModel;
+
 //------------------------------------------------------------------------------
 // <copyright file="ControlAdapter.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>                                                                
 //------------------------------------------------------------------------------
 
-namespace System.Web.UI.Adapters {
-    using System;
-    using System.ComponentModel;
-    using System.Security.Permissions;
-
+namespace System.Web.UI.Adapters
+{
     /* Defines the properties, methods, and events shared by all server control
      * adapters in the Web Forms page framework.
     */

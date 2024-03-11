@@ -1,10 +1,9 @@
 // MIT License.
 
-namespace System.Web.UI.WebControls.WebParts {
+using System.Reflection;
 
-    using System;
-    using System.Reflection;
-
+namespace System.Web.UI.WebControls.WebParts
+{
     /// <devdoc>
     /// Represents a property that has been marked as personalizable
     /// </devdoc>

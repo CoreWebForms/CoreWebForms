@@ -4,15 +4,12 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-namespace System.Web.UI.WebControls {
 
-    using System;
-    using System.CodeDom.Compiler;
-    using System.Collections;
-    using System.ComponentModel;
-    using System.Web;
-    using System.Web.UI;
+using System.CodeDom.Compiler;
+using System.ComponentModel;
 
+namespace System.Web.UI.WebControls
+{
     public sealed class WizardStepControlBuilder : ControlBuilder {
         internal override void SetParentBuilder(ControlBuilder parentBuilder) {
             // Do not check containment at designtime or in a skin file.

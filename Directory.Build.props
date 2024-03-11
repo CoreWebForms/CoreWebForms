@@ -18,6 +18,17 @@
   </PropertyGroup>
 
   <PropertyGroup>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+
+    <!-- Workaround for https://github.com/dotnet/roslyn/issues/41640 -->
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);CS1591;CS1573</NoWarn>
+
+    <!-- Disable warnings because of devdoc usage -->
+    <NoWarn>$(NoWarn);CS1570;CS1574;CS0419;CS1584;CS1587</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)CoreWebForms.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>

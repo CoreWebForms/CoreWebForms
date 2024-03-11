@@ -1,13 +1,11 @@
 // MIT License.
 
-namespace System.Web.UI.WebControls;
-
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.Text.RegularExpressions;
-using System.Web;
 
+namespace System.Web.UI.WebControls;
 /// <devdoc>
 ///    <para> Serves as the abstract base
 ///       class for validators that do typed comparisons.</para>

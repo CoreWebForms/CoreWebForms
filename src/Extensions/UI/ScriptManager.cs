@@ -1,26 +1,23 @@
 // MIT License.
 
+using System.Collections;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using System.Reflection;
+using System.Text;
+using System.Web.Globalization;
+using System.Web.Optimization;
+using System.Web.Resources;
+using System.Web.Script.Serialization;
+using System.Web.Util;
+using Microsoft.Extensions.Logging;
+
 namespace System.Web.UI
 {
-    using System;
-    using System.Collections;
-    using System.Collections.Generic;
-    using System.Collections.ObjectModel;
-    using System.Collections.Specialized;
-    using System.ComponentModel;
-    using System.Diagnostics;
-    using System.Diagnostics.CodeAnalysis;
-    using System.Globalization;
-    using System.Reflection;
-    using System.Text;
-    using System.Web;
-    using System.Web.Globalization;
-    using System.Web.Optimization;
-    using System.Web.Resources;
-    using System.Web.Script.Serialization;
-    using System.Web.Util;
-    using Microsoft.Extensions.Logging;
-
     [
     DefaultProperty("Scripts"),
     Designer("System.Web.UI.Design.ScriptManagerDesigner, " + AssemblyRef.SystemWebExtensionsDesign),
@@ -68,7 +65,7 @@ namespace System.Web.UI
         private int _uniqueScriptCounter;
         private bool _enableCdn;
         private bool _enableCdnFallback = true;
-        private HashSet<String> _scriptPathsDefiningSys = new HashSet<String>(StringComparer.OrdinalIgnoreCase);
+        private readonly HashSet<String> _scriptPathsDefiningSys = new HashSet<String>(StringComparer.OrdinalIgnoreCase);
 
         private static readonly object AsyncPostBackErrorEvent = new object();
         private static readonly object ResolveCompositeScriptReferenceEvent = new object();
@@ -1561,9 +1558,6 @@ namespace System.Web.UI
         }
 
         // 
-
-
-
 
         [SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters", Justification = "The overload specifically exists to strengthen the support for passing in a Page parameter.")]
         public static void RegisterArrayDeclaration(Page page, string arrayName, string arrayValue)

@@ -4,21 +4,14 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-namespace System.Web.UI.WebControls {
-    using System;
-    using System.Collections;
-    using System.Collections.Generic;
-    using System.ComponentModel;
-    using System.Diagnostics;
-    using System.Diagnostics.CodeAnalysis;
-    using System.Drawing.Design;
-    using System.Globalization;
-    using System.Linq;
-    using System.Security.Permissions;
-    using System.Web;
-    using System.Web.UI;
-    using System.Web.Util;
+using System.Collections;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 
+namespace System.Web.UI.WebControls
+{
     [
     Bindable(false),
     DefaultEvent("FinishButtonClick"),
@@ -90,7 +83,7 @@ namespace System.Web.UI.WebControls {
         private WizardRenderingBase _rendering;
 
         private bool _activeStepIndexSet;
-        private bool _displaySideBarDefault;
+        private readonly bool _displaySideBarDefault;
         private bool _displaySideBar;
         private bool? _isMacIE;
         private bool _renderSideBarDataList;
@@ -2821,9 +2814,9 @@ namespace System.Web.UI.WebControls {
         }
 
         private class WizardControlCollectionModifier : IDisposable {
-            Wizard _wizard;
-            ControlCollection _controls;
-            String _originalError;
+            readonly Wizard _wizard;
+            readonly ControlCollection _controls;
+            readonly String _originalError;
 
             public WizardControlCollectionModifier(Wizard wizard) {
                 _wizard = wizard;
@@ -2845,7 +2838,7 @@ namespace System.Web.UI.WebControls {
 
         [SupportsEventValidation]
         private class WizardChildTable : ChildTable {
-            private Wizard _owner;
+            private readonly Wizard _owner;
 
             internal WizardChildTable(Wizard owner) {
                 _owner = owner;
@@ -2864,11 +2857,11 @@ namespace System.Web.UI.WebControls {
 
         private sealed class NavigationTemplate : ITemplate {
 
-            private Wizard _wizard;
-            private WizardTemplateType _templateType;
-            private String _button1ID;
-            private String _button2ID;
-            private String _button3ID;
+            private readonly Wizard _wizard;
+            private readonly WizardTemplateType _templateType;
+            private readonly String _button1ID;
+            private readonly String _button2ID;
+            private readonly String _button3ID;
 
             private const string _startNextButtonID = "StartNext";
             private const string _stepNextButtonID = "StepNext";
@@ -2879,9 +2872,9 @@ namespace System.Web.UI.WebControls {
 
             private TableRow _row;
 
-            private IButtonControl[][] _buttons;
+            private readonly IButtonControl[][] _buttons;
 
-            private bool _button1CausesValidation;
+            private readonly bool _button1CausesValidation;
 
             internal static NavigationTemplate GetDefaultStartNavigationTemplate(Wizard wizard) {
                 return new NavigationTemplate(wizard, WizardTemplateType.StartNavigationTemplate,
@@ -3063,7 +3056,7 @@ namespace System.Web.UI.WebControls {
         }
 
         private class DataListItemTemplate : ITemplate {
-            Wizard _owner;
+            readonly Wizard _owner;
 
             internal DataListItemTemplate(Wizard owner) {
                 _owner = owner;
@@ -3081,7 +3074,7 @@ namespace System.Web.UI.WebControls {
         }
 
         private class DefaultSideBarTemplate : ITemplate {
-            private Wizard _owner;
+            private readonly Wizard _owner;
 
             internal DefaultSideBarTemplate(Wizard owner) {
                 _owner = owner;
@@ -3108,7 +3101,7 @@ namespace System.Web.UI.WebControls {
 
         // Internally use an empty table (with a row and a cell) to render the content.
         internal abstract class BlockControl : WebControl, INamingContainer, INonBindingContainer {
-            private Table _table;
+            private readonly Table _table;
             internal TableCell _cell;
             internal Wizard _owner;
 
@@ -3198,7 +3191,7 @@ namespace System.Web.UI.WebControls {
         }
 
         internal class BaseContentTemplateContainer : BlockControl {
-            private bool _useInnerTable;
+            private readonly bool _useInnerTable;
             internal BaseContentTemplateContainer(Wizard owner,  bool useInnerTable)
                 : base(owner) {
                 _useInnerTable = useInnerTable;
@@ -3232,7 +3225,7 @@ namespace System.Web.UI.WebControls {
             private IButtonControl _previousButton;
             private IButtonControl _nextButton;
             private IButtonControl _cancelButton;
-            private Wizard _owner;
+            private readonly Wizard _owner;
 
             internal BaseNavigationTemplateContainer(Wizard owner) {
                 _owner = owner;
@@ -3398,7 +3391,7 @@ namespace System.Web.UI.WebControls {
     }
 
     public sealed class WizardStepCollection : IList {
-        private Wizard _wizard;
+        private readonly Wizard _wizard;
 
         internal WizardStepCollection(Wizard wizard) {
             this._wizard = wizard;
@@ -3633,7 +3626,7 @@ namespace System.Web.UI.WebControls {
 
     public class WizardNavigationEventArgs : EventArgs {
 
-        private int _currentStepIndex;
+        private readonly int _currentStepIndex;
         private int _nextStepIndex;
         private bool _cancel;
 

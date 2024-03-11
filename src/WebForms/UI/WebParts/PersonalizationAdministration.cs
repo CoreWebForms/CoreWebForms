@@ -1,16 +1,15 @@
 // MIT License.
 
+using System.Collections.Specialized;
+using System.Diagnostics;
+using System.Globalization;
+using System.Security.Principal;
+using System.Web.Util;
+using Microsoft.Extensions.DependencyInjection;
+using WebForms;
+
 namespace System.Web.UI.WebControls.WebParts
 {
-    using System;
-    using System.Collections.Specialized;
-    using System.Diagnostics;
-    using System.Globalization;
-    using System.Security.Principal;
-    using System.Web.Util;
-    using Microsoft.Extensions.DependencyInjection;
-    using WebForms;
-
     internal class WebPartsOptions
     {
         public WebPartsOptions()

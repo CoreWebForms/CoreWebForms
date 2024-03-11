@@ -1,14 +1,13 @@
 // MIT License.
 
+using System.Web.UI;
+
 /*
  * Code related to the <assemblies> config section
  *
  * Copyright (c) 1999 Microsoft Corporation
  */
 namespace System.Web.Compilation;
-using System.Web;
-using System.Web.UI;
-
 internal static class CompilationUtil
 {
 

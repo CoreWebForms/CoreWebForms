@@ -14,9 +14,6 @@ BaseCodeDomTreeGenerator
 ***********************************************/
 
 namespace System.Web.Compilation;
-
-using System;
-
 [Serializable]
 public sealed class LinePragmaCodeInfo
 {

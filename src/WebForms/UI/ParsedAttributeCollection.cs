@@ -1,14 +1,11 @@
 // MIT License.
 
-namespace System.Web.UI;
-
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Web.Util;
 
+namespace System.Web.UI;
 /// <devdoc>
 /// Contains parsed attributes organized by filter.
 /// The IDictionary implementation uses the combination of all filters using filter:attrName as the attribute names

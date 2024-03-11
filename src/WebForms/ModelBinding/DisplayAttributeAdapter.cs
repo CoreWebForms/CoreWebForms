@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 namespace System.Web.ModelBinding
 {
     internal sealed class DisplayAttributeAdapter {
-        private DisplayAttribute _displayAttribute;
+        private readonly DisplayAttribute _displayAttribute;
 
         public DisplayAttributeAdapter(DisplayAttribute displayAttribute) {
             if (displayAttribute == null) {

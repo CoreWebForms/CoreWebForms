@@ -1,9 +1,8 @@
 //MIT license
 
-namespace System.Web.UI.WebControls.Adapters; 
-
 using System.Collections;
 
+namespace System.Web.UI.WebControls.Adapters; 
 public class DataBoundControlAdapter : WebControlAdapter {
 
     protected new DataBoundControl Control {

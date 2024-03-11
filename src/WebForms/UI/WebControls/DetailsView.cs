@@ -87,7 +87,7 @@ public class DetailsView : CompositeDataBoundControl, IDataItemContainer, ICallb
     private bool _renderClientScriptValid; 
 
     private IAutoFieldGenerator _rowsGenerator;
-    private DetailsViewRowsGenerator _defaultRowsGenerator = new DetailsViewRowsGenerator();
+    private readonly DetailsViewRowsGenerator _defaultRowsGenerator = new DetailsViewRowsGenerator();
 
     private IOrderedDictionary _deleteKeys;
     private IOrderedDictionary _deleteValues;

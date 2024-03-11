@@ -1,8 +1,8 @@
 //MIT license
 
-namespace System.Web.ModelBinding; 
 using System.Globalization;
 
+namespace System.Web.ModelBinding; 
 public sealed class QueryStringValueProvider : NameValueCollectionValueProvider {
 
     // QueryString should use the invariant culture since it's part of the URL, and the URL should be

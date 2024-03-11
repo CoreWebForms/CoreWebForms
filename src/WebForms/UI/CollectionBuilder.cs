@@ -1,5 +1,9 @@
 // MIT License.
 
+using System.Collections;
+using System.Diagnostics;
+using System.Reflection;
+
 /*
  * Classes related to complex property support.
  *
@@ -7,12 +11,6 @@
  */
 
 namespace System.Web.UI;
-
-using System;
-using System.Collections;
-using System.Diagnostics;
-using System.Reflection;
-
 [AttributeUsage(AttributeTargets.Property)]
 internal sealed class IgnoreUnknownContentAttribute : Attribute
 {

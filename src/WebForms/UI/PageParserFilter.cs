@@ -1,16 +1,15 @@
 // MIT License.
 
+using System.Collections;
+using System.Diagnostics;
+using System.Globalization;
+
 /*
  * Abstract class implemented by objects that need to control the parsing of pages.
  *
  * Copyright (c) 2004 Microsoft Corporation
  */
 namespace System.Web.UI;
-
-using System.Collections;
-using System.Diagnostics;
-using System.Globalization;
-
 public abstract class PageParserFilter
 {
 

@@ -1,7 +1,9 @@
 // MIT License.
 
+#if !NET8_0_OR_GREATER
 using System.Collections.Generic;
 using System.Linq;
+#endif
 using System.Reflection.Metadata;
 
 namespace WebForms;

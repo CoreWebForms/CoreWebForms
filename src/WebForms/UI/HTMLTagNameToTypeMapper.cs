@@ -1,5 +1,9 @@
 // MIT License.
 
+using System.Collections;
+using System.Web.UI.HtmlControls;
+using System.Web.Util;
+
 /*
  * Mapper of html tags to control types.
  *
@@ -7,12 +11,6 @@
  */
 
 namespace System.Web.UI;
-
-using System;
-using System.Collections;
-using System.Web.UI.HtmlControls;
-using System.Web.Util;
-
 internal class HtmlTagNameToTypeMapper : ITagNameToTypeMapper
 {
     static Hashtable _tagMap;

@@ -1,12 +1,10 @@
 // MIT License.
 
-namespace System.Web.UI.WebControls;
-
 using System.Collections;
 using System.ComponentModel;
 using System.Security.Principal;
-using System.Web.UI;
 
+namespace System.Web.UI.WebControls;
 /// <devdoc>
 /// Renders exactly one of its templates, chosen by whether a user is logged in
 /// and the roles that contain the user.

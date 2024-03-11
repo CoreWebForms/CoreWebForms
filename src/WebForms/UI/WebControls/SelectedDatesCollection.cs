@@ -1,18 +1,16 @@
 // MIT License.
 
+using System.Collections;
+
 namespace System.Web.UI.WebControls
 {
-
-    using System;
-    using System.Collections;
-
     /// <devdoc>
     /// <para>Encapsulates the collection of <see cref='Calendar.SelectedDates'/> within a <see cref='Calendar'/> control.</para>
     /// </devdoc>
     public sealed class SelectedDatesCollection : ICollection
     {
 
-        private ArrayList dateList;
+        private readonly ArrayList dateList;
 
         /// <devdoc>
         /// <para>Initializes a new instance of the <see cref='SelectedDatesCollection'/> class 

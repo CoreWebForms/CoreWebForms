@@ -5,7 +5,6 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
-using System.Runtime.Serialization;
 using System.Web.UI.WebControls;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.SystemWebAdapters;

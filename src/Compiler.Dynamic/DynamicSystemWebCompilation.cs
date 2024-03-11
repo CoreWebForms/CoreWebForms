@@ -3,7 +3,6 @@
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using System.Text.Json;
 using System.Web;
 using System.Web.Routing;
 using System.Web.SessionState;
@@ -15,7 +14,6 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
 using WebForms.Features;
-using WebForms.Internal;
 
 using HttpContext = System.Web.HttpContext;
 

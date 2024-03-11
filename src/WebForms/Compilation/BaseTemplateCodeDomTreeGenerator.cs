@@ -1,8 +1,5 @@
 // MIT License.
 
-namespace System.Web.Compilation;
-
-using System;
 using System.CodeDom;
 using System.Collections;
 using System.Collections.Specialized;
@@ -11,11 +8,11 @@ using System.ComponentModel.Design;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using System.IO;
 using System.Reflection;
 using System.Web.UI;
 using System.Web.Util;
 
+namespace System.Web.Compilation;
 internal abstract class BaseTemplateCodeDomTreeGenerator : BaseCodeDomTreeGenerator
 {
 
@@ -1279,13 +1276,13 @@ internal abstract class BaseTemplateCodeDomTreeGenerator : BaseCodeDomTreeGenera
             // Check if it has a non-private field or property that has a name that
             // matches the id of the control.
 
-            Type memberType = Util.GetNonPrivateFieldType(Parser.BaseType, builder.ID);
+            Type memberType = UI.Util.GetNonPrivateFieldType(Parser.BaseType, builder.ID);
 
             // Couldn't find a field, try a property (ASURT 45039)
             // 
             if (memberType == null)
             {
-                memberType = Util.GetNonPrivatePropertyType(Parser.BaseType, builder.ID);
+                memberType = UI.Util.GetNonPrivatePropertyType(Parser.BaseType, builder.ID);
             }
 
             if (memberType != null)

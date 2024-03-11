@@ -1,9 +1,7 @@
 // MIT License.
 
-namespace System.Web.UI.WebControls.WebParts {
-
-    using System;
-
+namespace System.Web.UI.WebControls.WebParts
+{
     public sealed class PersonalizationEntry {
         private PersonalizationScope _scope;
         private object _value;

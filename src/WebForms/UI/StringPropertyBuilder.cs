@@ -1,10 +1,8 @@
 // MIT License.
 
-namespace System.Web.UI;
-
-using System;
 using System.Collections;
 
+namespace System.Web.UI;
 /// <devdoc>
 /// Builds inner string properties.
 /// </devdoc>

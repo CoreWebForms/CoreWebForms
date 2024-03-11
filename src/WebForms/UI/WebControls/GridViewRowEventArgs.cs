@@ -1,15 +1,12 @@
 //MIT license
 
-namespace System.Web.UI.WebControls; 
-
-using System;
-
+namespace System.Web.UI.WebControls;
 /// <devdoc>
 /// <para>Provides data for the <see langword='GridViewRow'/> event.</para>
 /// </devdoc>
 public class GridViewRowEventArgs : EventArgs {
 
-    private GridViewRow _row;
+    private readonly GridViewRow _row;
 
     /// <devdoc>
     /// <para>Initializes a new instance of <see cref='System.Web.UI.WebControls.GridViewRowEventArgs'/> class.</para>

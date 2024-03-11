@@ -1,5 +1,8 @@
 // MIT License.
 
+using System.Collections;
+using System.Web.Util;
+
 /*
  * Implements the <object runat=server> tag
  *
@@ -7,12 +10,6 @@
  */
 
 namespace System.Web.UI;
-
-using System;
-using System.Collections;
-using System.Web;
-using System.Web.Util;
-
 /*
  * ObjectTag is a marker class, that should never be instantiated.  Its
  * only purpose is to point to the ObjectTagBuilder class through its

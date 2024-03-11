@@ -2,22 +2,18 @@
 
 namespace System.Web.UI.WebControls
 {
-    using System.ComponentModel;
-
-    using System;
-
     /// <devdoc>
     ///    <para> Represents a calendar day.</para>
     /// </devdoc>
     public class CalendarDay
     {
-        private DateTime date;
+        private readonly DateTime date;
         private bool isSelectable;
-        private bool isToday;
-        private bool isWeekend;
-        private bool isOtherMonth;
-        private bool isSelected;
-        private string dayNumberText;
+        private readonly bool isToday;
+        private readonly bool isWeekend;
+        private readonly bool isOtherMonth;
+        private readonly bool isSelected;
+        private readonly string dayNumberText;
 
         /// <devdoc>
         ///    <para>[To be supplied.]</para>

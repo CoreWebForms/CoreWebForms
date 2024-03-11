@@ -1,8 +1,5 @@
 // MIT License.
 
-namespace System.Web.Compilation;
-
-using System;
 using System.CodeDom;
 using System.CodeDom.Compiler;
 using System.ComponentModel;
@@ -13,6 +10,7 @@ using System.Reflection;
 using System.Web.UI;
 using Debug = System.Diagnostics.Debug;
 
+namespace System.Web.Compilation;
 internal static class CodeDomUtility
 {
 

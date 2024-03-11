@@ -1,10 +1,9 @@
 // MIT License.
 
+using System.Collections;
+
 namespace System.Web.UI
 {
-    using System;
-    using System.Collections;
-
     // Cache TargetControlTypeAttributes to improve performance
     internal static class TargetControlTypeCache
     {

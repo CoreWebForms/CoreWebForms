@@ -1,5 +1,17 @@
 // MIT License.
 
+using System.CodeDom;
+using System.CodeDom.Compiler;
+using System.Collections;
+using System.Collections.Specialized;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Globalization;
+using System.Reflection;
+using System.Text;
+using System.Web.UI;
+using System.Web.Util;
+
 /**********************************************
 
 Class hierarchy:
@@ -14,23 +26,6 @@ BaseCodeDomTreeGenerator
 ***********************************************/
 
 namespace System.Web.Compilation;
-
-using System;
-using System.CodeDom;
-using System.CodeDom.Compiler;
-using System.Collections;
-using System.Collections.Specialized;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Web.UI;
-using System.Web.Util;
-using Util = System.Web.UI.Util;
-
 internal abstract class BaseCodeDomTreeGenerator
 {
 
@@ -143,13 +138,13 @@ protected void AppendDebugComment(CodeStatementCollection statements) {
             return null;
         }
 
-        return Util.MakeFullTypeName(_sourceDataNamespace.Name, _sourceDataClass.Name);
+        return UI.Util.MakeFullTypeName(_sourceDataNamespace.Name, _sourceDataClass.Name);
     }
 
     internal string GetIntermediateFullTypeName()
     {
 
-        return Util.MakeFullTypeName(Parser.BaseTypeNamespace, _intermediateClass.Name);
+        return UI.Util.MakeFullTypeName(Parser.BaseTypeNamespace, _intermediateClass.Name);
     }
 
     /*
@@ -251,7 +246,7 @@ protected void AppendDebugComment(CodeStatementCollection statements) {
                 // VSWhidbey 411701. Always use global type reference for the baseType 
                 // when codefile is present.
                 _sourceDataClass.BaseTypes.Add(CodeDomUtility.BuildGlobalCodeTypeReference(
-                    Util.MakeFullTypeName(Parser.BaseTypeNamespace, Parser.BaseTypeName)));
+                    UI.Util.MakeFullTypeName(Parser.BaseTypeNamespace, Parser.BaseTypeName)));
 
                 _sourceDataNamespace.Types.Add(_sourceDataClass);
             }
@@ -316,7 +311,7 @@ protected void AppendDebugComment(CodeStatementCollection statements) {
         if (_sourceDataClass != null)
         {
             // We need to generate a global reference to avoid ambiguities (VSWhidbey 284936)
-            string fullClassName = Util.MakeFullTypeName(_sourceDataNamespace.Name, _sourceDataClass.Name);
+            string fullClassName = UI.Util.MakeFullTypeName(_sourceDataNamespace.Name, _sourceDataClass.Name);
             CodeTypeReference classTypeRef = CodeDomUtility.BuildGlobalCodeTypeReference(fullClassName);
 
             // Since this is needed in several places, store it in a member variable

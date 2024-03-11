@@ -1,9 +1,8 @@
 // MIT License.
 
-namespace System.Web.UI;
-
 using System.Reflection;
 
+namespace System.Web.UI;
 /// <devdoc>
 /// Base class for all PropertyEntries.
 /// 

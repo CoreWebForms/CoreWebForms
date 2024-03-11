@@ -1,12 +1,11 @@
 // MIT License.
 
-namespace System.Web.UI.WebControls.WebParts {
+using System.Collections;
+using System.Collections.Specialized;
+using System.Web.Util;
 
-    using System;
-    using System.Collections;
-    using System.Collections.Specialized;
-    using System.Web.Util;
-
+namespace System.Web.UI.WebControls.WebParts
+{
     // This class is unsealed so it can be extended by developers who extend the personalization infrastructure
     public class PersonalizationDictionary : IDictionary {
         private readonly HybridDictionary _dictionary;

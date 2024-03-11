@@ -10,7 +10,7 @@ namespace System.Web.UI.WebControls;
 public class DetailsViewModeEventArgs : CancelEventArgs {
 
     private DetailsViewMode _mode;
-    private bool _cancelingEdit;
+    private readonly bool _cancelingEdit;
 
     /// <devdoc>
     /// <para>Initializes a new instance of <see cref='System.Web.UI.WebControls.DetailsViewModeEventArgs'/> class.</para>

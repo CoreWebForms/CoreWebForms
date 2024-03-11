@@ -4,17 +4,14 @@
 // </copyright>                                                                
 //------------------------------------------------------------------------------
 
-namespace System.Web.UI.WebControls {
+using System.Collections;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.Web.Util;
 
-    using System;
-    using System.Collections;
-    using System.ComponentModel;
-    using System.Diagnostics;
-    using System.Diagnostics.CodeAnalysis;
-    using System.Web;
-    using System.Web.UI;
-    using System.Web.Util;
-    
+namespace System.Web.UI.WebControls
+{
     /// <devdoc>
     ///    <para>
     ///       Creates
@@ -83,8 +80,8 @@ namespace System.Web.UI.WebControls {
         private ArrayList itemsArray;
         private DataListItemCollection itemsCollection;
         
-        private int offset;
-        private int visibleItemCount = -1;
+        private readonly int offset;
+        private readonly int visibleItemCount = -1;
 
         /// <devdoc>
         ///    <para>

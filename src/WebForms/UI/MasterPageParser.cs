@@ -1,5 +1,9 @@
 // MIT License.
 
+using System.Collections;
+using System.Web.Compilation;
+using System.Web.Util;
+
 /*
  * Implements the ASP.NET master page parser
  *
@@ -7,13 +11,6 @@
  */
 
 namespace System.Web.UI;
-
-using System;
-using System.Collections;
-using System.Web;
-using System.Web.Compilation;
-using System.Web.Util;
-
 /*
  * Parser for MasterPage
  */

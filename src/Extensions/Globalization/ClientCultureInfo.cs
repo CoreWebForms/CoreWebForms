@@ -1,29 +1,27 @@
 // MIT License.
 
+using System.Collections;
+using System.Collections.Specialized;
+using System.Globalization;
+using System.Web.Script.Serialization;
+
 namespace System.Web.Globalization
 {
-    using System;
-    using System.Collections;
-    using System.Collections.Specialized;
-    using System.Globalization;
-    using System.Web.Script.Serialization;
-
     internal sealed class ClientCultureInfo
     {
-
-        private static Hashtable cultureScriptBlockCache = Hashtable.Synchronized(new Hashtable());
+        private static readonly Hashtable cultureScriptBlockCache = Hashtable.Synchronized(new Hashtable());
         private static readonly CultureInfo enUS = CultureInfo.GetCultureInfo(0x409);
         private const int eraNumber = 0;
-        private static int eraName = 1;
-        private static int eraStart = 2;
-        private static int eraYearOffset = 3;
+        private const int eraName = 1;
+        private const int eraStart = 2;
+        private const int eraYearOffset = 3;
 
         public string name;
         public NumberFormatInfo numberFormat;
         public DateTimeFormatInfo dateTimeFormat;
         public object[] eras;
-        private string _convertScript;
-        private int _adjustment;
+        private readonly string _convertScript;
+        private readonly int _adjustment;
 
         private ClientCultureInfo(CultureInfo cultureInfo)
         {

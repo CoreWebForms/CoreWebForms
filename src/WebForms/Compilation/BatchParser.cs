@@ -1,19 +1,15 @@
 // MIT License.
 
-namespace System.Web.UI;
-
-using System;
 using System.Collections;
 using System.Collections.Specialized;
 using System.Globalization;
-using System.IO;
 using System.Text.RegularExpressions;
-using System.Threading;
 using System.Web.Util;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using WebForms;
 
+namespace System.Web.UI;
 internal static class MTConfigUtil
 {
     public static CompilationSection Compilation => HttpRuntimeHelper.Services.GetRequiredService<IOptions<CompilationSection>>().Value;

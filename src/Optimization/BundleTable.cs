@@ -11,7 +11,7 @@ namespace System.Web.Optimization
     /// </summary>
     public static class BundleTable
     {
-        private static BundleCollection _instance = new BundleCollection();
+        private static readonly BundleCollection _instance = new BundleCollection();
 
         /// <summary>
         /// Gets the default bundle collection.

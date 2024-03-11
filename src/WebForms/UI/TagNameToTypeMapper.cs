@@ -1,5 +1,11 @@
 // MIT License.
 
+using System.Collections;
+using System.ComponentModel.Design;
+using System.Reflection;
+using Microsoft.Extensions.DependencyInjection;
+using WebForms;
+
 /*
  * Base Control factory implementation
  *
@@ -7,15 +13,6 @@
  */
 
 namespace System.Web.UI;
-
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel.Design;
-using System.Reflection;
-using Microsoft.Extensions.DependencyInjection;
-using WebForms;
-
 /// <devdoc>
 ///    <para>Maps a sequence of text characters to a .NET Framework 
 ///       type when an .aspx file is processed on the server.</para>

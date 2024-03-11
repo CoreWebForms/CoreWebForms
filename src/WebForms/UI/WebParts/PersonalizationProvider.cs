@@ -1,18 +1,15 @@
 // MIT License.
 
+using System.Collections;
+using System.Collections.Specialized;
+using System.Configuration.Provider;
+using System.Security.Principal;
+using Microsoft.AspNetCore.SystemWebAdapters;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
+
 namespace System.Web.UI.WebControls.WebParts
 {
-
-    using System;
-    using System.Collections;
-    using System.Collections.Specialized;
-    using System.Configuration.Provider;
-    using System.Security.Principal;
-    using System.Web;
-    using Microsoft.AspNetCore.SystemWebAdapters;
-    using Microsoft.Extensions.DependencyInjection;
-    using Microsoft.Extensions.Options;
-
     /// <devdoc>
     /// The provider used to access the personalization store for WebPart pages.
     /// </devdoc>

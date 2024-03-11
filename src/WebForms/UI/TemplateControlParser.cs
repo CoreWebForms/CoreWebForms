@@ -1,5 +1,8 @@
 // MIT License.
 
+using System.Collections;
+using System.Web.Util;
+
 /*
  * Implements the ASP.NET template parser
  *
@@ -7,12 +10,6 @@
  */
 
 namespace System.Web.UI;
-
-using System;
-using System.Collections;
-using System.Web.Util;
-using HttpException = System.Web.HttpException;
-
 /*
  * Parser for TemplateControl's (UserControls and Pages)
  */

@@ -1,12 +1,9 @@
 // MIT License.
 
-namespace System.Web.UI.WebControls.WebParts {
+using System.Configuration.Provider;
 
-    using System;
-    using System.Configuration.Provider;
-    using System.Web;
-    using System.Web.UI;
-
+namespace System.Web.UI.WebControls.WebParts
+{
     public sealed class PersonalizationProviderCollection : ProviderCollection {
 
         new public PersonalizationProvider this[string name] {

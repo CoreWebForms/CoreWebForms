@@ -1,10 +1,6 @@
 ﻿// Copyright (c) Microsoft Corporation, Inc. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-using System.Collections.Generic;
-using System.IO;
-using System.Web.Hosting;
-
 namespace System.Web.Optimization
 {
     /// <summary>
@@ -15,7 +11,7 @@ namespace System.Web.Optimization
     /// </remarks>
     public class FileExtensionReplacementList
     {
-        private List<Entry> _entries = new List<Entry>();
+        private readonly List<Entry> _entries = new List<Entry>();
 
         // Just for unit tests to verify defaults
         internal int Count

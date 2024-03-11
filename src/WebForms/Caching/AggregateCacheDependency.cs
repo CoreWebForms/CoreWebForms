@@ -2,7 +2,6 @@
 
 using System.Collections;
 using System.Text;
-using System.Web.Caching;
 
 namespace System.Web.Caching;
 
@@ -11,13 +10,11 @@ internal sealed class AggregateCacheDependency : CacheDependency
     ArrayList _dependencies;
     bool _disposed;
 
-
     public AggregateCacheDependency()
     {
         // The ctor of every class derived from CacheDependency must call this.
         FinishInit();
     }
-
 
     public void Add(params CacheDependency[] dependencies)
     {
@@ -122,7 +119,6 @@ internal sealed class AggregateCacheDependency : CacheDependency
     {
         NotifyDependencyChanged(sender, e);
     }
-
 
     public override string GetUniqueID()
     {

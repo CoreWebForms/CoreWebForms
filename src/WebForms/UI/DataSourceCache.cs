@@ -1,10 +1,10 @@
 // MIT License.
 
+using System.ComponentModel;
+using System.Web.Caching;
+
 namespace System.Web.UI
 {
-    using System.ComponentModel;
-    using System.Web.Caching;
-
     internal class DataSourceCache : IStateManager
     {
 

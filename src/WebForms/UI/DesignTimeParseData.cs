@@ -1,12 +1,9 @@
 // MIT License.
 
-namespace System.Web.UI;
-
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.ComponentModel.Design;
 
+namespace System.Web.UI;
 /// <internalonly/>
 public sealed class DesignTimeParseData
 {

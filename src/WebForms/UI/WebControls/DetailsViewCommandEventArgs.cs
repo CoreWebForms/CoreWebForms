@@ -9,7 +9,7 @@ namespace System.Web.UI.WebControls;
 /// </devdoc>
 public class DetailsViewCommandEventArgs : CommandEventArgs {
 
-    private object _commandSource;
+    private readonly object _commandSource;
     
 
     /// <devdoc>

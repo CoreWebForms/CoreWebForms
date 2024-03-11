@@ -1,11 +1,9 @@
 // MIT License.
 
-namespace System.Web.UI;
-
-using System;
 using System.Collections;
 using System.Collections.Specialized;
 
+namespace System.Web.UI;
 /// <devdoc>
 /// Contains a filtered (by device filter) view of the attributes parsed from a tag
 /// </devdoc>

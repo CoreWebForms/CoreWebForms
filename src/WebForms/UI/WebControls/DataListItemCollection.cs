@@ -4,20 +4,19 @@
 // </copyright>                                                                
 //------------------------------------------------------------------------------
 
+using System.Collections;
+
 /*
  */
 
-namespace System.Web.UI.WebControls {
-
-    using System;
-    using System.Collections;
-
+namespace System.Web.UI.WebControls
+{
     /// <devdoc>
     /// <para>Represents the collection of <see cref='System.Web.UI.WebControls.DataListItem'/> objects</para>
     /// </devdoc>
     public sealed class DataListItemCollection : ICollection {
 
-        private ArrayList items;
+        private readonly ArrayList items;
 
         /// <devdoc>
         /// <para>Initializes a new instance of the <see cref='System.Web.UI.WebControls.DataListItemCollection'/> class.</para>

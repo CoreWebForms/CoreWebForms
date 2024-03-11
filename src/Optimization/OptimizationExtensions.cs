@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Routing.Patterns;
-using Microsoft.AspNetCore.SystemWebAdapters;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Primitives;
 

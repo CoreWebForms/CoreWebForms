@@ -1,22 +1,12 @@
 // MIT License.
 
+using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using System.Web.Resources;
+
 namespace System.Web.UI
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Collections.Specialized;
-    using System.ComponentModel;
-    using System.Diagnostics;
-    using System.Diagnostics.CodeAnalysis;
-    using System.Drawing;
-    using System.Drawing.Design;
-    using System.Globalization;
-    using System.Web;
-    using System.Web.Resources;
-    using System.Web.UI;
-    using System.Web.UI.WebControls;
-    using System.Web.Util;
-
     [
     DefaultProperty("Scripts"),
     Designer("System.Web.UI.Design.ScriptManagerProxyDesigner, " + AssemblyRef.SystemWebExtensionsDesign),

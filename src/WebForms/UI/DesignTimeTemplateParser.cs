@@ -1,13 +1,10 @@
 // MIT License.
 
-namespace System.Web.UI;
-
-using System;
 using System.Collections;
 using System.ComponentModel.Design;
-using System.Web;
 using System.Web.Util;
 
+namespace System.Web.UI;
 /// <internalonly/>
 public static class DesignTimeTemplateParser
 {

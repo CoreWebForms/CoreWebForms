@@ -1,19 +1,19 @@
 // MIT License.
 
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+
 namespace System.Web.UI
 {
-    using System.Diagnostics;
-    using System.Diagnostics.CodeAnalysis;
-
     public sealed class RegisteredScript
     {
-        private RegisteredScriptType _scriptType;
-        private Control _control;
-        private string _key;
-        private string _script;
-        private Type _type;
-        private bool _addScriptTags;
-        private string _url;
+        private readonly RegisteredScriptType _scriptType;
+        private readonly Control _control;
+        private readonly string _key;
+        private readonly string _script;
+        private readonly Type _type;
+        private readonly bool _addScriptTags;
+        private readonly string _url;
 
         internal RegisteredScript(Control control, Type type, string key, string url)
         {

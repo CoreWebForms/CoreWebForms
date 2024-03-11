@@ -1,9 +1,7 @@
 // MIT License.
 
-namespace System.Web.UI {
-    using System.Security.Permissions;
-    using System.Web;
-
+namespace System.Web.UI
+{
     public enum ScriptMode {
         Auto = 0,
         Inherit = 1,

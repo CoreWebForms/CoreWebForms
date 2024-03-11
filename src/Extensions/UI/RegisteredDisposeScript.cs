@@ -1,14 +1,14 @@
 // MIT License.
 
+using System.Diagnostics;
+
 namespace System.Web.UI
 {
-    using System.Diagnostics;
-
     public sealed class RegisteredDisposeScript
     {
-        private Control _control;
-        private UpdatePanel _parentUpdatePanel;
-        private string _script;
+        private readonly Control _control;
+        private readonly UpdatePanel _parentUpdatePanel;
+        private readonly string _script;
 
         internal RegisteredDisposeScript(Control control, string disposeScript, UpdatePanel parentUpdatePanel)
         {

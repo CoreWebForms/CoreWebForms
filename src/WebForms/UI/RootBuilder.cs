@@ -1,5 +1,7 @@
 // MIT License.
 
+using System.Collections;
+
 /*
  * Implements the root builder
  *
@@ -7,10 +9,6 @@
  */
 
 namespace System.Web.UI;
-
-using System;
-using System.Collections;
-
 /// <internalonly/>
 /// <devdoc>
 ///    <para>[To be supplied.]</para>

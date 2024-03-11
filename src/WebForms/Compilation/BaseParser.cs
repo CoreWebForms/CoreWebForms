@@ -4,7 +4,6 @@ using System.Collections;
 using System.Text.RegularExpressions;
 using Microsoft.Extensions.FileProviders;
 using WebForms.Features;
-using WebForms.Internal;
 
 /*
  * Implements the ASP.NET template parser

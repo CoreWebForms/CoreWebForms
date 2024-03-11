@@ -1,14 +1,12 @@
 // MIT License.
 
+using System.Xml;
+using System.Xml.XPath;
+using System.Xml.Xsl;
+using System.Diagnostics.CodeAnalysis;
+
 namespace System.Web.Util
 {
-
-    using System.IO;
-    using System.Xml;
-    using System.Xml.XPath;
-    using System.Xml.Xsl;
-    using System.Diagnostics.CodeAnalysis;
-
     internal static class XmlUtils
     {
         private static class AppSettings
@@ -163,7 +161,6 @@ namespace System.Web.Util
             compiledTransform.Load(readerToUse, null, null);
             return compiledTransform;
         }
-
 
 #pragma warning disable 0618    // To avoid deprecation warning
         [SuppressMessage("Microsoft.Security", "MSEC1201:DoNotUseXslTransform", Justification = "Handles developer-controlled input xsl.  Optional safer codepath available via appSettings/aspnet:RestrictXmlControls configuration.")]

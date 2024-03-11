@@ -1,11 +1,9 @@
 // MIT License.
 
-namespace System.Web.UI.WebControls;
-
 using System.Collections;
 using System.ComponentModel;
-using System.Web.UI;
 
+namespace System.Web.UI.WebControls;
 /// <devdoc>
 /// Displays a link or button that allows the user to login or logout of the site.
 /// Shows whether the user is currently logged in.

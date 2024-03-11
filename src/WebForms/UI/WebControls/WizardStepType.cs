@@ -4,11 +4,8 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-namespace System.Web.UI.WebControls {
-
-    using System;
-    using System.ComponentModel;
-
+namespace System.Web.UI.WebControls
+{
     public enum WizardStepType {
 
         /// <devdoc>

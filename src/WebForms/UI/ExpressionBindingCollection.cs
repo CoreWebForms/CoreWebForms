@@ -1,10 +1,8 @@
 // MIT License.
 
-namespace System.Web.UI;
-
-using System;
 using System.Collections;
 
+namespace System.Web.UI;
 /// <devdoc>
 /// </devdoc>
 public sealed class ExpressionBindingCollection : ICollection

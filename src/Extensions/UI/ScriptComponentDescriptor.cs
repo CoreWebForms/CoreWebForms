@@ -12,7 +12,7 @@ namespace System.Web.UI
     {
         // PERF: In the ScriptControl/Properties/Scenario.aspx perf test, SortedList is 2% faster than
         // SortedDictionary.
-        private string _elementIDInternal;
+        private readonly string _elementIDInternal;
         private SortedList<string, string> _events;
         private string _id;
         private SortedList<string, Expression> _properties;
@@ -360,7 +360,7 @@ namespace System.Web.UI
 
         private sealed class ComponentReference : Expression
         {
-            private string _componentID;
+            private readonly string _componentID;
 
             public ComponentReference(string componentID)
             {
@@ -379,7 +379,7 @@ namespace System.Web.UI
 
         private sealed class ElementReference : Expression
         {
-            private string _elementID;
+            private readonly string _elementID;
 
             public ElementReference(string elementID)
             {
@@ -398,7 +398,7 @@ namespace System.Web.UI
 
         private sealed class ObjectReference : Expression
         {
-            private object _value;
+            private readonly object _value;
 
             public ObjectReference(object value)
             {
@@ -417,7 +417,7 @@ namespace System.Web.UI
 
         private sealed class ScriptExpression : Expression
         {
-            private string _script;
+            private readonly string _script;
 
             public ScriptExpression(string script)
             {

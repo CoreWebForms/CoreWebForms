@@ -1,23 +1,14 @@
 // MIT License.
 
+using System.Globalization;
+using System.ComponentModel;
+using System.Collections;
+using System.Drawing;
+using System.Text;
+using System.Diagnostics;
+
 namespace System.Web.UI.WebControls
 {
-    using System.Threading;
-    using System.Globalization;
-    using System.ComponentModel;
-    using System;
-    using System.Web;
-    using System.Web.UI;
-    using System.Web.Util;
-    using System.Collections;
-    using System.ComponentModel.Design;
-    using System.Drawing;
-    using System.Text;
-
-    using System.IO;
-    using System.Reflection;
-    using System.Diagnostics;
-
     /// <devdoc>
     ///    <para>Displays a one-month calendar and allows the user to
     ///       view and select a specific day, week, or month.</para>
@@ -63,7 +54,7 @@ namespace System.Web.UI.WebControls
         private const string SELECT_RANGE_COMMAND = "R";
         private const string NAVIGATE_MONTH_COMMAND = "V";
 
-        private static DateTime baseDate = new DateTime(2000, 1, 1);
+        private static readonly DateTime baseDate = new DateTime(2000, 1, 1);
 
         private const int STYLEMASK_DAY = 16;
         private const int STYLEMASK_UNIQUE = 15;

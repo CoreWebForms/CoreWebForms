@@ -10,7 +10,7 @@ namespace System.Web.UI.WebControls;
 /// </devdoc>
 public class GridViewUpdateEventArgs : CancelEventArgs {
 
-    private int _rowIndex;
+    private readonly int _rowIndex;
     private OrderedDictionary _values;
     private OrderedDictionary _keys;
     private OrderedDictionary _oldValues;

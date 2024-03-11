@@ -3,10 +3,10 @@
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //------------------------------------------------------------------------------
-namespace System.Web.UI {
-    using System.Collections;
-    using System.Web.UI.WebControls;
+using System.Collections;
 
+namespace System.Web.UI
+{
     public interface IAutoFieldGenerator {
         ICollection GenerateFields(Control control);
     }

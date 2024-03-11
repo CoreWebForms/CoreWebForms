@@ -1,6 +1,5 @@
 // MIT License.
 
-using System;
 using System.Collections;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -8,19 +7,11 @@ using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
 using System.Diagnostics;
-using System.Drawing.Design;
 using System.Globalization;
-using System.IO;
 using System.Text;
-using System.Web;
-using System.Web.Caching;
-using System.Web.UI;
-using System.Web.UI.WebControls;
-using System.Web.Util;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using WebForms;
-using ConflictOptions = System.Web.UI.ConflictOptions;
 
 namespace System.Web.UI.WebControls;
 /// <devdoc>
@@ -42,8 +33,8 @@ public class SqlDataSourceView : DataSourceView, IStateManager
     private static readonly object EventUpdated = new object();
     private static readonly object EventUpdating = new object();
 
-    private HttpContext _context;
-    private SqlDataSource _owner;
+    private readonly HttpContext _context;
+    private readonly SqlDataSource _owner;
     private bool _tracking;
 
     private bool _cancelSelectOnNullParameter = true;

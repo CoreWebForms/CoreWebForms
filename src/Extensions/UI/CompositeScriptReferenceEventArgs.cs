@@ -2,9 +2,6 @@
 
 namespace System.Web.UI
 {
-    using System;
-    using System.Web;
-
     public class CompositeScriptReferenceEventArgs : EventArgs
     {
         private readonly CompositeScriptReference _compositeScript;
