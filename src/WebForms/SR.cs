@@ -943,6 +943,9 @@ internal static class SR
     public const string ModelDataSourceView_SelectNotSupported = "The Select operation is not supported unless the SelectMethod is specified.";
     public const string ModelDataSourceView_UpdateNotSupported = "Updating is not supported unless the UpdateMethod is specified.";
     public const string ModelDataSourceView_UseAsyncMethodMustBeUsingAsyncPage = nameof(ModelDataSourceView_UseAsyncMethodMustBeUsingAsyncPage);
+    public const string ModelErrorMessage_AssociatedControlID = "The ID of the control associated with the model state error message.";
+    public const string ModelErrorMessage_ModelStateKey = "The key of the model state value to display the first error for.";
+    public const string ModelErrorMessage_SetFocusOnError = "Whether focus is set on the associated control when a model state error message is found.";
     public const string Multiple_forms_not_allowed = "A page can have only one server-side Form tag.";
     public const string MultiView_ActiveView = "The active View control.";
     public const string MultiView_ActiveViewChanged = "Fires when the active view control is changed.";
@@ -1365,6 +1368,16 @@ internal static class SR
     public const string Unknown_server_tag = "Unknown server tag '{0}'.";
     public const string UnknownWebPart = "The specified Web Part does not belong the collection of Web Parts on this page.";
     public const string UserName_InitialValue = "The initial value in the user name textbox.";
+    public const string ValidationSummary_DisplayMode = "Format for error summary display.";
+    public const string ValidationSummary_HeaderText = "Header text to display in the summary.";
+    public const string ValidationSummary_ShowMessageBox = "Whether to display a message box on error in up-level browsers.";
+    public const string ValidationSummary_ShowSummary = "Whether to display the summary text on the page.";
+    public const string ValidationSummary_ShowModelStateErrors = "Whether the model state errors from a data operation should be shown.";
+    public const string ValidationSummary_ShowValidationErrors = "Whether the validation summary from validators should be shown.";
+    public const string ValidationSummary_EnableClientScript = "Whether to update the summary on the client in up-level browsers.";
+    public const string ValidationSummary_ValidationGroup = "The group to which the validation summary belongs.";
+    public const string ValSummary_error_message_1 = "Error message 1.";
+    public const string ValSummary_error_message_2 = "Error message 2.";
     public const string Validator_bad_control_type = "Control '{0}' referenced by the {1} property of '{2}' cannot be validated.";
     public const string Validator_bad_regex = "{0} is not a valid regular expression.";
     public const string Validator_control_blank = "The ControlToValidate property of '{0}' cannot be blank.";
