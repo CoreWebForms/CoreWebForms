@@ -14,6 +14,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
+using WebForms.Features;
 using WebForms.Internal;
 
 using HttpContext = System.Web.HttpContext;
@@ -136,7 +137,7 @@ internal sealed class DynamicSystemWebCompilation : IHttpHandlerCollection
         }
     }
 
-    private sealed class WrappedMetadata(IHttpHandlerMetadata metadata, ICompiledTypeAccessor compiledTypes) : IHttpHandlerMetadata, ICompiledTypeAccessor
+    private sealed class WrappedMetadata(IHttpHandlerMetadata metadata, IWebFormsCompilationFeature compiledTypes) : IHttpHandlerMetadata, IWebFormsCompilationFeature
     {
         SessionStateBehavior IHttpHandlerMetadata.Behavior => metadata.Behavior;
 
@@ -144,10 +145,10 @@ internal sealed class DynamicSystemWebCompilation : IHttpHandlerCollection
 
         IHttpHandler IHttpHandlerMetadata.Create(Microsoft.AspNetCore.Http.HttpContext context) => metadata.Create(context);
 
-        Type? ICompiledTypeAccessor.GetForPath(string virtualPath) => compiledTypes.GetForPath(virtualPath);
+        Type? IWebFormsCompilationFeature.GetForPath(string virtualPath) => compiledTypes.GetForPath(virtualPath);
 
-        bool ICompiledTypeAccessor.TryGetException(string path, [MaybeNullWhen(false)] out Exception exception) => compiledTypes.TryGetException(path, out exception);
+        bool IWebFormsCompilationFeature.TryGetException(string path, [MaybeNullWhen(false)] out Exception exception) => compiledTypes.TryGetException(path, out exception);
 
-        IReadOnlyCollection<string> ICompiledTypeAccessor.Paths => compiledTypes.Paths;
+        IReadOnlyCollection<string> IWebFormsCompilationFeature.Paths => compiledTypes.Paths;
     }
 }

@@ -2,11 +2,12 @@
 
 using System.Collections.Frozen;
 using System.Diagnostics.CodeAnalysis;
+using WebForms.Features;
 using WebForms.Internal;
 
 namespace WebForms.Compiler.Dynamic;
 
-internal sealed class SystemWebCompilationUnit(ICompilationStrategy provider) : ICompiledTypeAccessor
+internal sealed class SystemWebCompilationUnit(ICompilationStrategy provider) : IWebFormsCompilationFeature
 {
     private readonly Dictionary<string, CompiledPage> _cache = new(PathComparer.Instance);
 
@@ -14,7 +15,7 @@ internal sealed class SystemWebCompilationUnit(ICompilationStrategy provider) : 
 
     public IEnumerable<CompiledPage> Values => _cache.Values;
 
-    IReadOnlyCollection<string> ICompiledTypeAccessor.Paths => _cache.Keys;
+    IReadOnlyCollection<string> IWebFormsCompilationFeature.Paths => _cache.Keys;
 
     public CompiledPage this[string path]
     {
@@ -22,7 +23,7 @@ internal sealed class SystemWebCompilationUnit(ICompilationStrategy provider) : 
         set => _cache[path] = value;
     }
 
-    bool ICompiledTypeAccessor.TryGetException(string path, [MaybeNullWhen(false)] out Exception exception)
+    bool IWebFormsCompilationFeature.TryGetException(string path, [MaybeNullWhen(false)] out Exception exception)
     {
         if (_cache.TryGetValue(path, out var page) && page.Exception is { } e)
         {
@@ -34,12 +35,12 @@ internal sealed class SystemWebCompilationUnit(ICompilationStrategy provider) : 
         return false;
     }
 
-    Type? ICompiledTypeAccessor.GetForPath(string virtualPath)
+    Type? IWebFormsCompilationFeature.GetForPath(string virtualPath)
         => _cache.TryGetValue(virtualPath, out var page) && page.Type is { } type ? type : null;
 
     public ICompilationResult Build() => new BuiltDynamicCompilation(_cache);
 
-    private sealed class BuiltDynamicCompilation : ICompiledTypeAccessor, ICompilationResult
+    private sealed class BuiltDynamicCompilation : IWebFormsCompilationFeature, ICompilationResult
     {
         private FrozenDictionary<string, CompiledPage>? _pages;
 
@@ -48,11 +49,11 @@ internal sealed class SystemWebCompilationUnit(ICompilationStrategy provider) : 
             _pages = pages.ToFrozenDictionary(PathComparer.Instance);
         }
 
-        ICompiledTypeAccessor ICompilationResult.Types => this;
+        IWebFormsCompilationFeature ICompilationResult.Types => this;
 
-        IReadOnlyCollection<string> ICompiledTypeAccessor.Paths => _pages?.Keys ?? throw new ObjectDisposedException(GetType().FullName);
+        IReadOnlyCollection<string> IWebFormsCompilationFeature.Paths => _pages?.Keys ?? throw new ObjectDisposedException(GetType().FullName);
 
-        Type? ICompiledTypeAccessor.GetForPath(string virtualPath)
+        Type? IWebFormsCompilationFeature.GetForPath(string virtualPath)
         {
             if (_pages is not { } pages)
             {
@@ -75,7 +76,7 @@ internal sealed class SystemWebCompilationUnit(ICompilationStrategy provider) : 
             }
         }
 
-        bool ICompiledTypeAccessor.TryGetException(string path, [MaybeNullWhen(false)] out Exception exception)
+        bool IWebFormsCompilationFeature.TryGetException(string path, [MaybeNullWhen(false)] out Exception exception)
         {
             if (_pages is not { } pages)
             {
