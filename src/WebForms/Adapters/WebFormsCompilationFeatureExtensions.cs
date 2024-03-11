@@ -2,7 +2,6 @@
 
 #nullable enable
 
-using System.Diagnostics.CodeAnalysis;
 using System.Web;
 using System.Web.UI;
 using System.Web.Util;
@@ -10,19 +9,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SystemWebAdapters;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using WebForms.Features;
 
 namespace WebForms.Internal;
 
-public interface ICompiledTypeAccessor
-{
-    IReadOnlyCollection<string> Paths { get; }
-
-    bool TryGetException(string path, [MaybeNullWhen(false)] out Exception exception);
-
-    Type? GetForPath(string virtualPath);
-}
-
-internal static class CompiledTypeAccessExtensions
+internal static class WebFormsCompilationFeatureExtensions
 {
     public static Control? GetControlByPath(this System.Web.HttpContext context, string virtualPath) => context.AsAspNetCore().GetControlByPath(virtualPath);
 
@@ -32,20 +23,20 @@ internal static class CompiledTypeAccessExtensions
 
         if (type is null)
         {
-            context.RequestServices.GetRequiredService<ILogger<ICompiledTypeAccessor>>().LogError("Type for {VirtualPath} could not be found", virtualPath);
+            context.RequestServices.GetRequiredService<ILogger<IWebFormsCompilationFeature>>().LogError("Type for {VirtualPath} could not be found", virtualPath);
             return null;
         }
 
         if (!type.IsAssignableTo(typeof(Control)))
         {
-            context.RequestServices.GetRequiredService<ILogger<ICompiledTypeAccessor>>().LogError("Path {VirtualPath} is not a valid control", virtualPath);
+            context.RequestServices.GetRequiredService<ILogger<IWebFormsCompilationFeature>>().LogError("Path {VirtualPath} is not a valid control", virtualPath);
             return null;
         }
 
         return (Control)ActivatorUtilities.CreateInstance(context.RequestServices, type);
     }
 
-    public static ICompiledTypeAccessor GetCompiledTypes(this System.Web.HttpContext context) => context.AsAspNetCore().GetRequiredCompiledTypes();
+    public static IWebFormsCompilationFeature GetCompiledTypes(this System.Web.HttpContext context) => context.AsAspNetCore().GetRequiredCompiledTypes();
 
     public static ITypedWebObjectFactory? GetTypedWebObjectForPath(this System.Web.HttpContext context, VirtualPath path)
     {
@@ -54,7 +45,7 @@ internal static class CompiledTypeAccessExtensions
 
         if (type is null)
         {
-            ctx.RequestServices.GetRequiredService<ILogger<ICompiledTypeAccessor>>().LogError("Type for {VirtualPath} could not be found", path.Path);
+            ctx.RequestServices.GetRequiredService<ILogger<IWebFormsCompilationFeature>>().LogError("Type for {VirtualPath} could not be found", path.Path);
             return null;
         }
 
@@ -68,17 +59,17 @@ internal static class CompiledTypeAccessExtensions
         public object CreateInstance() => ActivatorUtilities.CreateInstance(services, type);
     }
 
-    public static ICompiledTypeAccessor GetRequiredCompiledTypes(this HttpContextCore context) => context.GetCompiledTypes() ?? throw new InvalidOperationException("Compiled types not available");
+    public static IWebFormsCompilationFeature GetRequiredCompiledTypes(this HttpContextCore context) => context.GetCompiledTypes() ?? throw new InvalidOperationException("Compiled types not available");
 
-    public static ICompiledTypeAccessor? GetCompiledTypes(this HttpContextCore context)
+    public static IWebFormsCompilationFeature? GetCompiledTypes(this HttpContextCore context)
     {
-        if (context.Features.Get<ICompiledTypeAccessor>() is { } feature)
+        if (context.Features.Get<IWebFormsCompilationFeature>() is { } feature)
         {
             return feature;
         }
 
         var metadata = context.GetEndpoint()?.Metadata;
-        feature = metadata?.GetMetadata<ICompiledTypeAccessor>();
+        feature = metadata?.GetMetadata<IWebFormsCompilationFeature>();
 
         if (feature is null)
         {

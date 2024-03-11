@@ -3,7 +3,7 @@
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.Extensions.FileProviders;
-using WebForms.Internal;
+using WebForms.Features;
 
 namespace WebForms.Compiler.Dynamic;
 
@@ -27,5 +27,5 @@ public interface ICompilationStrategy
 
 public interface ICompilationResult : IDisposable
 {
-    ICompiledTypeAccessor Types { get; }
+    IWebFormsCompilationFeature Types { get; }
 }

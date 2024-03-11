@@ -3,6 +3,7 @@
 using System.Collections;
 using System.Text.RegularExpressions;
 using Microsoft.Extensions.FileProviders;
+using WebForms.Features;
 using WebForms.Internal;
 
 /*
@@ -53,7 +54,7 @@ public partial class BaseParser
 
     }
 
-    internal ICompiledTypeAccessor CompiledTypeAccessor { get; set; }
+    internal IWebFormsCompilationFeature CompiledTypeAccessor { get; set; }
 
     // The virtual path to the file currently being processed
     private VirtualPath _currentVirtualPath;

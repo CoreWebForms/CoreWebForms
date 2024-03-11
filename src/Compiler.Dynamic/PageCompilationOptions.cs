@@ -2,7 +2,7 @@
 
 using System.Web.UI;
 using Microsoft.Extensions.FileProviders;
-using WebForms.Internal;
+using WebForms.Features;
 
 namespace WebForms.Compiler.Dynamic;
 
@@ -16,12 +16,12 @@ public class PageCompilationOptions
 
     internal IFileProvider WebFormsFileProvider { get; set; } = default!;
 
-    internal Dictionary<string, Func<string, ICompiledTypeAccessor, DependencyParser>> Parsers { get; } = new(StringComparer.OrdinalIgnoreCase);
+    internal Dictionary<string, Func<string, IWebFormsCompilationFeature, DependencyParser>> Parsers { get; } = new(StringComparer.OrdinalIgnoreCase);
 
     internal void AddParser<DParser>(string extension)
         where DParser : DependencyParser, new()
     {
-        DependencyParser Create(string path, ICompiledTypeAccessor compiledTypeAccessor)
+        DependencyParser Create(string path, IWebFormsCompilationFeature compiledTypeAccessor)
         {
             var virtualPath = new System.Web.VirtualPath(path);
             var dependencyParser = new DParser

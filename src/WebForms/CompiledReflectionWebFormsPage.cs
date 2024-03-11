@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Primitives;
+using WebForms.Features;
 using WebForms.Internal;
 
 namespace Microsoft.AspNetCore.Builder;
@@ -34,7 +35,7 @@ public static class CompiledWebFormsPageExtensions
             {
                 builder.Use((ctx, next) =>
                 {
-                    ctx.Features.Set<ICompiledTypeAccessor>(compiledPages);
+                    ctx.Features.Set<IWebFormsCompilationFeature>(compiledPages);
                     return next(ctx);
                 });
 
@@ -88,7 +89,7 @@ public static class CompiledWebFormsPageExtensions
         }
     }
 
-    private sealed class CompiledReflectionWebFormsPage : IHttpHandlerCollection, ICompiledTypeAccessor, IDisposable
+    private sealed class CompiledReflectionWebFormsPage : IHttpHandlerCollection, IWebFormsCompilationFeature, IDisposable
     {
         private readonly Lazy<Dictionary<string, (IHttpHandlerMetadata Metadata, Type type)>> _metadata;
         private readonly IWebHostEnvironment _env;
@@ -101,7 +102,7 @@ public static class CompiledWebFormsPageExtensions
 
         IEnumerable<NamedHttpHandlerRoute> IHttpHandlerCollection.NamedRoutes => [];
 
-        IReadOnlyCollection<string> ICompiledTypeAccessor.Paths => _metadata.Value.Keys;
+        IReadOnlyCollection<string> IWebFormsCompilationFeature.Paths => _metadata.Value.Keys;
 
         IChangeToken IHttpHandlerCollection.GetChangeToken() => NullChangeToken.Singleton;
 
@@ -158,9 +159,9 @@ public static class CompiledWebFormsPageExtensions
             }
         }
 
-        Type ICompiledTypeAccessor.GetForPath(string virtualPath) => _metadata.Value.TryGetValue(virtualPath, out var result) ? result.type : null;
+        Type IWebFormsCompilationFeature.GetForPath(string virtualPath) => _metadata.Value.TryGetValue(virtualPath, out var result) ? result.type : null;
 
-        bool ICompiledTypeAccessor.TryGetException(string path, [MaybeNullWhen(false)] out Exception exception)
+        bool IWebFormsCompilationFeature.TryGetException(string path, [MaybeNullWhen(false)] out Exception exception)
         {
             exception = null;
             return false;
