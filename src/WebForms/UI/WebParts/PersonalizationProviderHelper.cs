@@ -1,11 +1,11 @@
 // MIT License.
 
+using System.Collections;
+using System.Globalization;
+using System.Web.Util;
+
 namespace System.Web.UI.WebControls.WebParts
 {
-    using System.Collections;
-    using System.Globalization;
-    using System.Web.Util;
-
     internal static class PersonalizationProviderHelper
     {
         internal static string[] CheckAndTrimNonEmptyStringEntries(string[] array, string paramName,

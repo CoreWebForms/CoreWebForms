@@ -9,7 +9,7 @@ namespace System.Web.UI.WebControls;
 /// </devdoc>
 public class GridViewRowCollection : ICollection {
 
-    private ArrayList _rows;
+    private readonly ArrayList _rows;
 
     /// <devdoc>
     /// <para>Initializes a new instance of the <see cref='System.Web.UI.WebControls.GridViewRowCollection'/> class.</para>

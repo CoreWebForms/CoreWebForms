@@ -2,9 +2,6 @@
 
 namespace System.Web.UI
 {
-    using System;
-    using System.Web;
-
     public class AsyncPostBackErrorEventArgs : EventArgs
     {
         private readonly Exception _exception;

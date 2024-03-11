@@ -19,7 +19,7 @@ public class UpdatePanel : Control, IAttributeAccessor, IUpdatePanel
 
     private const string UpdatePanelToken = "updatePanel";
 
-    private new IPage _page;
+    private new readonly IPage _page;
     private IScriptManagerInternal _scriptManager;
 
     private AttributeCollection _attributes;

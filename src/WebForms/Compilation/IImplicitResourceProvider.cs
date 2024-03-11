@@ -1,12 +1,10 @@
 // MIT License.
 
-namespace System.Web.Compilation;
-
-using System;
 using System.Collections;
 using System.Globalization;
 using System.Resources;
 
+namespace System.Web.Compilation;
 /*
  * Interface to access implicit (automatic) page resources
  */

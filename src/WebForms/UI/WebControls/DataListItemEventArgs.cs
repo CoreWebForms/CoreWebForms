@@ -4,16 +4,14 @@
 // </copyright>                                                                
 //------------------------------------------------------------------------------
 
-namespace System.Web.UI.WebControls {
-
-    using System;
-
+namespace System.Web.UI.WebControls
+{
     /// <devdoc>
     /// <para>Provides data for the <see langword='DataListItem'/> event of a <see cref='System.Web.UI.WebControls.DataList'/> .</para>
     /// </devdoc>
     public class DataListItemEventArgs : EventArgs {
 
-        private DataListItem item;
+        private readonly DataListItem item;
 
         /// <devdoc>
         /// <para>Initializes a new instance of the <see cref='System.Web.UI.WebControls.DataListItemEventArgs'/> class.</para>

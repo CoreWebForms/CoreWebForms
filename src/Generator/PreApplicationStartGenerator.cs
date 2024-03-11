@@ -164,7 +164,6 @@ public class PreApplicationStartGenerator : IIncrementalGenerator
 
                 indented.Indent++;
 
-
                 foreach (var (assembly, typeName, methodName, isStatic, isValid) in startups)
                 {
                     indented.WriteLine("{");

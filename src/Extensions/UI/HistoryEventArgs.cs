@@ -1,13 +1,12 @@
 // MIT License.
 
+using System.Collections.Specialized;
+
 namespace System.Web.UI
 {
-    using System;
-    using System.Collections.Specialized;
-
     public class HistoryEventArgs : EventArgs
     {
-        private NameValueCollection _state;
+        private readonly NameValueCollection _state;
 
         public HistoryEventArgs(NameValueCollection state)
         {

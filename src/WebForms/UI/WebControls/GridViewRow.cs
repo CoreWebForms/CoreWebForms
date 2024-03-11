@@ -1,16 +1,14 @@
 //MIT license
 
-using System;
-
-namespace System.Web.UI.WebControls; 
+namespace System.Web.UI.WebControls;
 
 /// <devdoc>
 /// <para>Represents an individual row in the <see cref='System.Web.UI.WebControls.GridView'/>.</para>
 /// </devdoc>
 public class GridViewRow : TableRow, IDataItemContainer {
 
-    private int _rowIndex;
-    private int _dataItemIndex;
+    private readonly int _rowIndex;
+    private readonly int _dataItemIndex;
     private DataControlRowType _rowType;
     private DataControlRowState _rowState;
     private object _dataItem;

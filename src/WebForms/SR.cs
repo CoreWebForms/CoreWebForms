@@ -1,6 +1,5 @@
 // MIT
 
-
 namespace System.Web;
 
 internal static class AssemblyRef

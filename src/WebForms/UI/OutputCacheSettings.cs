@@ -1,10 +1,8 @@
 // MIT License.
 
-namespace System.Web.UI;
-
-using System;
 using System.Web.Util;
 
+namespace System.Web.UI;
 [FlagsAttribute()]
 internal enum OutputCacheParameter : int
 {

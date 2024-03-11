@@ -10,7 +10,7 @@ namespace System.Web.UI.WebControls;
 /// </devdoc>
 public class DetailsViewInsertEventArgs : CancelEventArgs {
 
-    private object _commandArgument;
+    private readonly object _commandArgument;
     private OrderedDictionary _values;
     
 

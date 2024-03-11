@@ -1,9 +1,8 @@
 // MIT License.
 
-namespace System.Web.UI.WebControls;
-
 using System.Collections;
 
+namespace System.Web.UI.WebControls;
 internal interface IWizardSideBarListControl
 {
     object DataSource { get; set; }

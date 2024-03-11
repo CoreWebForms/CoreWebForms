@@ -2,8 +2,6 @@
 
 namespace System.Web.Util
 {
-    using System;
-
     internal static class HeaderUtility
     {
         public static bool IsEncodingInAcceptList(string acceptEncodingHeader, string expectedEncoding)

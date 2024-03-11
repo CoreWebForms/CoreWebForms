@@ -1,10 +1,6 @@
 // MIT License.
 
 namespace System.Web.Util;
-
-using System;
-using System.Web;
-
 internal static class ExceptionUtil
 {
     internal static ArgumentException ParameterInvalid(string parameter)

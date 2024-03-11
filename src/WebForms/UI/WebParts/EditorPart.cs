@@ -4,7 +4,6 @@ using System.Collections;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Security.Permissions;
 
 namespace System.Web.UI.WebControls.WebParts
 {

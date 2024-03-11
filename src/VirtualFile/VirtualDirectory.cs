@@ -18,7 +18,6 @@ public abstract class VirtualDirectory : VirtualFileBase
         _virtualPath = System.Web.VirtualPath.CreateTrailingSlash(virtualPath);
     }
 
-
     public override bool IsDirectory
     {
         get { return true; }

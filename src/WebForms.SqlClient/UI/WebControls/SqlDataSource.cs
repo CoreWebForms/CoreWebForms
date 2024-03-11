@@ -1,21 +1,14 @@
 // MIT License.
 
-using System;
 using System.Collections;
 using System.ComponentModel;
 using System.Data.Common;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Drawing;
-using System.Drawing.Design;
 using System.Globalization;
 using System.Text;
-using System.Web;
 using System.Web.Caching;
-using System.Web.UI;
-using System.Web.Util;
-using ConflictOptions = System.Web.UI.ConflictOptions;
 
 namespace System.Web.UI.WebControls;
 /// <devdoc>
@@ -42,7 +35,7 @@ public class SqlDataSource : DataSourceControl
     private const string DefaultViewName = "DefaultView";
 
     private DataSourceCache _cache;
-    private string _cachedSelectCommand;
+    private readonly string _cachedSelectCommand;
     private string _connectionString;
     private SqlDataSourceMode _dataSourceMode = SqlDataSourceMode.DataSet;
     private string _providerName;

@@ -19,10 +19,10 @@ namespace System.Web.Optimization
         private IBundleBuilder _builder;
         private string _path;
         private ItemRegistry _items;
-        private List<string> _cacheKeys = new List<string>();
+        private readonly List<string> _cacheKeys = new List<string>();
         private bool _enableReplacements = true;
         // REVIEW: adding to the transforms list does not invalidate cache entries since we have no hook
-        private IList<IBundleTransform> _transforms = new List<IBundleTransform>();
+        private readonly IList<IBundleTransform> _transforms = new List<IBundleTransform>();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Bundle"/> class.

@@ -1,5 +1,8 @@
 // MIT License.
 
+using System.Collections;
+using System.Web.Compilation;
+
 /*
  * Implements the ASP.NET template parser
  *
@@ -7,11 +10,6 @@
  */
 
 namespace System.Web.UI;
-
-using System;
-using System.Collections;
-using System.Web.Compilation;
-
 /*
  * Parser for declarative controls
  */

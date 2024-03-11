@@ -1,17 +1,12 @@
 // MIT License.
 
+using System.Collections;
+using System.Collections.Specialized;
+using System.Diagnostics;
+using System.Web.Util;
+
 namespace System.Web.UI.WebControls.WebParts
 {
-
-    using System;
-    using System.Collections;
-    using System.Collections.Specialized;
-    using System.ComponentModel;
-    using System.Diagnostics;
-    using System.Reflection;
-    using System.Web;
-    using System.Web.Util;
-
     /// <devdoc>
     /// Used to mark a property as personalizable.
     /// </devdoc>

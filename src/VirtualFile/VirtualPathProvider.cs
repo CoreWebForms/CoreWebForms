@@ -10,7 +10,6 @@ public abstract class VirtualPathProvider
 {
     private VirtualPathProvider _previous;
 
-
     internal virtual void Initialize(VirtualPathProvider previous)
     {
         _previous = previous;
@@ -170,7 +169,6 @@ public abstract class VirtualPathProvider
 
         return virtualFile;
     }
-
 
     /*
      * Returns a VirtualDirectory object for the passed in virtual path

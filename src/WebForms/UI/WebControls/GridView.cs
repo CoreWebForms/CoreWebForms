@@ -96,7 +96,7 @@ public class GridView : CompositeDataBoundControl, IPostBackContainer, IPostBack
     private string _modelValidationGroup;
 
     private IAutoFieldGenerator _columnsGenerator;
-    private GridViewColumnsGenerator _defaultColumnsGenerator = new GridViewColumnsGenerator();
+    private readonly GridViewColumnsGenerator _defaultColumnsGenerator = new GridViewColumnsGenerator();
 
     private IOrderedDictionary _updateKeys;
     private IOrderedDictionary _updateOldValues;

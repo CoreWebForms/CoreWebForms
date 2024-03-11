@@ -1,5 +1,12 @@
 // MIT License.
 
+using System.Collections;
+using System.ComponentModel;
+using System.ComponentModel.Design;
+using System.Diagnostics;
+using System.Reflection;
+using System.Web.Util;
+
 /*
  * Classes related to templated control support
  *
@@ -7,14 +14,6 @@
  */
 
 namespace System.Web.UI;
-
-using System;
-using System.Collections;
-using System.ComponentModel;
-using System.ComponentModel.Design;
-using System.Diagnostics;
-using System.Reflection;
-using System.Web.Util;
 #if !FEATURE_PAL
 #endif // !FEATURE_PAL
 

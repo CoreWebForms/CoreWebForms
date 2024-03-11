@@ -1,30 +1,24 @@
 // MIT License.
 
+using System.Collections;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using System.Reflection;
+using System.Resources;
+using System.Security;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Web.Resources;
+using System.Web.Util;
+
 namespace System.Web.UI
 {
-    using System;
-    using System.Collections;
-    using System.Collections.Generic;
-    using System.Diagnostics.CodeAnalysis;
-    using System.Globalization;
-    using System.IO;
-    using System.Reflection;
-    using System.Resources;
-    using System.Security;
-    using System.Security.Permissions;
-    using System.Text;
-    using System.Text.RegularExpressions;
-    using System.Threading;
-    using System.Web;
-    using System.Web.Resources;
-    using System.Web.Util;
-
     [AttributeUsage(AttributeTargets.Assembly, AllowMultiple = true)]
     public sealed class ScriptResourceAttribute : Attribute
     {
-        private string _scriptName;
-        private string _stringResourceName;
-        private string _stringResourceClientTypeName;
+        private readonly string _scriptName;
+        private readonly string _stringResourceName;
+        private readonly string _stringResourceClientTypeName;
         private static readonly Regex _webResourceRegEx = new Regex(
             @"<%\s*=\s*(?<resourceType>WebResource|ScriptResource)\(""(?<resourceName>[^""]*)""\)\s*%>",
             RegexOptions.Singleline | RegexOptions.Multiline);

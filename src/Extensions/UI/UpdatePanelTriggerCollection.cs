@@ -7,7 +7,7 @@ namespace System.Web.UI
 {
     public class UpdatePanelTriggerCollection : Collection<UpdatePanelTrigger> {
         private bool _initialized;
-        private UpdatePanel _owner;
+        private readonly UpdatePanel _owner;
 
         public UpdatePanelTriggerCollection(UpdatePanel owner) {
             if (owner == null) {

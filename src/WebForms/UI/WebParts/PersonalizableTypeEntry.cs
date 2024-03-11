@@ -1,12 +1,11 @@
 // MIT License.
 
-namespace System.Web.UI.WebControls.WebParts {
+using System.Collections;
+using System.Collections.Specialized;
+using System.Reflection;
 
-    using System;
-    using System.Collections;
-    using System.Collections.Specialized;
-    using System.Reflection;
-
+namespace System.Web.UI.WebControls.WebParts
+{
     /// <devdoc>
     /// Used to represent a type that has personalizable properties
     /// and cache information about it.

@@ -1,25 +1,22 @@
 // MIT License.
 
+using System.Collections;
+using System.Globalization;
+using System.Reflection;
+using System.Web.Resources;
+
 namespace System.Web.UI
 {
-    using System;
-    using System.Collections;
-    using System.Collections.Generic;
-    using System.Globalization;
-    using System.Reflection;
-    using System.Web.Resources;
-    using System.Web.Util;
-
     internal sealed class ScriptResourceInfo
     {
-        private string _contentType;
-        private bool _performSubstitution;
-        private string _scriptName;
-        private string _scriptResourceName;
-        private string _typeName;
-        private bool _isDebug;
-        private string _cdnPath;
-        private string _cdnPathSecureConnection;
+        private readonly string _contentType;
+        private readonly bool _performSubstitution;
+        private readonly string _scriptName;
+        private readonly string _scriptResourceName;
+        private readonly string _typeName;
+        private readonly bool _isDebug;
+        private readonly string _cdnPath;
+        private readonly string _cdnPathSecureConnection;
         private readonly string _loadSuccessExpression;
 
         private static readonly IDictionary _scriptCache = Hashtable.Synchronized(new Hashtable());

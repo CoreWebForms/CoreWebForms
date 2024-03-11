@@ -1,9 +1,6 @@
 // MIT License.
 
 using System.Collections;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.SystemWebAdapters;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.FileProviders;
 
 namespace System.Web;

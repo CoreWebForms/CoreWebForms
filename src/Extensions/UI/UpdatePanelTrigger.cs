@@ -1,7 +1,10 @@
 // MIT License.
 
 using System.ComponentModel;
+
+#if DEBUG
 using System.Diagnostics;
+#endif
 
 namespace System.Web.UI
 {

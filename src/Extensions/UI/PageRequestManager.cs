@@ -1,25 +1,16 @@
 // MIT License.
 
+using System.Collections;
+using System.Collections.Specialized;
+using System.Diagnostics;
+using System.Globalization;
+using System.Security;
+using System.Text;
+using System.Web.UI.HtmlControls;
+using System.Web.Resources;
+
 namespace System.Web.UI
 {
-    using System;
-    using System.Collections;
-    using System.Collections.Generic;
-    using System.Collections.Specialized;
-    using System.Diagnostics;
-    using System.Globalization;
-    using System.IO;
-    using System.Security;
-    using System.Text;
-    using System.Web;
-    using System.Web.Configuration;
-    using System.Web.UI;
-    using System.Web.UI.HtmlControls;
-    using System.Web.Resources;
-    using System.Web.Script.Serialization;
-    using System.Reflection;
-    using System.Security.Permissions;
-
     internal sealed class PageRequestManager
     {
 
@@ -59,7 +50,7 @@ namespace System.Web.UI
         private static readonly Version MinimumEcmaScriptVersion = new Version(1, 0);
 #endif
 
-        private ScriptManager _owner;
+        private readonly ScriptManager _owner;
 
         private List<UpdatePanel> _allUpdatePanels;
         private List<UpdatePanel> _updatePanelsToRefresh;
@@ -82,7 +73,6 @@ namespace System.Web.UI
             Debug.Assert(owner != null);
             _owner = owner;
         }
-
 
         public string AsyncPostBackSourceElementID
         {
@@ -828,10 +818,6 @@ namespace System.Web.UI
 
                 // 
 
-
-
-
-
                 // DevDiv 55447: Do not use Response.Flush and a NullStream to prevent Response.Writes
                 // from being written to the output stream, as calling Response.Flush causes headers to
                 // be written. This prevents cookies from being issued after this, for example.
@@ -969,11 +955,6 @@ namespace System.Web.UI
         internal void RenderPageRequestManagerScript(HtmlTextWriter writer)
         {
             // 
-
-
-
-
-
 
             // Script format:
             // <script type=""text/javascript"">
@@ -1135,9 +1116,9 @@ Sys.WebForms.PageRequestManager._initialize('");
 
         private sealed class ScriptDataItem
         {
-            private Control _control;
-            private string _dataItem;
-            private bool _isJsonSerialized;
+            private readonly Control _control;
+            private readonly string _dataItem;
+            private readonly bool _isJsonSerialized;
 
             public ScriptDataItem(Control control, string dataItem, bool isJsonSerialized)
             {

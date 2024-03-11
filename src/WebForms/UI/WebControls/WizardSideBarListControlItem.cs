@@ -6,7 +6,7 @@
 
 namespace System.Web.UI.WebControls {
     internal sealed class WizardSideBarListControlItem {
-        private Control _container;
+        private readonly Control _container;
 
         public object DataItem {
             get;

@@ -15,7 +15,6 @@ public abstract class VirtualFile : VirtualFileBase
         _virtualPath = System.Web.VirtualPath.Create(virtualPath);
     }
 
-
     public override bool IsDirectory
     {
         get { return false; }

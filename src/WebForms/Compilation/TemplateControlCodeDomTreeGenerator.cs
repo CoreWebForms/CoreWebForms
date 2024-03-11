@@ -1,15 +1,12 @@
 // MIT License.
 
-namespace System.Web.Compilation;
-
-using System;
 using System.CodeDom;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Web.UI;
 
+namespace System.Web.Compilation;
 internal abstract class TemplateControlCodeDomTreeGenerator : BaseTemplateCodeDomTreeGenerator
 {
 

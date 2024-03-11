@@ -1,11 +1,10 @@
 // MIT License.
 
-namespace System.Web.Compilation;
-
 using System.CodeDom;
 using System.Globalization;
 using System.Web.UI;
 
+namespace System.Web.Compilation;
 internal class MasterPageCodeDomTreeGenerator : TemplateControlCodeDomTreeGenerator
 {
 

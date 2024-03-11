@@ -1,5 +1,21 @@
 // MIT License.
 
+using System.CodeDom.Compiler;
+using System.Collections;
+using System.Collections.Specialized;
+using System.ComponentModel;
+using System.ComponentModel.Design;
+using System.Diagnostics;
+using System.Globalization;
+using System.Reflection;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Web.Compilation;
+using System.Web.Util;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using WebForms;
+
 /*
  * Implements the ASP.NET template parser
  *
@@ -10,29 +26,6 @@
 //#define PROFILE_REGEX
 
 namespace System.Web.UI;
-
-using System;
-using System.CodeDom.Compiler;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.ComponentModel;
-using System.ComponentModel.Design;
-using System.Diagnostics;
-using System.Globalization;
-using System.IO;
-using System.Reflection;
-using System.Runtime.Loader;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading;
-using System.Web.Compilation;
-using System.Web.Util;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.FileProviders;
-using Microsoft.Extensions.Logging;
-using WebForms;
-
 public class CompilationSection
 {
     public Type ControlBuilderInterceptorTypeInternal { get; internal set; }

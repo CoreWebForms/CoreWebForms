@@ -7,9 +7,9 @@ namespace System.Web.UI.WebControls;
 /// </devdoc>
 public class DetailsViewRow : TableRow {
 
-    private int _rowIndex;
-    private DataControlRowType _rowType;
-    private DataControlRowState _rowState;
+    private readonly int _rowIndex;
+    private readonly DataControlRowType _rowType;
+    private readonly DataControlRowState _rowState;
     
 
     /// <devdoc>

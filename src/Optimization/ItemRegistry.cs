@@ -1,10 +1,7 @@
 // Copyright (c) Microsoft Corporation, Inc. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Web.Hosting;
 using System.Web.Optimization.Resources;
 
 namespace System.Web.Optimization

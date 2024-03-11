@@ -4,10 +4,9 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
+using System.Collections;
+
 namespace System.Web.UI {
-
-    using System.Collections;
-
     /// <devdoc>
     /// Allows the designer of to both push and pull data from a control.
     ///

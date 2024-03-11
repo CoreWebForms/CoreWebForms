@@ -1,22 +1,19 @@
 // MIT License.
 
+using System.Collections.Specialized;
+using System.Diagnostics;
+using System.Globalization;
+using System.Reflection;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Web.Resources;
+using System.Web.Script.Serialization;
 
 namespace System.Web.UI
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Collections.Specialized;
-    using System.Diagnostics;
-    using System.Globalization;
-    using System.Reflection;
-    using System.Text;
-    using System.Text.RegularExpressions;
-    using System.Web.Resources;
-    using System.Web.Script.Serialization;
-
     internal sealed class ScriptRegistrationManager
     {
-        private static Regex ScriptTagRegex = new Regex(
+        private static readonly Regex ScriptTagRegex = new Regex(
             @"<script" +
             @"(" +
                 @"\s+(?<attrname>\w[-\w:]*)" +          // Attribute name
@@ -29,7 +26,7 @@ namespace System.Web.UI
             RegexOptions.Singleline | RegexOptions.Multiline | RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         private static Dictionary<ScriptKey, string> _fallbackScripts;
-        private ScriptManager _scriptManager;
+        private readonly ScriptManager _scriptManager;
         private List<RegisteredDisposeScript> _scriptDisposes;
         private List<RegisteredArrayDeclaration> _scriptArrays;
         private List<RegisteredScript> _clientScriptBlocks;

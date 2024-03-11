@@ -2,10 +2,7 @@
 
 using System.Text;
 using System.Web.Util;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
-using Microsoft.Extensions.Hosting;
-using WebForms;
 
 namespace System.Web;
 

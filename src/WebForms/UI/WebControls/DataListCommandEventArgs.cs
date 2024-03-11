@@ -7,18 +7,16 @@
 /*
  */
 
-namespace System.Web.UI.WebControls {
-
-    using System;
-
+namespace System.Web.UI.WebControls
+{
     /// <devdoc>
     /// <para>Provides data for the <see langword='DataListCommand'/> event of a <see cref='System.Web.UI.WebControls.DataList'/>.
     /// </para>
     /// </devdoc>
     public class DataListCommandEventArgs : CommandEventArgs {
 
-        private DataListItem item;
-        private object commandSource;
+        private readonly DataListItem item;
+        private readonly object commandSource;
 
         /// <devdoc>
         /// <para>Initializes a new instance of the <see cref='System.Web.UI.WebControls.DataListCommandEventArgs'/> class.</para>

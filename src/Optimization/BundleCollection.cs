@@ -2,10 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System.Collections;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Globalization;
-using System.Web.Optimization.Resources;
 
 namespace System.Web.Optimization
 {
@@ -15,12 +12,12 @@ namespace System.Web.Optimization
     /// </summary>
     public class BundleCollection : IEnumerable<Bundle>
     {
-        private Dictionary<string, Bundle> _bundles = new Dictionary<string, Bundle>(StringComparer.OrdinalIgnoreCase);
-        private Dictionary<string, DynamicFolderBundle> _dynamicBundles = new Dictionary<string, DynamicFolderBundle>(StringComparer.OrdinalIgnoreCase);
-        private Dictionary<string, Bundle> _staticBundles = new Dictionary<string, Bundle>(StringComparer.OrdinalIgnoreCase);
-        private List<BundleFileSetOrdering> _orderPriority = new List<BundleFileSetOrdering>();
-        private IgnoreList _ignoreList = new IgnoreList();
-        private IgnoreList _directoryFilter = new IgnoreList();
+        private readonly Dictionary<string, Bundle> _bundles = new Dictionary<string, Bundle>(StringComparer.OrdinalIgnoreCase);
+        private readonly Dictionary<string, DynamicFolderBundle> _dynamicBundles = new Dictionary<string, DynamicFolderBundle>(StringComparer.OrdinalIgnoreCase);
+        private readonly Dictionary<string, Bundle> _staticBundles = new Dictionary<string, Bundle>(StringComparer.OrdinalIgnoreCase);
+        private readonly List<BundleFileSetOrdering> _orderPriority = new List<BundleFileSetOrdering>();
+        private readonly IgnoreList _ignoreList = new IgnoreList();
+        private readonly IgnoreList _directoryFilter = new IgnoreList();
         private FileExtensionReplacementList _replacementList = new FileExtensionReplacementList();
 
         /// <summary>

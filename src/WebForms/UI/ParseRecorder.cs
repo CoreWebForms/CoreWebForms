@@ -1,11 +1,9 @@
 // MIT License.
 
-namespace System.Web.UI;
-
 using System.CodeDom;
-using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
+namespace System.Web.UI;
 /// <summary>
 /// Abstract base class for an object that wants to be notified of parse
 /// events during page parsing.

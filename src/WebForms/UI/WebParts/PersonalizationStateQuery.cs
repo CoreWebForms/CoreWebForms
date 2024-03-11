@@ -1,14 +1,11 @@
 // MIT License.
 
+using System.Collections.Specialized;
+using System.Diagnostics;
+using System.Web.Util;
+
 namespace System.Web.UI.WebControls.WebParts
 {
-
-    using System;
-    using System.Collections.Generic;
-    using System.Collections.Specialized;
-    using System.Diagnostics;
-    using System.Web.Util;
-
     [Serializable]
     public sealed class PersonalizationStateQuery
     {

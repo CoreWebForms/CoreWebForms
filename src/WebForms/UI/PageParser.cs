@@ -1,5 +1,11 @@
 // MIT License.
 
+using System.Collections;
+using System.Text;
+using System.Web.Compilation;
+using System.Web.Configuration;
+using System.Web.Util;
+
 /*
  * Implements the ASP.NET template parser
  *
@@ -7,15 +13,6 @@
  */
 
 namespace System.Web.UI;
-
-using System;
-using System.Collections;
-using System.IO;
-using System.Text;
-using System.Web.Compilation;
-using System.Web.Configuration;
-using System.Web.Util;
-
 /*
  * Parser for .aspx files
  */

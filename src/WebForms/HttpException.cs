@@ -1,5 +1,10 @@
 // MIT License.
 
+using System.CodeDom.Compiler;
+using System.Collections;
+using System.Globalization;
+using System.Runtime.Serialization;
+
 /*
  * Exception thrown by ASP.NET managed runtime
  * 
@@ -7,12 +12,6 @@
  */
 
 namespace System.Web;
-
-using System.CodeDom.Compiler;
-using System.Collections;
-using System.Globalization;
-using System.Runtime.Serialization;
-
 /// <devdoc>
 ///    <para> Exception thrown when a compilation error occurs.</para>
 /// </devdoc>

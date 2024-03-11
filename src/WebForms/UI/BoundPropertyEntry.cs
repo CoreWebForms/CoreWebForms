@@ -1,8 +1,8 @@
 // MIT License.
 
-namespace System.Web.UI;
 using System.Web.Compilation;
 
+namespace System.Web.UI;
 /// <devdoc>
 /// PropertyEntry for any bound properties
 /// </devdoc>

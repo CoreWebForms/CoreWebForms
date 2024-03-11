@@ -1,14 +1,14 @@
 // MIT License.
 
+using System.Diagnostics;
+
 namespace System.Web.UI
 {
-    using System.Diagnostics;
-
     public sealed class RegisteredHiddenField
     {
-        private Control _control;
-        private string _name;
-        private string _initialValue;
+        private readonly Control _control;
+        private readonly string _name;
+        private readonly string _initialValue;
 
         internal RegisteredHiddenField(Control control, string hiddenFieldName, string hiddenFieldInitialValue)
         {

@@ -9,7 +9,7 @@ namespace System.Web.UI.WebControls
     /// </devdoc>
     public class MonthChangedEventArgs
     {
-        DateTime newDate, previousDate;
+        readonly DateTime newDate, previousDate;
 
         /// <devdoc>
         /// <para>Initializes a new instance of the <see cref='MonthChangedEventArgs'/> class.</para>

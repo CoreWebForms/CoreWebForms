@@ -9,8 +9,8 @@ namespace System.Web.UI.WebControls;
 /// </devdoc>
 public class GridViewCommandEventArgs : CommandEventArgs {
 
-    private GridViewRow _row;
-    private object _commandSource;
+    private readonly GridViewRow _row;
+    private readonly object _commandSource;
     
 
     /// <devdoc>

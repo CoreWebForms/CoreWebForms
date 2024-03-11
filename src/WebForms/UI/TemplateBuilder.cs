@@ -1,16 +1,15 @@
 // MIT License.
 
+using System.Collections;
+using System.ComponentModel;
+using System.ComponentModel.Design;
+
 /*
  * Classes related to templated control support
  *
  * Copyright (c) 1999 Microsoft Corporation
  */
 namespace System.Web.UI;
-
-using System;
-using System.Collections;
-using System.ComponentModel;
-using System.ComponentModel.Design;
 /*
  * This class defines the TemplateAttribute attribute that can be placed on
  * properties of type ITemplate.  It allows the parser to strongly type the

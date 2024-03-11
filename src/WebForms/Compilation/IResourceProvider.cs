@@ -1,14 +1,11 @@
 // MIT License.
 
-namespace System.Web.Compilation;
-
-using System;
 using System.Globalization;
-using System.IO;
 using System.Reflection;
 using System.Resources;
 using System.Web.UI;
 
+namespace System.Web.Compilation;
 /*
  * Basic interface to access and enumerate resources
  */

@@ -1,13 +1,11 @@
 // MIT License.
 
-namespace System.Web.UI;
-
-using System;
 using System.Collections;
 using System.Text;
 using System.Web.Compilation;
 using System.Web.Util;
 
+namespace System.Web.UI;
 internal class PageThemeParser : BaseTemplateParser
 {
 

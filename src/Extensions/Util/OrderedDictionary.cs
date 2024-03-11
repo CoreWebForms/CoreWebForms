@@ -1,20 +1,18 @@
 // MIT License.
 
+using System.Collections;
+
 namespace System.Web.Util
 {
-    using System;
-    using System.Collections;
-    using System.Collections.Generic;
-
     // This is different from the BCL's SortedDictionary in that SortedDictionary sorts by the keys'
     // values (e.g., alphabetical order), but OrderedDictionary sorts by the order in which the keys
     // were inserted into the dictionary.
 
     internal sealed class OrderedDictionary<TKey, TValue> : IDictionary<TKey, TValue>
     {
-        private Dictionary<TKey, TValue> _dictionary;
-        private List<TKey> _keys;
-        private List<TValue> _values;
+        private readonly Dictionary<TKey, TValue> _dictionary;
+        private readonly List<TKey> _keys;
+        private readonly List<TValue> _values;
 
         // Cannot easily support ctor that takes IEqualityComparer, since List doesn't have an easy
         // way to use the IEqualityComparer.

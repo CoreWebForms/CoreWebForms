@@ -4,14 +4,11 @@
 // </copyright>                                                                
 //------------------------------------------------------------------------------
 
-namespace System.Web.UI.WebControls {
+using System.Collections;
+using System.ComponentModel;
 
-    using System;
-    using System.Collections;
-    using System.ComponentModel;
-    using System.Web.UI;
-    using System.Web.Util;
-
+namespace System.Web.UI.WebControls
+{
     /// <devdoc>
     /// <para>Represents an item in the <see cref='System.Web.UI.WebControls.DataList'/>. </para>
     /// </devdoc>
@@ -20,7 +17,7 @@ namespace System.Web.UI.WebControls {
     ]
     public class DataListItem : WebControl, IDataItemContainer {
 
-        private int itemIndex;
+        private readonly int itemIndex;
         private ListItemType itemType;
         private object dataItem;
 

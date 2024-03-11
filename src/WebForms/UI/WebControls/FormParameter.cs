@@ -4,14 +4,12 @@
 // </copyright>                                                                
 //------------------------------------------------------------------------------
 
+using System.Collections.Specialized;
+using System.ComponentModel;
+using System.Data;
+
 namespace System.Web.UI.WebControls
 {
-
-    using System;
-    using System.Collections.Specialized;
-    using System.ComponentModel;
-    using System.Data;
-
     /// <devdoc>
     /// Represents a Parameter that gets its value from the application's form parameters.
     /// </devdoc>

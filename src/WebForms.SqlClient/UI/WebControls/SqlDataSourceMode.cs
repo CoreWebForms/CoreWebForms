@@ -1,7 +1,5 @@
 // MIT License.
 
-using System;
-
 namespace System.Web.UI.WebControls;
 /// <devdoc>
 /// Specifies the behavior of the SqlDataSource.

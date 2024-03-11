@@ -4,13 +4,10 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-namespace System.Web.UI.WebControls {
+using System.ComponentModel;
 
-    using System;
-    using System.ComponentModel;
-    using System.Web;
-    using System.Web.UI;
-
+namespace System.Web.UI.WebControls
+{
     [ParseChildren(false)]
     [
     Designer("System.Web.UI.Design.WebControls.ViewDesigner, " + AssemblyRef.SystemDesign)

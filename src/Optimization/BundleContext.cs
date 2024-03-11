@@ -1,9 +1,6 @@
 // Copyright (c) Microsoft Corporation, Inc. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-using System.Collections.Generic;
-using System.Web.Hosting;
-
 namespace System.Web.Optimization
 {
     /// <summary>
@@ -94,7 +91,7 @@ namespace System.Web.Optimization
         }
 #endif
 
-        private HashSet<string> _cacheDependencyDirectories = new HashSet<string>();
+        private readonly HashSet<string> _cacheDependencyDirectories = new HashSet<string>();
         internal HashSet<string> CacheDependencyDirectories
         {
             get

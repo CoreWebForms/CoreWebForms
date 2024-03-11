@@ -1,13 +1,11 @@
 // MIT License.
 
+using System.Collections;
+using System.Diagnostics;
+using System.Web.Util;
+
 namespace System.Web.UI.WebControls.WebParts
 {
-    using System;
-    using System.Collections;
-    using System.Collections.Generic;
-    using System.Diagnostics;
-    using System.Web.Util;
-
     [Serializable]
     public sealed class PersonalizationStateInfoCollection : ICollection
     {

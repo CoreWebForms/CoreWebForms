@@ -1,20 +1,15 @@
 // MIT License.
 
-namespace System.Web.UI;
 
-using System;
 using System.CodeDom;
 using System.Collections;
-using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Diagnostics;
 using System.Globalization;
-using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using System.Web;
 using System.Web.Compilation;
 using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
@@ -22,6 +17,7 @@ using System.Web.Util;
 using Microsoft.AspNetCore.SystemWebAdapters;
 using Microsoft.Extensions.DependencyInjection;
 
+namespace System.Web.UI;
 /// <devdoc>
 /// Implementation of a generic control builder used by all controls and child objects
 /// </devdoc>

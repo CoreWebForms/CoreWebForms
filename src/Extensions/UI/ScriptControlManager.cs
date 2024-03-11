@@ -1,24 +1,20 @@
 // MIT License.
 
+using System.Globalization;
+using System.Text;
+using System.Web.Resources;
+using System.Web.Util;
+
+using Debug = System.Diagnostics.Debug;
+
 namespace System.Web.UI
 {
-    using System;
-    using System.Collections.ObjectModel;
-    using System.Collections.Generic;
-    using System.Globalization;
-    using System.Text;
-    using System.Web.UI;
-    using System.Web.Resources;
-    using System.Web.Util;
-
-    using Debug = System.Diagnostics.Debug;
-
     internal sealed class ScriptControlManager
     {
         private OrderedDictionary<IExtenderControl, List<Control>> _extenderControls;
         private bool _pagePreRenderRaised;
         private OrderedDictionary<IScriptControl, int> _scriptControls;
-        private ScriptManager _scriptManager;
+        private readonly ScriptManager _scriptManager;
         private bool _scriptReferencesRegistered;
 
         public ScriptControlManager(ScriptManager scriptManager)

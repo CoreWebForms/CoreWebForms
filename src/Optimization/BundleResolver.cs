@@ -1,9 +1,6 @@
 // Copyright (c) Microsoft Corporation, Inc. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-using System.Collections.Generic;
-using System.Web.Hosting;
-
 namespace System.Web.Optimization
 {
     /// <summary>
@@ -14,7 +11,7 @@ namespace System.Web.Optimization
     public class BundleResolver : IBundleResolver
     {
 
-        private static BundleResolver _default = new BundleResolver();
+        private static readonly BundleResolver _default = new BundleResolver();
         private static IBundleResolver _current;
         /// <summary>
         /// ScriptManager uses reflection against System.Web.Optimization.BundleResolver.Current

@@ -1,11 +1,7 @@
 // MIT License.
 
-namespace System.Web.UI.WebControls.WebParts {
-
-    using System;
-    using System.Web;
-    using System.Web.Util;
-
+namespace System.Web.UI.WebControls.WebParts
+{
     /// <devdoc>
     /// </devdoc>
     public abstract class PersonalizationState {

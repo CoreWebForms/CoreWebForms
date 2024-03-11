@@ -1,13 +1,11 @@
 // MIT License.
 
-namespace System.Web.Compilation;
-
-using System;
 using System.CodeDom;
 using System.Diagnostics;
 using System.Reflection;
 using System.Web.UI;
 
+namespace System.Web.Compilation;
 internal class DataBindingExpressionBuilder : ExpressionBuilder
 {
     private static EventInfo eventInfo;

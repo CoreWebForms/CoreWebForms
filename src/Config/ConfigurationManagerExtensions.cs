@@ -19,7 +19,6 @@ public static class ConfigurationManagerExtensions
     /// <param name="host">The <see cref="IHostApplicationBuilder"/> instance.</param>
     /// <param name="path">Path to the configuration file.</param>
     /// <param name="isOptional">Sets if the config source is optional or not.</param>
-    /// <param name="eagerUpdateAppSettings">Flag to initiate loading values into <see cref="System.Configuration.ConfigurationManager.AppSettings"/> early for scenarios that these values before the host itself is build.</param>
     /// <returns></returns>
     public static IHostApplicationBuilder UseWebConfig(this IHostApplicationBuilder host, string path = "web.config", bool isOptional = true)
     {
@@ -38,7 +37,6 @@ public static class ConfigurationManagerExtensions
     /// <param name="host">The <see cref="IHostBuilder"/> instance.</param>
     /// <param name="path">Path to the configuration file.</param>
     /// <param name="isOptional">Sets if the config source is optional or not.</param>
-    /// <param name="eagerUpdateAppSettings">Flag to initiate loading values into <see cref="System.Configuration.ConfigurationManager.AppSettings"/> early for scenarios that these values before the host itself is build.</param>
     /// <returns></returns>
     public static IHostBuilder UseWebConfig(this IHostBuilder host, string path = "web.config", bool isOptional = true) => host
         .ConfigureAppConfiguration(config =>

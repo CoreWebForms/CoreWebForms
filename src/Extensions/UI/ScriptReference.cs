@@ -1,22 +1,20 @@
 // MIT License.
 
+using System.Collections;
+using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using System.Reflection;
+using System.Web.Optimization;
+using System.Web.Resources;
+using System.Web.Util;
+using Microsoft.Extensions.DependencyInjection;
+using WebForms;
+
+using Debug = System.Diagnostics.Debug;
+
 namespace System.Web.UI
 {
-    using System;
-    using System.Collections;
-    using System.ComponentModel;
-    using System.Diagnostics.CodeAnalysis;
-    using System.Globalization;
-    using System.Reflection;
-    using System.Web;
-    using System.Web.Optimization;
-    using System.Web.Resources;
-    using System.Web.Util;
-    using Microsoft.Extensions.DependencyInjection;
-    using WebForms;
-
-    using Debug = System.Diagnostics.Debug;
-
     [
     DefaultProperty("Path"),
     ]
@@ -270,22 +268,6 @@ namespace System.Web.UI
                     scriptManager.AjaxFrameworkAssembly :
                     assembly);
             }
-        }
-
-        // Release: foo.js
-        // Debug:   foo.debug.js
-        private static string GetDebugName(string releaseName)
-        {
-            // Since System.Web.Handlers.AssemblyResourceLoader treats the resource name as case-sensitive,
-            // we must do the same when verifying the extension.
-            // Ignore trailing whitespace. For example, "MicrosoftAjax.js " is valid (at least from
-            // a debug/release naming perspective).
-            if (!releaseName.EndsWith(".js", StringComparison.Ordinal))
-            {
-                throw new InvalidOperationException(SR.GetString(AtlasWeb.ScriptReference_InvalidReleaseScriptName, releaseName));
-            }
-
-            return ReplaceExtension(releaseName);
         }
 
         internal string GetPath(ScriptManager scriptManager, string releasePath, string predeterminedDebugPath, bool isDebuggingEnabled)
@@ -608,14 +590,14 @@ namespace System.Web.UI
 
         internal sealed class ScriptEffectiveInfo
         {
-            private string _resourceName;
-            private Assembly _assembly;
-            private string _path;
-            private string _debugPath;
-            private string _cdnPath;
-            private string _cdnDebugPath;
-            private string _cdnPathSecureConnection;
-            private string _cdnDebugPathSecureConnection;
+            private readonly string _resourceName;
+            private readonly Assembly _assembly;
+            private readonly string _path;
+            private readonly string _debugPath;
+            private readonly string _cdnPath;
+            private readonly string _cdnDebugPath;
+            private readonly string _cdnPathSecureConnection;
+            private readonly string _cdnDebugPathSecureConnection;
 
             public ScriptEffectiveInfo(ScriptReference scriptReference)
             {

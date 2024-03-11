@@ -1,5 +1,10 @@
 // MIT License.
 
+using System.Collections;
+using System.Collections.Specialized;
+using System.ComponentModel.Design;
+using System.Diagnostics;
+
 /*
  * Classes related to templated control support
  *
@@ -7,13 +12,6 @@
  */
 
 namespace System.Web.UI;
-
-using System;
-using System.Collections;
-using System.Collections.Specialized;
-using System.ComponentModel.Design;
-using System.Diagnostics;
-
 /// <devdoc>
 ///    <para>[To be supplied.]</para>
 /// </devdoc>

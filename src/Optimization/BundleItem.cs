@@ -1,15 +1,11 @@
 ﻿// Copyright (c) Microsoft Corporation, Inc. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-using System.Collections.Generic;
-using System.IO;
-using System.Web.Hosting;
-
 namespace System.Web.Optimization
 {
     internal class BundleItem
     {
-        private List<IItemTransform> _transforms = new List<IItemTransform>();
+        private readonly List<IItemTransform> _transforms = new List<IItemTransform>();
 
         public BundleItem(string virtualPath) : this(virtualPath, null)
         {

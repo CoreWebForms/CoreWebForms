@@ -36,7 +36,6 @@ public sealed class RouteCollection : IDisposable, IHttpHandlerCollection
         }
     }
 
-
     internal RouteCollection(TemplateBinderFactory template, IOptions<RouteOptions> options)
     {
         _options = options;

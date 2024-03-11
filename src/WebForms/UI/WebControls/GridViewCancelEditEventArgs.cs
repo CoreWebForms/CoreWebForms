@@ -8,7 +8,7 @@ namespace System.Web.UI.WebControls;
 /// </devdoc>
 public class GridViewCancelEditEventArgs : CancelEventArgs {
 
-    private int _rowIndex;
+    private readonly int _rowIndex;
 
     /// <devdoc>
     /// <para>Initializes a new instance of the <see cref='System.Web.UI.WebControls.GridViewCancelEditEventArgs'/>

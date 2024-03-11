@@ -1,7 +1,6 @@
 // MIT License.
 
 using System.ComponentModel;
-using System.Drawing;
 using System.Globalization;
 
 #nullable disable

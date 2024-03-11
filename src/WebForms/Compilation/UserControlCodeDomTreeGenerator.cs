@@ -1,10 +1,9 @@
 // MIT License.
 
-namespace System.Web.Compilation;
-
 using System.CodeDom;
 using System.Web.UI;
 
+namespace System.Web.Compilation;
 internal class UserControlCodeDomTreeGenerator : TemplateControlCodeDomTreeGenerator
 {
 

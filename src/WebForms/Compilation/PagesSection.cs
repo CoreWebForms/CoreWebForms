@@ -1,11 +1,9 @@
 // MIT License.
 
-namespace System.Web.UI;
-
-using System;
 using System.Collections;
 using System.Web.Configuration;
 
+namespace System.Web.UI;
 // This used ConfigurationManager in framework
 internal class PagesSection
 {

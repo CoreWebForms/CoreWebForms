@@ -1,10 +1,6 @@
 ﻿// Copyright (c) Microsoft Corporation, Inc. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-using System.Collections.Generic;
-using System.IO;
-using System.Web.Hosting;
-
 namespace System.Web.Optimization
 {
     /// <summary>
@@ -12,7 +8,7 @@ namespace System.Web.Optimization
     /// </summary>
     public class BundleFile
     {
-        private List<IItemTransform> _transforms = new List<IItemTransform>();
+        private readonly List<IItemTransform> _transforms = new List<IItemTransform>();
 
         /// <summary>
         /// Constructor taking a list of transforms for the file

@@ -1,10 +1,8 @@
 // MIT License.
 
-namespace System.Web.Compilation;
-
-using System;
 using System.CodeDom.Compiler;
 
+namespace System.Web.Compilation;
 /*
  * This class describes a CodeDom compiler, along with the parameters that it uses.
  * The reason we need this class is that if two files both use the same language,

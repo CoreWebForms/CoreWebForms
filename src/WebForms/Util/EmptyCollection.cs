@@ -1,5 +1,7 @@
 // MIT License.
 
+using System.Collections;
+
 /*
  * EmptyCollection class
  * 
@@ -7,9 +9,6 @@
  */
 
 namespace System.Web.Util;
-
-using System.Collections;
-
 /*
  * Fast implementation of an empty collection
  */

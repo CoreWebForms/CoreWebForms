@@ -1,17 +1,14 @@
 // MIT License.
 
-namespace System.Web.Compilation;
-
-using System;
 using System.CodeDom;
 using System.ComponentModel.Design;
-using System.Web;
 #if !FEATURE_PAL
 #endif // !FEATURE_PAL
 using System.Web.UI;
 using Microsoft.Extensions.DependencyInjection;
 using WebForms;
 
+namespace System.Web.Compilation;
 public abstract class ExpressionBuilder
 {
     private static ExpressionBuilder dataBindingExpressionBuilder;

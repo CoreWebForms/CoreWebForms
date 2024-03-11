@@ -1,14 +1,14 @@
 // MIT License.
 
+using System.Diagnostics;
+
 namespace System.Web.UI
 {
-    using System.Diagnostics;
-
     public sealed class RegisteredArrayDeclaration
     {
-        private Control _control;
-        private string _name;
-        private string _value;
+        private readonly Control _control;
+        private readonly string _name;
+        private readonly string _value;
 
         internal RegisteredArrayDeclaration(Control control, string arrayName, string arrayValue)
         {

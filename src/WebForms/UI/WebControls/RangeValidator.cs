@@ -1,11 +1,9 @@
 // MIT License.
 
-namespace System.Web.UI.WebControls;
-
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Web;
 
+namespace System.Web.UI.WebControls;
 /// <devdoc>
 ///    <para> Checks if the value of the associated input control
 ///       is within some minimum and maximum values, which

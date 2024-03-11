@@ -2,7 +2,6 @@
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http.Features;
-using Microsoft.AspNetCore.SystemWebAdapters;
 using Microsoft.AspNetCore.SystemWebAdapters.Features;
 
 namespace System.Web;

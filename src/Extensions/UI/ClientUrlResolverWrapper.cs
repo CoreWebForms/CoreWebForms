@@ -1,9 +1,7 @@
 // MIT License.
 
-namespace System.Web.UI {
-    using System;
-    using System.Web.UI;
-
+namespace System.Web.UI
+{
     internal sealed class ClientUrlResolverWrapper : IClientUrlResolver {
         private readonly Control _control;
 
