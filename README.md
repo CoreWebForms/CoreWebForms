@@ -67,8 +67,8 @@ This will make use of `Microsoft.AspNetCore.SystemWebAdapters` to provide the `S
             .AddWebForms()
             .AddScriptManager() // Remove if you don't use ScriptManager/AJAX
             .AddOptimization() // Remove if you don't use System.Web.Optimization
-            .AddDynamicPages() // Remove if you don't have dynamic pages
-            .AddCompiledPages();
+            .AddDynamicPages() // Used if you have dynamic pages
+            .AddCompiledPages(); // Used if compiled pages are used
 
     builder.Services.AddSession();
     builder.Services.AddDistributedMemoryCache();

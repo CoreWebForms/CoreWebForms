@@ -50,7 +50,7 @@ var app = builder.Build();
 app.UseSession(); // If needed with custom setup
 app.UseSystemwebAdapters();
 
-app.MapWebForms();
+app.MapHttpHandlers();
 ```
 
-The `MapWebForms()` method will map all [handlers](./Handlers.md) as well as set up endpoints required for scripts provided by WebForms.
+To understand `MapHttpHandlers()`, see the documentation for [handlers](./Handlers.md).

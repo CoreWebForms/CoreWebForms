@@ -20,7 +20,13 @@ For context, this is what the registration looked like in `web.config`:
 </system.web>
 ```
 
-## Design
+## Design 2 - Available in v0.2+
+
+Usage of `TagPrefixAttribute` to declare in an assembly that has specific prefixes registered for specific prefix/namespace pairs.
+
+This has some known shortcomings, and #116 is tracking getting a better story there.
+
+## Design 1 - Removed in v0.2
 
 The initial step is to allow prefixes to be registered by supplying a type from the namespace which will then be included in the compilation:
 
