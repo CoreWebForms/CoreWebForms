@@ -87,7 +87,7 @@ internal sealed class StaticCompilationService : BackgroundService
         private string GetAssemblyPath(string typeName, bool isPdb = false)
         {
             var ext = isPdb ? "pdb" : "dll";
-            return Path.Combine(options.TargetDirectory, $"WebForms.{typeName}.{ext}");
+            return Path.Combine(options.TargetDirectory, $"ASP.{typeName}.{ext}");
         }
 
         public bool HandleErrors(string route, ImmutableArray<Diagnostic> errors)
