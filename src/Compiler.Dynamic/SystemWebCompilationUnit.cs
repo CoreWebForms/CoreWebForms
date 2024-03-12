@@ -2,6 +2,7 @@
 
 using System.Collections.Frozen;
 using System.Diagnostics.CodeAnalysis;
+using System.Web;
 using WebForms.Features;
 using WebForms.Internal;
 
@@ -9,15 +10,15 @@ namespace WebForms.Compiler.Dynamic;
 
 internal sealed class SystemWebCompilationUnit(ICompilationStrategy provider) : IWebFormsCompilationFeature
 {
-    private readonly Dictionary<string, CompiledPage> _cache = new(PathComparer.Instance);
+    private readonly Dictionary<VirtualPath, CompiledPage> _cache = new();
 
-    public ICompilationStrategy OutputProvider { get; } = provider;
+    public ICompilationStrategy Strategy { get; } = provider;
 
     public IEnumerable<CompiledPage> Values => _cache.Values;
 
-    IReadOnlyCollection<string> IWebFormsCompilationFeature.Paths => _cache.Keys;
+    IReadOnlyCollection<string> IWebFormsCompilationFeature.Paths => _cache.Keys.Select(k => k.Path).ToList();
 
-    public CompiledPage this[string path]
+    public CompiledPage this[VirtualPath path]
     {
         get => _cache[path];
         set => _cache[path] = value;
@@ -25,7 +26,7 @@ internal sealed class SystemWebCompilationUnit(ICompilationStrategy provider) : 
 
     bool IWebFormsCompilationFeature.TryGetException(string path, [MaybeNullWhen(false)] out Exception exception)
     {
-        if (_cache.TryGetValue(path, out var page) && page.Exception is { } e)
+        if (_cache.TryGetValue(new(path), out var page) && page.Exception is { } e)
         {
             exception = e;
             return true;
@@ -36,7 +37,7 @@ internal sealed class SystemWebCompilationUnit(ICompilationStrategy provider) : 
     }
 
     Type? IWebFormsCompilationFeature.GetForPath(string virtualPath)
-        => _cache.TryGetValue(virtualPath, out var page) && page.Type is { } type ? type : null;
+        => _cache.TryGetValue(new(virtualPath), out var page) && page.Type is { } type ? type : null;
 
     public ICompilationResult Build() => new BuiltDynamicCompilation(_cache);
 
@@ -44,9 +45,9 @@ internal sealed class SystemWebCompilationUnit(ICompilationStrategy provider) : 
     {
         private FrozenDictionary<string, CompiledPage>? _pages;
 
-        public BuiltDynamicCompilation(Dictionary<string, CompiledPage> pages)
+        public BuiltDynamicCompilation(Dictionary<VirtualPath, CompiledPage> pages)
         {
-            _pages = pages.ToFrozenDictionary(PathComparer.Instance);
+            _pages = pages.ToFrozenDictionary(p => p.Key.Path, p => p.Value, PathComparer.Instance);
         }
 
         IWebFormsCompilationFeature ICompilationResult.Types => this;

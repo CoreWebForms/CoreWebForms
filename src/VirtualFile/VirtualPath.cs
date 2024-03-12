@@ -54,6 +54,14 @@ internal sealed class VirtualPath
 
     public string Path { get; }
 
+    public override string ToString() => Path;
+
+    public override int GetHashCode() => StringComparer.OrdinalIgnoreCase.GetHashCode(Path);
+
+    public override bool Equals(object obj) => obj is VirtualPath other && Equals(other);
+
+    public bool Equals(VirtualPath other) => string.Equals(Path, other?.Path, StringComparison.OrdinalIgnoreCase);
+
     public string VirtualPathStringNoTrailingSlash
     {
         get

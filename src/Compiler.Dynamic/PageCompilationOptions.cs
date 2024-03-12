@@ -1,5 +1,6 @@
 // MIT License.
 
+using System.Web;
 using System.Web.UI;
 using Microsoft.Extensions.FileProviders;
 using WebForms.Features;
@@ -16,20 +17,19 @@ public class PageCompilationOptions
 
     internal IFileProvider WebFormsFileProvider { get; set; } = default!;
 
-    internal Dictionary<string, Func<string, IWebFormsCompilationFeature, DependencyParser>> Parsers { get; } = new(StringComparer.OrdinalIgnoreCase);
+    internal Dictionary<string, Func<VirtualPath, IWebFormsCompilationFeature, DependencyParser>> Parsers { get; } = new(StringComparer.OrdinalIgnoreCase);
 
     internal void AddParser<DParser>(string extension)
         where DParser : DependencyParser, new()
     {
-        DependencyParser Create(string path, IWebFormsCompilationFeature compiledTypeAccessor)
+        DependencyParser Create(VirtualPath path, IWebFormsCompilationFeature compiledTypeAccessor)
         {
-            var virtualPath = new System.Web.VirtualPath(path);
             var dependencyParser = new DParser
             {
                 WebFormsFileProvider = WebFormsFileProvider,
                 CompiledTypeAccessor = compiledTypeAccessor,
             };
-            dependencyParser.Init(virtualPath);
+            dependencyParser.Init(path);
 
             return dependencyParser;
         }
