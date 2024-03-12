@@ -47,15 +47,15 @@ internal sealed class SystemWebCompilation : IDisposable, IWebFormsCompiler
 
     public IFileProvider Files => _webFormsOptions.Value.WebFormsFileProvider;
 
-    private SystemWebCompilationUnit CompileAllPages(ICompilationStrategy output, CancellationToken token)
+    private SystemWebCompilationUnit CompileAllPages(ICompilationStrategy strategy, CancellationToken token)
     {
         var aspxFiles = Files.GetFiles().Where(t => t.FullPath.EndsWith(".aspx"))
-            .Select(t => t.FullPath);
-        var compilation = new SystemWebCompilationUnit(output);
+            .Select(t => new VirtualPath("/" + t.FullPath));
+        var compilation = new SystemWebCompilationUnit(strategy);
 
         foreach (var parser in GetParsersToCompile(aspxFiles, compilation))
         {
-            compilation[parser.CurrentVirtualPath.Path] = InternalCompilePage(compilation, parser, token);
+            compilation[parser.CurrentVirtualPath] = InternalCompilePage(compilation, parser, token);
         }
 
         return compilation;
@@ -66,12 +66,12 @@ internal sealed class SystemWebCompilation : IDisposable, IWebFormsCompiler
     /// by using <see cref="TemplateParser.GetDependencyPaths"/>, but we want to ensure we only compile something if its
     /// dependencies have already been compiled.
     /// </summary>
-    private IEnumerable<DependencyParser> GetParsersToCompile(IEnumerable<string> files, SystemWebCompilationUnit compilationUnit)
+    private IEnumerable<DependencyParser> GetParsersToCompile(IEnumerable<VirtualPath> files, SystemWebCompilationUnit compilationUnit)
     {
-        var parsers = new Dictionary<string, DependencyParser>();
+        var parsers = new Dictionary<VirtualPath, DependencyParser>();
 
-        var stack = new Stack<string>(files);
-        var visited = new HashSet<string>();
+        var stack = new Stack<VirtualPath>(files);
+        var visited = new HashSet<VirtualPath>();
 
         while (stack.Count > 0)
         {
@@ -102,7 +102,7 @@ internal sealed class SystemWebCompilation : IDisposable, IWebFormsCompiler
 
     private CompiledPage InternalCompilePage(SystemWebCompilationUnit compiledPages, DependencyParser parser, CancellationToken token)
     {
-        var currentPath = parser.CurrentVirtualPath.Path;
+        var currentPath = parser.CurrentVirtualPath;
 
         try
         {
@@ -152,11 +152,6 @@ internal sealed class SystemWebCompilation : IDisposable, IWebFormsCompiler
 
             var compiled = CreateCompiledPage(compiledPages, compilation, currentPath, typeName, embedded, assemblies!, token);
 
-            foreach (var dependency in dependencies)
-            {
-                dependency.PageDependencies.Add(compiled);
-            }
-
             _logger.LogInformation("Compiled {Path}", currentPath);
 
             return compiled;
@@ -165,9 +160,9 @@ internal sealed class SystemWebCompilation : IDisposable, IWebFormsCompiler
         {
             _logger.LogError(e, "Failed to compile {Path}", currentPath);
 
-            if (compiledPages.OutputProvider.HandleExceptions)
+            if (compiledPages.Strategy.HandleExceptions)
             {
-                return new(new(currentPath), [])
+                return new(currentPath)
                 {
                     Exception = e
                 };
@@ -181,15 +176,15 @@ internal sealed class SystemWebCompilation : IDisposable, IWebFormsCompiler
 
     private CompiledPage CreateCompiledPage(
         SystemWebCompilationUnit cu,
-           Compilation compilation,
-           string route,
-           string typeName,
-           IEnumerable<EmbeddedText> embedded,
-           IEnumerable<Assembly> assemblies,
-           CancellationToken token)
+        Compilation compilation,
+        VirtualPath virtualPath,
+        string typeName,
+        IEnumerable<EmbeddedText> embedded,
+        IEnumerable<Assembly> assemblies,
+        CancellationToken token)
     {
-        using var peStream = cu.OutputProvider.CreatePeStream(route, typeName);
-        using var pdbStream = cu.OutputProvider.CreatePdbStream(route, typeName);
+        using var peStream = cu.Strategy.CreatePeStream(virtualPath.Path, typeName);
+        using var pdbStream = cu.Strategy.CreatePdbStream(virtualPath.Path, typeName);
 
         var result = compilation.Emit(
             embeddedTexts: embedded,
@@ -199,17 +194,17 @@ internal sealed class SystemWebCompilation : IDisposable, IWebFormsCompiler
 
         if (!result.Success)
         {
-            _logger.LogError("{ErrorCount} error(s) found compiling {Route}", result.Diagnostics.Length, route);
+            _logger.LogError("{ErrorCount} error(s) found compiling {Route}", result.Diagnostics.Length, virtualPath);
 
-            if (!cu.OutputProvider.HandleErrors(route, result.Diagnostics))
+            if (!cu.Strategy.HandleErrors(virtualPath, result.Diagnostics))
             {
-                throw new RoslynCompilationException(route, result.Diagnostics.ConvertToErrors());
+                throw new RoslynCompilationException(virtualPath, result.Diagnostics.ConvertToErrors());
             }
             else
             {
-                return new(new(route), [])
+                return new(virtualPath)
                 {
-                    Exception = new RoslynCompilationException(route, result.Diagnostics.ConvertToErrors())
+                    Exception = new RoslynCompilationException(virtualPath, result.Diagnostics.ConvertToErrors())
                 };
             }
         }
@@ -218,14 +213,14 @@ internal sealed class SystemWebCompilation : IDisposable, IWebFormsCompiler
             peStream.Position = 0;
             pdbStream.Position = 0;
 
-            var context = new PageAssemblyLoadContext(route, assemblies, _factory.CreateLogger<PageAssemblyLoadContext>());
+            var context = new PageAssemblyLoadContext(virtualPath, assemblies, _factory.CreateLogger<PageAssemblyLoadContext>());
             var assembly = context.LoadFromStream(peStream, pdbStream);
 
             peStream.Position = 0;
 
             if (assembly.GetType(typeName) is Type type)
             {
-                return new CompiledPage(new(route), embedded.Select(t => t.FilePath).ToArray())
+                return new CompiledPage(virtualPath)
                 {
                     MetadataReference = MetadataReference.CreateFromStream(peStream),
                     Type = type,
@@ -251,9 +246,9 @@ internal sealed class SystemWebCompilation : IDisposable, IWebFormsCompiler
         throw new NotSupportedException($"Unknown language {compiler.Language}");
     }
 
-    private DependencyParser CreateParser(string path, SystemWebCompilationUnit compilationUnit)
+    private DependencyParser CreateParser(VirtualPath path, SystemWebCompilationUnit compilationUnit)
     {
-        var extension = Path.GetExtension(path);
+        var extension = path.Extension;
 
         if (_pageCompilationOptions.Value.Parsers.TryGetValue(extension, out var parser))
         {

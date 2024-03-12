@@ -73,21 +73,22 @@ internal sealed class StaticCompilationService : BackgroundService
         public bool HandleExceptions => false;
 
         Stream ICompilationStrategy.CreatePdbStream(string route, string typeName)
-            => CreateStream(GetAssemblyPath(typeName, isPdb: true));
+            => CreateStream(GetAssemblyPath(route, isPdb: true));
 
         Stream ICompilationStrategy.CreatePeStream(string route, string typeName)
         {
-            var assemblyName = GetAssemblyPath(typeName);
+            var assemblyName = GetAssemblyPath(route);
             Pages.Add(new(route, typeName, Path.GetFileNameWithoutExtension(assemblyName)));
             return CreateStream(assemblyName);
         }
 
         private static Stream CreateStream(string path) => File.Open(path, FileMode.Create, FileAccess.ReadWrite, FileShare.None);
 
-        private string GetAssemblyPath(string typeName, bool isPdb = false)
+        private string GetAssemblyPath(string route, bool isPdb = false)
         {
             var ext = isPdb ? "pdb" : "dll";
-            return Path.Combine(options.TargetDirectory, $"ASP.{typeName}.{ext}");
+            var assemblyName = "ASP." + route.TrimStart(['/', '\\']).Replace("/", "_").Replace("\\", "_");
+            return Path.Combine(options.TargetDirectory, $"{assemblyName}.{ext}");
         }
 
         public bool HandleErrors(string route, ImmutableArray<Diagnostic> errors)

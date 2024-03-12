@@ -1,40 +1,32 @@
 // MIT License.
 
 using System.Runtime.Loader;
-using Microsoft.AspNetCore.Http;
+using System.Web;
 using Microsoft.CodeAnalysis;
 
 namespace WebForms.Compiler.Dynamic;
 
-internal sealed class CompiledPage
+internal sealed class CompiledPage(VirtualPath path)
 {
-    public CompiledPage(PagePath path, string[] dependencies)
+    private Type? _type;
+
+    public Type? Type
     {
-        Path = path.UrlPath;
-        FileDependencies = dependencies;
-        AspxFile = path.FilePath;
+        get => _type;
+        init => _type = value;
     }
 
-    public Type? Type { get; set; }
+    public Exception? Exception { get; init; }
 
-    public Exception? Exception { get; set; }
-
-    public PathString Path { get; }
-
-    public IReadOnlyCollection<string> FileDependencies { get; }
-
-    public ICollection<CompiledPage> PageDependencies { get; } = new HashSet<CompiledPage>();
-
-    public string AspxFile { get; }
+    public VirtualPath Path { get; } = path;
 
     public MetadataReference? MetadataReference { get; init; }
 
     public void Dispose()
     {
-        if (Type is not null)
+        if (_type is { } type)
         {
-            var type = Type;
-            Type = null;
+            _type = null;
             RemovePage(type);
         }
     }
