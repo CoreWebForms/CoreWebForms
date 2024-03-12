@@ -32,7 +32,6 @@ namespace System.Web.Util {
         private VersionInfo() {
         }
 
-        [FileIOPermission(SecurityAction.Assert, Unrestricted = true)]
         internal static string GetFileVersion(String filename) {
 #if !FEATURE_PAL // FEATURE_PAL does not fully support FileVersionInfo
             try {

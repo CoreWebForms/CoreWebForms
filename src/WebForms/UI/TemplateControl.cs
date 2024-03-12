@@ -6,6 +6,8 @@ using System.Collections;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Reflection;
+using System.Web.Compilation;
+using System.Web.Util;
 using WebForms.Internal;
 
 namespace System.Web.UI;
@@ -520,20 +522,49 @@ public abstract class TemplateControl : Control, INamingContainer, IFilterResolu
         return control;
     }
 
+    public ITemplate LoadTemplate(string virtualPath) {
+        return LoadTemplate(VirtualPath.Create(virtualPath));
+    }
+
+    internal ITemplate LoadTemplate(VirtualPath virtualPath) {
+
+        // If it's relative, make it *app* relative.  Treat is as relative to this
+        // user control (ASURT 55513)
+        virtualPath = VirtualPath.Combine(TemplateControlVirtualDirectory).Combine(virtualPath);
+
+        // Compile the declarative template and get its object factory
+        ITypedWebObjectFactory objectFactory = (ITypedWebObjectFactory)BuildManager.GetVPathBuildResult(
+            Context, virtualPath);
+
+        return new SimpleTemplate(objectFactory);
+    }
+
+    internal class SimpleTemplate : ITemplate {
+        private IWebObjectFactory _objectFactory;
+
+        internal SimpleTemplate(ITypedWebObjectFactory objectFactory) {
+
+            // Make sure it's a user control (VSWhidbey 428718)
+            Util.CheckAssignableType(typeof(UserControl), objectFactory.InstantiatedType);
+
+            _objectFactory = objectFactory;
+        }
+
+        public virtual void InstantiateIn(Control control) {
+            UserControl uc = (UserControl)_objectFactory.CreateInstance();
+
+            uc.InitializeAsUserControl(control.Page);
+
+            control.Controls.Add(uc);
+        }
+    }
+
     private sealed class LoadedControl(string virtualPath) : Control
     {
         protected internal override void Render(HtmlTextWriter writer)
         {
             writer.InnerWriter.Write($"<!-- Failed to load control for {virtualPath} --> ");
         }
-    }
-
-    /// <devdoc>
-    /// <para>Obtains a <see cref='System.Web.UI.UserControl'/> object from a user control file.</para>
-    /// </devdoc>
-    public Control LoadControl(string virtualPath) {
-
-        return LoadControl(VirtualPath.Create(virtualPath));
     }
 
     /// <devdoc>

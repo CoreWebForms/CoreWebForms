@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Specialized;
 using System.Globalization;
 using System.Text.RegularExpressions;
+using System.Web.Configuration;
 using System.Web.Util;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -56,7 +57,7 @@ internal abstract class DependencyParser : BaseParser
             {
                 return _baseTemplateParser;
             }
-            
+
             _baseTemplateParser = InitializeBaseTemplateParser();
             return _baseTemplateParser;
         }
@@ -479,7 +480,7 @@ internal class PageDependencyParser : TemplateControlDependencyParser
     }
 
     protected override BaseTemplateParser CreateTemplateParser() => new PageParser();
-   
+
     internal override void ProcessDirective(string directiveName, IDictionary directive)
     {
         base.ProcessDirective(directiveName, directive);

@@ -162,7 +162,6 @@ namespace System.Web.Util {
             }
         }
 
-        [ConfigurationPermission(SecurityAction.Assert, Unrestricted = true)]
         [SuppressMessage("Microsoft.Security", "CA2106:SecureAsserts", Justification = "This assert is safe since we control the callers; they're not leaking information.")]
         private static NameValueCollection GetAppSettingsSection() {
             // DevDiv #353926 - Fall back to reading App.config if System.Web types are being consumed outside an ASP.NET application

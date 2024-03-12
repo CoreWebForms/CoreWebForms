@@ -4,7 +4,6 @@
 // </copyright>
 //------------------------------------------------------------------------------
 
-using System.EnterpriseServices;
 using System.Transactions;
 
 namespace System.Web.Services {
@@ -198,5 +197,16 @@ namespace System.Web.Services {
             }
         }
         internal bool MessageNameSpecified { get { return messageNameSpecified; } }
+    }
+
+    public enum TransactionOption
+    {
+        Disabled = 0,
+        NotSupported = 1,
+        Supported = 2,
+        Required = 3,
+        RequiresNew = 4,
+        Mandatory = 5,
+        RequiresNewOrMandatory = 6
     }
 }

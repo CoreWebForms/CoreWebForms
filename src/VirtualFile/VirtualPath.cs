@@ -4,12 +4,16 @@ using System.Diagnostics;
 using System.Text;
 using System.Web.Hosting;
 using System.Web.Util;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
+using WebForms;
 
 namespace System.Web;
 
 public sealed class VirtualPath
 {
+    public IFileProvider Files => HttpRuntimeHelper.Services.GetRequiredService<IWebHostEnvironment>().ContentRootFileProvider;
     public VirtualPath Parent
     {
         get
@@ -156,7 +160,7 @@ public sealed class VirtualPath
     {
         if (IsRelative)
         {
-            throw new ArgumentException("Must be relative path");
+            throw new ArgumentException($"Must be relative path - {Path}");
         }
     }
 

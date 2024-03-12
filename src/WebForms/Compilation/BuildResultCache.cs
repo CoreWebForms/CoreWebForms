@@ -90,7 +90,6 @@ internal class MemoryBuildResultCache : BuildResultCache
         AppDomain.CurrentDomain.AssemblyLoad += new AssemblyLoadEventHandler(OnAssemblyLoad);
     }
 
-    [PermissionSet(SecurityAction.Assert, Unrestricted = true)]
     private void OnAssemblyLoad(object sender, AssemblyLoadEventArgs args)
     {
         Assembly a = args.LoadedAssembly;
@@ -266,7 +265,6 @@ internal class MemoryBuildResultCache : BuildResultCache
     // OnCacheItemRemoved can be invoked with user code on the stack, for example if someone
     // implements VirtualPathProvider.GetCacheDependency to return a custom CacheDependency.
     // This callback needs PathDiscovery, Read, and Write permission.
-    [FileIOPermission(SecurityAction.Assert, Unrestricted = true)]
     private void OnCacheItemRemoved(string key, object value, CacheItemRemovedReason reason)
     {
 

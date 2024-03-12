@@ -31,7 +31,7 @@ internal sealed class SourceFileBuildProvider: InternalBuildProvider {
     private void EnsureCodeCompileUnit() {
         if (_snippetCompileUnit == null) {
             // Read the contents of the file
-            string sourceString = Util.StringFromVirtualPath(VirtualPathObject);
+            string sourceString = Util.StringFromVirtualPath(VirtualPathObject, VirtualPathObject.Files);
             _snippetCompileUnit = new CodeSnippetCompileUnit(sourceString);
             _snippetCompileUnit.LinePragma = BaseCodeDomTreeGenerator.CreateCodeLinePragmaHelper(
                 VirtualPath, 1);

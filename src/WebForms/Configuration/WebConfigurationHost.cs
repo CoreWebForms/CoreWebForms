@@ -341,7 +341,6 @@ namespace System.Web.Configuration {
             return configPath.Substring(indexVPath);
         }
 
-        [AspNetHostingPermission(SecurityAction.Demand, Level=AspNetHostingPermissionLevel.Medium)]
         void IInternalConfigWebHost.GetSiteIDAndVPathFromConfigPath(string configPath, out string siteID, out string vpath) {
             VirtualPath virtualPath;
             WebConfigurationHost.GetSiteIDAndVPathFromConfigPath(configPath, out siteID, out virtualPath);
@@ -376,7 +375,6 @@ namespace System.Web.Configuration {
             }
         }
 
-        [AspNetHostingPermission(SecurityAction.Demand, Level=AspNetHostingPermissionLevel.Medium)]
         string IInternalConfigWebHost.GetConfigPathFromSiteIDAndVPath(string siteID, string vpath) {
             return WebConfigurationHost.GetConfigPathFromSiteIDAndVPath(
                 siteID, VirtualPath.CreateAllowNull(vpath));
@@ -493,7 +491,6 @@ namespace System.Web.Configuration {
             }
         }
 
-        [FileIOPermissionAttribute(SecurityAction.Assert, AllFiles=FileIOPermissionAccess.PathDiscovery)]
         private string CombineAndValidatePath(string directory, string baseName) {
             try {
                 string path = Path.Combine(directory, baseName);
@@ -852,7 +849,6 @@ namespace System.Web.Configuration {
 
         // Get the factory used to create and initialize Configuration objects.
         static internal IInternalConfigConfigurationFactory ConfigurationFactory {
-            [ReflectionPermission(SecurityAction.Assert, Flags=ReflectionPermissionFlag.MemberAccess)]
             get {
                 if (s_configurationFactory == null) {
                     Type type = Type.GetType(InternalConfigConfigurationFactoryTypeName, true);

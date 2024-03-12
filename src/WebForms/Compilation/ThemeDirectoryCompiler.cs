@@ -36,7 +36,6 @@ internal static class ThemeDirectoryCompiler {
     }
 
     // We need to Assert here since there could be user code on the stack (VSWhidbey 259563)
-    [PermissionSet(SecurityAction.Assert, Unrestricted=true)]
     internal static BuildResultCompiledType GetThemeBuildResultType(HttpContext context, string themeName) {
         // TODO: Migration
         // using (new ApplicationImpersonationContext()) {

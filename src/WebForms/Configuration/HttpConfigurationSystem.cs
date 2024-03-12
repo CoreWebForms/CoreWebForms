@@ -278,7 +278,6 @@ namespace System.Web.Configuration {
         // }
 
         static internal String MsCorLibDirectory {
-            [FileIOPermissionAttribute(SecurityAction.Assert, AllFiles=FileIOPermissionAccess.PathDiscovery)]
             get {
                 if (s_MsCorLibDirectory == null) {
                     s_MsCorLibDirectory = System.Runtime.InteropServices.RuntimeEnvironment.GetRuntimeDirectory();

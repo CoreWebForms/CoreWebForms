@@ -239,7 +239,6 @@ public class AssemblyBuilder {
         return CreateCodeFileWithAssert(generatedFilePath);
     }
 
-    [FileIOPermission(SecurityAction.Assert, Unrestricted = true)]
     private StreamWriter CreateCodeFileWithAssert(string generatedFilePath) {
         Stream temp = new FileStream(generatedFilePath, FileMode.Create, FileAccess.Write, FileShare.Read);
         return new StreamWriter(temp, Encoding.UTF8);
@@ -308,7 +307,6 @@ public class AssemblyBuilder {
     }
 
     // Assert to be able to get the length of the file in the CodeGen dir
-    [FileIOPermission(SecurityAction.Assert, AllFiles = FileIOPermissionAccess.Read)]
     private long GetFileLengthWithAssert(string filename) {
         FileInfo info = new FileInfo(filename);
         return info.Length;
@@ -369,7 +367,6 @@ public class AssemblyBuilder {
         return File.OpenWrite(resourceFile);
     }
 
-    [FileIOPermission(SecurityAction.Assert, Unrestricted = true)]
     private void CreateTempResourceDirectoryIfNecessary() {
         // Create the temp resource directory if needed
         string resourceDir = BuildManager.CodegenResourceDir;
@@ -429,7 +426,6 @@ public class AssemblyBuilder {
 
     // End of public contract
 
-    [FileIOPermission(SecurityAction.Assert, Unrestricted = true)]
     internal string GetTempFilePhysicalPathWithAssert(string extension) {
         return GetTempFilePhysicalPath(extension);
     }

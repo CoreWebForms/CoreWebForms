@@ -113,7 +113,6 @@ namespace System.Web.DataAccess
             return connectionString;
         }
 
-        [PermissionSet(SecurityAction.Assert, Unrestricted = true)]
         internal static string GetDataDirectory()
         {
             if (HostingEnvironment.IsHosted)
@@ -214,9 +213,6 @@ namespace System.Web.DataAccess
 
             if (File.Exists(fullFileName))
                 return;
-
-            if (!HttpRuntime2.HasAspNetHostingPermission(AspNetHostingPermissionLevel.High))
-                throw new ProviderException(SR.GetString(SR.Provider_can_not_create_file_in_this_trust_level));
 
             if (!connectionString.Contains("Database=master"))
                 connectionString += ";Database=master";

@@ -7,7 +7,9 @@
 /************************************************************************************************************/
 
 
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using WebForms;
 
@@ -175,7 +177,6 @@ namespace System.Web.Compilation {
 
         private BuildManager() { }
 
-        [PermissionSet(SecurityAction.Assert, Unrestricted = true)]
         public static bool InitializeBuildManager() {
 
             // If we already tried and got an exception, just rethrow it
@@ -1216,7 +1217,6 @@ namespace System.Web.Compilation {
             CodeDirectoryCompiler.CallAppInitializeMethod();
         }
 
-        [PermissionSet(SecurityAction.Assert, Unrestricted = true)]
         internal void EnsureTopLevelFilesCompiled() {
             if (PreStartInitStage != Compilation.PreStartInitStage.AfterPreStartInit) {
                 throw new InvalidOperationException(SR.GetString(SR.Method_cannot_be_called_during_pre_start_init));
@@ -1613,7 +1613,6 @@ namespace System.Web.Compilation {
         /*
          * Same as GetVPathBuildResultWithNoAssert, but with an Unrestricted Assert.
          */
-        [PermissionSet(SecurityAction.Assert, Unrestricted = true)]
         internal static BuildResult GetVPathBuildResultWithAssert(
             HttpContext context, VirtualPath virtualPath, bool noBuild, bool allowCrossApp, bool allowBuildInPrecompile, bool throwIfNotFound, bool ensureIsUpToDate = true) {
 
@@ -1633,6 +1632,9 @@ namespace System.Web.Compilation {
                 return _theBuildManager.GetVPathBuildResultInternal(virtualPath, noBuild, allowCrossApp, allowBuildInPrecompile, throwIfNotFound, ensureIsUpToDate);
             // }
         }
+
+        private IFileProvider DefaultFileProvider =>
+            HttpRuntimeHelper.Services.GetRequiredService<IWebHostEnvironment>().ContentRootFileProvider;
 
         private static AsyncLocal<VirtualPathSet> circularReferenceChecker = new AsyncLocal<VirtualPathSet>();
 
@@ -1664,9 +1666,9 @@ namespace System.Web.Compilation {
 
             if (throwIfNotFound) {
                 // Before grabbing the lock, make sure the file at least exists (ASURT 46465)
-                Util.CheckVirtualFileExists(virtualPath);
+                Util.CheckVirtualFileExists(virtualPath, DefaultFileProvider);
             }
-            else if (!virtualPath.FileExists()) {
+            else if (!virtualPath.FileExists(DefaultFileProvider)) {
                 return null;
             }
 
@@ -2640,7 +2642,6 @@ namespace System.Web.Compilation {
             }
         }
 
-        [PermissionSet(SecurityAction.Assert, Unrestricted = true)]
         private void PrecompileApp(VirtualPath startingVirtualDir, IEnumerable<string> excludedVirtualPaths) {
             // TODO: Migration
             // using (new ApplicationImpersonationContext()) {
@@ -3472,8 +3473,6 @@ namespace System.Web.Compilation {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2103:ReviewImperativeSecurity",
             Justification = "This is the correct Assert for the situation.")]
         public static Stream CreateCachedFile(string fileName) {
-            new FileIOPermission(FileIOPermissionAccess.AllAccess, HttpRuntime2.CodegenDirInternal).Assert();
-
             // Get the path to the file in the User Cache folder
             string path = GetUserCacheFilePath(fileName);
 
@@ -3483,8 +3482,6 @@ namespace System.Web.Compilation {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2103:ReviewImperativeSecurity",
             Justification = "This is the correct Assert for the situation.")]
         public static Stream ReadCachedFile(string fileName) {
-            new FileIOPermission(FileIOPermissionAccess.AllAccess, HttpRuntime2.CodegenDirInternal).Assert();
-
             // Get the path to the file in the User Cache folder
             string path = GetUserCacheFilePath(fileName);
 

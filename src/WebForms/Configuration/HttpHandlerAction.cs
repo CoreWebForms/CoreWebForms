@@ -136,7 +136,6 @@ namespace System.Web.Configuration {
 
         // Dev10 732000: In a homogenous AppDomain, it is necessary to assert FileIoPermission to load types outside
         // the AppDomain's grant set.
-        [FileIOPermission(SecurityAction.Assert, AllFiles = FileIOPermissionAccess.Read | FileIOPermissionAccess.PathDiscovery)]
         internal void InitValidateInternal() {
             string verb = Verb;
 

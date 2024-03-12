@@ -469,11 +469,6 @@ internal static class Util
 
     private static bool VirtualDirectoryExistsWithAssert(VirtualPath virtualDir) {
         try {
-            String physicalDir = virtualDir.MapPath();
-            if (physicalDir != null) {
-                new FileIOPermission(FileIOPermissionAccess.Read, physicalDir).Assert();
-            }
-
             return virtualDir.DirectoryExists();
         }
         catch {
@@ -1474,7 +1469,6 @@ internal static class Util
     /*
      * Get the path to the (shadow copied) DLL behind an assembly
      */
-    [FileIOPermission(SecurityAction.Assert, AllFiles = FileIOPermissionAccess.PathDiscovery)]
     internal static string GetAssemblyCodeBase(Assembly assembly) {
 
         string location = assembly.Location;

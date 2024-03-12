@@ -182,8 +182,6 @@ internal static class HttpRuntime2
     private static string DirectorySeparatorString = new string(Path.DirectorySeparatorChar, 1);
     private static string DoubleDirectorySeparatorString = new string(Path.DirectorySeparatorChar, 2);
     private static char[] s_InvalidPhysicalPathChars = { '/', '?', '*', '<', '>', '|', '"' };
-    internal static NamedPermissionSet NamedPermissionSet { get; set;}
-
 
     //
     // App domain related
@@ -232,27 +230,6 @@ internal static class HttpRuntime2
     internal static string TempDirInternal {
         get { return _tempDir; }
     }
-
-
-    internal static bool HasAspNetHostingPermission(AspNetHostingPermissionLevel level) {
-
-        // Make sure we have already initialized the trust level
-        //
-
-
-
-        // If we don't have a NamedPermissionSet, we're in full trust
-        if (NamedPermissionSet == null)
-            return true;
-
-        AspNetHostingPermission permission = (AspNetHostingPermission)NamedPermissionSet.GetPermission(
-            typeof(AspNetHostingPermission));
-        if (permission == null)
-            return false;
-
-        return (permission.Level >= level);
-    }
-
 
     internal static VirtualPath CodeDirectoryVirtualPath {
         get { return _appDomainAppVPath.Combine(CodeDirectoryName); }

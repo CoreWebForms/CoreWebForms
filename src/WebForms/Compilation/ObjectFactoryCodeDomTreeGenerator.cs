@@ -192,7 +192,6 @@ internal class ObjectFactoryCodeDomTreeGenerator {
     // Get the factory delegate for this type
     // Could be called with user code on the stack, so need to assert here
     // e.g. This can happen during a Server.Transfer, or a LoadControl.
-    [ReflectionPermission(SecurityAction.Assert, Flags = ReflectionPermissionFlag.MemberAccess)]
     internal static InstantiateObject GetFastObjectCreationDelegate(Type t) {
         // Look for the factory class in the same assembly
         Assembly a = t.Assembly;
