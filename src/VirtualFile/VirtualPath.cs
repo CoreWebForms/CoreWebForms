@@ -160,7 +160,7 @@ public sealed class VirtualPath
     {
         if (IsRelative)
         {
-            throw new ArgumentException($"Must be relative path - {Path}");
+            throw new ArgumentException($"Must be non-relative path - {Path}");
         }
     }
 
