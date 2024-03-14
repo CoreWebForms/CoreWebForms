@@ -1,4 +1,4 @@
-<%@ Page Title="Home Page" Language="C#" AutoEventWireup="false" MasterPageFile="~/Masters/Default.Master" CodeBehind="dynamic_page.aspx.cs" Inherits="SystemWebUISample.Pages.DynamicPage" %>
+<%@ Page Title="Home Page" Language="C#" AutoEventWireup="false" MasterPageFile="~/Masters/Default.Master" CodeBehind="master_property_set.aspx.cs" Inherits="SystemWebUISample.Pages.MasterPropertySetPage" %>
 
 
 <script runat="server">
@@ -58,4 +58,5 @@
                     <AlternatingItemStyle BackColor="White" />
                     <ItemStyle BackColor="#FFFBD6" ForeColor="#333333" />
                     <HeaderStyle BackColor="#990000" Font-Bold="True" ForeColor="White" /> </asp:DataGrid> <br /> <br />
+
 </asp:Content>

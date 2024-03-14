@@ -8,22 +8,14 @@ using System.Collections.Generic;
 
 namespace SystemWebUISample.Pages;
 
-public partial class DynamicPage : Page
+public partial class MasterPropertySetPage : Page
 {
     protected override void OnInit(EventArgs arguments)
     {
         base.OnInit(arguments);
 
-        // AutoEventWireup is False for the Login page, see aspx.
-        Load += Page_Load;
-
         // Body css class
-        ((BaseMaster)Master).BodyCssClass = "Dynamic Page";
-    }
-
-    protected void Page_Load(object sender, EventArgs e)
-    {
-
+        ((BaseMaster)Master).BodyCssClass = "Master Property Set Page";
     }
     protected string TestValue1 = "Hello there!";
 
