@@ -364,3 +364,5 @@ FodyWeavers.xsd
 
 # System.Web.Extensions compiled script files
 src/Extensions/Script/js/dist/
+
+.idea/

@@ -10,6 +10,21 @@ namespace SystemWebUISample.Pages;
 
 public partial class DynamicPage : Page
 {
+    protected override void OnInit(EventArgs arguments)
+    {
+        base.OnInit(arguments);
+
+        // AutoEventWireup is False for the Login page, see aspx.
+        Load += Page_Load;
+
+        // Body css class
+        ((BaseMaster)Master).BodyCssClass = "Dynamic Page";
+    }
+
+    protected void Page_Load(object sender, EventArgs e)
+    {
+
+    }
     protected string TestValue1 = "Hello there!";
 
     protected string GetText(string value)
@@ -43,7 +58,7 @@ public partial class DynamicPage : Page
         Grid.DataSource = bindingList;
         Grid.DataBind();
     }
-    
+
     class Employee
     {
         public string FirstName { get; set; }

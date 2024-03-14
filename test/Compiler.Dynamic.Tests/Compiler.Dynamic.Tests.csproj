@@ -18,7 +18,49 @@
 
   <ItemGroup>
     <TestAssets Include="assets/**/*" />
-    <EmbeddedResource Include="@(TestAssets)" />
+    <EmbeddedResource Include="assets\test01\basic_page.aspx" />
+    <EmbeddedResource Include="assets\test01\basic_page.aspx._0.html" />
+    <EmbeddedResource Include="assets\test02\code_behind.aspx" />
+    <EmbeddedResource Include="assets\test02\code_behind.aspx.cs" />
+    <EmbeddedResource Include="assets\test02\code_behind.aspx._0.html" />
+    <EmbeddedResource Include="assets\test03\page_with_master.aspx" />
+    <EmbeddedResource Include="assets\test03\page_with_master.aspx._0.html" />
+    <EmbeddedResource Include="assets\test03\Site.Master" />
+    <EmbeddedResource Include="assets\test03\Site.Master.cs" />
+    <EmbeddedResource Include="assets\test04\other_page_with_master.aspx" />
+    <EmbeddedResource Include="assets\test04\other_page_with_master.aspx._1.html" />
+    <EmbeddedResource Include="assets\test04\page_with_master.aspx" />
+    <EmbeddedResource Include="assets\test04\page_with_master.aspx._0.html" />
+    <EmbeddedResource Include="assets\test04\page_with_master.aspx._2.html" />
+    <EmbeddedResource Include="assets\test04\Site.Master" />
+    <EmbeddedResource Include="assets\test04\Site.Master.cs" />
+    <EmbeddedResource Include="assets\test05\error_page.aspx" />
+    <EmbeddedResource Include="assets\test05\error_page.aspx._0.html" />
+    <EmbeddedResource Include="assets\test06\route_url_expressionbuilder.aspx" />
+    <EmbeddedResource Include="assets\test06\route_url_expressionbuilder.aspx._0.html" />
+    <EmbeddedResource Include="assets\test07\actual.aspx" />
+    <EmbeddedResource Include="assets\test07\redirect_page.aspx" />
+    <EmbeddedResource Include="assets\test07\redirect_page.aspx._0.html" />
+    <EmbeddedResource Include="assets\test08\scripts.aspx" />
+    <EmbeddedResource Include="assets\test08\scripts.aspx._0.html" />
+    <EmbeddedResource Include="assets\test09\basic_page_with_usercontrol.aspx" />
+    <EmbeddedResource Include="assets\test09\basic_page_with_usercontrol.aspx._0.html" />
+    <EmbeddedResource Include="assets\test09\InsideTestUserControl.ascx" />
+    <EmbeddedResource Include="assets\test09\InsideTestUserControl.ascx.cs" />
+    <EmbeddedResource Include="assets\test09\TestUserControl.ascx" />
+    <EmbeddedResource Include="assets\test09\TestUserControl.ascx.cs" />
+    <EmbeddedResource Include="assets\test10\loadusercontrol.aspx" />
+    <EmbeddedResource Include="assets\test10\loadusercontrol.aspx._0.html" />
+    <EmbeddedResource Include="assets\test10\mycontrol.ascx" />
+    <EmbeddedResource Include="assets\test10\mycontrol.ascx.cs" />
+    <EmbeddedResource Include="assets\test11\cspage.aspx" />
+    <EmbeddedResource Include="assets\test11\cspage.aspx._0.html" />
+    <EmbeddedResource Include="assets\test11\vbcontrol.ascx" />
+    <EmbeddedResource Include="assets\test11\vbcontrol.ascx.cs" />
+    <EmbeddedResource Include="assets\test12\dynamic_page.aspx" />
+    <EmbeddedResource Include="assets\test12\dynamic_page.aspx.cs" />
+    <EmbeddedResource Include="assets\test12\Masters\Default.Master" />
+    <EmbeddedResource Include="assets\test12\Masters\Default.Master.cs" />
     <Compile Remove="@(TestAssets)" />
     <None Remove="@(TestAssets)" />
   </ItemGroup>
@@ -26,6 +68,11 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\Compiler.Dynamic\Compiler.Dynamic.csproj" />
     <ProjectReference Include="..\..\src\Extensions\Extensions.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="assets\test12\dynamic_page.aspx.cs" />
+    <Content Include="assets\test12\Masters\Default.Master.cs" />
   </ItemGroup>
 
 </Project>
