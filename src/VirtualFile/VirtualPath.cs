@@ -36,7 +36,7 @@ public sealed class VirtualPath
         Path = Resolve(path);
     }
 
-    public string GetCacheKey() => null;
+    public string GetCacheKey() => Path;
 
     public bool HasTrailingSlash => Path.EndsWith("/");
 
@@ -254,52 +254,11 @@ public sealed class VirtualPath
 
 
     public static bool operator == (VirtualPath v1, VirtualPath v2) {
-        return VirtualPath.Equals(v1, v2);
+        return Equals(v1, v2);
     }
 
     public static bool operator != (VirtualPath v1, VirtualPath v2) {
-        return !VirtualPath.Equals(v1, v2);
-    }
-
-    public static bool Equals(VirtualPath v1, VirtualPath v2) {
-
-        // Check if it's the same object
-        if ((Object)v1 == (Object)v2) {
-            return true;
-        }
-
-        if ((Object)v1 == null || (Object)v2 == null) {
-            return false;
-        }
-
-        return EqualsHelper(v1, v2);
-    }
-
-    public override bool Equals(object value) {
-
-        if (value == null)
-            return false;
-
-        VirtualPath virtualPath = value as VirtualPath;
-        if ((object)virtualPath == null) {
-            Debug.Assert(false);
-            return false;
-        }
-
-        return EqualsHelper(virtualPath, this);
-    }
-
-    private static bool EqualsHelper(VirtualPath v1, VirtualPath v2) {
-        return StringComparer.InvariantCultureIgnoreCase.Compare(
-            v1.VirtualPathString, v2.VirtualPathString) == 0;
-    }
-
-    public override int GetHashCode() {
-        return StringComparer.InvariantCultureIgnoreCase.GetHashCode(VirtualPathString);
-    }
-
-    public override String ToString() {
-        return VirtualPathString;
+        return !Equals(v1, v2);
     }
 
     public void FailIfNotWithinAppRoot()

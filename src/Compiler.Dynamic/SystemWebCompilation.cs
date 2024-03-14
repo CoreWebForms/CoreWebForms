@@ -50,7 +50,7 @@ internal sealed class SystemWebCompilation : IDisposable, IWebFormsCompiler
     private SystemWebCompilationUnit CompileAllPages(ICompilationStrategy strategy, CancellationToken token)
     {
         var aspxFiles = Files.GetFiles().Where(t => t.FullPath.EndsWith(".aspx"))
-            .Select(t => new VirtualPath("/" + t.FullPath));
+            .Select(t => new VirtualPath("/" + t.FullPath.Replace("\\", "/")));
         var compilation = new SystemWebCompilationUnit(strategy);
 
         foreach (var parser in GetParsersToCompile(aspxFiles, compilation))
@@ -94,7 +94,15 @@ internal sealed class SystemWebCompilation : IDisposable, IWebFormsCompiler
             if (ReferenceEquals(stack.Peek(), currentPath))
             {
                 stack.Pop();
-                parser.Parse();
+                try
+                {
+                    parser.Parse();
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError(e, "Failed to parse {Path}", currentPath);
+                }
+
                 yield return parser;
             }
         }
