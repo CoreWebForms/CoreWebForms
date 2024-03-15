@@ -22,7 +22,7 @@ internal sealed class ScriptResourceHandler : IScriptResourceHandler
         _protector = protector.CreateProtector("ScriptResource");
     }
 
-    public string Prefix { get; } = "__webforms/resource";
+    public string Prefix { get; } = "/__webforms/resource";
 
     public Stream Resolve(string encodedFile)
     {
