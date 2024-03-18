@@ -5,6 +5,8 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Web.UI.WebControls;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.SystemWebAdapters;
@@ -62,10 +64,10 @@ public sealed class ObjectStateFormatter : IStateFormatter, IStateFormatter2
     private const byte Token_TypeRefAddLocal = 42;
     private const byte Token_TypeRef = 43;
 
-#if PORT_BINARYSERIALIZER
+// #if PORT_BINARYSERIALIZER
     // Un-optimized (Binary serialized) types
     private const byte Token_BinarySerialized = 50;
-#endif
+// #endif
 
     // Optimized for sparse arrays
     private const byte Token_SparseArray = 60;
@@ -79,7 +81,7 @@ public sealed class ObjectStateFormatter : IStateFormatter, IStateFormatter2
 
     // Known types for which we generate short type references
     // rather than assembly qualified names
-    // 
+    //
 
     private static readonly Type[] KnownTypes =
         new Type[] {
@@ -94,7 +96,7 @@ public sealed class ObjectStateFormatter : IStateFormatter, IStateFormatter2
     private const byte Marker_Version_1 = 0x01;
 
     // The size of the string table. At most it can be Byte.MaxValue.
-    // 
+    //
     private const int StringTableSize = byte.MaxValue;
 
     // Used during serialization
@@ -710,6 +712,7 @@ public sealed class ObjectStateFormatter : IStateFormatter, IStateFormatter2
     /// Serializes a single value using the specified writer.
     /// Handles exceptions to provide more information about the value being serialized.
     /// </devdoc>
+    [Obsolete("Obsolete")]
     private void SerializeValue(BinaryWriter writer, object value)
     {
         try
@@ -1059,7 +1062,21 @@ public sealed class ObjectStateFormatter : IStateFormatter, IStateFormatter2
                 }
                 else
                 {
-                    throw new InvalidOperationException($"Unsupported type {valueType.FullName}");
+                    // TODO: Migration: BinaryFormatter
+                    IFormatter formatter = new BinaryFormatter();
+                    MemoryStream ms = new MemoryStream(256);
+                    formatter.Serialize(ms, value);
+
+                    byte[] buffer = ms.GetBuffer();
+                    int length = (int)ms.Length;
+
+                    writer.Write(Token_BinarySerialized);
+                    // writer.WriteEncoded(length);
+                    writer.Write7BitEncodedInt(length);
+                    if (buffer.Length != 0) {
+                        writer.Write(buffer, 0, (int)length);
+                    }
+                    // throw new InvalidOperationException($"Unsupported type {valueType.FullName}");
                 }
             }
             while (objectStack.Count > 0);
