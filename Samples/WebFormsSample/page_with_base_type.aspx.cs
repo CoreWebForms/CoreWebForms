@@ -1,6 +1,6 @@
 ﻿// MIT License.
 
-namespace WebFormsSample.Dynamic.UI;
+namespace SystemWebUISample;
 
 public partial class PageWithBaseType : BasePage
 {

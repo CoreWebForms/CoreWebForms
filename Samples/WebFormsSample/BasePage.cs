@@ -2,7 +2,7 @@
 
 using System.Web.UI;
 
-namespace WebFormsSample.Dynamic;
+namespace SystemWebUISample;
 
 public partial class BasePage : Page
 {
