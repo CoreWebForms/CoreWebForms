@@ -8,8 +8,15 @@ using System.Collections.Generic;
 
 namespace SystemWebUISample.Pages;
 
-public partial class DynamicPage : Page
+public partial class MasterPropertySetPage : Page
 {
+    protected override void OnInit(EventArgs arguments)
+    {
+        base.OnInit(arguments);
+
+        // Body css class
+        ((BaseMaster)Master).BodyCssClass = "Master Property Set Page";
+    }
     protected string TestValue1 = "Hello there!";
 
     protected string GetText(string value)
@@ -43,7 +50,7 @@ public partial class DynamicPage : Page
         Grid.DataSource = bindingList;
         Grid.DataBind();
     }
-    
+
     class Employee
     {
         public string FirstName { get; set; }

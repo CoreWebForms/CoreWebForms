@@ -28,4 +28,9 @@
     <ProjectReference Include="..\..\src\Extensions\Extensions.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Include="assets\test12\master_property_set.aspx.cs" />
+    <Content Include="assets\test12\Masters\Default.Master.cs" />
+  </ItemGroup>
+
 </Project>

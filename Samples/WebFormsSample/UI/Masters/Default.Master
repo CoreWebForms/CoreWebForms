@@ -1,0 +1,31 @@
+<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Default.Master.cs" Inherits="SystemWebUISample.BaseMaster" %>
+
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head runat="server">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%: Page.Title %> - Catalog manager (Web Forms)</title>
+
+    <asp:PlaceHolder runat="server">
+    </asp:PlaceHolder>
+
+    <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+
+</head>
+
+<body>
+    <form runat="server">
+
+        <h1>MasterPage: WebForms Sample on ASP.NET Core <%: System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription %></h1>
+
+        <div>
+            <asp:ContentPlaceHolder ID="MainContent" runat="server">
+            </asp:ContentPlaceHolder>
+        </div>
+
+    </form>
+</body>
+</html>

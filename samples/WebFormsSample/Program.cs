@@ -25,11 +25,8 @@ builder.Services.AddSystemWebAdapters()
         bundles.Add(new ScriptBundle("~/scriptbundle")
             .Include("~/script.js"));
     })
-#if WEBFORMS_DYNAMIC
-    .AddDynamicPages();
-#else
+    .AddDynamicPages()
     .AddCompiledPages();
-#endif
 
 var app = builder.Build();
 
