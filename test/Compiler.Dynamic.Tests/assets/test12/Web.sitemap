@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<siteMap>
+    <siteMapNode title="Home" >
+        <siteMapNode title="Services" >
+            <siteMapNode title="SamePage" url="~/SiteMapDemo.aspx"/>
+            <siteMapNode title="DynamicPage" url="~/dynamic_page.aspx"/>
+            <siteMapNode title="Ajax" url="~/ajax.aspx"/>
+        </siteMapNode>
+    </siteMapNode>
+</siteMap>

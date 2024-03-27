@@ -220,4 +220,12 @@ public abstract class VirtualPathProvider
         // If there is no provider, just combine them normally
         return basePath.Parent.Combine(relativePath);
     }
+
+    //TODO change signature and make public once https://github.com/dotnet/systemweb-adapters/pull/490 is merged
+    internal Stream OpenFile(string virtualPath)
+    {
+        VirtualFile vfile = GetFileWithCheck(virtualPath);
+        return vfile.Open();
+    }
+
 }

@@ -2,6 +2,7 @@
 
 using System.Web.Caching;
 using System.Web.UI;
+using Microsoft.AspNetCore.SystemWebAdapters.Features;
 
 namespace System.Web;
 
@@ -56,4 +57,6 @@ internal static class Extensions
     {
         return request.CurrentExecutionFilePath;
     }
+
+    public static Page GetCurrentPage(this HttpContext context) => context.GetRequiredFeature<IHttpHandlerFeature>().Current as Page;
 }
