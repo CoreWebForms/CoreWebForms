@@ -15,7 +15,7 @@ jobs:
       run: dotnet run -p tools/TypeDumper/TypeDumper.csproj
     - name: Validate type forwards
       run: |
-        if [ "$(git diff --ignore-space-at-eol generated/ | wc -l)" -gt "0" ]; then
+        if [ "$(git diff --ignore-space-at-eol | wc -l)" -gt "0" ]; then
           echo "Detected new APIs not included in shim"
           git diff
           exit 1
