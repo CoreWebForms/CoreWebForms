@@ -7,18 +7,17 @@ using System.Text.RegularExpressions;
 using System.Web.Util;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using WebForms;
 
 namespace System.Web.UI;
 internal static class MTConfigUtil
 {
-    public static CompilationSection Compilation => HttpRuntimeHelper.Services.GetRequiredService<IOptions<CompilationSection>>().Value;
+    public static CompilationSection Compilation => HttpRuntime.WebObjectActivator.GetRequiredService<IOptions<CompilationSection>>().Value;
 
     internal static CompilationSection GetCompilationAppConfig() => Compilation;
 
     internal static CompilationSection GetCompilationConfig(VirtualPath currentVirtualPath) => GetCompilationAppConfig();
 
-    internal static PagesSection GetPagesConfig() => HttpRuntimeHelper.Services.GetRequiredService<IOptions<PagesSection>>().Value;
+    internal static PagesSection GetPagesConfig() => HttpRuntime.WebObjectActivator.GetRequiredService<IOptions<PagesSection>>().Value;
 
     internal static PagesSection GetPagesConfig(VirtualPath virtualPath) => GetPagesConfig();
 }

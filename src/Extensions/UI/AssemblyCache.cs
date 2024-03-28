@@ -4,7 +4,6 @@ using System.ComponentModel.Design;
 using System.Reflection;
 using System.Web.Script;
 using Microsoft.Extensions.DependencyInjection;
-using WebForms;
 
 namespace System.Web.UI;
 
@@ -19,7 +18,7 @@ internal static class AssemblyCache
 
     public static Version GetVersion(Assembly assembly) => assembly.GetName().Version;
 
-    public static Assembly Load(string assemblyName) => HttpRuntimeHelper.Services.GetRequiredService<ITypeResolutionService>().GetAssembly(new(assemblyName));
+    public static Assembly Load(string assemblyName) => HttpRuntime.WebObjectActivator.GetRequiredService<ITypeResolutionService>().GetAssembly(new(assemblyName));
 
     public static bool IsAjaxFrameworkAssembly(Assembly assembly) => assembly.GetCustomAttributes<AjaxFrameworkAssemblyAttribute>().Any();
 }

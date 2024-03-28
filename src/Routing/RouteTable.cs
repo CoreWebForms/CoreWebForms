@@ -1,7 +1,6 @@
 // MIT License.
 
 using Microsoft.Extensions.DependencyInjection;
-using WebForms;
 
 namespace System.Web.Routing;
 
@@ -11,5 +10,5 @@ public class RouteTable
     {
     }
 
-    public static RouteCollection Routes => HttpRuntimeHelper.Services.GetRequiredService<RouteCollection>();
+    public static RouteCollection Routes => HttpRuntime.WebObjectActivator.GetRequiredService<RouteCollection>();
 }

@@ -9,7 +9,6 @@ using System.Web.Optimization;
 using System.Web.Resources;
 using System.Web.Util;
 using Microsoft.Extensions.DependencyInjection;
-using WebForms;
 
 using Debug = System.Diagnostics.Debug;
 
@@ -498,7 +497,7 @@ namespace System.Web.UI
             // ScriptPath is obsolete but still functional
             if (IgnoreScriptPath || String.IsNullOrEmpty(scriptManager.ScriptPath))
             {
-                return HttpRuntimeHelper.Services.GetRequiredService<IScriptResourceHandler>().GetScriptResourceUrl(assembly, resourceName, culture, zip);
+                return HttpRuntime.WebObjectActivator.GetRequiredService<IScriptResourceHandler>().GetScriptResourceUrl(assembly, resourceName, culture, zip);
             }
             else
             {
@@ -506,7 +505,7 @@ namespace System.Web.UI
 
                 if (IsBundleReference)
                 {
-                    return HttpRuntimeHelper.Services.GetRequiredService<IBundleResolver>().GetBundleUrl(path);
+                    return HttpRuntime.WebObjectActivator.GetRequiredService<IBundleResolver>().GetBundleUrl(path);
                 }
 
                 // Always want to resolve ScriptPath urls against the ScriptManager itself,
@@ -523,7 +522,7 @@ namespace System.Web.UI
 
             if (IsBundleReference)
             {
-                return HttpRuntimeHelper.Services.GetRequiredService<IBundleResolver>().GetBundleUrl(path);
+                return HttpRuntime.WebObjectActivator.GetRequiredService<IBundleResolver>().GetBundleUrl(path);
             }
 
             return ClientUrlResolver.ResolveClientUrl(path);

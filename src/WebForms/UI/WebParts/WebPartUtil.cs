@@ -3,7 +3,6 @@
 using System.Diagnostics;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
-using WebForms;
 
 namespace System.Web.UI.WebControls.WebParts
 {
@@ -12,7 +11,7 @@ namespace System.Web.UI.WebControls.WebParts
         // Called from WebPartManagerInternals and ConnectionsZone.
         internal static object CreateObjectFromType(Type type)
         {
-            return ActivatorUtilities.CreateInstance(HttpRuntimeHelper.Services, type);
+            return ActivatorUtilities.CreateInstance(HttpRuntime.WebObjectActivator, type);
         }
 
         // We use BuildManager.GetType() instead of Type.GetType() so we can load types from the

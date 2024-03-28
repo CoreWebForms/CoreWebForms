@@ -10,7 +10,6 @@
 
   <ItemGroup>
     <Compile Include="..\Handlers\CancellationChangeTokenSource.cs" Link="CancellationChangeTokenSource.cs" />
-    <Compile Include="..\VirtualFile\HttpRuntimeHelper.cs" Link="HttpRuntimeHelper.cs" />
   </ItemGroup>
 
   <ItemGroup>

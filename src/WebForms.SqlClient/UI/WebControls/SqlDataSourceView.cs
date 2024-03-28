@@ -11,7 +11,6 @@ using System.Globalization;
 using System.Text;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using WebForms;
 
 namespace System.Web.UI.WebControls;
 /// <devdoc>
@@ -1167,7 +1166,7 @@ public class SqlDataSourceView : DataSourceView, IStateManager
         {
             case SqlDataSourceMode.DataSet:
                 {
-                    HttpRuntimeHelper.Services.GetRequiredService<ILogger<SqlDataSourceView>>().LogWarning("SqlDataSourceView.Mode==DataSet is not supported");
+                    HttpRuntime.WebObjectActivator.GetRequiredService<ILogger<SqlDataSourceView>>().LogWarning("SqlDataSourceView.Mode==DataSet is not supported");
 #if PORT_SQLDEPENDENCY
                     SqlCacheDependency cacheDependency = null;
                     if (cacheEnabled && cache is SqlDataSourceCache)

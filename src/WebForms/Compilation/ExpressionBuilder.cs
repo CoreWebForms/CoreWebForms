@@ -94,7 +94,7 @@ public abstract class ExpressionBuilder
 
         return expressionBuilder;
 #else
-        return HttpRuntimeHelper.Services.GetRequiredService<ExpressionBuilderCollection>()
+        return HttpRuntime.WebObjectActivator.GetRequiredService<ExpressionBuilderCollection>()
             .GetBuilder(expressionPrefix);
 #endif
     }
