@@ -13,7 +13,6 @@ using System.Web.UI.Adapters;
 using System.Web.UI.WebControls;
 using System.Web.Util;
 using Microsoft.AspNetCore.SystemWebAdapters;
-using Microsoft.AspNetCore.SystemWebAdapters.Features;
 using Microsoft.Extensions.DependencyInjection;
 
 #nullable disable
@@ -915,7 +914,7 @@ public partial class Control : IComponent, IParserAccessor, IDataBindingsAccesso
     ]
     public Page Page
     {
-        get => page ??= HttpContext.Current.GetRequiredFeature<IHttpHandlerFeature>().Current as Page ?? throw new InvalidOperationException("No page available");
+        get => page ??= HttpContext.Current.CurrentHandler as Page ?? throw new InvalidOperationException("No page available");
         set => page = value;
     }
 

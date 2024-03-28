@@ -3,10 +3,9 @@
 using System.Web.SessionState;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Routing.Patterns;
-using Microsoft.AspNetCore.SystemWebAdapters.Features;
+using Microsoft.AspNetCore.SystemWebAdapters;
 using Microsoft.AspNetCore.SystemWebAdapters.HttpHandlers;
 using Microsoft.Extensions.Primitives;
 
@@ -98,7 +97,7 @@ internal sealed class HttpHandlerEndpointConventionBuilder : EndpointDataSource,
         builder.EnsureRequestEndThrows();
         builder.Run(context =>
         {
-            if (context.Features.GetRequiredFeature<IHttpHandlerFeature>().Current is { } handler)
+            if (context.AsSystemWeb().CurrentHandler is { } handler)
             {
                 return handler.RunHandlerAsync(context).AsTask();
             }
