@@ -42,7 +42,7 @@ public class ModelMethodContext
     {
         get
         {
-            Page page = HttpContext.Current.GetHandler() as Page;
+            Page page = HttpContext.Current.CurrentHandler as Page;
             if (page != null)
             {
                 return new ModelMethodContext(page);

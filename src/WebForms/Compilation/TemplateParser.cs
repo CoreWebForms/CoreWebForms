@@ -14,7 +14,6 @@ using System.Web.Compilation;
 using System.Web.Util;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using WebForms;
 
 /*
  * Implements the ASP.NET template parser
@@ -2552,7 +2551,7 @@ private Match RunTextRegex(string text, int textPos) {
         // Make sure we don't get conflicting languages
         if (_compilerType != null && !Equals(_compilerType, compilerType))
         {
-            HttpRuntimeHelper.GetLogger<TemplateParser>().LogError("File {File} expected compiler type {Expected} but got {Actual}", _codeFileVirtualPath.Path, _compilerType, compilerType);
+            HttpRuntime.WebObjectActivator.GetRequiredService<ILogger<TemplateParser>>().LogError("File {File} expected compiler type {Expected} but got {Actual}", _codeFileVirtualPath.Path, _compilerType, compilerType);
             ProcessError(SR.GetString(SR.Inconsistent_CodeFile_Language));
 
             return;
@@ -2722,7 +2721,7 @@ private Match RunTextRegex(string text, int textPos) {
             return _typeResolutionService.GetAssembly(asmName, throwOnFail);
         }
 
-        return HttpRuntimeHelper.Services.GetRequiredService<ITypeResolutionService>().GetAssembly(new(assemblyName));
+        return HttpRuntime.WebObjectActivator.GetRequiredService<ITypeResolutionService>().GetAssembly(new(assemblyName));
     }
 
     internal Type GetType(string typeName, bool ignoreCase)

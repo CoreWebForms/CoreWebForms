@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Routing.Patterns;
+using Microsoft.AspNetCore.SystemWebAdapters;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Primitives;
 
@@ -53,8 +54,7 @@ public static class OptimizationExtensions
                     return Task.CompletedTask;
                 }, RoutePatternFactory.Parse(bundle.Path), 0);
 
-                // TODO: cannot buffer and have HttpApplication at the same time
-                //builder.Metadata.Add(new BufferResponseStreamAttribute());
+                builder.Metadata.Add(new BufferResponseStreamAttribute());
 
                 yield return builder.Build();
             }

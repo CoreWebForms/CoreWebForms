@@ -4,7 +4,6 @@ using System.Collections;
 using System.ComponentModel.Design;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
-using WebForms;
 
 /*
  * Base Control factory implementation
@@ -159,7 +158,7 @@ internal class NamespaceTagNameToTypeMapper : ITagNameToTypeMapper
         // If the assembly was not specified, look for the type in the code assemblies (including sub code assemblies)
         return BuildManager.GetTypeFromCodeAssembly(typeName, true /*ignoreCase*/);
 #else
-        return HttpRuntimeHelper.Services.GetRequiredService<ITypeResolutionService>().GetType(typeName);
+        return HttpRuntime.WebObjectActivator.GetRequiredService<ITypeResolutionService>().GetType(typeName);
 #endif
     }
 }

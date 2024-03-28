@@ -3,7 +3,7 @@
 using System.Web;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SystemWebAdapters;
-using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Microsoft.AspNetCore.Builder;
 
@@ -11,7 +11,12 @@ public static class VirtualFileExtensions
 {
     public static ISystemWebAdapterBuilder AddVirtualPathProvider(this ISystemWebAdapterBuilder builder)
     {
-        builder.Services.TryAddSingleton<VirtualPathProvider, ContentRootVirtualPathProvider>();
+        builder.Services.AddTransient<ContentRootVirtualPathProvider>();
+        builder.Services.AddOptions<SystemWebAdaptersOptions>()
+            .Configure<ContentRootVirtualPathProvider>((options, provider) =>
+        {
+            options.VirtualPathProvider = provider;
+        });
 
         return builder;
     }

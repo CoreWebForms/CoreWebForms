@@ -6,7 +6,6 @@ using System.Globalization;
 using System.Security.Principal;
 using System.Web.Util;
 using Microsoft.Extensions.DependencyInjection;
-using WebForms;
 
 namespace System.Web.UI.WebControls.WebParts
 {
@@ -42,9 +41,9 @@ namespace System.Web.UI.WebControls.WebParts
             }
         }
 
-        public static PersonalizationProvider Provider => HttpRuntimeHelper.Services.GetRequiredService<PersonalizationProvider>();
+        public static PersonalizationProvider Provider => HttpRuntime.WebObjectActivator.GetRequiredService<PersonalizationProvider>();
 
-        public static PersonalizationProviderCollection Providers => HttpRuntimeHelper.Services.GetRequiredService<PersonalizationProviderCollection>();
+        public static PersonalizationProviderCollection Providers => HttpRuntime.WebObjectActivator.GetRequiredService<PersonalizationProviderCollection>();
 
         public static int ResetAllState(PersonalizationScope scope)
         {

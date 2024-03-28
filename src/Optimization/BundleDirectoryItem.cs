@@ -3,6 +3,7 @@
 
 using System.Diagnostics;
 using System.Text.RegularExpressions;
+using System.Web.Hosting;
 
 namespace System.Web.Optimization
 {

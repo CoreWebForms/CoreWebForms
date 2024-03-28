@@ -2,6 +2,7 @@
 
 using System.Collections;
 using System.Text.RegularExpressions;
+using System.Web.Hosting;
 using Microsoft.Extensions.FileProviders;
 using WebForms.Features;
 
@@ -103,6 +104,6 @@ public partial class BaseParser
      */
     internal VirtualPath ResolveVirtualPath(VirtualPath virtualPath)
     {
-        return VirtualPathProvider.CombineVirtualPathsInternal(CurrentVirtualPath, virtualPath);
+        return HostingEnvironment.VirtualPathProvider.CombineVirtualPathsInternal(CurrentVirtualPath, virtualPath);
     }
 }

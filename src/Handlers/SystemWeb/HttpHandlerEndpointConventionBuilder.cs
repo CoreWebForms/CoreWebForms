@@ -3,10 +3,9 @@
 using System.Web.SessionState;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Routing.Patterns;
-using Microsoft.AspNetCore.SystemWebAdapters.Features;
+using Microsoft.AspNetCore.SystemWebAdapters;
 using Microsoft.AspNetCore.SystemWebAdapters.HttpHandlers;
 using Microsoft.Extensions.Primitives;
 
@@ -15,18 +14,15 @@ namespace System.Web;
 internal sealed class HttpHandlerEndpointConventionBuilder : EndpointDataSource, IEndpointConventionBuilder
 {
     private readonly IHttpHandlerCollection[] _managers;
-    private readonly HandlerMetadataProvider _metadataProvider;
     private readonly RequestDelegate _defaultHandler;
 
     private List<Action<EndpointBuilder>> _conventions = [];
 
     public HttpHandlerEndpointConventionBuilder(
         IEnumerable<IHttpHandlerCollection> managers,
-        HandlerMetadataProvider metadataProvider,
         IServiceProvider services)
     {
         _managers = managers.ToArray();
-        _metadataProvider = metadataProvider;
         _defaultHandler = BuildDefaultHandler(services);
     }
 
@@ -41,7 +37,7 @@ internal sealed class HttpHandlerEndpointConventionBuilder : EndpointDataSource,
                 var pattern = RoutePatternFactory.Parse(metadata.Route);
                 var builder = new RouteEndpointBuilder(_defaultHandler, pattern, 0);
 
-                _metadataProvider.Add(builder, metadata);
+                builder.AddHandler(metadata);
 
                 foreach (var convention in _conventions)
                 {
@@ -101,7 +97,7 @@ internal sealed class HttpHandlerEndpointConventionBuilder : EndpointDataSource,
         builder.EnsureRequestEndThrows();
         builder.Run(context =>
         {
-            if (context.Features.GetRequiredFeature<IHttpHandlerFeature>().Current is { } handler)
+            if (context.AsSystemWeb().CurrentHandler is { } handler)
             {
                 return handler.RunHandlerAsync(context).AsTask();
             }

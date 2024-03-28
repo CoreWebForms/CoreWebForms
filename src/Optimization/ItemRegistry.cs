@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System.Globalization;
+using System.Web.Hosting;
 using System.Web.Optimization.Resources;
 
 namespace System.Web.Optimization
