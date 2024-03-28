@@ -3,6 +3,7 @@
 
 using System.Globalization;
 using System.Text;
+using System.Web.Hosting;
 
 namespace System.Web.Optimization
 {

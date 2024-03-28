@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Diagnostics;
 using System.Globalization;
+using System.Web.Hosting;
 using System.Web.Util;
 using WebForms.Internal;
 
@@ -182,7 +183,7 @@ public class MasterPage : UserControl
 
         // If it's relative, make it *app* relative.  Treat is as relative to this
         // user control (ASURT 55513)
-        VirtualPath virtualPath = VirtualPathProvider.CombineVirtualPathsInternal(owner.TemplateControlVirtualPath, masterPageFile);
+        VirtualPath virtualPath = HostingEnvironment.VirtualPathProvider.CombineVirtualPathsInternal(owner.TemplateControlVirtualPath, masterPageFile);
 
         // Compile the declarative control and get its Type
         ITypedWebObjectFactory result = context.GetTypedWebObjectForPath(virtualPath);

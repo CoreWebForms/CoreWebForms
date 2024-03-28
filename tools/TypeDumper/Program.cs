@@ -21,7 +21,6 @@ var toInclude = new[]
     typeof(HtmlTextWriter).Assembly,
     typeof(IHttpHandler).Assembly,
     typeof(RouteCollection).Assembly,
-    typeof(VirtualFile).Assembly,
     typeof(Page).Assembly,
     typeof(ScriptManager).Assembly,
     typeof(SqlDataSourceView).Assembly,

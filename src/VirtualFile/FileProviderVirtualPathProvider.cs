@@ -1,6 +1,7 @@
 // MIT License.
 
 using System.Collections;
+using System.Web.Hosting;
 using Microsoft.Extensions.FileProviders;
 
 namespace System.Web;

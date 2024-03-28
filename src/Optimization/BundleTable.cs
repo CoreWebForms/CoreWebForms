@@ -2,8 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System.Web.Hosting;
-using Microsoft.Extensions.DependencyInjection;
-using WebForms;
+
 namespace System.Web.Optimization
 {
     /// <summary>
@@ -48,6 +47,7 @@ namespace System.Web.Optimization
         }
 
         private static VirtualPathProvider _vpp;
+
         /// <summary>
         /// Gets or sets the <see cref="VirtualPathProvider"/> to be used in resolving bundle files.
         /// </summary>
@@ -58,7 +58,7 @@ namespace System.Web.Optimization
         {
             get
             {
-                return _vpp ?? HttpRuntimeHelper.Services.GetRequiredService<VirtualPathProvider>();
+                return _vpp ?? HostingEnvironment.VirtualPathProvider;
             }
             set
             {
