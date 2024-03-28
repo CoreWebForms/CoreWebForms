@@ -15,7 +15,7 @@ using System.Web.Script.Serialization;
 using System.Web.Util;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using WebForms.Extensions;
+using WebForms.Extensions.Adapters;
 
 namespace System.Web.UI
 {
