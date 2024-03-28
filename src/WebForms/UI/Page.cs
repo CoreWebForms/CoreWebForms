@@ -18,6 +18,7 @@ using System.Web.Configuration;
 using System.Web.ModelBinding;
 using System.Web.Routing;
 using System.Web.SessionState;
+using System.Web.UI.Adapters;
 using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
 using System.Web.UI.WebControls.WebParts;
@@ -353,6 +354,7 @@ public partial class Page : TemplateControl, IHttpAsyncHandler
     private string _titleToBeSet;
     private string _descriptionToBeSet;
     private string _keywordsToBeSet;
+    private PageAdapter _pageAdapter;
 
     private ICallbackEventHandler _callbackControl;
 
@@ -6154,7 +6156,19 @@ window.onload = WebForm_RestoreScrollPosition;
         }
     }
 
-#if PORT_REQUEST_FILEPATH
+    public PageAdapter PageAdapter
+    {
+        get
+        {
+            if (_pageAdapter == null)
+            {
+                ResolveAdapter();
+                _pageAdapter = (PageAdapter)AdapterInternal;
+            }
+            return _pageAdapter;
+        }
+    }
+
     // 
     private String _relativeFilePath;
 
@@ -6179,13 +6193,12 @@ window.onload = WebForm_RestoreScrollPosition;
                 }
                 else
                 {
-                    _relativeFilePath = Server.UrlDecode(UrlPath.MakeRelative(filePath, s));
+                    _relativeFilePath = HttpUtility.UrlDecode(UrlPath.MakeRelative(filePath, s));
                 }
             }
             return _relativeFilePath;
         }
     }
-#endif
 
     private bool _designModeChecked;
     private bool _designMode;

@@ -1024,4 +1024,9 @@ internal static class Util
             return reader.ReadToEnd();
         }
     }
+
+    internal static bool TypeNameContainsAssembly(string typeName)
+    {
+        return CommaIndexInTypeName(typeName) > 0;
+    }
 }

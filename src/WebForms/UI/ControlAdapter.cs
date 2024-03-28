@@ -42,17 +42,17 @@ namespace System.Web.UI.Adapters
             }
         }
 
-        //[
-        //Browsable(false),
-        //DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden),
-        //]
-        //protected PageAdapter PageAdapter {
-        //    get {
-        //        if(Control != null && Control.Page != null)
-        //            return Control.Page.PageAdapter;
-        //        return null;
-        //    }
-        //}
+        [
+         Browsable(false),
+         DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden),
+        ]
+        protected PageAdapter PageAdapter {
+            get {
+                if(Control != null && Control.Page != null)
+                    return Control.Page.PageAdapter;
+                return null;
+            }
+        }
 
         protected HttpBrowserCapabilities Browser {
             get {

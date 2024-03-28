@@ -62,6 +62,11 @@ internal sealed class VirtualPath
 
     public bool Equals(VirtualPath other) => string.Equals(Path, other?.Path, StringComparison.OrdinalIgnoreCase);
 
+    public Stream OpenFile(VirtualPathProvider provider)
+    {
+        return provider.OpenFile(this);
+    }
+
     public string VirtualPathStringNoTrailingSlash
     {
         get
@@ -82,6 +87,19 @@ internal sealed class VirtualPath
             // app relative paths (_appRelativeVirtualPath does)
             return Path != null && Path[0] != '/';
         }
+    }
+
+    public bool IsWithinAppRoot
+    {
+        get
+        {
+            return IsRelative;
+        }
+    }
+
+    public VirtualPath CombineWithAppRoot()
+    {
+        return new VirtualPath(HttpRuntime.AppDomainAppPath).Combine(this);
     }
 
     public VirtualPath Combine(VirtualPath relativePath)
