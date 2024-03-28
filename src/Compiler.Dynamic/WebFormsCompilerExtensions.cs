@@ -65,6 +65,11 @@ public static class WebFormsCompilerExtensions
             .Configure<IOptions<PageCompilationOptions>>((options, compilation) =>
             {
                 options.EnableSessionState = System.Web.Configuration.PagesEnableSessionState.True;
+
+                foreach (var entry in compilation.Value.Entries)
+                {
+                    options.DefaultTagNamespaceRegisterEntries.Add(entry);
+                }
             })
             .Configure<IMetadataProvider>((options, metadata) =>
             {
