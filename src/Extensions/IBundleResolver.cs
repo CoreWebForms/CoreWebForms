@@ -5,7 +5,7 @@ namespace WebForms.Extensions.Adapters;
 public interface IBundleResolver
 {
     /// <summary>
-    /// Determines whether a virutal path addresses a bundle.
+    /// Determines whether a virtual path addresses a bundle.
     /// </summary>
     /// <param name="virtualPath">The requested virtual path.</param>
     /// <returns>True if the virtual path addresses a bundle.</returns>
