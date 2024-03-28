@@ -29,7 +29,6 @@ public static class HandlerServicesExtensions
     {
         services.Services.TryAddSingleton<IHttpHandlerEndpointFactory, HttpHandlerEndpointFactory>();
         services.Services.TryAddEnumerable(ServiceDescriptor.Transient<IStartupFilter, HttpHandlerStartupFilter>());
-        services.Services.TryAddTransient<HandlerMetadataProvider>();
         services.Services.TryAddSingleton<HttpHandlerEndpointConventionBuilder>();
 
         return services;

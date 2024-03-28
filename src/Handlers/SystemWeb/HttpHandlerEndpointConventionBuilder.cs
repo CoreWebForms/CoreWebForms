@@ -15,18 +15,15 @@ namespace System.Web;
 internal sealed class HttpHandlerEndpointConventionBuilder : EndpointDataSource, IEndpointConventionBuilder
 {
     private readonly IHttpHandlerCollection[] _managers;
-    private readonly HandlerMetadataProvider _metadataProvider;
     private readonly RequestDelegate _defaultHandler;
 
     private List<Action<EndpointBuilder>> _conventions = [];
 
     public HttpHandlerEndpointConventionBuilder(
         IEnumerable<IHttpHandlerCollection> managers,
-        HandlerMetadataProvider metadataProvider,
         IServiceProvider services)
     {
         _managers = managers.ToArray();
-        _metadataProvider = metadataProvider;
         _defaultHandler = BuildDefaultHandler(services);
     }
 
@@ -41,7 +38,7 @@ internal sealed class HttpHandlerEndpointConventionBuilder : EndpointDataSource,
                 var pattern = RoutePatternFactory.Parse(metadata.Route);
                 var builder = new RouteEndpointBuilder(_defaultHandler, pattern, 0);
 
-                _metadataProvider.Add(builder, metadata);
+                builder.AddHandler(metadata);
 
                 foreach (var convention in _conventions)
                 {
