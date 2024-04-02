@@ -27,10 +27,10 @@ This will make use of `Microsoft.AspNetCore.SystemWebAdapters` to provide the `S
 
 ## Get Started
 
-1. Add a `nuget.config` or update yours to have the ci feed:
+> [!IMPORTANT]
+> The feed URL has changed as of 2 April, 2024
 
-  > [!IMPORTANT]
-  > The feed URL has changed as of 2 April, 2024
+1. Add a `nuget.config` or update yours to have the ci feed:
 
     ```xml
     <?xml version="1.0" encoding="utf-8"?>
