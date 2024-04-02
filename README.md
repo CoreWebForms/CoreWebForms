@@ -29,6 +29,9 @@ This will make use of `Microsoft.AspNetCore.SystemWebAdapters` to provide the `S
 
 1. Add a `nuget.config` or update yours to have the ci feed:
 
+  > [!IMPORTANT]
+  > The feed URL has changed as of 2 April, 2024
+
     ```xml
     <?xml version="1.0" encoding="utf-8"?>
     <configuration>
@@ -36,7 +39,7 @@ This will make use of `Microsoft.AspNetCore.SystemWebAdapters` to provide the `S
         <!--To inherit the global NuGet package sources remove the <clear/> line below -->
         <clear />
         <add key="nuget" value="https://api.nuget.org/v3/index.json" />
-        <add key="webforms" value="https://webformsfeed.blob.core.windows.net/feed/index.json" />
+        <add key="corewebforms" value="https://corewebformsfeed.blob.core.windows.net/feed/index.json" />
       </packageSources>
     </configuration>
     ```
