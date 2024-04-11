@@ -21,6 +21,8 @@ public class PageCompilationOptions
 
     internal Dictionary<string, Func<VirtualPath, IWebFormsCompilationFeature, DependencyParser>> Parsers { get; } = new(StringComparer.OrdinalIgnoreCase);
 
+    public ICollection<string> Namespaces { get; } = new HashSet<string>();
+
     public void RegisterPrefix(string tagPrefix, string namespaceName, string assemblyName) => Entries.Add(new(tagPrefix, namespaceName, assemblyName));
 
     internal void AddParser<DParser>(string extension)
