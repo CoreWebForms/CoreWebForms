@@ -68,6 +68,7 @@ public static class WebFormsCompilerExtensions
 
                 foreach (var ns in compilation.Value.Namespaces)
                 {
+                    options.Namespaces.NamespaceEntries ??= new();
                     options.Namespaces.NamespaceEntries.Add(ns, new NamespaceEntry { Namespace = ns });
                 }
 
