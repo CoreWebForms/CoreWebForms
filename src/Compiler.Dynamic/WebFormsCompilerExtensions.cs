@@ -66,6 +66,11 @@ public static class WebFormsCompilerExtensions
             {
                 options.EnableSessionState = System.Web.Configuration.PagesEnableSessionState.True;
 
+                foreach (var ns in compilation.Value.Namespaces)
+                {
+                    options.Namespaces.NamespaceEntries.Add(ns, new NamespaceEntry { Namespace = ns });
+                }
+
                 foreach (var entry in compilation.Value.Entries)
                 {
                     options.DefaultTagNamespaceRegisterEntries.Add(entry);
