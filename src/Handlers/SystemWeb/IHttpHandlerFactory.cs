@@ -8,8 +8,6 @@
  * Handler factory interface
  */
 namespace System.Web {
-
-    using System.Security.Permissions;
     /*
      * Handler factory -- gets Handler by requestType,path,file
      */

@@ -178,7 +178,9 @@ public abstract class BuildProvider {
     ///     Opens a stream for a virtual file
     /// </devdoc>
     protected Stream OpenStream(string virtualPath) {
-        return VirtualPathProvider.OpenFile(virtualPath);
+        if (HostingEnvironment.VirtualPathProvider == null)
+            throw new InvalidOperationException("HostingEnvironment.VirtualPathProvider is not set.");
+        return HostingEnvironment.VirtualPathProvider.GetFile(virtualPath)?.Open();
     }
 
     internal /*protected*/ Stream OpenStream(VirtualPath virtualPath, IFileProvider fileProvider) {

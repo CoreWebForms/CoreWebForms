@@ -89,7 +89,7 @@ namespace System.Web.Configuration {
 
             VirtualPath codeVirtualSubDir = HttpRuntime2.CodeDirectoryVirtualPath.Combine(directoryName);
 
-            VirtualPathProvider fileProvider = HttpRuntimeHelper.Services.GetRequiredService<VirtualPathProvider>();
+            VirtualPathProvider fileProvider = HttpRuntime.WebObjectActivator.GetRequiredService<VirtualPathProvider>();
             // Make sure the specified directory exists
             if (!fileProvider.DirectoryExists(codeVirtualSubDir)) {
                 throw new ConfigurationErrorsException(

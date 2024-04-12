@@ -22,16 +22,16 @@ namespace System.Web.DataAccess
     using System.Web.Configuration;
     using System.Web.Hosting;
 
-    internal static class SqlConnectionHelper
+    public static class SqlConnectionHelper
     {
-        internal const string s_strDataDir = "DataDirectory";
-        internal const string s_strUpperDataDirWithToken = "|DATADIRECTORY|";
-        internal const string s_strSqlExprFileExt = ".MDF";
-        internal const string s_strUpperUserInstance = "USER INSTANCE";
+        public const string s_strDataDir = "DataDirectory";
+        public const string s_strUpperDataDirWithToken = "|DATADIRECTORY|";
+        public const string s_strSqlExprFileExt = ".MDF";
+        public const string s_strUpperUserInstance = "USER INSTANCE";
         private const string s_localDbName = "(LOCALDB)";
         private static object s_lock = new object();
 
-        internal static void EnsureNoUserInstance(string connectionString)
+        public static void EnsureNoUserInstance(string connectionString)
         {
             SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(connectionString);
             if (builder.UserInstance)
@@ -40,7 +40,7 @@ namespace System.Web.DataAccess
             }
         }
 
-        internal static SqlConnectionHolder GetConnection(string connectionString, bool revertImpersonation)
+        public static SqlConnectionHolder GetConnection(string connectionString, bool revertImpersonation)
         {
             string strTempConnection = connectionString.ToUpperInvariant();
             if (strTempConnection.Contains(s_strUpperDataDirWithToken))
@@ -80,7 +80,7 @@ namespace System.Web.DataAccess
             return holder;
         }
 
-        internal static string GetConnectionString(string specifiedConnectionString, bool lookupConnectionString,
+        public static string GetConnectionString(string specifiedConnectionString, bool lookupConnectionString,
             bool appLevel)
         {
             Debug.Assert((specifiedConnectionString != null) && (specifiedConnectionString.Length != 0));
@@ -113,7 +113,7 @@ namespace System.Web.DataAccess
             return connectionString;
         }
 
-        internal static string GetDataDirectory()
+        public static string GetDataDirectory()
         {
             if (HostingEnvironment.IsHosted)
                 return Path.Combine(HttpRuntime.AppDomainAppPath, HttpRuntime2.DataDirectoryName);
@@ -228,17 +228,17 @@ namespace System.Web.DataAccess
 
 
 
-        internal sealed class SqlConnectionHolder
+        public sealed class SqlConnectionHolder
         {
-            internal SqlConnection _Connection;
+            public SqlConnection _Connection;
             private bool _Opened;
 
-            internal SqlConnection Connection
+            public SqlConnection Connection
             {
                 get { return _Connection; }
             }
 
-            internal SqlConnectionHolder(string connectionString)
+            public SqlConnectionHolder(string connectionString)
             {
                 try
                 {
@@ -251,7 +251,7 @@ namespace System.Web.DataAccess
                 }
             }
 
-            internal void Open(HttpContext context, bool revertImpersonate)
+            public void Open(HttpContext context, bool revertImpersonate)
             {
                 if (_Opened)
                     return; // Already opened
@@ -266,10 +266,12 @@ namespace System.Web.DataAccess
                 //     Connection.Open();
                 // }
 
+                Connection.Open();
+
                 _Opened = true; // Open worked!
             }
 
-            internal void Close()
+            public void Close()
             {
                 if (!_Opened) // Not open!
                     return;

@@ -788,7 +788,7 @@ namespace System.Web.Compilation {
             //     message = "Change in " + _webHashFilePath;
             // }
             // HttpRuntime.ShutdownAppDomain(ApplicationShutdownReason.BuildManagerChange, message);
-            IHostApplicationLifetime hostApplicationLifetime = HttpRuntimeHelper.Services.GetRequiredService<IHostApplicationLifetime>();
+            IHostApplicationLifetime hostApplicationLifetime = HttpRuntime.WebObjectActivator.GetRequiredService<IHostApplicationLifetime>();
             hostApplicationLifetime.StopApplication();
         }
 
@@ -1634,7 +1634,7 @@ namespace System.Web.Compilation {
         }
 
         private IFileProvider DefaultFileProvider =>
-            HttpRuntimeHelper.Services.GetRequiredService<IWebHostEnvironment>().ContentRootFileProvider;
+            HttpRuntime.WebObjectActivator.GetRequiredService<IWebHostEnvironment>().ContentRootFileProvider;
 
         private static AsyncLocal<VirtualPathSet> circularReferenceChecker = new AsyncLocal<VirtualPathSet>();
 
@@ -1930,7 +1930,7 @@ namespace System.Web.Compilation {
 
         private void OnLocalResourcesChanged(object sender, FileSystemEventArgs e)
         {
-            IHostApplicationLifetime hostApplicationLifetime = HttpRuntimeHelper.Services.GetRequiredService<IHostApplicationLifetime>();
+            IHostApplicationLifetime hostApplicationLifetime = HttpRuntime.WebObjectActivator.GetRequiredService<IHostApplicationLifetime>();
             hostApplicationLifetime.StopApplication();
         }
 
@@ -2937,7 +2937,7 @@ namespace System.Web.Compilation {
                 // via CompileWebFile, we know that we cannot ignore errors.
                 _precompilingApp = true;
 
-                if (IsBatchEnabledForDirectory(vdir.VirtualPathObject)) {
+                if (IsBatchEnabledForDirectory(vdir.VirtualPath)) {
                     // batch everything if enabled
                     BatchCompileWebDirectory(vdir, virtualDir: null, ignoreErrors: false);
                 }
@@ -3076,10 +3076,10 @@ namespace System.Web.Compilation {
 
             bool createStub;
 
-            if (CompilationUtil.NeedToCopyFile(vfile.VirtualPathObject, PrecompilingForUpdatableDeployment,
+            if (CompilationUtil.NeedToCopyFile(vfile.VirtualPath, PrecompilingForUpdatableDeployment,
                 out createStub)) {
 
-                string sourcePhysicalPath = vfile.VirtualPathObject.MapPathInternal();
+                string sourcePhysicalPath = ((VirtualPath)vfile.VirtualPath).MapPathInternal();
 
                 // The file could already exist with updatable precompilation, since we would create the modified file
                 // earlier during processing of a code beside page.
@@ -3089,13 +3089,13 @@ namespace System.Web.Compilation {
                     // inherits attribute (VSWhidbey 467936)
 
                     // First, get the just-compiled BuildResult.  It should always exist
-                    BuildResultCompiledType result = GetVPathBuildResult(null, vfile.VirtualPathObject,
+                    BuildResultCompiledType result = GetVPathBuildResult(null, vfile.VirtualPath,
                         true /*noBuild*/, false /*allowCrossApp*/) as BuildResultCompiledType;
                     Debug.Assert(result != null);
 
                     // VSWhidbey 527299. Need to use the same encoding of the original file to
                     // read and write to the new file.
-                    Encoding encoding = Util.GetEncodingFromConfigPath(vfile.VirtualPathObject);
+                    Encoding encoding = Util.GetEncodingFromConfigPath(vfile.VirtualPath);
 
                     // Read in the file
                     string newAspxFile = Util.StringFromFile(destPhysicalPath, ref encoding);

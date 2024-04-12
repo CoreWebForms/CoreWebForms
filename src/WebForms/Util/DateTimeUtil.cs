@@ -1,14 +1,14 @@
 //------------------------------------------------------------------------------
 // <copyright file="FileChangesMonitor.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
-// </copyright>                                                                
+// </copyright>
 //------------------------------------------------------------------------------
 
 namespace System.Web.Util {
 
     using System;
 
-    internal enum TimeUnit {
+    public enum TimeUnit {
         Unknown         = 0,
         Days,
         Hours,

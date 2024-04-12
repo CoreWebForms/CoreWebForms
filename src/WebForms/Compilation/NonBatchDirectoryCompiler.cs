@@ -60,7 +60,7 @@ namespace System.Web.Compilation {
 
                 // Call GetVPathBuildResult to cause the file to be compiled.  We ignore the
                 // return value.
-                BuildManager.GetVPathBuildResult(vfile.VirtualPathObject);
+                BuildManager.GetVPathBuildResult(vfile.VirtualPath);
             }
         }
     }

@@ -10,6 +10,8 @@
  * Copyright (c) 1999 Microsoft Corporation
  */
 
+using System.Diagnostics;
+
 namespace System.Web.Util {
     using System.Globalization;
     using System.Web.Hosting;
@@ -23,9 +25,9 @@ namespace System.Web.Util {
     using System.Text.RegularExpressions;
     using System.Web.DataAccess;
 
-    internal static class SecUtility {
+    public static class SecUtility {
 
-        internal static string GetDefaultAppName() {
+        public static string GetDefaultAppName() {
             try {
                 string appName = HostingEnvironment.SiteName;
                 if (String.IsNullOrEmpty(appName)) {
@@ -55,7 +57,7 @@ namespace System.Web.Util {
             }
         }
 
-        internal static string GetConnectionString(NameValueCollection config) {
+        public static string GetConnectionString(NameValueCollection config) {
             Debug.Assert(config != null);
 
             string connectionString = config["connectionString"];
@@ -78,7 +80,7 @@ namespace System.Web.Util {
         }
 
         // We don't trim the param before checking with password parameters
-        internal static bool ValidatePasswordParameter(ref string param, int maxSize) {
+        public static bool ValidatePasswordParameter(ref string param, int maxSize) {
             if (param == null) {
                 return false;
             }
@@ -94,7 +96,7 @@ namespace System.Web.Util {
             return true;
         }
 
-        internal static bool ValidateParameter(ref string param, bool checkForNull, bool checkIfEmpty, bool checkForCommas, int maxSize) {
+        public static bool ValidateParameter(ref string param, bool checkForNull, bool checkIfEmpty, bool checkForCommas, int maxSize) {
             if (param == null) {
                 return !checkForNull;
             }
@@ -110,7 +112,7 @@ namespace System.Web.Util {
         }
 
         // We don't trim the param before checking with password parameters
-        internal static void CheckPasswordParameter(ref string param, int maxSize, string paramName) {
+        public static void CheckPasswordParameter(ref string param, int maxSize, string paramName) {
             if (param == null) {
                 throw new ArgumentNullException(paramName);
             }
@@ -124,7 +126,7 @@ namespace System.Web.Util {
             }
         }
 
-        internal static void CheckParameter(ref string param, bool checkForNull, bool checkIfEmpty, bool checkForCommas, int maxSize, string paramName) {
+        public static void CheckParameter(ref string param, bool checkForNull, bool checkIfEmpty, bool checkForCommas, int maxSize, string paramName) {
             if (param == null) {
                 if (checkForNull) {
                     throw new ArgumentNullException(paramName);
@@ -147,7 +149,7 @@ namespace System.Web.Util {
             }
         }
 
-        internal static void CheckArrayParameter(ref string[] param, bool checkForNull, bool checkIfEmpty, bool checkForCommas, int maxSize, string paramName) {
+        public static void CheckArrayParameter(ref string[] param, bool checkForNull, bool checkIfEmpty, bool checkForCommas, int maxSize, string paramName) {
             if (param == null) {
                 throw new ArgumentNullException(paramName);
             }
@@ -169,7 +171,7 @@ namespace System.Web.Util {
             }
         }
 
-        internal static bool GetBooleanValue(NameValueCollection config, string valueName, bool defaultValue) {
+        public static bool GetBooleanValue(NameValueCollection config, string valueName, bool defaultValue) {
             string sValue = config[valueName];
             if (sValue == null) {
                 return defaultValue;
@@ -184,7 +186,7 @@ namespace System.Web.Util {
             }
         }
 
-        internal static int GetIntValue(NameValueCollection config, string valueName, int defaultValue, bool zeroAllowed, int maxValueAllowed) {
+        public static int GetIntValue(NameValueCollection config, string valueName, int defaultValue, bool zeroAllowed, int maxValueAllowed) {
             string sValue = config[valueName];
 
             if (sValue == null) {
@@ -215,7 +217,7 @@ namespace System.Web.Util {
             return iValue;
         }
 
-        internal static TimeUnit GetTimeoutUnit(NameValueCollection config, string valueName, TimeUnit defaultValue) {
+        public static TimeUnit GetTimeoutUnit(NameValueCollection config, string valueName, TimeUnit defaultValue) {
             TimeUnit unit;
             string sValue = config[valueName];
 
@@ -226,7 +228,7 @@ namespace System.Web.Util {
             return unit;
         }
 
-        internal static int? GetNullableIntValue(NameValueCollection config, string valueName) {
+        public static int? GetNullableIntValue(NameValueCollection config, string valueName) {
             int iValue;
             string sValue = config[valueName];
 
@@ -238,7 +240,7 @@ namespace System.Web.Util {
         }
 
 #if !FEATURE_PAL //
-        internal static void CheckSchemaVersion(ProviderBase provider, SqlConnection connection, string[] features, string version, ref int schemaVersionCheck) {
+        public static void CheckSchemaVersion(ProviderBase provider, SqlConnection connection, string[] features, string version, ref int schemaVersionCheck) {
             if (connection == null) {
                 throw new ArgumentNullException("connection");
             }

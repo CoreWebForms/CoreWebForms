@@ -28,7 +28,8 @@
   <ItemGroup>
     <PackageReference Include="System.CodeDom" Version="8.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.SystemWebAdapters" Version="1.4.0" />
-    <PackageReference Include="Microsoft.AspNetCore.SystemWebAdapters.CoreServices" Version="1.4.0" />
+    <PackageReference Include="Microsoft.AspNetCore.SystemWebAdapters.CoreServices" Version="1.3.3-preview1.24210.1" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.6" />
   </ItemGroup>
 
   <ItemGroup>
@@ -40,6 +41,7 @@
 
   <ItemGroup>
     <Folder Include="Web\Configuration\" />
+    <Folder Include="Web\DataAccess\" />
     <Folder Include="Web\Hosting\" />
   </ItemGroup>
 
