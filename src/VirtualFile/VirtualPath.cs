@@ -227,6 +227,7 @@ public sealed class VirtualPath
 
     internal static VirtualPath Create(string filename) => filename;
 
+    public bool FileExists() => Files.GetFileInfo(Path).Exists;
     internal bool FileExists(IFileProvider fileProvider) => fileProvider.GetFileInfo(Path).Exists;
 
     public string MapPath() => Files.GetFileInfo(Path).PhysicalPath;
