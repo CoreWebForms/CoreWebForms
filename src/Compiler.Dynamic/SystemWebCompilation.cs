@@ -49,9 +49,17 @@ internal sealed class SystemWebCompilation : IDisposable, IWebFormsCompiler
 
     private SystemWebCompilationUnit CompileAllPages(ICompilationStrategy strategy, CancellationToken token)
     {
+        var ascxFiles = Files.GetFiles().Where(t => t.FullPath.EndsWith(".ascx"))
+            .Select(t => new VirtualPath("/" + t.FullPath.Replace("\\", "/")));
         var aspxFiles = Files.GetFiles().Where(t => t.FullPath.EndsWith(".aspx"))
             .Select(t => new VirtualPath("/" + t.FullPath.Replace("\\", "/")));
+
         var compilation = new SystemWebCompilationUnit(strategy);
+
+        foreach (var parser in GetParsersToCompile(ascxFiles, compilation))
+        {
+            compilation[parser.CurrentVirtualPath] = InternalCompilePage(compilation, parser, token);
+        }
 
         foreach (var parser in GetParsersToCompile(aspxFiles, compilation))
         {
