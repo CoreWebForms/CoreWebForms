@@ -7,7 +7,7 @@ public interface IWebObjectFactory
     object CreateInstance();
 }
 
-internal interface ITypedWebObjectFactory : IWebObjectFactory
+public interface ITypedWebObjectFactory : IWebObjectFactory
 {
     // Type that will be instantiated by CreateInstance.  This is to allow the caller
     // to check base type validity *before* actually creating the instance.

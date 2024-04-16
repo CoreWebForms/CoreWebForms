@@ -7,7 +7,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Web.Hosting;
 using System.Web.Util;
-using WebForms.Internal;
+using WebForms.Features.Extensions;
 
 /*
  * MasterPage class definition

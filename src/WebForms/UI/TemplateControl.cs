@@ -8,7 +8,7 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Web.Compilation;
 using System.Web.Util;
-using WebForms.Internal;
+using WebForms.Features.Extensions;
 
 namespace System.Web.UI;
 
