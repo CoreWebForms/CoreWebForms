@@ -123,18 +123,25 @@ internal sealed class DynamicSystemWebCompilation : IHttpHandlerCollection
 
         public override Task ProcessRequestAsync(HttpContext context)
         {
+            context.Response.StatusCode = 500;
             if (e is RoslynCompilationException r)
             {
-                return context.AsAspNetCore().Response.WriteAsJsonAsync(r.Error.Select(e => new
+                return context.AsAspNetCore().Response.WriteAsJsonAsync(new
                 {
-                    e.Severity,
-                    e.Message
-                }));
+                    Message = "There was an error compiling the page",
+                    Errors = r.Error.Select(e => new
+                    {
+                        e.Severity,
+                        e.Message
+                    })
+                });
             }
             else
             {
-                context.Response.Write(e.Message);
-                return Task.CompletedTask;
+                return context.AsAspNetCore().Response.WriteAsJsonAsync(new
+                {
+                    Message = "There was an error compiling the page", ErrorMessage = e.Message,
+                });
             }
         }
     }
