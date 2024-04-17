@@ -46,6 +46,8 @@ public sealed class VirtualPath
 
     public static string Resolve(string url)
     {
+        url = url.Replace("\\", "/");
+
         if (!url.StartsWith('~'))
         {
             return Normalize(url);
