@@ -26,6 +26,7 @@ internal sealed class SystemWebCompilation : IDisposable, IWebFormsCompiler
     private readonly ILogger<SystemWebCompilation> _logger;
     private readonly IOptions<WebFormsOptions> _webFormsOptions;
     private readonly IOptions<PageCompilationOptions> _pageCompilationOptions;
+    private readonly string[] _ignoredFolders = new[] { "bin", "obj", "Properties" };
 
     public SystemWebCompilation(
         ILoggerFactory logger,
@@ -47,12 +48,21 @@ internal sealed class SystemWebCompilation : IDisposable, IWebFormsCompiler
 
     public IFileProvider Files => _webFormsOptions.Value.WebFormsFileProvider;
 
+    private bool IsIgnoredFolder(VirtualPath path)
+    {
+        var normalizedPath = path.Path.TrimStart('~').ToLowerInvariant();
+        return _ignoredFolders.Any(folder => normalizedPath.StartsWith($"/{folder}"));
+    }
+
     private SystemWebCompilationUnit CompileAllPages(ICompilationStrategy strategy, CancellationToken token)
     {
         var ascxFiles = Files.GetFiles().Where(t => t.FullPath.EndsWith(".ascx"))
-            .Select(t => new VirtualPath("/" + t.FullPath.Replace("\\", "/")));
+            .Select(t => new VirtualPath("/" + t.FullPath))
+            .Where(x => !IsIgnoredFolder(x));
+
         var aspxFiles = Files.GetFiles().Where(t => t.FullPath.EndsWith(".aspx"))
-            .Select(t => new VirtualPath("/" + t.FullPath.Replace("\\", "/")));
+            .Select(t => new VirtualPath("/" + t.FullPath))
+            .Where(x => !IsIgnoredFolder(x));
 
         var compilation = new SystemWebCompilationUnit(strategy);
 
