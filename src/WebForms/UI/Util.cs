@@ -451,7 +451,7 @@ internal static class Util
 
     internal static bool ThemeExists(string themeName)
     {
-//#if PORT_THEMES
+#if PORT_THEMES
         VirtualPath virtualDir = ThemeDirectoryCompiler.GetAppThemeVirtualDir(themeName);
         if (!VirtualDirectoryExistsWithAssert(virtualDir))
         {
@@ -463,7 +463,7 @@ internal static class Util
         }
 
         return true;
-//#endif
+#endif
         throw new NotImplementedException("Themes are not available");
     }
 
