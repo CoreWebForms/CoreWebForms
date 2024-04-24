@@ -2,6 +2,7 @@
 
 using System.Web;
 using System.Web.UI;
+using Microsoft.CodeAnalysis;
 using Microsoft.Extensions.FileProviders;
 using WebForms.Features;
 
@@ -22,6 +23,8 @@ public class PageCompilationOptions
     internal Dictionary<string, Func<VirtualPath, IWebFormsCompilationFeature, DependencyParser>> Parsers { get; } = new(StringComparer.OrdinalIgnoreCase);
 
     public ICollection<string> Namespaces { get; } = new HashSet<string>();
+
+    public Func<CompilationOptions, CompilationOptions>? OnCreateOption { get; set; }
 
     public void RegisterPrefix(string tagPrefix, string namespaceName, string assemblyName) => Entries.Add(new(tagPrefix, namespaceName, assemblyName));
 

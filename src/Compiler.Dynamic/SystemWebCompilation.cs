@@ -281,6 +281,19 @@ internal sealed class SystemWebCompilation : IDisposable, IWebFormsCompiler
         void IDisposable.Dispose() => Provider.Dispose();
     }
 
+    private static TOptions CreateOptions<TOptions>(PageCompilationOptions pageOptions, TOptions options)
+        where TOptions : CompilationOptions
+    {
+        var result = options.WithOptimizationLevel(pageOptions.IsDebug ? OptimizationLevel.Debug : OptimizationLevel.Release);
+
+        if (pageOptions.OnCreateOption is { } onCreate)
+        {
+            result = onCreate(options);
+        }
+
+        return (TOptions)result;
+    }
+
     private sealed class CSharpCompiler(PageCompilationOptions options) : ICompiler
     {
         public CodeDomProvider Provider { get; } = CodeDomProvider.CreateProvider("CSharp");
@@ -290,9 +303,7 @@ internal sealed class SystemWebCompilation : IDisposable, IWebFormsCompiler
 
         public Compilation CreateCompilation(string typeName, IEnumerable<SyntaxTree> trees, IEnumerable<MetadataReference> references)
             => CSharpCompilation.Create($"WebForms.{typeName}",
-              options: new CSharpCompilationOptions(
-                  outputKind: OutputKind.DynamicallyLinkedLibrary,
-                  optimizationLevel: options.IsDebug ? OptimizationLevel.Debug : OptimizationLevel.Release),
+              options: CreateOptions(options, new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary)),
               syntaxTrees: trees,
               references: references);
     }
@@ -315,9 +326,7 @@ internal sealed class SystemWebCompilation : IDisposable, IWebFormsCompiler
 
         public Compilation CreateCompilation(string typeName, IEnumerable<SyntaxTree> trees, IEnumerable<MetadataReference> references)
             => VisualBasicCompilation.Create($"WebForms.{typeName}",
-              options: new VisualBasicCompilationOptions(
-                  outputKind: OutputKind.DynamicallyLinkedLibrary,
-                  optimizationLevel: _options.IsDebug ? OptimizationLevel.Debug : OptimizationLevel.Release),
+              options: CreateOptions(_options, new VisualBasicCompilationOptions(OutputKind.DynamicallyLinkedLibrary)),
               syntaxTrees: trees,
               references: references.Concat(_vbReferences));
     }
