@@ -220,7 +220,11 @@ internal sealed class SystemWebCompilation : IDisposable, IWebFormsCompiler
 
         if (!result.Success)
         {
-            _logger.LogError("{ErrorCount} error(s) found compiling {Route}", result.Diagnostics.Length, virtualPath);
+            IEnumerable<Diagnostic> errors = result.Diagnostics.Where(d => d.Severity == DiagnosticSeverity.Error);
+            IEnumerable<Diagnostic> warnings = result.Diagnostics.Where(d => d.Severity == DiagnosticSeverity.Warning);
+
+            _logger.LogError("{ErrorCount} error(s) found compiling {Route}", errors.Count(), virtualPath);
+            _logger.LogWarning("{WarningCount} warning(s) found compiling {Route}", warnings.Count(), virtualPath);
 
             if (!cu.Strategy.HandleErrors(virtualPath, result.Diagnostics))
             {
