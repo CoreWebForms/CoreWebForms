@@ -89,9 +89,9 @@ internal sealed class DynamicSystemWebCompilation : IHttpHandlerCollection
     {
         public bool HandleExceptions => true;
 
-        Stream ICompilationStrategy.CreatePdbStream(string route, string typeName) => new MemoryStream();
+        Stream ICompilationStrategy.CreatePdbStream(string route, string typeName, string assemblyName) => new MemoryStream();
 
-        Stream ICompilationStrategy.CreatePeStream(string route, string typeName) => new MemoryStream();
+        Stream ICompilationStrategy.CreatePeStream(string route, string typeName, string assemblyName) => new MemoryStream();
 
         bool ICompilationStrategy.HandleErrors(string route, ImmutableArray<Diagnostic> diagnostics)
         {

@@ -72,22 +72,20 @@ internal sealed class StaticCompilationService : BackgroundService
 
         public bool HandleExceptions => false;
 
-        Stream ICompilationStrategy.CreatePdbStream(string route, string typeName)
-            => CreateStream(GetAssemblyPath(route, isPdb: true));
+        Stream ICompilationStrategy.CreatePdbStream(string route, string typeName, string assemblyName)
+            => CreateStream(GetAssemblyPath(assemblyName, isPdb: true));
 
-        Stream ICompilationStrategy.CreatePeStream(string route, string typeName)
+        Stream ICompilationStrategy.CreatePeStream(string route, string typeName, string assemblyName)
         {
-            var assemblyName = GetAssemblyPath(route);
-            Pages.Add(new(route, typeName, Path.GetFileNameWithoutExtension(assemblyName)));
-            return CreateStream(assemblyName);
+            Pages.Add(new(route, typeName, assemblyName));
+            return CreateStream(GetAssemblyPath(assemblyName));
         }
 
         private static Stream CreateStream(string path) => File.Open(path, FileMode.Create, FileAccess.ReadWrite, FileShare.None);
 
-        private string GetAssemblyPath(string route, bool isPdb = false)
+        private string GetAssemblyPath(string assemblyName, bool isPdb = false)
         {
             var ext = isPdb ? "pdb" : "dll";
-            var assemblyName = "ASP." + route.TrimStart(['/', '\\']).Replace("/", "_").Replace("\\", "_");
             return Path.Combine(options.TargetDirectory, $"{assemblyName}.{ext}");
         }
 

@@ -183,8 +183,8 @@ internal sealed class SystemWebCompilation : IDisposable, IWebFormsCompiler
         IEnumerable<Assembly> assemblies,
         CancellationToken token)
     {
-        using var peStream = cu.Strategy.CreatePeStream(virtualPath.Path, typeName);
-        using var pdbStream = cu.Strategy.CreatePdbStream(virtualPath.Path, typeName);
+        using var peStream = cu.Strategy.CreatePeStream(virtualPath.Path, typeName, compilation.AssemblyName!);
+        using var pdbStream = cu.Strategy.CreatePdbStream(virtualPath.Path, typeName, compilation.AssemblyName!);
 
         var result = compilation.Emit(
             embeddedTexts: embedded,
