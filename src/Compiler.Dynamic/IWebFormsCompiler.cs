@@ -18,9 +18,9 @@ public interface ICompilationStrategy
 {
     bool HandleExceptions { get; }
 
-    Stream CreatePeStream(string route, string typeName);
+    Stream CreatePeStream(string route, string typeName, string assemblyName);
 
-    Stream CreatePdbStream(string route, string typeName);
+    Stream CreatePdbStream(string route, string typeName, string assemblyName);
 
     bool HandleErrors(string route, ImmutableArray<Diagnostic> errors);
 }
