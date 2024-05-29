@@ -34,7 +34,7 @@ internal sealed class VirtualPath
     {
         if (!url.StartsWith('~'))
         {
-            return url;
+            return Normalize(url);
         }
 
         var vdir = HttpRuntime.AppDomainAppVirtualPath;
@@ -47,9 +47,23 @@ internal sealed class VirtualPath
         }
 
         sb.Insert(0, vdir);
-        sb.Replace("//", "/");
+
+        Normalize(sb);
 
         return sb.ToString();
+    }
+
+    private static string Normalize(string str)
+    {
+        var sb = new StringBuilder(str);
+        Normalize(sb);
+        return sb.ToString();
+    }
+
+    private static void Normalize(StringBuilder sb)
+    {
+        sb.Replace("//", "/");
+        sb.Replace("\\", "/");
     }
 
     public string Path { get; }

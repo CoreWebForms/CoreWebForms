@@ -37,6 +37,7 @@ public class DynamicCompilationTests
     [DataRow("test09", "basic_page_with_usercontrol.aspx")]
     [DataRow("test10", "loadusercontrol.aspx")]
     [DataRow("test11", "cspage.aspx")]
+    [DataRow("test12", "folder/subfolder.aspx")]
     public async Task CompiledPageRuns(string test, params string[] pages)
     {
         if (test == "test08")
@@ -46,7 +47,7 @@ public class DynamicCompilationTests
 
         // Arrange
         using var cts = Debugger.IsAttached ? new CancellationTokenSource() : new CancellationTokenSource(TimeSpan.FromSeconds(30));
-        var contentProvider = new EmbeddedFileProvider(typeof(DynamicCompilationTests).Assembly, $"Compiler.Dynamic.Tests.assets.{test}");
+        var contentProvider = new PhysicalFileProvider(Path.Combine(AppContext.BaseDirectory, "assets", test));
         var expectedPages = pages
             .Select((page, index) => $"{page}._{index}.html")
             .Select(expectedHtmlPath =>
@@ -134,7 +135,7 @@ public class DynamicCompilationTests
                 }
             } while (result is null);
 
-            var tempPath = Path.Combine(Path.GetTempPath(), $"{page}._{i}.html");
+            var tempPath = Path.Combine(Path.GetTempPath(), $"{page.Replace("/", "__")}._{i}.html");
             File.WriteAllText(tempPath, result);
             _context.WriteLine($"Wrote result to {tempPath}");
 
