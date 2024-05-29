@@ -18,6 +18,19 @@ internal static class HandlerMetadataProvider
         public static object RequiredSession = new SessionAttribute { SessionBehavior = SessionStateBehavior.Required };
     }
 
+    public static void AddHandler(this EndpointBuilder builder, List<object> metadataCollection)
+    {
+        foreach (var metadata in metadataCollection)
+        {
+            builder.Metadata.Add(metadata);
+
+            if (metadata is IHttpHandlerMetadata handler)
+            {
+                builder.AddHandler(handler);
+            }
+        }
+    }
+
     public static void AddHandler(this EndpointBuilder builder, IHttpHandlerMetadata metadata)
     {
         if (metadata.Behavior is SessionStateBehavior.ReadOnly)

@@ -6,11 +6,13 @@ using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using WebForms.Features;
 
 namespace Compiler.Dynamic.Tests;
 
@@ -26,7 +28,7 @@ public class DynamicCompilationTests
     }
 
     [DataTestMethod]
-    [DataRow("test01", "basic_page.aspx")]
+    [DataRow("test01", "basic_page.aspx", "mapped-page")]
     [DataRow("test02", "code_behind.aspx")]
     [DataRow("test03", "page_with_master.aspx")]
     [DataRow("test04", "page_with_master.aspx", "other_page_with_master.aspx", "page_with_master.aspx")]
@@ -49,7 +51,7 @@ public class DynamicCompilationTests
         using var cts = Debugger.IsAttached ? new CancellationTokenSource() : new CancellationTokenSource(TimeSpan.FromSeconds(30));
         var contentProvider = new PhysicalFileProvider(Path.Combine(AppContext.BaseDirectory, "assets", test));
         var expectedPages = pages
-            .Select((page, index) => $"{page}._{index}.html")
+            .Select((page, index) => $"{NormalizePage(page)}._{index}.html")
             .Select(expectedHtmlPath =>
             {
                 if (contentProvider.GetFileInfo(expectedHtmlPath) is { Exists: true } file)
@@ -77,6 +79,15 @@ public class DynamicCompilationTests
                     app.UseRouting();
                     app.UseSession();
                     app.UseSystemWebAdapters();
+                    app.Use((ctx, next) =>
+                    {
+                        if (ctx.GetEndpoint() is { })
+                        {
+                            Assert.IsNotNull(ctx.Features.Get<IWebFormsCompilationFeature>());
+                        }
+
+                        return next(ctx);
+                    });
                     app.UseEndpoints(endpoints =>
                     {
                         endpoints.MapHttpHandlers();
@@ -96,6 +107,9 @@ public class DynamicCompilationTests
                         .AddWrappedAspNetCoreSession()
                         .AddRouting(routes =>
                         {
+                            routes.MapPageRoute("MappedPage", "/mapped-page", pages[0]);
+
+                            // for route builder test
                             routes.MapPageRoute("Test", "/test", pages[0]);
                         })
                         .AddWebForms()
@@ -135,13 +149,15 @@ public class DynamicCompilationTests
                 }
             } while (result is null);
 
-            var tempPath = Path.Combine(Path.GetTempPath(), $"{page.Replace("/", "__")}._{i}.html");
+            var tempPath = Path.Combine(Path.GetTempPath(), $"{NormalizePage(page)}._{i}.html");
             File.WriteAllText(tempPath, result);
             _context.WriteLine($"Wrote result to {tempPath}");
 
             Assert.AreEqual(expectedHtml.ReplaceLineEndings(), result.ReplaceLineEndings());
         }
     }
+
+    private static string NormalizePage(string path) => path.Replace("/", "__");
 
     // Allows for data protection to be turned off for testing purposes.
     private sealed class NoopDataProtector : IDataProtector, IDataProtectionProvider
