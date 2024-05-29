@@ -126,7 +126,15 @@ internal sealed class VirtualPath
     public static implicit operator VirtualPath(string path) => new(path);
     public static implicit operator string(VirtualPath vpath) => vpath.Path;
 
-    public static VirtualPath CreateAllowNull(string path) => new(path);
+    public static VirtualPath CreateAllowNull(string path)
+    {
+        if (string.IsNullOrEmpty(path))
+        {
+            return null;
+        }
+
+        return new(path);
+    }
 
     internal static VirtualPath CreateNonRelativeAllowNull(string v) => v;
 
