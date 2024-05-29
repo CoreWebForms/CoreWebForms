@@ -40,11 +40,17 @@ public class DynamicCompilationTests
     [DataRow("test10", "loadusercontrol.aspx")]
     [DataRow("test11", "cspage.aspx")]
     [DataRow("test12", "folder/subfolder.aspx")]
+    [DataRow("test13", "custom_base_property.aspx")]
     public async Task CompiledPageRuns(string test, params string[] pages)
     {
         if (test == "test08")
         {
             Assert.Inconclusive("Currently broken on CI");
+        }
+
+        if (test == "test13")
+        {
+            Assert.Inconclusive("Not implemented yet");
         }
 
         // Arrange
