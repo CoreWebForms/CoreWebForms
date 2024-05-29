@@ -18,9 +18,11 @@
 
   <ItemGroup>
     <TestAssets Include="assets/**/*" />
-    <EmbeddedResource Include="@(TestAssets)" />
     <Compile Remove="@(TestAssets)" />
     <None Remove="@(TestAssets)" />
+    <Content Include="@(TestAssets)">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
