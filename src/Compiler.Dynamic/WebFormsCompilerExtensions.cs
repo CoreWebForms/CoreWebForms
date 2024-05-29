@@ -54,6 +54,10 @@ public static class WebFormsCompilerExtensions
                 options.AddParser<PageDependencyParser>(".aspx");
                 options.AddParser<MasterPageDependencyParser>(".Master");
                 options.AddParser<UserControlDependencyParser>(".ascx");
+
+                // Manually add optimization for now
+                options.Namespaces.Add("System.Web.Optimization");
+                options.RegisterPrefix("webopt", "Microsoft.AspNet.Web.Optimization.WebForms", "Microsoft.AspNet.Web.Optimization.WebForms");
             })
             .Configure<IWebHostEnvironment>((options, env) =>
             {
