@@ -4,16 +4,12 @@
     <PackageReference Include="WebForms" Version="$(WebFormsVersion)" />
     <PackageReference Include="WebForms.Compiler" Version="$(WebFormsVersion)" />
     <PackageReference Include="WebForms.Extensions" Version="$(WebFormsVersion)" />
+    <PackageReference Include="WebForms.Optimization" Version="$(WebFormsVersion)" />
     <PackageReference Include="WebForms.ConfigurationManager" Version="$(WebFormsVersion)" />
     <PackageReference Include="WebForms.Shim.Infrastructure" Version="$(WebFormsVersion)" />
     <PackageReference Include="WebForms.Shim.SystemWeb" Version="$(WebFormsVersion)" />
     <PackageReference Include="WebForms.Shim.SystemWeb.Extensions" Version="$(WebFormsVersion)" />
     <PackageReference Include="WebForms.SqlClient" Version="$(WebFormsVersion)" />
-  </ItemGroup>
-
-
-  <ItemGroup Condition=" '$(EnableCoreOptimization' == 'true' ">
-    <PackageReference Include="WebForms.Optimization" Version="$(WebFormsVersion)" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(EnableRuntimeAspxCompilation)' == 'true' ">
