@@ -54,11 +54,18 @@ internal sealed class WebFormsCompilationService : BackgroundService
 
     private async Task ProcessChanges(CancellationToken token)
     {
-        while (true)
+        while (!token.IsCancellationRequested)
         {
             await _event.WaitHandle.WaitAsync(token).ConfigureAwait(false);
 
-            _compiler.CompilePages(token);
+            try
+            {
+                _compiler.CompilePages(token);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error compiling assets");
+            }
 
             _event.Reset();
         }
