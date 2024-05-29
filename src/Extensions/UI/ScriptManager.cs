@@ -10,12 +10,11 @@ using System.Globalization;
 using System.Reflection;
 using System.Text;
 using System.Web.Globalization;
+using System.Web.Optimization;
 using System.Web.Resources;
 using System.Web.Script.Serialization;
 using System.Web.Util;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using WebForms.Extensions.Adapters;
 
 namespace System.Web.UI
 {
@@ -1805,7 +1804,7 @@ namespace System.Web.UI
         internal List<ScriptReferenceBase> ProcessBundleReferences(List<ScriptReferenceBase> scripts)
         {
             // If we have a bundle resolver, look through all the scripts and see which are bundles
-            var resolver = HttpRuntime.WebObjectActivator.GetService<IBundleResolver>();
+            var resolver = BundleResolver.Current;
 
             if (resolver != null)
             {
