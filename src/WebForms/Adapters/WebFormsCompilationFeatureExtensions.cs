@@ -5,7 +5,7 @@
 using System.Web;
 using System.Web.UI;
 using System.Web.Util;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.SystemWebAdapters;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -19,7 +19,7 @@ internal static class WebFormsCompilationFeatureExtensions
 
     public static Control? GetControlByPath(this HttpContextCore context, string virtualPath)
     {
-        var type = context.GetRequiredCompiledTypes().GetForPath(virtualPath);
+        var type = context.Features.GetRequiredFeature<IWebFormsCompilationFeature>().GetForPath(virtualPath);
 
         if (type is null)
         {
@@ -36,12 +36,12 @@ internal static class WebFormsCompilationFeatureExtensions
         return (Control)ActivatorUtilities.CreateInstance(context.RequestServices, type);
     }
 
-    public static IWebFormsCompilationFeature GetCompiledTypes(this System.Web.HttpContext context) => context.AsAspNetCore().GetRequiredCompiledTypes();
+    public static IWebFormsCompilationFeature GetCompiledTypes(this System.Web.HttpContext context) => context.AsAspNetCore().Features.GetRequiredFeature<IWebFormsCompilationFeature>();
 
     public static ITypedWebObjectFactory? GetTypedWebObjectForPath(this System.Web.HttpContext context, VirtualPath path)
     {
         var ctx = context.AsAspNetCore();
-        var type = ctx.GetRequiredCompiledTypes().GetForPath(path.Path);
+        var type = ctx.Features.GetRequiredFeature<IWebFormsCompilationFeature>().GetForPath(path.Path);
 
         if (type is null)
         {
@@ -57,26 +57,5 @@ internal static class WebFormsCompilationFeatureExtensions
         public Type InstantiatedType => type;
 
         public object CreateInstance() => ActivatorUtilities.CreateInstance(services, type);
-    }
-
-    public static IWebFormsCompilationFeature GetRequiredCompiledTypes(this HttpContextCore context) => context.GetCompiledTypes() ?? throw new InvalidOperationException("Compiled types not available");
-
-    public static IWebFormsCompilationFeature? GetCompiledTypes(this HttpContextCore context)
-    {
-        if (context.Features.Get<IWebFormsCompilationFeature>() is { } feature)
-        {
-            return feature;
-        }
-
-        var metadata = context.GetEndpoint()?.Metadata;
-        feature = metadata?.GetMetadata<IWebFormsCompilationFeature>();
-
-        if (feature is null)
-        {
-            return null;
-        }
-
-        context.Features.Set(feature);
-        return feature;
     }
 }

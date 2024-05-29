@@ -39,6 +39,7 @@ public static class WebFormsCompilerExtensions
         services.Services.AddWebFormsCompilationCore(configure);
         services.Services.AddHostedService<WebFormsCompilationService>();
         services.Services.AddSingleton<DynamicSystemWebCompilation>();
+        services.Services.AddTransient<IStartupFilter, DynamicSystemWebCompilationStartup>();
         services.Services.AddSingleton<IHttpHandlerCollection>(ctx => ctx.GetRequiredService<DynamicSystemWebCompilation>());
 
         return services;

@@ -32,12 +32,12 @@ internal sealed class HttpHandlerEndpointConventionBuilder : EndpointDataSource,
         {
             var endpoints = new List<Endpoint>();
 
-            foreach (var metadata in CollectMetadata())
+            foreach (var (route, metadataCollection) in CollectMetadata())
             {
-                var pattern = RoutePatternFactory.Parse(metadata.Route);
+                var pattern = RoutePatternFactory.Parse(route);
                 var builder = new RouteEndpointBuilder(_defaultHandler, pattern, 0);
 
-                builder.AddHandler(metadata);
+                builder.AddHandler(metadataCollection);
 
                 foreach (var convention in _conventions)
                 {
@@ -58,9 +58,9 @@ internal sealed class HttpHandlerEndpointConventionBuilder : EndpointDataSource,
         }
     }
 
-    private IEnumerable<IHttpHandlerMetadata> CollectMetadata()
+    private Dictionary<string, List<object>> CollectMetadata()
     {
-        var metadataCollection = new Dictionary<string, IHttpHandlerMetadata>();
+        var metadataCollection = new Dictionary<string, List<object>>();
         var mappedRoutes = new List<NamedHttpHandlerRoute>();
 
         foreach (var manager in _managers)
@@ -69,20 +69,20 @@ internal sealed class HttpHandlerEndpointConventionBuilder : EndpointDataSource,
 
             foreach (var metadata in manager.GetHandlerMetadata())
             {
-                metadataCollection.Add(metadata.Route, metadata);
+                metadataCollection.Add(metadata.Route, [metadata]);
             }
         }
 
         foreach (var mappedRoute in mappedRoutes)
         {
             // TODO should we log if we can't find it? It may be a race condition where the compilation hasn't found it yet, so it could be an unnecessary warning
-            if (metadataCollection.TryGetValue(mappedRoute.Path, out var fromCollection))
+            if (metadataCollection.TryGetValue(mappedRoute.Path, out var fromCollection) && fromCollection is [IHttpHandlerMetadata handler, ..])
             {
-                metadataCollection.Add(mappedRoute.Route, new MappedHandlerMetadata(mappedRoute.Route, fromCollection));
+                metadataCollection.Add(mappedRoute.Route, [.. fromCollection, new MappedHandlerMetadata(mappedRoute.Route, handler)]);
             }
         }
 
-        return metadataCollection.Values;
+        return metadataCollection;
     }
 
     public void Add(Action<EndpointBuilder> convention)

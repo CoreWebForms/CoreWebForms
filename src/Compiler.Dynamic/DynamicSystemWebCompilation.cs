@@ -57,7 +57,7 @@ internal sealed class DynamicSystemWebCompilation : IHttpHandlerCollection
                 }
                 else if (result.Types.TryGetException(route, out var exception))
                 {
-                    yield return HandlerMetadata.Create(route, new ErrorHandler(exception));
+                    yield return new WrappedMetadata(HandlerMetadata.Create(route, new ErrorHandler(exception)), result.Types);
                 }
                 else
                 {
