@@ -41,6 +41,7 @@ public class DynamicCompilationTests
     [DataRow("test11", "cspage.aspx")]
     [DataRow("test12", "folder/subfolder.aspx")]
     [DataRow("test13", "custom_base_property.aspx")]
+    [DataRow("test14", "sitemapdemo.aspx")]
     public async Task CompiledPageRuns(string test, params string[] pages)
     {
         if (test == "test08")
@@ -159,7 +160,15 @@ public class DynamicCompilationTests
             File.WriteAllText(tempPath, result);
             _context.WriteLine($"Wrote result to {tempPath}");
 
-            Assert.AreEqual(expectedHtml.ReplaceLineEndings(), result.ReplaceLineEndings());
+            //TODO avoid this check, needed for Viewstate
+            if (test == "test14")
+            {
+                Assert.IsTrue(result.ReplaceLineEndings().Contains(expectedHtml.ReplaceLineEndings()));
+            }
+            else
+            {
+                Assert.AreEqual(expectedHtml.ReplaceLineEndings(), result.ReplaceLineEndings());
+            }
         }
     }
 

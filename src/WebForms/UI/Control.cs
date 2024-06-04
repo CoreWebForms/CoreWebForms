@@ -84,6 +84,7 @@ public partial class Control : IComponent, IParserAccessor, IDataBindingsAccesso
     private const int disableTheming = 0x00001000;
     private const int enableThemingSet = 0x00002000;
     private const int styleSheetApplied = 0x00004000;
+    private const int controlAdapterResolved = 0x00008000;
     private const int designMode = 0x00010000;
     private const int designModeChecked = 0x00020000;
     private const int disableChildControlState = 0x00040000;
@@ -368,6 +369,50 @@ public partial class Control : IComponent, IParserAccessor, IDataBindingsAccesso
     DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)
     ]
     protected internal virtual HttpContext Context => HttpContext.Current;
+
+    protected virtual ControlAdapter ResolveAdapter()
+    {
+        if (flags[controlAdapterResolved])
+        {
+            return AdapterInternal;
+        }
+        if (DesignMode)
+        {
+            flags.Set(controlAdapterResolved);
+            return null;
+        }
+
+        HttpContext context = Context;
+        if (context != null && context.Request.Browser != null)
+        {
+            AdapterInternal = null;
+
+            //TODO create issue
+#if PORT_BROWSERCAPABILITIES
+            context.Request.Browser.GetAdapter(this);
+#endif
+        }
+        flags.Set(controlAdapterResolved);
+        return AdapterInternal;
+    }
+
+    /// <devdoc>
+    ///    <para>Indicates the list of event handler delegates for the control. This property
+    ///       is read-only.</para>
+    /// </devdoc>
+    protected ControlAdapter Adapter
+    {
+        get
+        {
+            if (flags[controlAdapterResolved])
+            {
+                return AdapterInternal;
+            }
+            AdapterInternal = ResolveAdapter();
+            flags.Set(controlAdapterResolved);
+            return AdapterInternal;
+        }
+    }
 
     /// <devdoc>
     /// Indicates whether a control is being used in the context of a design surface.

@@ -56,4 +56,6 @@ internal static class Extensions
     {
         return request.CurrentExecutionFilePath;
     }
+
+    public static Page GetCurrentPage(this HttpContext context) => context.CurrentHandler as Page;
 }

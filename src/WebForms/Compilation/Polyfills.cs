@@ -1,6 +1,9 @@
 // MIT License.
 
 using System.Collections;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Globalization;
 using System.Reflection;
 using System.Text;
 using System.Web.Compilation;
@@ -26,6 +29,71 @@ internal class ResourceExpressionBuilder
     internal static object ParseExpression(string fullResourceKey)
     {
         throw new NotImplementedException("ParseExpression");
+    }
+
+    internal static object GetGlobalResourceObject(string classKey, string resourceKey)
+    {
+        return GetGlobalResourceObject(classKey, resourceKey, null /*objType*/, null /*propName*/, null /*culture*/);
+    }
+
+    internal static object GetGlobalResourceObject(string classKey,
+        string resourceKey, Type objType, string propName, CultureInfo culture)
+    {
+
+        IResourceProvider resourceProvider = GetGlobalResourceProvider(classKey);
+        return GetResourceObject(resourceProvider, resourceKey, culture,
+            objType, propName);
+    }
+
+    private static IResourceProvider GetGlobalResourceProvider(string classKey)
+    {
+        throw new NotImplementedException("GetGlobalResourceProvider");
+    }
+
+    internal static object GetResourceObject(IResourceProvider resourceProvider,
+        string resourceKey, CultureInfo culture)
+    {
+        return GetResourceObject(resourceProvider, resourceKey, culture,
+            null /*objType*/, null /*propName*/);
+    }
+
+    internal static object GetResourceObject(IResourceProvider resourceProvider,
+        string resourceKey, CultureInfo culture, Type objType, string propName)
+    {
+
+        if (resourceProvider == null)
+            return null;
+
+        object o = resourceProvider.GetObject(resourceKey, culture);
+
+        // If no objType/propName was provided, return the object as is
+        if (objType == null)
+            return o;
+
+        // Also, if the object from the resource is not a string, return it as is
+        string s = o as String;
+        if (s == null)
+            return o;
+
+        // If they were provided, perform the appropriate conversion
+        return ObjectFromString(s, objType, propName);
+    }
+
+    private static object ObjectFromString(string value, Type objType, string propName)
+    {
+
+        // Get the PropertyDescriptor for the property
+        PropertyDescriptor pd = TypeDescriptor.GetProperties(objType)[propName];
+        Debug.Assert(pd != null);
+        if (pd == null) return null;
+
+        // Get its type descriptor
+        TypeConverter converter = pd.Converter;
+        Debug.Assert(converter != null);
+        if (converter == null) return null;
+
+        // Perform the conversion
+        return converter.ConvertFromInvariantString(value);
     }
 }
 
