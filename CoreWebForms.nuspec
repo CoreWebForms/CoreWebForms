@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>MasonChase.CoreWebForms</id>
+    <version>0.0.1</version>
+    <authors>Mason Chase</authors>
+    <owners>Mason Chase</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>CoreWebForms is a library that provides a set of classes and controls for ASP.NET WebForms applications for apps targeting .NET 8</description>
+    <tags>mason-chase web-forms core-web-forms net8</tags>
+  </metadata>
+  <files>
+    <file src="bin\Release\net8.0\*.dll" target="lib\net8.0" />
+  </files>
+</package>
