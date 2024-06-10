@@ -34,13 +34,9 @@ jobs:
         path: |
           artifacts/webforms/package/release/*.nupkg
           artifacts/webforms/package/release/*.snupkg
-    - name: Push nuget package to Azure storage
+    - name: Push nuget package to NuGet.org
       if: github.ref == 'refs/heads/main' || github.event_name == 'release' || github.event_name == 'workflow_dispatch'
       env:
-        SLEET_FEED_TYPE: azure
-        SLEET_FEED_CONTAINER: feed
-        SLEET_FEED_CONNECTIONSTRING: ${{secrets.SLEET_CONNECTIONSTRING}}
+        NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
       run: |
-        cd $GITHUB_WORKSPACE/artifacts/webforms/package/release
-        dotnet tool install -g sleet
-        sleet push . --skip-existing
+        dotnet nuget push artifacts/webforms/package/release/*.nupkg -k $NUGET_API_KEY -s https://api.nuget.org/v3/index.json
