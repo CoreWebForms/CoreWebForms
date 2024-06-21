@@ -500,7 +500,7 @@ public abstract class BuildProvider {
 
         // Default implementation with code at line 1
 
-        string sourceString = Util.StringFromVirtualPath(VirtualPathObject, VirtualPathObject.Files);
+        string sourceString = Util.StringFromVirtualPath(VirtualPathObject, VirtualPathObject.FileProvider);
         CodeSnippetCompileUnit snippetCompileUnit = new CodeSnippetCompileUnit(sourceString);
 
         LinePragmaCodeInfo codeInfo = new LinePragmaCodeInfo(1 /* startLine */, 1 /* startColumn */, 1 /* startGeneratedColumn */, -1 /* codeLength */, false /* isCodeNuggest */);
