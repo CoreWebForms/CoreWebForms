@@ -37,6 +37,11 @@ internal sealed class HttpHandlerEndpointFactory : IHttpHandlerEndpointFactory
     private static Endpoint Create(IHttpHandler handler)
     {
         var builder = new NonRouteEndpointBuilder();
+        builder.RequestDelegate = context =>
+        {
+            handler.ProcessRequest(context);
+            return Task.CompletedTask;
+        };
         var metadata = HandlerMetadata.Create("/", handler);
 
         builder.AddHandler(metadata);
