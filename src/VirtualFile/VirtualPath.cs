@@ -11,7 +11,7 @@ namespace System.Web;
 
 public sealed class VirtualPath
 {
-    public IFileProvider Files => HttpRuntime.WebObjectActivator.GetRequiredService<IWebHostEnvironment>().ContentRootFileProvider;
+    public IFileProvider FileProvider => HttpRuntime.WebObjectActivator.GetRequiredService<IWebHostEnvironment>().ContentRootFileProvider;
     public VirtualPath Parent
     {
         get
@@ -41,13 +41,11 @@ public sealed class VirtualPath
     public bool DirectoryExists() {
         // TODO: Check
         //return HostingEnvironment.VirtualPathProvider.DirectoryExists(this);
-        return Files.GetDirectoryContents(Path).Exists;
+        return FileProvider.GetDirectoryContents(Path).Exists;
     }
 
     public static string Resolve(string url)
     {
-        url = url.Replace("\\", "/");
-
         if (!url.StartsWith('~'))
         {
             return Normalize(url);
@@ -94,7 +92,7 @@ public sealed class VirtualPath
 
     public Stream OpenFile(VirtualPathProvider provider)
     {
-        return provider.GetFile(FileName).Open();
+        return provider.GetFile(FileName)?.Open();
     }
 
     public string VirtualPathStringNoTrailingSlash
@@ -229,27 +227,17 @@ public sealed class VirtualPath
 
     internal static VirtualPath Create(string filename) => filename;
 
-    public bool FileExists() => Files.GetFileInfo(Path).Exists;
+    public bool FileExists() => FileProvider.GetFileInfo(Path).Exists;
     internal bool FileExists(IFileProvider fileProvider) => fileProvider.GetFileInfo(Path).Exists;
 
-    public string MapPath() => Files.GetFileInfo(Path).PhysicalPath;
+    public string MapPath() => FileProvider.GetFileInfo(Path).PhysicalPath;
     internal string MapPathInternal() => MapPath();
-
-    internal static VirtualPath CreateTrailingSlash(string virtualPath)
-    {
-        // Ensure the virtual path ends with a slash
-        if (virtualPath.Length == 0 || virtualPath[virtualPath.Length - 1] != '/')
-        {
-            return new VirtualPath(virtualPath + "/");
-        }
-        return new VirtualPath(virtualPath);
-    }
 
     public VirtualDirectory GetDirectory() {
         // TODO: Migration
         // Debug.Assert(this.HasTrailingSlash);
         // return HostingEnvironment.VirtualPathProvider.GetDirectory(this);
-        return new FileProviderVirtualPathProvider(Files).GetDirectory(this);
+        return new FileProviderVirtualPathProvider(FileProvider).GetDirectory(this);
     }
 
     public static bool operator == (VirtualPath v1, VirtualPath v2) {
@@ -264,7 +252,7 @@ public sealed class VirtualPath
     {
         if (!IsWithinAppRoot)
         {
-            throw new ArgumentException("Must be within app root");
+            throw new ArgumentException($"{Path} must be within app root");
         }
     }
 }

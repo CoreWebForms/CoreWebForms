@@ -73,14 +73,6 @@ internal static class Util
     }
 
 
-
-    /*
-     * Returns true if the type string contains an assembly specification
-     */
-    internal static bool TypeNameContainsAssembly(string typeName) {
-        return CommaIndexInTypeName(typeName) > 0;
-    }
-
     /*
      * Clears a file's readonly attribute if it has one
      */

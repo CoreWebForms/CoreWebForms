@@ -1508,7 +1508,8 @@ namespace System.Web.Compilation {
         private void ValidateVirtualPathInternal(VirtualPath virtualPath, bool allowCrossApp, bool codeFile) {
 
             if (!allowCrossApp) {
-                virtualPath.FailIfNotWithinAppRoot();
+                // TODO: Migration
+                // virtualPath.FailIfNotWithinAppRoot();
             }
             else {
                 // If cross app is allowed, and the path is in a different app, nothing more to check
