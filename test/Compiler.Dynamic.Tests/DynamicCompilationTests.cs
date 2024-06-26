@@ -2,6 +2,8 @@
 
 using System.Diagnostics;
 using System.Net;
+using System.Net.Http.Json;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
@@ -88,7 +90,7 @@ public class DynamicCompilationTests
                     app.UseSystemWebAdapters();
                     app.Use((ctx, next) =>
                     {
-                        if (ctx.GetEndpoint() is { })
+                        if (ctx.GetEndpoint() is not null)
                         {
                             Assert.IsNotNull(ctx.Features.Get<IWebFormsCompilationFeature>());
                         }
@@ -98,6 +100,20 @@ public class DynamicCompilationTests
                     app.UseEndpoints(endpoints =>
                     {
                         endpoints.MapHttpHandlers();
+                        endpoints.MapGet("/test-compilation-feature", async context =>
+                        {
+                            var feature = context.Features.Get<IWebFormsCompilationFeature>();
+
+                            if (feature is null)
+                            {
+                                context.Response.StatusCode = 500;
+                                await context.Response.WriteAsJsonAsync(new { status = "failed", message = "IWebFormsCompilationFeature is not available" });
+                                return;
+                            }
+
+                            context.Response.StatusCode = 200;
+                            await context.Response.WriteAsJsonAsync(new { status = "success", message = "IWebFormsCompilationFeature is available" });
+                        });
                     });
                 });
                 app.ConfigureServices(services =>
@@ -129,6 +145,11 @@ public class DynamicCompilationTests
 
         // Act
         var client = host.GetTestClient();
+
+        using var featureResponse = await client.GetAsync("/test-compilation-feature");
+        featureResponse.EnsureSuccessStatusCode();
+        var featureResponseBodyJson = await featureResponse.Content.ReadFromJsonAsync<JsonElement>();
+        Assert.AreSame("success", featureResponseBodyJson.GetProperty("status").GetString());
 
         for (int i = 0; i < pages.Length; i++)
         {

@@ -3,6 +3,8 @@
 using System.Runtime.Loader;
 using System.Security.Claims;
 using System.Web.Optimization;
+using WebForms.Features;
+using WebFormsSample.Dynamic;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +16,7 @@ builder.Services.AddSession();
 builder.Services.AddDistributedMemoryCache();
 
 builder.Services.AddSystemWebAdapters()
+    .AddHttpHandler<SampleHttpHandler>("handler")
     .AddPreApplicationStartMethod()
     .AddJsonSessionSerializer()
     .AddWrappedAspNetCoreSession()
@@ -67,5 +70,20 @@ app.MapGet("/acls", () => AssemblyLoadContext.All.Select(acl => new
 app.MapHttpHandlers();
 app.MapScriptManager();
 app.MapBundleTable();
+
+app.MapGet("/test-compilation-feature", async context =>
+{
+    var feature = context.Features.Get<IWebFormsCompilationFeature>();
+
+    if (feature is null)
+    {
+        context.Response.StatusCode = 500;
+        await context.Response.WriteAsJsonAsync(new { status = "failed", message = "IWebFormsCompilationFeature is not available" });
+        return;
+    }
+
+    context.Response.StatusCode = 200;
+    await context.Response.WriteAsJsonAsync(new { status = "success", message = "IWebFormsCompilationFeature is available" });
+});
 
 app.Run();
