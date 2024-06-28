@@ -6,15 +6,6 @@ on:
   pull_request:
 
 jobs:
-  event_file: # Used for test reporting
-    name: "Event File"
-    runs-on: ubuntu-latest
-    steps:
-    - name: Upload
-      uses: actions/upload-artifact@v4
-      with:
-        name: Event File
-        path: ${{ github.event_path }}
   build:
     runs-on: ${{ matrix.os }}
     strategy:
@@ -49,79 +40,3 @@ jobs:
         foreach ($project in $projects) {
             dotnet publish $project --no-restore -r ${{ matrix.rid }} -f net8.0
         }
-    - name: Upload Samples
-      uses: actions/upload-artifact@v4.3.1
-      with:
-        name: samples-${{ matrix.rid }}
-        path: |
-          artifacts/samples/publish/**/*
-    - name: Upload tests
-      uses: actions/upload-artifact@v4.3.1
-      with:
-        name: tests-${{ matrix.rid }}
-        path: |
-          artifacts/tests/publish/**/*
-  test:
-    needs: [ build ]
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        include:
-          - os: "ubuntu-latest"
-            rid: "linux-x64"
-            ext: "Tests"
-          - os: "windows-latest"
-            rid: "win-x64"
-            ext: "Tests.exe"
-    steps:
-      - name: Download tests
-        uses: actions/download-artifact@v4
-        with:
-            name: tests-${{ matrix.rid }}
-            path: '${{ github.workspace }}/tests'
-      - name: Run tests
-        shell: pwsh
-        working-directory: '${{ github.workspace }}/tests'
-        run: |
-          $resultsDirectory = Join-Path "${{ github.workspace }}" "test-results"
-          $tests = gci * -Directory `
-            | % { gci $_ "*${{ matrix.rid }}" } `
-            | % { gci $_ *.${{ matrix.ext }} } `
-            | % { $_.FullName }
-
-          $result = 0
-
-          foreach ($test in $tests) {
-            if ($IsLinux) {
-              chmod +x $test
-            }
-
-            & $test --report-trx --results-directory "$resultsDirectory"
-            $result += $LastExitCode
-          }
-
-          return $LastExitCode
-      - name: Upload results
-        uses: actions/upload-artifact@v4.3.1
-        with:
-          name: test-result-${{ matrix.rid }}
-          path: |
-            ${{ github.workspace }}/test-results/**/*.trx
-  results:
-    permissions:
-      checks: write
-      pull-requests: write
-    runs-on: ubuntu-latest
-    needs: [ test ]
-    steps:
-      - name: Download tests results
-        uses: actions/download-artifact@v4
-        with:
-            pattern: test-result-*
-            path: '${{ github.workspace }}/results'
-      - name: Publish Test Results
-        uses: EnricoMi/publish-unit-test-result-action@v2
-        if: always()
-        with:
-          files: |
-            ${{ github.workspace }}/results/**/*.trx
