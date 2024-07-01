@@ -7,6 +7,7 @@
     <Nullable>disable</Nullable>
     <AssemblyName>WebForms.SqlClient</AssemblyName>
     <RootNamespace>System.Web</RootNamespace>
+    <PackageId>MasonChase.CoreWebForms.SqlClient</PackageId>
   </PropertyGroup>
 
   <ItemGroup>

@@ -4,7 +4,7 @@
     <TargetFrameworks>net8.0</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>disable</Nullable>
-    <PackageId>WebForms.VirtualFile</PackageId>
+    <PackageId>MasonChase.CoreWebForms.VirtualFile</PackageId>
     <AssemblyName>WebForms.VirtualFile</AssemblyName>
   </PropertyGroup>
 

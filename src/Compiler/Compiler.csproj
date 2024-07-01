@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <PackageId>WebForms.Compiler</PackageId>
+    <PackageId>MasonChase.CoreWebForms.Compiler</PackageId>
     <DevelopmentDependency>true</DevelopmentDependency>
     <NoPackageAnalysis>true</NoPackageAnalysis>
   </PropertyGroup>

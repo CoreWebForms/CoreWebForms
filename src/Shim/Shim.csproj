@@ -5,7 +5,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>disable</Nullable>
-    <PackageId>WebForms.Shim.SystemWeb</PackageId>
+    <PackageId>MasonChase.CoreWebForms.Shim.SystemWeb</PackageId>
     <AssemblyName>System.Web</AssemblyName>
 
     <!-- Must be higher than 4.0.0.0 so resolution can occur -->

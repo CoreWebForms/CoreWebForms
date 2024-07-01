@@ -7,6 +7,7 @@
     <Nullable>enable</Nullable>
     <AssemblyName>WebForms.Compiler.Dynamic</AssemblyName>
     <RootNamespace>WebForms.Compiler.Dynamic</RootNamespace>
+    <PackageId>MasonChase.CoreWebForms.Compiler.Dynamic</PackageId>
   </PropertyGroup>
 
   <ItemGroup>

@@ -4,7 +4,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <PackageId>WebForms.Shim.Infrastructure</PackageId>
+    <PackageId>MasonChase.CoreWebForms.Shim.Infrastructure</PackageId>
     <AssemblyName>Microsoft.Web.Infrastructure</AssemblyName>
     <AssemblyVersion>1.1.0.0</AssemblyVersion>
   </PropertyGroup>

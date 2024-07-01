@@ -7,6 +7,7 @@
     <IsShipped>true</IsShipped>
     <AssemblyName>WebForms.Optimization</AssemblyName>
     <RootNamespace>System.Web.Optimization</RootNamespace>
+    <PackageId>MasonChase.CoreWebForms.Optimization</PackageId>
   </PropertyGroup>
 
   <ItemGroup>

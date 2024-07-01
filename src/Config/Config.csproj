@@ -5,6 +5,7 @@
     <Nullable>enable</Nullable>
     <IsShipped>true</IsShipped>
     <AssemblyName>WebForms.ConfigurationManager</AssemblyName>
+    <PackageId>MasonChase.CoreWebForms.ConfigurationManager</PackageId>
   </PropertyGroup>
 
   <ItemGroup>

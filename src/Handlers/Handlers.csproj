@@ -8,6 +8,7 @@
     <AssemblyName>WebForms.HttpHandler</AssemblyName>
     <RootNamespace>WebForms.HttpHandler</RootNamespace>
     <WarningsAsErrors>Nullable</WarningsAsErrors>
+    <PackageId>MasonChase.CoreWebForms.HttpHandler</PackageId>
   </PropertyGroup>
 
   <ItemGroup>

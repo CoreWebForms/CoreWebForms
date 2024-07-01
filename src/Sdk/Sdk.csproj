@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <PackageId>CoreWebForms.Sdk</PackageId>
+    <PackageId>MasonChase.CoreWebForms.Sdk</PackageId>
     <DevelopmentDependency>true</DevelopmentDependency>
     <NoPackageAnalysis>true</NoPackageAnalysis>
   </PropertyGroup>

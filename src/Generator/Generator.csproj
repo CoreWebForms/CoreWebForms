@@ -5,6 +5,7 @@
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
     <AssemblyName>CoreWebForms.Generator</AssemblyName>
+    <PackageId>MasonChase.CoreWebForms.Generator</PackageId>
   </PropertyGroup>
 
   <PropertyGroup>

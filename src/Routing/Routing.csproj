@@ -6,6 +6,7 @@
     <Nullable>enable</Nullable>
     <AssemblyName>WebForms.Routing</AssemblyName>
     <RootNamespace>WebForms.Routing</RootNamespace>
+    <PackageId>MasonChase.CoreWebForms.Routing</PackageId>
   </PropertyGroup>
 
   <ItemGroup>

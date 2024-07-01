@@ -8,6 +8,7 @@
     <AssemblyName>WebForms</AssemblyName>
     <RootNamespace>System.Web</RootNamespace>
     <NoWarn>$(NoWarn);SYSWEB0003</NoWarn>
+    <PackageId>MasonChase.CoreWebForms</PackageId>
   </PropertyGroup>
 
   <ItemGroup>
