@@ -186,7 +186,7 @@ public sealed class VirtualPath
     internal static VirtualPath CreateNonRelativeAllowNull(string v) => v;
 
     internal static string GetAppRelativeVirtualPathStringOrEmpty(VirtualPath vpath)
-        => vpath.Path;
+        => vpath?.AppRelativeVirtualPathString ?? string.Empty;
 
     internal static string GetVirtualPathString(VirtualPath vpath)
         => vpath?.Path;
