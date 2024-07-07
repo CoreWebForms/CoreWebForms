@@ -10,6 +10,7 @@ namespace WebForms.Compiler.Dynamic;
 public interface IWebFormsCompiler
 {
     IFileProvider Files { get; }
+    IWebFormsCompilationFeature? CompilationFeature { get; }
 
     ICompilationResult CompilePages(ICompilationStrategy outputProvider, CancellationToken token);
 }

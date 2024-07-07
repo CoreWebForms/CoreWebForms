@@ -14,6 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using WebForms.Features;
 
 namespace WebForms.Compiler.Dynamic;
 
@@ -27,6 +28,8 @@ internal sealed class SystemWebCompilation : IDisposable, IWebFormsCompiler
     private readonly IOptions<WebFormsOptions> _webFormsOptions;
     private readonly IOptions<PageCompilationOptions> _pageCompilationOptions;
     private readonly string[] _ignoredFolders = new[] { "bin", "obj", "Properties" };
+
+    public IWebFormsCompilationFeature? CompilationFeature { get; private set; }
 
     public SystemWebCompilation(
         ILoggerFactory logger,
@@ -288,6 +291,7 @@ internal sealed class SystemWebCompilation : IDisposable, IWebFormsCompiler
     ICompilationResult IWebFormsCompiler.CompilePages(ICompilationStrategy outputProvider, CancellationToken token)
     {
         var result = CompileAllPages(outputProvider, token);
+        CompilationFeature = result;
 
         // Log success and fail count
         int failureCount = result.Values.Count(x => x.Exception != null);
