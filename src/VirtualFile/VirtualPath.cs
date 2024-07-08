@@ -36,7 +36,7 @@ public sealed class VirtualPath
 
     public string GetCacheKey() => Path;
 
-    public bool HasTrailingSlash => Path.EndsWith("/");
+    public bool HasTrailingSlash => Path.EndsWith('/');
 
     public bool DirectoryExists() {
         // TODO: Check
@@ -183,7 +183,15 @@ public sealed class VirtualPath
         return new(path);
     }
 
-    internal static VirtualPath CreateNonRelativeAllowNull(string v) => v;
+    internal static VirtualPath CreateNonRelativeAllowNull(string v)
+    {
+        if (string.IsNullOrEmpty(v))
+        {
+            return null;
+        }
+
+        return new(v);
+    }
 
     internal static string GetAppRelativeVirtualPathStringOrEmpty(VirtualPath vpath)
         => vpath?.AppRelativeVirtualPathString ?? string.Empty;
