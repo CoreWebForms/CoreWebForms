@@ -64,10 +64,10 @@ public sealed class ObjectStateFormatter : IStateFormatter, IStateFormatter2
     private const byte Token_TypeRefAddLocal = 42;
     private const byte Token_TypeRef = 43;
 
-// #if PORT_BINARYSERIALIZER
+    // #if PORT_BINARYSERIALIZER
     // Un-optimized (Binary serialized) types
     private const byte Token_BinarySerialized = 50;
-// #endif
+    // #endif
 
     // Optimized for sparse arrays
     private const byte Token_SparseArray = 60;
@@ -545,7 +545,6 @@ public sealed class ObjectStateFormatter : IStateFormatter, IStateFormatter2
 
                     return result;
                 }
-#if PORT_BINARYFORMATTER
             case Token_BinarySerialized:
                 {
                     var length = reader.Read7BitEncodedInt();
@@ -558,13 +557,16 @@ public sealed class ObjectStateFormatter : IStateFormatter, IStateFormatter2
 
                     object result = null;
 
-                    using (var ms = GetMemoryStream())
+                    using (MemoryStream ms = new())
                     {
                         try
                         {
                             ms.Write(buffer, 0, length);
                             ms.Position = 0;
+
+#pragma warning disable SYSLIB0011
                             IFormatter formatter = new BinaryFormatter();
+#pragma warning restore SYSLIB0011
 
                             result = formatter.Deserialize(ms);
                         }
@@ -579,7 +581,6 @@ public sealed class ObjectStateFormatter : IStateFormatter, IStateFormatter2
 
                     return result;
                 }
-#endif
             default:
                 throw new InvalidOperationException(SR.GetString(SR.InvalidSerializedData));
         }
@@ -1073,7 +1074,8 @@ public sealed class ObjectStateFormatter : IStateFormatter, IStateFormatter2
                     writer.Write(Token_BinarySerialized);
                     // writer.WriteEncoded(length);
                     writer.Write7BitEncodedInt(length);
-                    if (buffer.Length != 0) {
+                    if (buffer.Length != 0)
+                    {
                         writer.Write(buffer, 0, (int)length);
                     }
                     // throw new InvalidOperationException($"Unsupported type {valueType.FullName}");
