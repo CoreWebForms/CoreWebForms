@@ -588,7 +588,8 @@ public abstract class BaseDataList : WebControl
         return (type.IsPrimitive ||
                (type == typeof(string)) ||
                (type == typeof(DateTime)) ||
-               (type == typeof(Decimal)));
+               (type == typeof(Decimal)) ||
+               (type == typeof(object)));
     }
 
     /// <internalonly/>
