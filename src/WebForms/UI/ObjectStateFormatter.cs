@@ -366,6 +366,7 @@ public sealed class ObjectStateFormatter : IStateFormatter, IStateFormatter2
     /// Essentially a token is read, followed by as much data needed to recreate
     /// the single value.
     /// </devdoc>
+    [Obsolete("BinaryFormatter should not be used anymore")]
     private object DeserializeValue(BinaryReader reader)
     {
         var token = reader.ReadByte();
