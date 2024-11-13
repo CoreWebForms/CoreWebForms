@@ -14,7 +14,7 @@
     <!-- System.Runtime.Caching had a dependency on System.Drawing.Common which is not supported in .NET 8
          However, the adapters reference v6.0.0. For now, we'll force WebForms to rely on this, but a later
          version of the adapters should reference v8.0.0 of the caching library so this is fixed -->
-    <PackageReference Include="System.Runtime.Caching" Version="8.0.0" />
+    <PackageReference Include="System.Runtime.Caching" Version="9.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.SystemWebAdapters.CoreServices" Version="1.4.0" />
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
