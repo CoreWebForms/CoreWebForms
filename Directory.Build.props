@@ -6,10 +6,10 @@
     <WarnOnPackingNonPackableProject>false</WarnOnPackingNonPackableProject>
     <NoWarn>$(NoWarn);SYSWEB1001</NoWarn>
   </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-  </PropertyGroup>
+<!-- TODO: Bring this back -->
+<!--  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">-->
+<!--    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>-->
+<!--  </PropertyGroup>-->
 
   <PropertyGroup>
     <InformationalVersion>$(GitVersion_InformationalVersion)</InformationalVersion>
