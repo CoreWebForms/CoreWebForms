@@ -2,12 +2,13 @@
 
   <PropertyGroup>
     <IsShipped>true</IsShipped>
-    <TargetFrameworks>net8.0</TargetFrameworks>
+    <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>disable</Nullable>
     <AssemblyName>WebForms</AssemblyName>
     <RootNamespace>System.Web</RootNamespace>
     <NoWarn>$(NoWarn);SYSWEB0003</NoWarn>
+    <PackageId>WebForms</PackageId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -29,6 +30,7 @@
     <PackageReference Include="System.CodeDom" Version="8.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.SystemWebAdapters" Version="1.4.0" />
     <PackageReference Include="Microsoft.AspNetCore.SystemWebAdapters.CoreServices" Version="1.4.0" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.6" />
   </ItemGroup>
 
   <ItemGroup>
@@ -37,5 +39,11 @@
     <ProjectReference Include="..\Routing\Routing.csproj" />
     <ProjectReference Include="..\VirtualFile\VirtualFile.csproj" />
   </ItemGroup>
-  
+
+  <ItemGroup>
+    <Folder Include="Web\Configuration\" />
+    <Folder Include="Web\DataAccess\" />
+    <Folder Include="Web\Hosting\" />
+  </ItemGroup>
+
 </Project>
