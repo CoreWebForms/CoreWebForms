@@ -122,5 +122,9 @@ namespace System.Web.Configuration
             }
         }
 
+        internal static bool IsTypeHandlerOrFactory(Type t) {
+            return typeof(IHttpHandler).IsAssignableFrom(t)
+                   || typeof(IHttpHandlerFactory).IsAssignableFrom(t);
+        }
     }
 }
