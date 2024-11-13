@@ -59,11 +59,11 @@ public sealed class ViewStateException : Exception, ISerializable
         HttpResponse response = context != null ? context.Response : null;
 
         _isConnected = response.IsClientConnected;
-        _remoteAddr = request.ServerVariables["REMOTE_ADDR"];
-        _remotePort = request.ServerVariables["REMOTE_PORT"];
-        _userAgent = request.ServerVariables["HTTP_USER_AGENT"];
-        _referer = request.ServerVariables["HTTP_REFERER"];
-        _path = request.ServerVariables["PATH_INFO"];
+        _remoteAddr = context.ServerVariable("REMOTE_ADDR", string.Empty);
+        _remotePort = context.ServerVariable("REMOTE_PORT", string.Empty);
+        _userAgent = context.ServerVariable("HTTP_USER_AGENT", string.Empty);
+        _referer = context.ServerVariable("HTTP_REFERER", string.Empty);
+        _path = context.ServerVariable("PATH_INFO", string.Empty);
 
         string debugInfo = String.Format(CultureInfo.InvariantCulture,
                                          _format,
