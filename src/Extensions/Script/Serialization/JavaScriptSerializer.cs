@@ -2,6 +2,7 @@
 
 using System.Collections.Specialized;
 using System.Text;
+using Newtonsoft.Json;
 
 namespace System.Web.Script.Serialization;
 
@@ -12,27 +13,29 @@ internal sealed class JavaScriptSerializer
 
     internal static string SerializeInternal(OrderedDictionary orderedDictionary)
     {
-        throw new NotImplementedException();
+        return JsonConvert.SerializeObject(orderedDictionary);
     }
 
     internal void Serialize(object value, StringBuilder builder, SerializationFormat javaScript)
     {
-        throw new NotImplementedException();
+        var jsonString = JsonConvert.SerializeObject(value);
+        builder.Append(jsonString);
     }
 
     internal void Serialize(string clientID, StringBuilder sb)
     {
-        throw new NotImplementedException();
+        var jsonString = JsonConvert.SerializeObject(clientID);
+        sb.Append(jsonString);
     }
 
     internal string Serialize(OrderedDictionary attrs)
     {
-        throw new NotImplementedException();
+        return JsonConvert.SerializeObject(attrs);
     }
 
     internal string Serialize(string clientID)
     {
-        throw new NotImplementedException();
+        return JsonConvert.SerializeObject(clientID);
     }
 
     public enum SerializationFormat
