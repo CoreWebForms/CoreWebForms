@@ -45,14 +45,12 @@ internal class HashCodeCombiner
         return CombineHashCodes(CombineHashCodes(h1, h2, h3, h4), h5);
     }
 
-#if PORT_VIRTUALDIRECTORY
     internal static string GetDirectoryHash(VirtualPath virtualDir)
     {
         HashCodeCombiner hashCodeCombiner = new HashCodeCombiner();
-        hashCodeCombiner.AddDirectory(virtualDir.MapPathInternal());
+        hashCodeCombiner.AddDirectory(virtualDir.MapPath());
         return hashCodeCombiner.CombinedHashString;
     }
-#endif
 
     internal void AddArray(string[] a)
     {
