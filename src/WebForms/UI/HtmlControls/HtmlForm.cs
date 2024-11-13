@@ -344,7 +344,21 @@ public class HtmlForm : HtmlContainerControl
 
         return action;
 #endif
-        return Context.Request.Path ?? "./";
+        string action = Context.Request.Path;
+
+        if (string.IsNullOrEmpty(action))
+        {
+            action = "./";
+        }
+
+        string queryString = Context.Request.QueryString.ToString();
+
+        if (!string.IsNullOrEmpty(queryString))
+        {
+            action += "?" + queryString;
+        }
+
+        return action;
     }
 
     /// <internalonly/>
