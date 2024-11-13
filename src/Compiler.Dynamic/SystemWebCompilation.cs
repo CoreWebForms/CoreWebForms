@@ -14,6 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using WebForms.Features;
 
 namespace WebForms.Compiler.Dynamic;
 
@@ -26,6 +27,9 @@ internal sealed class SystemWebCompilation : IDisposable, IWebFormsCompiler
     private readonly ILogger<SystemWebCompilation> _logger;
     private readonly IOptions<WebFormsOptions> _webFormsOptions;
     private readonly IOptions<PageCompilationOptions> _pageCompilationOptions;
+    private readonly string[] _ignoredFolders = new[] { "bin", "obj", "Properties" };
+
+    public IWebFormsCompilationFeature? CompilationFeature { get; private set; }
 
     public SystemWebCompilation(
         ILoggerFactory logger,
@@ -47,10 +51,18 @@ internal sealed class SystemWebCompilation : IDisposable, IWebFormsCompiler
 
     public IFileProvider Files => _webFormsOptions.Value.WebFormsFileProvider;
 
+    private bool IsIgnoredFolder(VirtualPath path)
+    {
+        var normalizedPath = path.Path.TrimStart('~').ToLowerInvariant();
+        return _ignoredFolders.Any(folder => normalizedPath.StartsWith($"/{folder}"));
+    }
+
     private SystemWebCompilationUnit CompileAllPages(ICompilationStrategy strategy, CancellationToken token)
     {
         var aspxFiles = Files.GetFiles().Where(t => t.FullPath.EndsWith(".aspx"))
-            .Select(t => new VirtualPath("/" + t.FullPath));
+            .Select(t => new VirtualPath("/" + t.FullPath))
+            .Where(x => !IsIgnoredFolder(x));
+
         var compilation = new SystemWebCompilationUnit(strategy);
 
         foreach (var parser in GetParsersToCompile(aspxFiles, compilation))
@@ -66,7 +78,8 @@ internal sealed class SystemWebCompilation : IDisposable, IWebFormsCompiler
     /// by using <see cref="TemplateParser.GetDependencyPaths"/>, but we want to ensure we only compile something if its
     /// dependencies have already been compiled.
     /// </summary>
-    private IEnumerable<DependencyParser> GetParsersToCompile(IEnumerable<VirtualPath> files, SystemWebCompilationUnit compilationUnit)
+    private IEnumerable<DependencyParser> GetParsersToCompile(IEnumerable<VirtualPath> files,
+        SystemWebCompilationUnit compilationUnit)
     {
         var parsers = new Dictionary<VirtualPath, DependencyParser>();
 
@@ -94,13 +107,22 @@ internal sealed class SystemWebCompilation : IDisposable, IWebFormsCompiler
             if (ReferenceEquals(stack.Peek(), currentPath))
             {
                 stack.Pop();
-                parser.Parse();
+                try
+                {
+                    parser.Parse();
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError(e, "Failed to parse {Path}", currentPath);
+                }
+
                 yield return parser;
             }
         }
     }
 
-    private CompiledPage InternalCompilePage(SystemWebCompilationUnit compiledPages, DependencyParser parser, CancellationToken token)
+    private CompiledPage InternalCompilePage(SystemWebCompilationUnit compiledPages, DependencyParser parser,
+        CancellationToken token)
     {
         var currentPath = parser.CurrentVirtualPath;
 
@@ -150,7 +172,8 @@ internal sealed class SystemWebCompilation : IDisposable, IWebFormsCompiler
 
             var compilation = compiler.CreateCompilation(typeName, trees, references!);
 
-            var compiled = CreateCompiledPage(compiledPages, compilation, currentPath, typeName, embedded, assemblies!, token);
+            var compiled = CreateCompiledPage(compiledPages, compilation, currentPath, typeName, embedded, assemblies!,
+                token);
 
             _logger.LogInformation("Compiled {Path}", currentPath);
 
@@ -162,10 +185,7 @@ internal sealed class SystemWebCompilation : IDisposable, IWebFormsCompiler
 
             if (compiledPages.Strategy.HandleExceptions)
             {
-                return new(currentPath)
-                {
-                    Exception = e
-                };
+                return new(currentPath) { Exception = e };
             }
             else
             {
@@ -194,7 +214,11 @@ internal sealed class SystemWebCompilation : IDisposable, IWebFormsCompiler
 
         if (!result.Success)
         {
-            _logger.LogError("{ErrorCount} error(s) found compiling {Route}", result.Diagnostics.Length, virtualPath);
+            IEnumerable<Diagnostic> errors = result.Diagnostics.Where(d => d.Severity == DiagnosticSeverity.Error);
+            IEnumerable<Diagnostic> warnings = result.Diagnostics.Where(d => d.Severity == DiagnosticSeverity.Warning);
+
+            _logger.LogError("{ErrorCount} error(s) found compiling {Route}", errors.Count(), virtualPath);
+            _logger.LogWarning("{WarningCount} warning(s) found compiling {Route}", warnings.Count(), virtualPath);
 
             if (!cu.Strategy.HandleErrors(virtualPath, result.Diagnostics))
             {
@@ -213,17 +237,17 @@ internal sealed class SystemWebCompilation : IDisposable, IWebFormsCompiler
             peStream.Position = 0;
             pdbStream.Position = 0;
 
-            var context = new PageAssemblyLoadContext(virtualPath, assemblies, _factory.CreateLogger<PageAssemblyLoadContext>());
+            var context = new PageAssemblyLoadContext(virtualPath, assemblies,
+                _factory.CreateLogger<PageAssemblyLoadContext>());
             var assembly = context.LoadFromStream(peStream, pdbStream);
 
             peStream.Position = 0;
 
-            if (assembly.GetType(typeName) is Type type)
+            if (assembly.GetType(typeName) is { } type)
             {
                 return new CompiledPage(virtualPath)
                 {
-                    MetadataReference = MetadataReference.CreateFromStream(peStream),
-                    Type = type,
+                    MetadataReference = MetadataReference.CreateFromStream(peStream), Type = type,
                 };
             }
         }
@@ -267,6 +291,14 @@ internal sealed class SystemWebCompilation : IDisposable, IWebFormsCompiler
     ICompilationResult IWebFormsCompiler.CompilePages(ICompilationStrategy outputProvider, CancellationToken token)
     {
         var result = CompileAllPages(outputProvider, token);
+        CompilationFeature = result;
+
+        // Log success and fail count
+        int failureCount = result.Values.Count(x => x.Exception != null);
+        int successCount = result.Values.Count() - failureCount;
+        _logger.LogInformation("Compilation completed. Success count: {SuccessCount}, Failure count: {FailureCount}",
+            successCount, failureCount);
+
         return result.Build();
     }
 
@@ -276,7 +308,8 @@ internal sealed class SystemWebCompilation : IDisposable, IWebFormsCompiler
 
         SyntaxTree ParseText(SourceText source, string path, CancellationToken cancellationToken);
 
-        Compilation CreateCompilation(string typeName, IEnumerable<SyntaxTree> trees, IEnumerable<MetadataReference> references);
+        Compilation CreateCompilation(string typeName, IEnumerable<SyntaxTree> trees,
+            IEnumerable<MetadataReference> references);
 
         void IDisposable.Dispose() => Provider.Dispose();
     }
@@ -284,7 +317,8 @@ internal sealed class SystemWebCompilation : IDisposable, IWebFormsCompiler
     private static TOptions CreateOptions<TOptions>(PageCompilationOptions pageOptions, TOptions options)
         where TOptions : CompilationOptions
     {
-        var result = options.WithOptimizationLevel(pageOptions.IsDebug ? OptimizationLevel.Debug : OptimizationLevel.Release);
+        var result =
+            options.WithOptimizationLevel(pageOptions.IsDebug ? OptimizationLevel.Debug : OptimizationLevel.Release);
 
         if (pageOptions.OnCreateOption is { } onCreate)
         {
@@ -301,11 +335,12 @@ internal sealed class SystemWebCompilation : IDisposable, IWebFormsCompiler
         public SyntaxTree ParseText(SourceText source, string path, CancellationToken cancellationToken)
             => CSharpSyntaxTree.ParseText(source, path: path, cancellationToken: cancellationToken);
 
-        public Compilation CreateCompilation(string typeName, IEnumerable<SyntaxTree> trees, IEnumerable<MetadataReference> references)
+        public Compilation CreateCompilation(string typeName, IEnumerable<SyntaxTree> trees,
+            IEnumerable<MetadataReference> references)
             => CSharpCompilation.Create($"WebForms.{typeName}",
-              options: CreateOptions(options, new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary)),
-              syntaxTrees: trees,
-              references: references);
+                options: CreateOptions(options, new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary)),
+                syntaxTrees: trees,
+                references: references);
     }
 
     private sealed class VisualBasicCompiler : ICompiler
@@ -316,7 +351,10 @@ internal sealed class SystemWebCompilation : IDisposable, IWebFormsCompiler
         public VisualBasicCompiler(PageCompilationOptions options)
         {
             _options = options;
-            _vbReferences = new[] { MetadataReference.CreateFromFile(Assembly.Load("Microsoft.VisualBasic.Core").Location) };
+            _vbReferences = new[]
+            {
+                MetadataReference.CreateFromFile(Assembly.Load("Microsoft.VisualBasic.Core").Location)
+            };
         }
 
         public CodeDomProvider Provider { get; } = CodeDomProvider.CreateProvider("VisualBasic");
@@ -324,10 +362,12 @@ internal sealed class SystemWebCompilation : IDisposable, IWebFormsCompiler
         public SyntaxTree ParseText(SourceText source, string path, CancellationToken cancellationToken)
             => VisualBasicSyntaxTree.ParseText(source, path: path, cancellationToken: cancellationToken);
 
-        public Compilation CreateCompilation(string typeName, IEnumerable<SyntaxTree> trees, IEnumerable<MetadataReference> references)
+        public Compilation CreateCompilation(string typeName, IEnumerable<SyntaxTree> trees,
+            IEnumerable<MetadataReference> references)
             => VisualBasicCompilation.Create($"WebForms.{typeName}",
-              options: CreateOptions(_options, new VisualBasicCompilationOptions(OutputKind.DynamicallyLinkedLibrary)),
-              syntaxTrees: trees,
-              references: references.Concat(_vbReferences));
+                options: CreateOptions(_options,
+                    new VisualBasicCompilationOptions(OutputKind.DynamicallyLinkedLibrary)),
+                syntaxTrees: trees,
+                references: references.Concat(_vbReferences));
     }
 }

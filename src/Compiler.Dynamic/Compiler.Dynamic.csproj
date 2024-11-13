@@ -7,6 +7,7 @@
     <Nullable>enable</Nullable>
     <AssemblyName>WebForms.Compiler.Dynamic</AssemblyName>
     <RootNamespace>WebForms.Compiler.Dynamic</RootNamespace>
+    <PackageId>WebForms.Compiler.Dynamic</PackageId>
   </PropertyGroup>
 
   <ItemGroup>
