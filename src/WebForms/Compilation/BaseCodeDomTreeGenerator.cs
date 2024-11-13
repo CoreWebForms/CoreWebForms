@@ -25,6 +25,8 @@ BaseCodeDomTreeGenerator
     ApplicationFileCodeDomTreeGenerator
 ***********************************************/
 
+using System.Web.Configuration;
+
 namespace System.Web.Compilation;
 internal abstract class BaseCodeDomTreeGenerator
 {
@@ -243,7 +245,7 @@ protected void AppendDebugComment(CodeStatementCollection statements) {
             {
 
                 _sourceDataClass = new CodeTypeDeclaration(generatedClassName);
-                // VSWhidbey 411701. Always use global type reference for the baseType 
+                // VSWhidbey 411701. Always use global type reference for the baseType
                 // when codefile is present.
                 _sourceDataClass.BaseTypes.Add(CodeDomUtility.BuildGlobalCodeTypeReference(
                     UI.Util.MakeFullTypeName(Parser.BaseTypeNamespace, Parser.BaseTypeName)));
@@ -774,7 +776,7 @@ private void BuildSessionObjectProperties() {
             {
                 // If it's a <%= ... %> block, we always generate '__o = expr' is
                 // designer mode, so the column is fixed
-                // 
+                //
                 generatedColumn = BaseTemplateCodeDomTreeGenerator.tempObjectVariable.Length +
                     GetGeneratedColumnOffset(_codeDomProvider);
             }
@@ -919,7 +921,7 @@ private void BuildSessionObjectProperties() {
 
             // Due to config system limitations, we can end up with virtualPath
             // actually being a physical path.  If that's the case, just use it as is.
-            // 
+            //
 
             pragmaFile = virtualPath;
         }
