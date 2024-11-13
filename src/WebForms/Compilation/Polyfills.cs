@@ -5,18 +5,15 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.Reflection;
-using System.Text;
+using System.Security;
 using System.Web.Compilation;
+using BuildProvider = System.Web.Compilation.BuildProvider;
 
 namespace System.Web.UI;
 
 internal class BuildManagerHost
 {
     public static bool InClientBuildManager { get; internal set; }
-}
-internal class BuildResult
-{
-    public IEnumerable VirtualPathDependencies { get; internal set; }
 }
 
 internal class ResourceExpressionBuilder
@@ -97,56 +94,167 @@ internal class ResourceExpressionBuilder
     }
 }
 
-internal class BaseResourcesBuildProvider
+internal class BaseResourcesBuildProvider : BuildProvider
 {
     public static string DefaultResourcesNamespace { get; internal set; }
-}
 
-internal static class BuildManager
-{
-    public static bool PrecompilingForDeployment { get; internal set; }
-    public static string UpdatableInheritReplacementToken { get; internal set; }
-    public static Assembly AppResourcesAssembly { get; internal set; }
-    public static bool PrecompilingForUpdatableDeployment { get; internal set; }
-
-    internal static BuildResult GetBuildResultFromCache(string cacheKey)
+    public void DontGenerateStronglyTypedClass()
     {
-        throw new NotImplementedException("GetBuildResultFromCache");
-    }
-
-    internal static string GetLocalResourcesAssemblyName(VirtualPath virtualDir)
-    {
-        throw new NotImplementedException("GetLocalResourcesAssemblyName");
-    }
-
-    internal static TextWriter GetUpdatableDeploymentTargetWriter(VirtualPath currentVirtualPath, Encoding fileEncoding)
-        => new StringWriter();
-
-    internal static object GetVPathBuildResult(VirtualPath virtualPath)
-    {
-        throw new NotImplementedException("GetVPathBuildResult");
-    }
-
-    internal static void ReportParseError(ParserError parseError)
-    {
-        throw new NotImplementedException("ReportParseError");
-    }
-
-    internal static void ThrowIfPreAppStartNotRunning()
-    {
-        throw new NotImplementedException("ThrowIfPreAppStartNotRunning");
-    }
-
-    internal static void ValidateCodeFileVirtualPath(VirtualPath codeFileVirtualPath)
-    {
+        throw new NotImplementedException();
     }
 }
 
 internal static class HttpRuntime2
 {
-    internal static RootBuilder CreateNonPublicInstance(Type fileLevelBuilderType)
+
+
+    internal static string GetSafePath(string path) {
+        if (String.IsNullOrEmpty(path))
+            return path;
+
+        try {
+            // if (HasPathDiscoveryPermission(path)) // could throw on bad filenames
+            return path;
+        }
+        catch {
+        }
+
+        return Path.GetFileName(path);
+    }
+
+    internal static object CreateNonPublicInstance(Type type)
     {
-        throw new NotImplementedException();
+        // Check if the type is null
+        if (type == null)
+        {
+            throw new ArgumentNullException(nameof(type));
+        }
+
+        // Check if the type is not public
+        if (!type.IsPublic)
+        {
+            // Use reflection to create an instance of the non-public class
+            return Activator.CreateInstance(type, true);
+        }
+
+        throw new ArgumentException("The type must be non-public.", nameof(type));
+    }
+
+    internal static object FastCreatePublicInstance(Type postProcessorType)
+    {
+        // Check if the type is null
+        if (postProcessorType == null)
+        {
+            throw new ArgumentNullException(nameof(postProcessorType));
+        }
+
+        // Check if the type is public
+        if (postProcessorType.IsPublic)
+        {
+            // Use Activator to create an instance of the public class
+            return Activator.CreateInstance(postProcessorType);
+        }
+
+        throw new ArgumentException("The type must be public.", nameof(postProcessorType));
+    }
+
+
+
+    internal const string codegenDirName = "Temporary ASP.NET Files";
+    internal const string profileFileName = "profileoptimization.prof";
+
+    internal static byte[] s_autogenKeys = new byte[1024];
+
+    //
+    // Names of special ASP.NET directories
+    //
+
+    internal const string BinDirectoryName = "bin";
+    internal const string CodeDirectoryName = "App_Code";
+    internal const string WebRefDirectoryName = "App_WebReferences";
+    internal const string ResourcesDirectoryName = "App_GlobalResources";
+    internal const string LocalResourcesDirectoryName = "App_LocalResources";
+    internal const string DataDirectoryName = "App_Data";
+    internal const string ThemesDirectoryName = "App_Themes";
+    internal const string GlobalThemesDirectoryName = "Themes";
+    internal const string BrowsersDirectoryName = "App_Browsers";
+
+    private static string DirectorySeparatorString = new string(Path.DirectorySeparatorChar, 1);
+    private static string DoubleDirectorySeparatorString = new string(Path.DirectorySeparatorChar, 2);
+    private static char[] s_InvalidPhysicalPathChars = { '/', '?', '*', '<', '>', '|', '"' };
+
+    //
+    // App domain related
+    //
+
+    private static String _tempDir;
+    private static String _codegenDir;
+    private static String _appDomainAppId;
+    private static String _appDomainAppPath;
+    private static VirtualPath _appDomainAppVPath;
+    private static String _appDomainId;
+
+    /// <devdoc>
+    ///    <para>[To be supplied.]</para>
+    /// </devdoc>
+    public static String CodegenDir {
+        get {
+            String path = CodegenDirInternal;
+            // Todo : Migration
+            //InternalSecurityPermissions.PathDiscovery(path).Demand();
+            return path;
+        }
+    }
+
+    internal static string CodegenDirInternal {
+        get
+        {
+            if (_codegenDir == null)
+            {
+                string dynamicAssemblyPath = AppDomain.CurrentDomain.DynamicDirectory;
+                if (dynamicAssemblyPath == null)
+                {
+                    // TODO: Migration
+                    // DynamicDirectory is null, use a fallback directory
+                    dynamicAssemblyPath = Path.Combine(Path.GetTempPath(), "MyDynamicAssemblies");
+                    // Ensure the directory exists
+                    Directory.CreateDirectory(dynamicAssemblyPath);
+                }
+
+                _codegenDir = dynamicAssemblyPath;
+            }
+            return _codegenDir;
+        }
+    }
+
+    internal static string TempDirInternal {
+        get { return _tempDir; }
+    }
+
+    internal static VirtualPath CodeDirectoryVirtualPath {
+        get { return _appDomainAppVPath.Combine(CodeDirectoryName); }
+    }
+
+    internal static VirtualPath ResourcesDirectoryVirtualPath {
+        get { return _appDomainAppVPath.Combine(ResourcesDirectoryName); }
+    }
+
+    internal static VirtualPath WebRefDirectoryVirtualPath {
+        get { return _appDomainAppVPath.Combine(WebRefDirectoryName); }
+    }
+
+    internal static string BinDirectoryInternal {
+        get { return Path.Combine(HttpRuntime.AppDomainAppPath, HttpRuntime2.BinDirectoryName) + Path.DirectorySeparatorChar; }
+
+    }
+
+    internal static string AppDomainAppPathInternal {
+        get { return HttpRuntime.AppDomainAppPath; }
+    }
+
+    public static object CreatePublicInstanceByWebObjectActivator(Type buildProviderType)
+    {
+        return Activator.CreateInstance(buildProviderType);
     }
 }
 
