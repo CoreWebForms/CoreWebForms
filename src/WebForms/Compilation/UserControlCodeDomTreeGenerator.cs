@@ -44,12 +44,14 @@ internal class UserControlCodeDomTreeGenerator : TemplateControlCodeDomTreeGener
                 attribDecl.Arguments.Add(attribArg);
                 attribArg = new CodeAttributeArgument(new CodePrimitiveExpression(cacheSettings.SqlDependency));
                 attribDecl.Arguments.Add(attribArg);
-                attribArg = new CodeAttributeArgument(new CodePrimitiveExpression(UserControlParser.FSharedPartialCaching));
+                // TODO: Migration
+                // attribArg = new CodeAttributeArgument(new CodePrimitiveExpression(UserControlParser.FSharedPartialCaching));
                 attribDecl.Arguments.Add(attribArg);
                 // Use the providerName argument only when targeting 4.0 and above.
                 if (MultiTargetingUtil.IsTargetFramework40OrAbove)
                 {
-                    attribArg = new CodeAttributeArgument("ProviderName", new CodePrimitiveExpression(UserControlParser.Provider));
+                    // TODO: Migration
+                    // attribArg = new CodeAttributeArgument("ProviderName", new CodePrimitiveExpression(UserControlParser.Provider));
                     attribDecl.Arguments.Add(attribArg);
                 }
 
