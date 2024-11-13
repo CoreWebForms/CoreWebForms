@@ -36,7 +36,7 @@ public static class ScriptManagerExtensions
         {
             if (request.Query["s"] is [{ } file] && handler.Resolve(file) is { } resource)
             {
-                return TypedResults.Stream(resource);
+                return TypedResults.Stream(resource, "application/javascript");
             }
             else
             {
