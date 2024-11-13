@@ -5,7 +5,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Web;
 using System.Web.Routing;
-using System.Web.SessionState;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SystemWebAdapters;
 using Microsoft.AspNetCore.SystemWebAdapters.HttpHandlers;
@@ -40,6 +39,8 @@ internal sealed class DynamicSystemWebCompilation : IHttpHandlerCollection
 
     public IFileProvider Files => _compiler.Files;
 
+    public IWebFormsCompilationFeature Current => _result?.Types ?? EmptyWebFormsCompilation.Instance;
+
     IEnumerable<IHttpHandlerMetadata> IHttpHandlerCollection.GetHandlerMetadata()
     {
         if (_result is not { } result)
@@ -53,11 +54,11 @@ internal sealed class DynamicSystemWebCompilation : IHttpHandlerCollection
             {
                 if (result.Types.GetForPath(route) is { } type)
                 {
-                    yield return new WrappedMetadata(HandlerMetadata.Create(route, type), result.Types);
+                    yield return HandlerMetadata.Create(route, type);
                 }
                 else if (result.Types.TryGetException(route, out var exception))
                 {
-                    yield return new WrappedMetadata(HandlerMetadata.Create(route, new ErrorHandler(exception)), result.Types);
+                    yield return HandlerMetadata.Create(route, new ErrorHandler(exception));
                 }
                 else
                 {
@@ -135,18 +136,18 @@ internal sealed class DynamicSystemWebCompilation : IHttpHandlerCollection
         }
     }
 
-    private sealed class WrappedMetadata(IHttpHandlerMetadata metadata, IWebFormsCompilationFeature compiledTypes) : IHttpHandlerMetadata, IWebFormsCompilationFeature
+    private sealed class EmptyWebFormsCompilation : IWebFormsCompilationFeature
     {
-        SessionStateBehavior IHttpHandlerMetadata.Behavior => metadata.Behavior;
+        public static EmptyWebFormsCompilation Instance { get; } = new();
 
-        string IHttpHandlerMetadata.Route => metadata.Route;
+        public IReadOnlyCollection<string> Paths => [];
 
-        IHttpHandler IHttpHandlerMetadata.Create(Microsoft.AspNetCore.Http.HttpContext context) => metadata.Create(context);
+        public Type? GetForPath(string virtualPath) => null;
 
-        Type? IWebFormsCompilationFeature.GetForPath(string virtualPath) => compiledTypes.GetForPath(virtualPath);
-
-        bool IWebFormsCompilationFeature.TryGetException(string path, [MaybeNullWhen(false)] out Exception exception) => compiledTypes.TryGetException(path, out exception);
-
-        IReadOnlyCollection<string> IWebFormsCompilationFeature.Paths => compiledTypes.Paths;
+        public bool TryGetException(string path, [MaybeNullWhen(false)] out Exception exception)
+        {
+            exception = null;
+            return false;
+        }
     }
 }
