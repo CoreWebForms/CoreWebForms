@@ -40,6 +40,7 @@ public static class WebFormsCompilerExtensions
         services.Services.AddHostedService<WebFormsCompilationService>();
         services.Services.AddSingleton<DynamicSystemWebCompilation>();
         services.Services.AddTransient<IStartupFilter, DynamicSystemWebCompilationStartup>();
+        services.Services.AddTransient<IStartupFilter, CompilationFeatureStartupFilter>();
         services.Services.AddSingleton<IHttpHandlerCollection>(ctx => ctx.GetRequiredService<DynamicSystemWebCompilation>());
 
         return services;
@@ -102,5 +103,15 @@ public static class WebFormsCompilerExtensions
                 Location = d.Location.ToString(),
             };
         }
+    }
+
+    private sealed class CompilationFeatureStartupFilter : IStartupFilter
+    {
+        public Action<IApplicationBuilder> Configure(Action<IApplicationBuilder> next)
+            => builder =>
+            {
+                builder.UseMiddleware<SetCompilationFeatureMiddleware>();
+                next(builder);
+            };
     }
 }

@@ -10,7 +10,7 @@ namespace WebForms.Compiler.Dynamic;
 
 internal sealed class DynamicSystemWebCompilationStartup : IStartupFilter
 {
-    public Action<IApplicationBuilder> Configure(Action<IApplicationBuilder> next) => builder =>
+    public Action<IApplicationBuilder> Configure(Action<IApplicationBuilder> _next) => builder =>
     {
         builder.Use((ctx, next) =>
         {
@@ -19,7 +19,7 @@ internal sealed class DynamicSystemWebCompilationStartup : IStartupFilter
             return next(ctx);
         });
 
-        next(builder);
+        _next(builder);
     };
 
     private sealed class CompilationEndpoint(HttpContext context) : IEndpointFeature

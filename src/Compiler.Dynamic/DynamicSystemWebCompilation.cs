@@ -4,6 +4,7 @@ using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Web;
+using System.Web.Compilation;
 using System.Web.Routing;
 using System.Web.SessionState;
 using Microsoft.AspNetCore.Http;
@@ -14,31 +15,21 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
 using WebForms.Features;
-
 using HttpContext = System.Web.HttpContext;
 
 namespace WebForms.Compiler.Dynamic;
 
-internal sealed class DynamicSystemWebCompilation : IHttpHandlerCollection
+internal sealed class DynamicSystemWebCompilation(IWebFormsCompiler compiler, ILoggerFactory factory)
+    : IHttpHandlerCollection
 {
-    private readonly IWebFormsCompiler _compiler;
-    private readonly ILoggerFactory _factory;
-    private readonly ILogger<DynamicSystemWebCompilation> _logger;
-    private readonly ManualResetEventSlim _event = new(false);
+    private readonly ILogger<DynamicSystemWebCompilation> _logger = factory.CreateLogger<DynamicSystemWebCompilation>();
     private readonly CancellationChangeTokenSource _changeTokenSource = new();
 
     private ICompilationResult? _result;
 
     public IEnumerable<NamedHttpHandlerRoute> NamedRoutes => [];
 
-    public DynamicSystemWebCompilation(IWebFormsCompiler compiler, ILoggerFactory factory)
-    {
-        _compiler = compiler;
-        _factory = factory;
-        _logger = factory.CreateLogger<DynamicSystemWebCompilation>();
-    }
-
-    public IFileProvider Files => _compiler.Files;
+    public IFileProvider Files => compiler.Files;
 
     IEnumerable<IHttpHandlerMetadata> IHttpHandlerCollection.GetHandlerMetadata()
     {
@@ -57,7 +48,8 @@ internal sealed class DynamicSystemWebCompilation : IHttpHandlerCollection
                 }
                 else if (result.Types.TryGetException(route, out var exception))
                 {
-                    yield return new WrappedMetadata(HandlerMetadata.Create(route, new ErrorHandler(exception)), result.Types);
+                    yield return new WrappedMetadata(HandlerMetadata.Create(route, new ErrorHandler(exception)),
+                        result.Types);
                 }
                 else
                 {
@@ -71,9 +63,12 @@ internal sealed class DynamicSystemWebCompilation : IHttpHandlerCollection
 
     public void CompilePages(CancellationToken token)
     {
-        _event.Reset();
+        // Init build manager
+        BuildManager.InitializeBuildManager();
 
-        var result = _compiler.CompilePages(new DynamicCompilationProvider(_factory.CreateLogger<DynamicCompilationProvider>()), token);
+        var result =
+            compiler.CompilePages(new DynamicCompilationProvider(factory.CreateLogger<DynamicCompilationProvider>()),
+                token);
 
         var previous = _result;
         _result = result;
@@ -81,17 +76,17 @@ internal sealed class DynamicSystemWebCompilation : IHttpHandlerCollection
         _changeTokenSource.OnChange();
 
         previous?.Dispose();
-
-        _event.Set();
     }
 
     internal sealed class DynamicCompilationProvider(ILogger<DynamicCompilationProvider> logger) : ICompilationStrategy
     {
         public bool HandleExceptions => true;
 
-        Stream ICompilationStrategy.CreatePdbStream(string route, string typeName, string assemblyName) => new MemoryStream();
+        Stream ICompilationStrategy.CreatePdbStream(string route, string typeName, string assemblyName) =>
+            new MemoryStream();
 
-        Stream ICompilationStrategy.CreatePeStream(string route, string typeName, string assemblyName) => new MemoryStream();
+        Stream ICompilationStrategy.CreatePeStream(string route, string typeName, string assemblyName) =>
+            new MemoryStream();
 
         bool ICompilationStrategy.HandleErrors(string route, ImmutableArray<Diagnostic> diagnostics)
         {
@@ -106,7 +101,8 @@ internal sealed class DynamicSystemWebCompilation : IHttpHandlerCollection
                     _ => LogLevel.Critical,
                 };
 
-                logger.Log(logLevel, "[{Id}] {Message} @{Location}", d.Id, d.GetMessage(CultureInfo.CurrentCulture), d.Location);
+                logger.Log(logLevel, "[{Id}] {Message} @{Location}", d.Id, d.GetMessage(CultureInfo.CurrentCulture),
+                    d.Location);
             }
 
             return true;
@@ -119,33 +115,39 @@ internal sealed class DynamicSystemWebCompilation : IHttpHandlerCollection
 
         public override Task ProcessRequestAsync(HttpContext context)
         {
+            context.Response.StatusCode = 500;
             if (e is RoslynCompilationException r)
             {
-                return context.AsAspNetCore().Response.WriteAsJsonAsync(r.Error.Select(e => new
+                return context.AsAspNetCore().Response.WriteAsJsonAsync(new
                 {
-                    e.Severity,
-                    e.Message
-                }));
+                    Message = "There was an error compiling the page",
+                    Errors = r.Error.Select(e => new { e.Severity, e.Message })
+                });
             }
             else
             {
-                context.Response.Write(e.Message);
-                return Task.CompletedTask;
+                return context.AsAspNetCore().Response.WriteAsJsonAsync(new
+                {
+                    Message = "There was an error compiling the page", ErrorMessage = e.Message,
+                });
             }
         }
     }
 
-    private sealed class WrappedMetadata(IHttpHandlerMetadata metadata, IWebFormsCompilationFeature compiledTypes) : IHttpHandlerMetadata, IWebFormsCompilationFeature
+    private sealed class WrappedMetadata(IHttpHandlerMetadata metadata, IWebFormsCompilationFeature compiledTypes)
+        : IHttpHandlerMetadata, IWebFormsCompilationFeature
     {
         SessionStateBehavior IHttpHandlerMetadata.Behavior => metadata.Behavior;
 
         string IHttpHandlerMetadata.Route => metadata.Route;
 
-        IHttpHandler IHttpHandlerMetadata.Create(Microsoft.AspNetCore.Http.HttpContext context) => metadata.Create(context);
+        IHttpHandler IHttpHandlerMetadata.Create(Microsoft.AspNetCore.Http.HttpContext context) =>
+            metadata.Create(context);
 
         Type? IWebFormsCompilationFeature.GetForPath(string virtualPath) => compiledTypes.GetForPath(virtualPath);
 
-        bool IWebFormsCompilationFeature.TryGetException(string path, [MaybeNullWhen(false)] out Exception exception) => compiledTypes.TryGetException(path, out exception);
+        bool IWebFormsCompilationFeature.TryGetException(string path, [MaybeNullWhen(false)] out Exception exception) =>
+            compiledTypes.TryGetException(path, out exception);
 
         IReadOnlyCollection<string> IWebFormsCompilationFeature.Paths => compiledTypes.Paths;
     }
