@@ -3,12 +3,15 @@
 using System.Text;
 using System.Web.Hosting;
 using System.Web.Util;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 
 namespace System.Web;
 
-internal sealed class VirtualPath
+public sealed class VirtualPath
 {
+    public IFileProvider FileProvider => HttpRuntime.WebObjectActivator.GetRequiredService<IWebHostEnvironment>().ContentRootFileProvider;
     public VirtualPath Parent
     {
         get
@@ -29,6 +32,14 @@ internal sealed class VirtualPath
     public VirtualPath(string path)
     {
         Path = Resolve(path);
+    }
+
+    public string GetCacheKey() => Path;
+
+    public bool HasTrailingSlash => Path.EndsWith('/');
+
+    public bool DirectoryExists() {
+        return FileProvider.GetDirectoryContents(Path).Exists;
     }
 
     public static string Resolve(string url)
@@ -79,7 +90,7 @@ internal sealed class VirtualPath
 
     public Stream OpenFile(VirtualPathProvider provider)
     {
-        return provider.GetFile(FileName).Open();
+        return provider.GetFile(FileName)?.Open();
     }
 
     public string VirtualPathStringNoTrailingSlash
@@ -117,6 +128,7 @@ internal sealed class VirtualPath
         return new VirtualPath(HttpRuntime.AppDomainAppPath).Combine(this);
     }
 
+    public VirtualPath SimpleCombineWithDir(VirtualPath relativePath) => Combine(relativePath);
     public VirtualPath Combine(VirtualPath relativePath)
     {
         if (relativePath == null)
@@ -144,7 +156,7 @@ internal sealed class VirtualPath
     {
         if (IsRelative)
         {
-            throw new ArgumentException("Must be relative path");
+            throw new ArgumentException($"Must be non-relative path - {Path}");
         }
     }
 
@@ -154,10 +166,10 @@ internal sealed class VirtualPath
 
     public string FileName => IO.Path.GetFileName(Path);
 
-    public object AppRelativeVirtualPathString => Path;
+    public string AppRelativeVirtualPathString => Path;
 
     public static implicit operator VirtualPath(string path) => new(path);
-    public static implicit operator string(VirtualPath vpath) => vpath.Path;
+    public static implicit operator string(VirtualPath vpath) => vpath?.Path;
 
     public static VirtualPath CreateAllowNull(string path)
     {
@@ -169,17 +181,47 @@ internal sealed class VirtualPath
         return new(path);
     }
 
-    internal static VirtualPath CreateNonRelativeAllowNull(string v) => v;
+    internal static VirtualPath CreateNonRelativeAllowNull(string v)
+    {
+        if (string.IsNullOrEmpty(v))
+        {
+            return null;
+        }
+
+        return new(v);
+    }
 
     internal static string GetAppRelativeVirtualPathStringOrEmpty(VirtualPath vpath)
-        => vpath.Path;
+        => vpath?.AppRelativeVirtualPathString ?? string.Empty;
 
     internal static string GetVirtualPathString(VirtualPath vpath)
         => vpath?.Path;
 
     internal string GetAppRelativeVirtualPathString(VirtualPath templateControlVirtualPath)
     {
-        throw new NotImplementedException();
+        // Check if the current path is already application-relative
+        if (Path.StartsWith("~") || templateControlVirtualPath.IsRelative)
+        {
+            return Path; // Already application-relative, return as is.
+        }
+
+        if (templateControlVirtualPath != null && !string.IsNullOrEmpty(templateControlVirtualPath.Path))
+        {
+            // If a template control's virtual path is provided, use it to resolve the current path
+            // This assumes that templateControlVirtualPath is an application-relative path
+            var basePath = templateControlVirtualPath.Path;
+            if (!basePath.EndsWith("/"))
+            {
+                basePath += "/";
+            }
+
+            // Combine the base path with the current path to create a new application-relative path
+            var combinedPath = VirtualPathUtility.Combine(basePath, Path);
+            return "~/" + combinedPath.TrimStart('/'); // Ensure the result is application-relative
+        }
+
+        // Fallback to converting the current path to an application-relative path using the root
+        return "~/" + Path.TrimStart('/');
     }
 
     internal static VirtualPath CreateNonRelative(string value)
@@ -191,15 +233,29 @@ internal sealed class VirtualPath
 
     internal static VirtualPath Create(string filename) => filename;
 
+    public bool FileExists() => FileProvider.GetFileInfo(Path).Exists;
     internal bool FileExists(IFileProvider fileProvider) => fileProvider.GetFileInfo(Path).Exists;
 
-    internal string MapPath()
-    {
-        throw new NotImplementedException();
+    public string MapPath() => FileProvider.GetFileInfo(Path).PhysicalPath;
+    internal string MapPathInternal() => MapPath();
+
+    public VirtualDirectory GetDirectory() {
+        return new FileProviderVirtualPathProvider(FileProvider).GetDirectory(this);
     }
 
-    internal static VirtualPath CreateTrailingSlash(string virtualPath)
+    public static bool operator == (VirtualPath v1, VirtualPath v2) {
+        return Equals(v1, v2);
+    }
+
+    public static bool operator != (VirtualPath v1, VirtualPath v2) {
+        return !Equals(v1, v2);
+    }
+
+    public void FailIfNotWithinAppRoot()
     {
-        throw new NotImplementedException();
+        if (!IsWithinAppRoot)
+        {
+            throw new ArgumentException($"{Path} must be within app root");
+        }
     }
 }
