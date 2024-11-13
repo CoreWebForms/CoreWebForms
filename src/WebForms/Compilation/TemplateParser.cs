@@ -11,6 +11,7 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web.Compilation;
+using System.Web.Configuration;
 using System.Web.Util;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -25,17 +26,6 @@ using Microsoft.Extensions.Logging;
 //#define PROFILE_REGEX
 
 namespace System.Web.UI;
-public class CompilationSection
-{
-    public Type ControlBuilderInterceptorTypeInternal { get; internal set; }
-    public bool Explicit { get; internal set; }
-    public bool Strict { get; internal set; }
-    public bool Batch { get; internal set; }
-    public int NumRecompilesBeforeAppRestart { get; internal set; }
-    public string DefaultLanguage { get; internal set; }
-    public bool Debug { get; internal set; } = true;
-    public bool UrlLinePragmas { get; internal set; }
-}
 
 /// <internalonly/>
 /// <devdoc>
@@ -1469,7 +1459,7 @@ private Match RunTextRegex(string text, int textPos) {
      */
     private void ProcessLiteral()
     {
-        // Debug.Trace("Template", "Literal text: \"" + _literalBuilder.ToString() + "\"");
+        // Debug.Write("Template", "Literal text: \"" + _literalBuilder.ToString() + "\"");
 
         // Get the current literal string
         string literal = GetLiteral();
@@ -2807,7 +2797,7 @@ private Match RunTextRegex(string text, int textPos) {
 
         string pathType = match.Groups["pathtype"].Value;
         string filename = match.Groups["filename"].Value;
-        //System.Web.Util.Debug.Trace("Template", "#Include " + pathType + "=" + filename);
+        //System.Web.Util.Debug.Write("Template", "#Include " + pathType + "=" + filename);
 
         if (filename.Length == 0)
         {
