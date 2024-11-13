@@ -1,6 +1,8 @@
 // MIT License.
 
 using System.CodeDom.Compiler;
+using System.Collections;
+using System.Web.Configuration;
 
 namespace System.Web.Compilation;
 /*
@@ -105,4 +107,76 @@ internal static AssemblyBuilder GetDefaultAssemblyBuilder(CompilationSection com
         generatedFilesDir, outputAssemblyName);
 }
 #endif
+    public Type CodeDomProviderType { get; private set; }
+
+    internal CompilerType(Type codeDomProviderType, CompilerParameters compilParams) {
+
+        Debug.Assert(codeDomProviderType != null);
+        CodeDomProviderType = codeDomProviderType;
+
+        if (compilParams == null)
+            CompilerParameters = new CompilerParameters();
+        else
+            CompilerParameters = compilParams;
+    }
+
+
+    internal CompilerType Clone() {
+        // Clone the CompilerParameters to make sure the original is untouched
+        return new CompilerType(CodeDomProviderType, CloneCompilerParameters());
+    }
+
+    private CompilerParameters CloneCompilerParameters() {
+
+        CompilerParameters copy = new CompilerParameters();
+        copy.IncludeDebugInformation = CompilerParameters.IncludeDebugInformation;
+        copy.TreatWarningsAsErrors = CompilerParameters.TreatWarningsAsErrors;
+        copy.WarningLevel = CompilerParameters.WarningLevel;
+        copy.CompilerOptions = CompilerParameters.CompilerOptions;
+
+        return copy;
+    }
+
+    internal AssemblyBuilder CreateAssemblyBuilder(CompilationSection compConfig,
+        ICollection referencedAssemblies) {
+
+        return CreateAssemblyBuilder(compConfig, referencedAssemblies,
+            null /*generatedFilesDir*/, null /*outputAssemblyName*/);
+    }
+
+    internal AssemblyBuilder CreateAssemblyBuilder(CompilationSection compConfig,
+        ICollection referencedAssemblies, string generatedFilesDir, string outputAssemblyName) {
+
+        // Create a special AssemblyBuilder when we're only supposed to generate
+        // source files but not compile them (for ClientBuildManager.GetCodeDirectoryInformation)
+        if (generatedFilesDir != null) {
+            return new CbmCodeGeneratorBuildProviderHost(compConfig,
+                referencedAssemblies, this, generatedFilesDir, outputAssemblyName);
+        }
+
+        return new AssemblyBuilder(compConfig, referencedAssemblies, this, outputAssemblyName);
+    }
+
+    private static CompilerType GetDefaultCompilerTypeWithParams(
+        CompilationSection compConfig, VirtualPath configPath) {
+
+        // By default, use C# when no provider is asking for a specific language
+        return CompilationUtil.GetCSharpCompilerInfo(compConfig, configPath);
+    }
+
+    internal static AssemblyBuilder GetDefaultAssemblyBuilder(CompilationSection compConfig,
+        ICollection referencedAssemblies, VirtualPath configPath, string outputAssemblyName) {
+
+        return GetDefaultAssemblyBuilder(compConfig, referencedAssemblies,
+            configPath, null /*generatedFilesDir*/, outputAssemblyName);
+    }
+
+    internal static AssemblyBuilder GetDefaultAssemblyBuilder(CompilationSection compConfig,
+        ICollection referencedAssemblies, VirtualPath configPath,
+        string generatedFilesDir, string outputAssemblyName) {
+
+        CompilerType ctwp = GetDefaultCompilerTypeWithParams(compConfig, configPath);
+        return ctwp.CreateAssemblyBuilder(compConfig, referencedAssemblies,
+            generatedFilesDir, outputAssemblyName);
+    }
 }
