@@ -30,7 +30,7 @@ public static class CompiledWebFormsPageExtensions
 
     private sealed class CompiledStartupFilter(CompiledReflectionWebFormsPage compiledPages) : IStartupFilter
     {
-        Action<IApplicationBuilder> IStartupFilter.Configure(Action<IApplicationBuilder> next)
+        Action<IApplicationBuilder> IStartupFilter.Configure(Action<IApplicationBuilder> _next)
             => builder =>
             {
                 builder.Use((ctx, next) =>
@@ -39,7 +39,7 @@ public static class CompiledWebFormsPageExtensions
                     return next(ctx);
                 });
 
-                next(builder);
+                _next(builder);
             };
     }
 
