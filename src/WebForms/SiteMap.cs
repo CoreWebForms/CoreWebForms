@@ -2,6 +2,9 @@
 
 using System.Configuration.Provider;
 using System.Web.Configuration;
+using Microsoft.AspNetCore.SystemWebAdapters;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace System.Web;
 
@@ -96,23 +99,15 @@ public static class SiteMap
             if (_providers != null)
                 return;
 
-#if Integrate_Sitemap_WebConfig 
-            // SiteMapSection config = RuntimeConfig.GetAppConfig().SiteMap;
-#endif
-            SiteMapSection config = new SiteMapSection();
-            if (config == null)
-            {
-                // just return an empty collection so that designer will work.
-                _providers = new SiteMapProviderCollection();
-                return;
-            }
+            var siteMapOption = HttpContext.Current.Request.AsAspNetCore().HttpContext.RequestServices
+                .GetRequiredService<IOptions<SiteMapOptions>>();
+            SiteMapSection config = new SiteMapSection(siteMapOption);
 
             if (!config.Enabled)
                 throw new InvalidOperationException(SR.GetString(SR.SiteMap_feature_disabled, SiteMap.SectionName));
 
             // Make sure the default provider exists.
             config.ValidateDefaultProvider();
-
             _providers = config.ProvidersInternal;
             _provider = _providers[config.DefaultProvider];
             _providers.SetReadOnly();
