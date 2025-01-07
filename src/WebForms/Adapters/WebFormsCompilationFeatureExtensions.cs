@@ -11,9 +11,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using WebForms.Features;
 
-namespace WebForms.Internal;
+namespace WebForms.Features.Extensions;
 
-internal static class WebFormsCompilationFeatureExtensions
+public static class WebFormsCompilationFeatureExtensions
 {
     public static Control? GetControlByPath(this System.Web.HttpContext context, string virtualPath) => context.AsAspNetCore().GetControlByPath(virtualPath);
 
