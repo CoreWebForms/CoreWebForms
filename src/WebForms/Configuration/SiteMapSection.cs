@@ -1,6 +1,7 @@
 //MIT license
 
 using System.Configuration;
+using Microsoft.Extensions.Options;
 
 namespace System.Web.Configuration;
 
@@ -32,94 +33,55 @@ namespace System.Web.Configuration;
     </siteMap>
 */
 
-internal sealed class SiteMapSection : ConfigurationSection
+internal sealed class SiteMapSection
 {
-
-    private static readonly ConfigurationPropertyCollection _properties;
-
-    private static readonly ConfigurationProperty _propDefaultProvider =
-        new ConfigurationProperty("defaultProvider",
-                                    typeof(string),
-                                    "AspNetXmlSiteMapProvider",
-                                    null,
-                                    null,
-                                    ConfigurationPropertyOptions.None);
-
-    private static readonly ConfigurationProperty _propEnabled =
-        new ConfigurationProperty("enabled",
-                                    typeof(bool),
-                                    true,
-                                    ConfigurationPropertyOptions.None);
-
-    private static readonly ConfigurationProperty _propProviders =
-        new ConfigurationProperty("providers",
-                                    typeof(ProviderSettingsCollection),
-                                    null,
-                                    ConfigurationPropertyOptions.None);
-
     private SiteMapProviderCollection _siteMapProviders;
+    private readonly SiteMapOptions _siteMapOptions;
 
 #pragma warning disable CA1810 // Initialize reference type static fields inline
     static SiteMapSection()
 #pragma warning restore CA1810 // Initialize reference type static fields inline
     {
         // Property initialization
-        _properties = [_propDefaultProvider, _propEnabled, _propProviders];
+       // _properties = [_propDefaultProvider, _propEnabled, _propProviders];
     }
 
-    public SiteMapSection()
+    public SiteMapSection(IOptions<SiteMapOptions> options)
     {
+        _siteMapOptions = options.Value;
     }
 
-    protected override ConfigurationPropertyCollection Properties
-    {
-        get
-        {
-            return _properties;
-        }
-    }
-
-    [ConfigurationProperty("defaultProvider", DefaultValue = "AspNetXmlSiteMapProvider")]
-    [StringValidator(MinLength = 1)]
     public string DefaultProvider
     {
         get
         {
-            return (string)base[_propDefaultProvider];
+            return _siteMapOptions.DefaultProvider;
         }
-        set
-        {
-            base[_propDefaultProvider] = value;
-        }
+
     }
 
-    [ConfigurationProperty("enabled", DefaultValue = true)]
     public bool Enabled
     {
         get
         {
-            return (bool)base[_propEnabled];
+            return _siteMapOptions.Enabled ?? false;
         }
-        set
-        {
-            base[_propEnabled] = value;
-        }
+
     }
 
-    [ConfigurationProperty("providers")]
     public ProviderSettingsCollection Providers
     {
         get
         {
-            if (base[_propProviders] == null || ((ProviderSettingsCollection)base[_propProviders]).Count == 0)
+            if (_siteMapOptions.Providers.Count == 0)
             {
-                //TODO: let's handle better way
                 var ps = new ProviderSettings() { Name = "AspNetXmlSiteMapProvider", Type = typeof(XmlSiteMapProvider).AssemblyQualifiedName };
                 ps.Parameters.Add("siteMapFile", "~/Web.sitemap");
-                var col = new ProviderSettingsCollection{ ps };
-                base[_propProviders] = col;
+                _siteMapOptions.Providers.Add(ps);
             }
-            return (ProviderSettingsCollection)base[_propProviders];
+
+            ProviderSettingsCollection providerSettingsCollection = [.. _siteMapOptions.Providers];
+            return providerSettingsCollection;
         }
     }
 
@@ -133,9 +95,8 @@ internal sealed class SiteMapSection : ConfigurationSection
                 {
                     if (_siteMapProviders == null)
                     {
-                        SiteMapProviderCollection siteMapProviders = new SiteMapProviderCollection();
+                        var siteMapProviders = new SiteMapProviderCollection();
                         ProvidersHelper.InstantiateProviders(Providers, siteMapProviders, typeof(SiteMapProvider));
-
                         _siteMapProviders = siteMapProviders;
                     }
                 }
@@ -153,7 +114,7 @@ internal sealed class SiteMapSection : ConfigurationSection
             if (Providers[DefaultProvider] == null) {
                 throw new ConfigurationErrorsException(
                     SR.GetString(SR.Config_provider_must_exist, DefaultProvider),
-                    ElementInformation.Properties[_propDefaultProvider.Name].Source, 
+                    ElementInformation.Properties[_propDefaultProvider.Name].Source,
                     ElementInformation.Properties[_propDefaultProvider.Name].LineNumber);
             }
 #endif

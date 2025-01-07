@@ -3,6 +3,7 @@
 using System.Diagnostics;
 using System.Net;
 using System.Text.Json.Serialization;
+using System.Web;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
@@ -123,6 +124,15 @@ public class DynamicCompilationTests
                         .AddScriptManager()
                         .AddDynamicPages();
                     services.AddSingleton<IDataProtectionProvider, NoopDataProtector>();
+                    if (test == "test14")
+                    {
+                        services.Configure<SiteMapOptions>(
+                            options =>
+                            {
+                                options.DefaultProvider = "AspNetXmlSiteMapProvider";
+                                options.Enabled = true;
+                            });
+                    }
                 });
             })
             .Start();
