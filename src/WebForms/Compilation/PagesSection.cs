@@ -41,6 +41,7 @@ internal class PagesSection
     internal class NamespaceCollection
     {
         public Hashtable NamespaceEntries { get; internal set; }
+        public bool AutoImportVBNamespace => true;
     }
 
     internal static PageParserFilter CreateControlTypeFilter()
