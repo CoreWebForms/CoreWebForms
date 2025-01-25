@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Specialized;
 using System.Globalization;
 using System.Text.RegularExpressions;
+using System.Web.Configuration;
 using System.Web.Util;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -20,6 +21,9 @@ internal static class MTConfigUtil
     internal static PagesSection GetPagesConfig() => HttpRuntime.WebObjectActivator.GetRequiredService<IOptions<PagesSection>>().Value;
 
     internal static PagesSection GetPagesConfig(VirtualPath virtualPath) => GetPagesConfig();
+
+    // Counterpart for RuntimeConfig.GetAppConfig().Profile;
+    internal static ProfileSection GetProfileAppConfig() => HttpRuntime.WebObjectActivator.GetRequiredService<IOptions<ProfileSection>>().Value;
 }
 
 internal abstract class DependencyParser : BaseParser
@@ -53,7 +57,7 @@ internal abstract class DependencyParser : BaseParser
             {
                 return _baseTemplateParser;
             }
-            
+
             _baseTemplateParser = InitializeBaseTemplateParser();
             return _baseTemplateParser;
         }
@@ -476,7 +480,7 @@ internal class PageDependencyParser : TemplateControlDependencyParser
     }
 
     protected override BaseTemplateParser CreateTemplateParser() => new PageParser();
-   
+
     internal override void ProcessDirective(string directiveName, IDictionary directive)
     {
         base.ProcessDirective(directiveName, directive);
