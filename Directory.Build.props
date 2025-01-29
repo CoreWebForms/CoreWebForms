@@ -27,6 +27,9 @@
 
     <!-- Disable warnings because of devdoc usage -->
     <NoWarn>$(NoWarn);CS1570;CS1574;CS0419;CS1584;CS1587</NoWarn>
+
+    <!-- Warnings that showed up in .NET 9 that should be addressed-->
+    <NoWarn>$(NoWarn);IDE0073</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup>
