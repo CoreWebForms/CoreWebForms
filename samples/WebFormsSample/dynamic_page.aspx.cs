@@ -43,7 +43,7 @@ public partial class DynamicPage : Page
         Grid.DataSource = bindingList;
         Grid.DataBind();
     }
-    
+
     class Employee
     {
         public string FirstName { get; set; }

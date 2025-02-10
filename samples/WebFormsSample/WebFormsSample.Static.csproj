@@ -12,5 +12,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNet.ScriptManager.MSAjax" Version="5.0.0" GeneratePathProperty="true" CopyContent="true" NoWarn="NU1701" />
   </ItemGroup>
-  
+  <ItemGroup>
+    <PackageReference Include="EntityFramework" Version="6.5.1" />
+  </ItemGroup>
 </Project>
