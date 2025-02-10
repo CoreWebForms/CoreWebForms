@@ -25,8 +25,30 @@ internal sealed class DynamicControlCollection : ITypeResolutionService, IMetada
         _map = ImmutableDictionary<AssemblyName, MetadataReference>.Empty;
 
         AppDomain.CurrentDomain.AssemblyLoad += CurrentDomain_AssemblyLoad;
-
+        LoadCurrentDomainAssembly();
+        
         ProcessLoadedAssemblies();
+
+    }
+
+    private void LoadCurrentDomainAssembly()
+    {
+        var loadedAssemblies = AppDomain.CurrentDomain.GetAssemblies().ToList();
+        var loadedPaths = loadedAssemblies.Select(a => a.Location).ToArray();
+        var referencedPaths = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory, "*.dll");
+        var toLoad = referencedPaths.Where(r => !loadedPaths.Contains(r, StringComparer.InvariantCultureIgnoreCase)).ToList();
+
+        foreach (var path in toLoad)
+        {
+            try
+            {
+                AppDomain.CurrentDomain.Load(AssemblyName.GetAssemblyName(path));
+            }
+            catch (Exception ex) //consult why System.Web creates problem.
+            {
+                _logger.LogInformation("Logging the assembly that couldn't be loaded is {Assembly}. Error is {stacktrace}", path, ex.Message);
+            }
+        }
     }
 
     private void CurrentDomain_AssemblyLoad(object? sender, AssemblyLoadEventArgs args)
