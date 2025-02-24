@@ -1,7 +1,3 @@
-<Project>
-  <ItemGroup>
-    <PackageReference Include="Microsoft.Testing.Extensions.TrxReport" Version="1.0.0" />
-  </ItemGroup>
-  
+<Project>  
   <Import Project="..\Directory.Build.targets" />
 </Project>
