@@ -9,6 +9,30 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
+    groups:
+      SystemWebAdapters:
+        patterns:
+          - "Microsoft.AspNetCore.SystemWebAdapters"
+          - "Microsoft.AspNetCore.SystemWebAdapters.*"
+      AspNetCore:
+        patterns:
+          - "Microsoft.AspNetCore.*"
+      MicrosoftCodeAnalysis:
+        patterns:
+          - "Microsoft.CodeAnalysis.*"
+          - "System.CodeDom"
+      MicrosoftExtensions:
+        patterns:
+          - "Microsoft.Extensions.*"
+      Xunit:
+        patterns:
+          - "Xunit.*"
+
+  - package-ecosystem: "dotnet-sdk"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "wednesday"
 
   - package-ecosystem: "github-actions"
     # Workflow files stored in the default location of `.github/workflows`. (You don't need to specify `/.github/workflows` for `directory`. You can use `directory: "/"`.)
