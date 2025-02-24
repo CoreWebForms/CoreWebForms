@@ -34,12 +34,12 @@
   </Target>
 
   <ItemGroup>
-    <ProjectReference Include="../../tools/aspnet_compiler/aspnet_compiler.csproj" ReferenceOutputAssembly="false" Targets="Publish;PublishItemsOutputGroup" Private="false" SetTargetFramework="TargetFramework=net8.0" OutputItemType="AspNetCompilerOutputs8" />
+    <ProjectReference Include="../../tools/aspnet_compiler/aspnet_compiler.csproj" ReferenceOutputAssembly="false" Targets="Publish;PublishItemsOutputGroup" Private="false" SetTargetFramework="TargetFramework=net9.0" OutputItemType="AspNetCompilerOutputs8" />
   </ItemGroup>
 
   <Target Name="GetWebFormsCompiler" BeforeTargets="AssignTargetPaths" AfterTargets="ResolveProjectReferences">
     <PropertyGroup>
-      <_AspNetCompilerPrefix8>tools/net8.0/aspnet_compiler/</_AspNetCompilerPrefix8>
+      <_AspNetCompilerPrefix8>tools/net9.0/aspnet_compiler/</_AspNetCompilerPrefix8>
     </PropertyGroup>
     <ItemGroup>
       <None Include="%(AspNetCompilerOutputs8.Identity)"
