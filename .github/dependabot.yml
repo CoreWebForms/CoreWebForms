@@ -24,9 +24,10 @@ updates:
       MicrosoftExtensions:
         patterns:
           - "Microsoft.Extensions.*"
-      Xunit:
+      Testing:
         patterns:
-          - "Xunit.*"
+          - "Microsoft.Testing.*"
+          - "MSTest"
 
   - package-ecosystem: "dotnet-sdk"
     directory: "/"
