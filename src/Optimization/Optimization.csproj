@@ -23,7 +23,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Handlers\Handlers.csproj" />
-    <ProjectReference Include="..\VirtualFile\VirtualFile.csproj" />
     <ProjectReference Include="..\WebForms\WebForms.csproj" />
   </ItemGroup>
 
