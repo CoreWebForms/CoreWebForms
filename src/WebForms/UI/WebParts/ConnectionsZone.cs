@@ -1809,7 +1809,7 @@ namespace System.Web.UI.WebControls.WebParts
                     writer.RenderEndTag(); // TABLE
 
                     WebPartVerb connectVerb = ConnectVerb;
-                    connectVerb.EventArgument = String.Join(ID_SEPARATOR.ToString(CultureInfo.InvariantCulture),
+                    connectVerb.EventArgument = String.Join<string>(ID_SEPARATOR.ToString(CultureInfo.InvariantCulture),
                         [connectEventArgument, providerEventArgument, provider.ID]);
                     RenderVerb(writer, connectVerb);
 
@@ -1909,7 +1909,7 @@ namespace System.Web.UI.WebControls.WebParts
                     writer.RenderEndTag(); // TABLE
 
                     WebPartVerb connectVerb = ConnectVerb;
-                    connectVerb.EventArgument = String.Join(ID_SEPARATOR.ToString(CultureInfo.InvariantCulture),
+                    connectVerb.EventArgument = String.Join<string>(ID_SEPARATOR.ToString(CultureInfo.InvariantCulture),
                         [connectEventArgument, consumerEventArgument, consumer.ID]);
                     RenderVerb(writer, connectVerb);
 
@@ -2148,7 +2148,7 @@ namespace System.Web.UI.WebControls.WebParts
                                         providerConnectionPoint.DisplayName :
                                         SR.GetString(SR.Part_Unknown)),
                                      consumerString,
-                                     String.Join(ID_SEPARATOR.ToString(CultureInfo.InvariantCulture),
+                                     String.Join<string>(ID_SEPARATOR.ToString(CultureInfo.InvariantCulture),
                                                  [disconnectEventArgument, connection.ID]),
                                      transformerEventArgs,
                                      true,
@@ -2189,7 +2189,7 @@ namespace System.Web.UI.WebControls.WebParts
                                       consumerConnectionPoint.DisplayName :
                                       SR.GetString(SR.Part_Unknown)),
                                      providerString,
-                                     String.Join(ID_SEPARATOR.ToString(CultureInfo.InvariantCulture),
+                                     String.Join<string>(ID_SEPARATOR.ToString(CultureInfo.InvariantCulture),
                                                  [disconnectEventArgument, connection.ID]),
                                      transformerEventArgs,
                                      false,

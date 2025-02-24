@@ -44,13 +44,13 @@ This will make use of `Microsoft.AspNetCore.SystemWebAdapters` to provide the `S
     </configuration>
     ```
 
-1. Create a .NET 8 project similar to the following with the WebForms SDK:
+1. Create a .NET 9 project similar to the following with the WebForms SDK:
 
     ```xml
     <Project Sdk="CoreWebForms.Sdk/0.2.1">
 
         <PropertyGroup>
-            <TargetFrameworks>net8.0</TargetFrameworks>
+            <TargetFrameworks>net9.0</TargetFrameworks>
             <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
             <!-- Optional, but easier to debug at runtime than compile time -->
             <EnableRuntimeAspxCompilation>true</EnableRuntimeAspxCompilation>
