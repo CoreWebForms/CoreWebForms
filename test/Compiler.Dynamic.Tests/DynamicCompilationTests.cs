@@ -20,10 +20,9 @@ namespace Compiler.Dynamic.Tests;
 [TestClass]
 public class DynamicCompilationTests
 {
-    private static TestContext _context = null!;
+    private readonly TestContext _context;
 
-    [ClassInitialize]
-    public static void Initialize(TestContext context)
+    public DynamicCompilationTests(TestContext context)
     {
         _context = context;
     }

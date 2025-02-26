@@ -18,6 +18,11 @@ namespace Microsoft.Extensions.DependencyInjection;
 
 public static class WebFormsCompilerExtensions
 {
+    private static readonly HashSet<string> _diagnosticsToSkip = [
+        "CS1701", // Assembly unification error not applicable on .NET Core
+        "CS1702", // Assembly unification error not applicable on .NET Core
+        ];
+
     public static IWebFormsBuilder AddPersistentWebFormsCompilation(this IWebFormsBuilder builder, IEnumerable<string> paths)
     {
         builder.Services.AddSingleton<StaticControlCollection>(_ => new StaticControlCollection(paths));
@@ -94,13 +99,16 @@ public static class WebFormsCompilerExtensions
     {
         foreach (var d in diagnostics)
         {
-            yield return new RoslynError()
+            if (!_diagnosticsToSkip.Contains(d.Id))
             {
-                Id = d.Id,
-                Message = d.GetMessage(CultureInfo.CurrentCulture),
-                Severity = d.Severity,
-                Location = d.Location.ToString(),
-            };
+                yield return new RoslynError()
+                {
+                    Id = d.Id,
+                    Message = d.GetMessage(CultureInfo.CurrentCulture),
+                    Severity = d.Severity,
+                    Location = d.Location.ToString(),
+                };
+            }
         }
     }
 }

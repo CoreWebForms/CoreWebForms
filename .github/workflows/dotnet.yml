@@ -47,7 +47,7 @@ jobs:
         dotnet restore -r ${{ matrix.rid }}
 
         foreach ($project in $projects) {
-            dotnet publish $project --no-restore -r ${{ matrix.rid }} -f net8.0
+            dotnet publish $project --no-restore -r ${{ matrix.rid }} -f net9.0
         }
     - name: Upload Samples
       uses: actions/upload-artifact@v4.3.1
