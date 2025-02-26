@@ -27,13 +27,13 @@ internal static class UrlPath
         // URIs have the format <scheme>:<scheme-specific-path>, e.g. mailto:user@ms.com,
         // http://server/, nettcp://server/, etc.  The <scheme> cannot contain slashes.
         // The virtualPath passed to this method may be absolute or relative. Although
-        // ':' is only allowed in the <scheme-specific-path> if it is encoded, the 
+        // ':' is only allowed in the <scheme-specific-path> if it is encoded, the
         // virtual path that we're receiving here may be decoded, so it is impossible
         // for us to determine if virtualPath has a scheme.  We will be conservative
         // and err on the side of assuming it has a scheme when we cannot tell for certain.
         // To do this, we first check for ':'.  If not found, then it doesn't have a scheme.
         // If ':' is found, then as long as we find a '/' before the ':', it cannot be
-        // a scheme because schemes don't contain '/'.  Otherwise, we will assume it has a 
+        // a scheme because schemes don't contain '/'.  Otherwise, we will assume it has a
         // scheme.
         int indexOfColon = virtualPath.IndexOf(':');
         if (indexOfColon == -1)
@@ -272,28 +272,22 @@ internal static class UrlPath
     }
 
     // Same as Reduce, but for a virtual path that is known to be well formed
-    internal static String ReduceVirtualPath(String path)
-    {
+    internal static String ReduceVirtualPath(String path) {
 
         int length = path.Length;
         int examine;
 
         // quickly rule out situations in which there are no . or ..
 
-        for (examine = 0; ; examine++)
-        {
+        for (examine = 0; ; examine++) {
             examine = path.IndexOf('.', examine);
             if (examine < 0)
-            {
                 return path;
-            }
 
             if ((examine == 0 || path[examine - 1] == '/')
                 && (examine + 1 == length || path[examine + 1] == '/' ||
                     (path[examine + 1] == '.' && (examine + 2 == length || path[examine + 2] == '/'))))
-            {
                 break;
-            }
         }
 
         // OK, we found a . or .. so process it:
@@ -303,32 +297,24 @@ internal static class UrlPath
         int start;
         examine = 0;
 
-        for (; ; )
-        {
+        for (; ; ) {
             start = examine;
             examine = path.IndexOf('/', start + 1);
 
             if (examine < 0)
-            {
                 examine = length;
-            }
 
             if (examine - start <= 3 &&
                 (examine < 1 || path[examine - 1] == '.') &&
-                (start + 1 >= length || path[start + 1] == '.'))
-            {
-                if (examine - start == 3)
-                {
+                (start + 1 >= length || path[start + 1] == '.')) {
+                if (examine - start == 3) {
                     if (list.Count == 0)
-                    {
                         throw new HttpException(SR.GetString(SR.Cannot_exit_up_top_directory));
-                    }
 
                     // We're about to backtrack onto a starting '~', which would yield
                     // incorrect results.  Instead, make the path App Absolute, and call
                     // Reduce on that.
-                    if (list.Count == 1 && IsAppRelativePath(path))
-                    {
+                    if (list.Count == 1 && IsAppRelativePath(path)) {
                         Debug.Assert(sb.Length == 1);
                         return ReduceVirtualPath(MakeVirtualPathAppAbsolute(path));
                     }
@@ -337,32 +323,24 @@ internal static class UrlPath
                     list.RemoveRange(list.Count - 1, 1);
                 }
             }
-            else
-            {
+            else {
                 list.Add(sb.Length);
 
                 sb.Append(path, start, examine - start);
             }
 
             if (examine == length)
-            {
                 break;
-            }
         }
 
         string result = sb.ToString();
 
         // If we end up with en empty string, turn it into either "/" or "." (VSWhidbey 289175)
-        if (result.Length == 0)
-        {
+        if (result.Length == 0) {
             if (length > 0 && path[0] == '/')
-            {
                 result = @"/";
-            }
             else
-            {
                 result = ".";
-            }
         }
 
         return result;

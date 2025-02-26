@@ -78,7 +78,7 @@ internal static class StringUtil
 
     /*
      * Determines if the string ends with the specified character.
-     * Fast, non-culture aware.  
+     * Fast, non-culture aware.
      */
     internal static bool StringEndsWith(string s, char c)
     {
@@ -88,7 +88,7 @@ internal static class StringUtil
 
     /*
      * Determines if the first string ends with the second string, ignoring case.
-     * Fast, non-culture aware.  
+     * Fast, non-culture aware.
      */
     internal static bool StringEndsWithIgnoreCase(string s1, string s2)
     {
@@ -98,7 +98,7 @@ internal static class StringUtil
 
     /*
      * Determines if the string starts with the specified character.
-     * Fast, non-culture aware.  
+     * Fast, non-culture aware.
      */
     internal static bool StringStartsWith(string s, char c)
     {
@@ -107,7 +107,7 @@ internal static class StringUtil
 
     /*
      * Determines if the first string starts with the second string.
-     * Fast, non-culture aware.  
+     * Fast, non-culture aware.
      */
     internal static bool StringStartsWith(string s1, string s2)
     {
@@ -116,7 +116,7 @@ internal static class StringUtil
 
     /*
      * Determines if the first string starts with the second string, ignoring case.
-     * Fast, non-culture aware.  
+     * Fast, non-culture aware.
      */
     internal static bool StringStartsWithIgnoreCase(string s1, string s2)
     {
@@ -207,5 +207,12 @@ internal static class StringUtil
         // memory than needed.  Working with small short-lived strings here, so that's probably ok.
         bytes = new byte[enc.GetMaxByteCount(s.Length) + 1];
         return enc.GetBytes(s, 0, s.Length, bytes, 0);
+    }
+
+
+    internal static string[] ObjectArrayToStringArray(object[] objectArray) {
+        String[] stringKeys = new String[objectArray.Length];
+        objectArray.CopyTo(stringKeys, 0);
+        return stringKeys;
     }
 }
