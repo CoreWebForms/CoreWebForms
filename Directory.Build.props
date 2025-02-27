@@ -1,6 +1,6 @@
 <Project>
   <PropertyGroup>
-    <LangVersion>12</LangVersion>
+    <LangVersion>13</LangVersion>
     <UseArtifactsOutput>true</UseArtifactsOutput>
     <ArtifactsPath>$(MSBuildThisFileDirectory)artifacts</ArtifactsPath>
     <WarnOnPackingNonPackableProject>false</WarnOnPackingNonPackableProject>
