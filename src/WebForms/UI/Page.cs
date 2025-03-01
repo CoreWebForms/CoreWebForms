@@ -198,7 +198,7 @@ public partial class Page : TemplateControl, IHttpAsyncHandler
     private const string PageReEnableControlsScriptKey = "PageReEnableControlsScript";
 
     // NOTE: Make sure this stays in sync with MobilePage.PageRegisteredControlsThatRequirePostBackKey
-    // 
+    //
     private const string PageRegisteredControlsThatRequirePostBackKey = "__ControlsRequirePostBackKey__";
 
     private const string EnabledControlArray = "__enabledControlArray";
@@ -480,7 +480,7 @@ public partial class Page : TemplateControl, IHttpAsyncHandler
     /// So this method provides a way to enfore that.
     /// This sets the active value provider which is used to provide the values for
     /// TryUpdateModel. This method should be called before calling TryUpdateModel otherwise the latter
-    /// would throw. Also it's callers responsibility to reset the active value Provider by calling this 
+    /// would throw. Also it's callers responsibility to reset the active value Provider by calling this
     /// method again with null values. (Currently this is all done by ModelDataSourceView).
     /// </summary>
     internal void SetActiveValueProvider(IValueProvider valueProvider)
@@ -490,7 +490,7 @@ public partial class Page : TemplateControl, IHttpAsyncHandler
 
     /// <summary>
     /// Attempts to update the model object from the values within a databound control. This
-    /// must be invoked within the Select/Update/Delete/InsertMethods used for data binding. 
+    /// must be invoked within the Select/Update/Delete/InsertMethods used for data binding.
     /// </summary>
     /// <returns>True if the model object is updated succesfully with valid values. False otherwise.</returns>
     public virtual bool TryUpdateModel<TModel>(TModel model) where TModel : class
@@ -541,7 +541,7 @@ public partial class Page : TemplateControl, IHttpAsyncHandler
     }
 
     /// <summary>
-    /// Updates the model object from the values within a databound control. This must be invoked 
+    /// Updates the model object from the values within a databound control. This must be invoked
     /// within the Select/Update/Delete/InsertMethods used for data binding.
     /// Throws an exception if the update fails.
     /// </summary>
@@ -728,7 +728,7 @@ public partial class Page : TemplateControl, IHttpAsyncHandler
                         ht.Add(systemPostField, true);
                     }
 
-                    // 
+                    //
                     HttpValueCollection httpValueCollection = (HttpValueCollection)((SkipFormActionValidation) ? Request.Unvalidated.QueryString : Request.QueryString);
                     _clientQueryString = httpValueCollection.ToString(urlencoded: true, excludeKeys: ht);
                 }
@@ -2185,7 +2185,7 @@ public partial class Page : TemplateControl, IHttpAsyncHandler
 
         // If there is no state or postEventSourceID in the request,
         // it's an initial request
-        // 
+        //
 
         if (ret[ViewStateFieldPrefixID] == null &&
             ret[ViewStateFieldCountID] == null &&
@@ -2842,7 +2842,7 @@ window.onload = WebForm_RestoreScrollPosition;
     /// <devdoc>
     ///     Needed by adapters which do more than one pass, so that OnFormRender can be called more than once.
     /// </devdoc>
-    // 
+    //
     internal void ResetOnFormRenderCalled()
     {
         _fOnFormRenderCalled = false;
@@ -3423,8 +3423,8 @@ window.onload = WebForm_RestoreScrollPosition;
         PartialCachingControlStack.Pop();
     }
 
-    // Operations like FindControl and LoadPostData call EnsureDataBound, which may fire up 
-    // async model binding methods. Therefore we make ProcessPostData method to be async so that we can await 
+    // Operations like FindControl and LoadPostData call EnsureDataBound, which may fire up
+    // async model binding methods. Therefore we make ProcessPostData method to be async so that we can await
     // async data bindings.
     // The differences between ProcessPostData and ProcessPostDataAsync are:
     // 1. ProcessPostDataAsync awaits GetWaitForPreviousStepCompletionAwaitable after FindControl();
@@ -3563,7 +3563,7 @@ window.onload = WebForm_RestoreScrollPosition;
         bool changed = false;
 
 #if PORT_MODELBINDING
-        // ListControl family controls call EnsureDataBound in consumer.LoadPostData, which could be an async call in 4.6. 
+        // ListControl family controls call EnsureDataBound in consumer.LoadPostData, which could be an async call in 4.6.
         // LoadPostData, however, is a sync method, which means we cannot await EnsureDataBound in the method.
         // To workaround this, for ListControl family controls, we call EnsureDataBound before we call into LoadPostData.
         if (AppSettings.EnableAsyncModelBinding && consumer is ListControl)
@@ -3712,7 +3712,7 @@ window.onload = WebForm_RestoreScrollPosition;
         sourceControl.RaisePostBackEvent(eventArgument);
     }
 
-    // 
+    //
 
     /// <devdoc>
     ///    <para>Registers a control as requiring an event to be raised when it is processed
@@ -4026,7 +4026,7 @@ window.onload = WebForm_RestoreScrollPosition;
             location = cacheSettings.Location;
         }
 
-        // 
+        //
 
         // Make some checks here and see if a configuration exception needs to be thrown:
 
@@ -4874,7 +4874,7 @@ window.onload = WebForm_RestoreScrollPosition;
     // If you change this method, also change ProcessRequestAsync(bool, bool).
     private void ProcessRequest(bool includeStagesBeforeAsyncPoint, bool includeStagesAfterAsyncPoint)
     {
-        throw new NotImplementedException();
+        ProcessRequestAsync(includeStagesBeforeAsyncPoint, includeStagesAfterAsyncPoint).GetAwaiter().GetResult();
 #if PORT_SYNC_PROCESS
         // Initialize the object and build the tree of controls.
         // This must happen *after* the intrinsics have been set.
@@ -6169,7 +6169,7 @@ window.onload = WebForm_RestoreScrollPosition;
         }
     }
 
-    // 
+    //
     private String _relativeFilePath;
 
     internal String RelativeFilePath
