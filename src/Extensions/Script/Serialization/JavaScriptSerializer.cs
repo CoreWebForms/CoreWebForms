@@ -3,7 +3,6 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Web.Resources;
 
 namespace System.Web.Script.Serialization;
@@ -22,10 +21,8 @@ public class JavaScriptSerializer
 
     internal static object Deserialize(JavaScriptSerializer serializer, string input, Type type, int depthLimit)
     {
-        if (input == null)
-        {
-            throw new ArgumentNullException(nameof(input));
-        }
+        ArgumentNullException.ThrowIfNull(input);
+
         if (input.Length > serializer.MaxJsonLength)
         {
             throw new ArgumentException(AtlasWeb.JSON_MaxJsonLengthExceeded, nameof(input));
@@ -33,10 +30,23 @@ public class JavaScriptSerializer
 
         var serializeOptions = new JsonSerializerOptions
         {
-            MaxDepth = depthLimit
+            MaxDepth = 0
         };
-        object result = JsonSerializer.Deserialize(input, type, serializeOptions);
-        return ObjectConverter.ConvertObjectToType(result, type, serializer);
+
+        // run backward compatibility logic only if someone has invoked registered converters else use default
+        // If we can do better let me know.
+        if (serializer.Converters != null && serializer.Converters.Count > 0)
+        {
+            //backward compatibility
+            serializeOptions.Converters.Add(new CustomDeserializerJsonConverter());
+            var dictionary = JsonSerializer.Deserialize<object>(input, serializeOptions);
+            return ObjectConverter.ConvertObjectToType(dictionary, type, serializer);
+        }
+        else
+        {
+            //default
+            return JsonSerializer.Deserialize(input, type, serializeOptions);
+        }
     }
 
     // INSTANCE fields/methods
@@ -107,10 +117,7 @@ public class JavaScriptSerializer
     [SuppressMessage("Microsoft.Usage", "CA2301:EmbeddableTypesInContainersRule", MessageId = "Converters", Justification = "This is for managed types which need to have custom type converters for JSon serialization, I don't think there will be any com interop types for this scenario.")]
     public void RegisterConverters(IEnumerable<JavaScriptConverter> converters)
     {
-        if (converters == null)
-        {
-            throw new ArgumentNullException(nameof(converters));
-        }
+        ArgumentNullException.ThrowIfNull(converters);
 
         foreach (JavaScriptConverter converter in converters)
         {
@@ -126,7 +133,7 @@ public class JavaScriptSerializer
     }
 
     [SuppressMessage("Microsoft.Usage", "CA2301:EmbeddableTypesInContainersRule", MessageId = "_converters", Justification = "This is for managed types which need to have custom type converters for JSon serialization, I don't think there will be any com interop types for this scenario.")]
-    private JavaScriptConverter GetConverter(Type t)
+    internal JavaScriptConverter GetConverter(Type t)
     {
         if (_converters != null)
         {
@@ -216,45 +223,16 @@ public class JavaScriptSerializer
     {
         var serializeOptions = new JsonSerializerOptions
         {
-            WriteIndented = true,
+            WriteIndented = false,
         };
-        serializeOptions.Converters.Add(new CustomJavaScriptConverter(this));
 
+        serializeOptions.Converters.Add(new CustomSerializerFactory(this));
         var jsonString = JsonSerializer.Serialize(obj, serializeOptions);
         output.Append(jsonString);
         // DevDiv Bugs 96574: Max JSON length does not apply when serializing to Javascript for ScriptDescriptors
         if (serializationFormat == SerializationFormat.JSON && output.Length > MaxJsonLength)
         {
             throw new InvalidOperationException(AtlasWeb.JSON_MaxJsonLengthExceeded);
-        }
-    }
-
-    internal sealed class CustomJavaScriptConverter(JavaScriptSerializer serializer) : JsonConverter<object>
-    {
-        private readonly JavaScriptSerializer _serializer = serializer;
-        private JavaScriptConverter _converter;
-
-        public override bool CanConvert(Type typeToConvert)
-        {
-            return _serializer.ConverterExistsForType(typeToConvert, out _converter);
-        }
-
-        public override object Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
-        {
-            throw new NotImplementedException("De-serialization is not implemented");
-
-        }
-
-        public override void Write(Utf8JsonWriter writer, object value, JsonSerializerOptions options)
-        {
-            if (_converter is null)
-            {
-                throw new Exception("Custom converter is not initialized");
-            }
-
-            var internalObject = _converter.Serialize(value, _serializer);
-            JsonSerializer.Serialize(writer, internalObject, options);
-
         }
     }
 
