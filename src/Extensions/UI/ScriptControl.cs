@@ -10,7 +10,7 @@ namespace System.Web.UI;
 public abstract class ScriptControl : WebControl, IScriptControl
 {
     private IScriptManagerInternal _scriptManager;
-    private new IPage _page;
+    private new readonly IPage _page;
 
     protected ScriptControl()
     {
