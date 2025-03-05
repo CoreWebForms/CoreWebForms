@@ -35,7 +35,7 @@ internal sealed class DynamicControlCollection : ITypeResolutionService, IMetada
 
         foreach (var assembly in _context.Assemblies)
         {
-            LoadAssembly(assembly);
+            SearchForControls(assembly);
         }
 
         foreach (var file in Directory.EnumerateFiles(AppContext.BaseDirectory, "*.dll"))
@@ -45,7 +45,7 @@ internal sealed class DynamicControlCollection : ITypeResolutionService, IMetada
     }
 
     private void CurrentDomain_AssemblyLoad(object? sender, AssemblyLoadEventArgs args)
-        => LoadAssembly(args.LoadedAssembly);
+        => SearchForControls(args.LoadedAssembly);
 
     IEnumerable<MetadataReference> IMetadataProvider.References => _map.Values;
 
@@ -100,17 +100,17 @@ internal sealed class DynamicControlCollection : ITypeResolutionService, IMetada
         throw new NotImplementedException();
     }
 
-    private void LoadAssembly(Assembly assembly)
+    private void SearchForControls(Assembly assembly)
     {
         _logger.LogTrace("Searching {Assembly} for tag prefixes", assembly.FullName);
+
+        var assemblyName = assembly.GetName();
 
         if (assembly.GetCustomAttributes<TagPrefixAttribute>().Any())
         {
             _logger.LogInformation("Found tag prefixes in {Assembly}", assembly.FullName);
-            ImmutableInterlocked.TryAdd(ref _controls, assembly.GetName(), assembly);
+            ImmutableInterlocked.TryAdd(ref _controls, assemblyName, assembly);
         }
-
-        var assemblyName = assembly.GetName();
 
         if (assembly is { Location: { Length: > 0 } location } && !_map.ContainsKey(assemblyName))
         {
@@ -135,6 +135,7 @@ internal sealed class DynamicControlCollection : ITypeResolutionService, IMetada
                 if (!_controls.ContainsKey(assemblyName) && HasControls(file))
                 {
                     // If it has a control, we need to eagerly load it so it'll be available for WebForms compilation
+                    // Once loaded, it will trigger the event that will search for controls
                     _context.LoadFromAssemblyPath(file);
                 }
             }
