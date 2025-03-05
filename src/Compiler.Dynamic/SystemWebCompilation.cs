@@ -94,8 +94,25 @@ internal sealed class SystemWebCompilation : IDisposable, IWebFormsCompiler
             if (ReferenceEquals(stack.Peek(), currentPath))
             {
                 stack.Pop();
+
+                if (TryParse(currentPath, parser, _logger))
+                {
+                    yield return parser;
+                }
+            }
+        }
+
+        static bool TryParse(string path, DependencyParser parser, ILogger logger)
+        {
+            try
+            {
                 parser.Parse();
-                yield return parser;
+                return true;
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e, "Failed to parse {Path}", path);
+                return false;
             }
         }
     }
@@ -192,9 +209,22 @@ internal sealed class SystemWebCompilation : IDisposable, IWebFormsCompiler
             pdbStream: pdbStream,
             cancellationToken: token);
 
+        var warningsCount = result.Diagnostics
+            .ConvertToErrors()
+            .Where(d => d.Severity == DiagnosticSeverity.Warning)
+            .Count();
+
+        if (warningsCount > 0)
+        {
+            _logger.LogWarning("{WarningCount} warning(s) found compiling {Route}", warningsCount, virtualPath);
+        }
+
         if (!result.Success)
         {
-            _logger.LogError("{ErrorCount} error(s) found compiling {Route}", result.Diagnostics.Length, virtualPath);
+            var errorsCount = result.Diagnostics
+                .ConvertToErrors()
+                .Where(d => d.Severity == DiagnosticSeverity.Error).Count();
+            _logger.LogError("{ErrorCount} error(s) found compiling {Route}", errorsCount, virtualPath);
 
             if (!cu.Strategy.HandleErrors(virtualPath, result.Diagnostics))
             {
@@ -218,7 +248,7 @@ internal sealed class SystemWebCompilation : IDisposable, IWebFormsCompiler
 
             peStream.Position = 0;
 
-            if (assembly.GetType(typeName) is Type type)
+            if (assembly.GetType(typeName) is { } type)
             {
                 return new CompiledPage(virtualPath)
                 {
@@ -316,7 +346,10 @@ internal sealed class SystemWebCompilation : IDisposable, IWebFormsCompiler
         public VisualBasicCompiler(PageCompilationOptions options)
         {
             _options = options;
-            _vbReferences = new[] { MetadataReference.CreateFromFile(Assembly.Load("Microsoft.VisualBasic.Core").Location) };
+            _vbReferences =
+                [
+                    MetadataReference.CreateFromFile(Assembly.Load("Microsoft.VisualBasic.Core").Location)
+                ];
         }
 
         public CodeDomProvider Provider { get; } = CodeDomProvider.CreateProvider("VisualBasic");
