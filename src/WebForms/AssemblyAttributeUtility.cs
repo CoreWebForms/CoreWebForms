@@ -14,10 +14,10 @@ internal static class AssemblyAttributeUtility
         => reader.GetAttributes<T>().Any();
 
     public static IEnumerable<CustomAttribute> GetAttributes<T>(this MetadataReader reader)
-    {
-        var typeName = typeof(T).Name;
-        var typeNamespace = typeof(T).Namespace;
+        => reader.GetAttributes(typeof(T).Name, typeof(T).Namespace);
 
+    public static IEnumerable<CustomAttribute> GetAttributes(this MetadataReader reader, string typeName, string typeNamespace)
+    {
         foreach (var a in reader.CustomAttributes)
         {
             var attribute = reader.GetCustomAttribute(a);
