@@ -154,6 +154,10 @@ internal sealed class DynamicControlCollection : ITypeResolutionService, IMetada
         return reader.HasAttribute<TagPrefixAttribute>();
     }
 
+    /// <summary>
+    /// The default comparer for <see cref="AssemblyName"/> is if the reference equals. This provides a comparer that compares
+    /// the <see cref="AssemblyName.FullName"/> property.
+    /// </summary>
     private sealed class AssemblyNameComparer : IEqualityComparer<AssemblyName>
     {
         public static AssemblyNameComparer Instance { get; } = new();
