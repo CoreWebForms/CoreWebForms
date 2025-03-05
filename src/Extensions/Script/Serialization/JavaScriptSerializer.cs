@@ -1,5 +1,7 @@
 // MIT License.
 
+#nullable enable
+
 using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
@@ -14,19 +16,30 @@ public class JavaScriptSerializer
     internal const string ServerTypeFieldName = "__type";
     internal const int DefaultRecursionLimit = 100;
     internal const int DefaultMaxJsonLength = 2097152;
+
     private static readonly JavaScriptSerializer _defaultJavaScriptSerializer = new();
+
+    private readonly JavaScriptTypeResolver? _typeResolver;
+    private int _recursionLimit = DefaultRecursionLimit;
+    private int _maxJsonLength = DefaultMaxJsonLength;
 
     private readonly JsonSerializerOptions _options = new()
     {
         MaxDepth = DefaultRecursionLimit,
     };
 
-    internal static string SerializeInternal(object o)
+    public JavaScriptSerializer()
     {
-        return _defaultJavaScriptSerializer.Serialize(o);
     }
 
-    internal static object Deserialize(JavaScriptSerializer serializer, string input, Type type, int depthLimit)
+    public JavaScriptSerializer(JavaScriptTypeResolver? resolver)
+    {
+        _typeResolver = resolver;
+    }
+
+    internal static string SerializeInternal(object o) => _defaultJavaScriptSerializer.Serialize(o);
+
+    internal static object? Deserialize(JavaScriptSerializer serializer, string input, Type type, int depthLimit)
     {
         ArgumentNullException.ThrowIfNull(input);
 
@@ -38,25 +51,9 @@ public class JavaScriptSerializer
         return JsonSerializer.Deserialize(input, type, serializer._options);
     }
 
-    private readonly JavaScriptTypeResolver _typeResolver;
-    private int _recursionLimit;
-    private int _maxJsonLength;
-
-    public JavaScriptSerializer() : this(null) { }
-
-    public JavaScriptSerializer(JavaScriptTypeResolver resolver)
-    {
-        _typeResolver = resolver;
-        RecursionLimit = DefaultRecursionLimit;
-        MaxJsonLength = DefaultMaxJsonLength;
-    }
-
     public int MaxJsonLength
     {
-        get
-        {
-            return _maxJsonLength;
-        }
+        get => _maxJsonLength;
         set
         {
             if (value < 1)
@@ -69,10 +66,7 @@ public class JavaScriptSerializer
 
     public int RecursionLimit
     {
-        get
-        {
-            return _recursionLimit;
-        }
+        get => _recursionLimit;
         set
         {
             if (value < 1)
@@ -83,66 +77,27 @@ public class JavaScriptSerializer
         }
     }
 
-    internal JavaScriptTypeResolver TypeResolver
-    {
-        get
-        {
-            return _typeResolver;
-        }
-    }
+    internal JavaScriptTypeResolver? TypeResolver => _typeResolver;
 
-    [SuppressMessage("Microsoft.Usage", "CA2301:EmbeddableTypesInContainersRule",
-        MessageId = "Converters", Justification = Constant.CA1859)]
     public void RegisterConverters(IEnumerable<JavaScriptConverter> converters)
     {
         ArgumentNullException.ThrowIfNull(converters);
 
         foreach (var converter in converters)
         {
-            _options.Converters.Add(new JavaScriptSerializerJsonConverterFactory(converter, this));
+            _options.Converters.Add(new JavaScriptConverterWrapper(converter, this));
         }
     }
 
-    [
-    SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter",
-        Justification = Constant.CA1004)
-    ]
-    public T Deserialize<T>(string input)
-    {
-        return (T)Deserialize(this, input, typeof(T), RecursionLimit);
-    }
+    public T? Deserialize<T>(string input) => (T?)Deserialize(this, input, typeof(T), RecursionLimit);
 
-    public object Deserialize(string input, Type targetType)
-    {
-        return Deserialize(this, input, targetType, RecursionLimit);
-    }
+    public object? Deserialize(string input, Type targetType) => Deserialize(this, input, targetType, RecursionLimit);
 
-    [
-    SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter",
-        Justification = Constant.CA1004),
-    SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames", MessageId = "obj",
-        Justification = Constant.CA1720)
-    ]
-    public T ConvertToType<T>(object obj)
-    {
-        return (T)ObjectConverter.ConvertObjectToType(obj, typeof(T), this);
-    }
+    public T ConvertToType<T>(object obj) => (T)ObjectConverter.ConvertObjectToType(obj, typeof(T), this);
 
-    [
-    SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames", MessageId = "obj",
-        Justification = Constant.CA1720)
-    ]
-    public object ConvertToType(object obj, Type targetType)
-    {
-        return ObjectConverter.ConvertObjectToType(obj, targetType, this);
-    }
+    public object ConvertToType(object obj, Type targetType) => ObjectConverter.ConvertObjectToType(obj, targetType, this);
 
-    [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames", MessageId = "obj",
-        Justification = Constant.CA1720)]
-    public string Serialize(object obj)
-    {
-        return Serialize(obj, SerializationFormat.JSON);
-    }
+    public string Serialize(object obj) => Serialize(obj, SerializationFormat.JSON);
 
     internal string Serialize(object obj, SerializationFormat serializationFormat)
     {
@@ -151,29 +106,24 @@ public class JavaScriptSerializer
         return sb.ToString();
     }
 
-    [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames", MessageId = "obj",
-        Justification = Constant.CA1720)]
-    public void Serialize(object obj, StringBuilder output)
-    {
-        Serialize(obj, output, SerializationFormat.JSON);
-    }
+    public void Serialize(object obj, StringBuilder output) => Serialize(obj, output, SerializationFormat.JSON);
 
     internal void Serialize(object obj, StringBuilder output, SerializationFormat serializationFormat)
     {
         var jsonString = JsonSerializer.Serialize(obj, _options);
         output.Append(jsonString);
-        // DevDiv Bugs 96574: Max JSON length does not apply when serializing to Javascript for ScriptDescriptors
+
         if (serializationFormat == SerializationFormat.JSON && output.Length > MaxJsonLength)
         {
             throw new InvalidOperationException(AtlasWeb.JSON_MaxJsonLengthExceeded);
         }
     }
 
-    internal bool ConverterExistsForType(Type type, out JavaScriptConverter converter)
+    internal bool ConverterExistsForType(Type type, [MaybeNullWhen(false)] out JavaScriptConverter converter)
     {
         foreach (var c in _options.Converters)
         {
-            if (c is JavaScriptSerializerJsonConverterFactory factory)
+            if (c is JavaScriptConverterWrapper factory)
             {
                 if (factory.CanConvert(type))
                 {
@@ -193,32 +143,24 @@ public class JavaScriptSerializer
         JavaScript
     }
 
-    private sealed class JavaScriptSerializerJsonConverterFactory(JavaScriptConverter converter, JavaScriptSerializer serializer) : JsonConverterFactory
+    private sealed class JavaScriptConverterWrapper(JavaScriptConverter converter, JavaScriptSerializer serializer) : JsonConverter<object>
     {
         private readonly HashSet<Type> _types = [.. converter.SupportedTypes];
-        private readonly JsonConverter _converter = new JavaScriptSerializerJsonConverter(converter, serializer);
 
         public JavaScriptConverter Converter => converter;
 
         public override bool CanConvert(Type typeToConvert) => _types.Contains(typeToConvert);
 
-        public override JsonConverter CreateConverter(Type typeToConvert, JsonSerializerOptions options) => _converter;
-    }
-
-    private sealed class JavaScriptSerializerJsonConverter(JavaScriptConverter converter, JavaScriptSerializer serializer) : JsonConverter<object>
-    {
         public override object Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            var result = ReadDictionary(ref reader, typeToConvert, options);
+            var result = ReadDictionary(ref reader, options);
             return converter.Deserialize(result, typeToConvert, serializer);
         }
 
         public override void Write(Utf8JsonWriter writer, object value, JsonSerializerOptions options)
-        {
-            JsonSerializer.Serialize(writer, converter.Serialize(value, serializer), options);
-        }
+            => JsonSerializer.Serialize(writer, converter.Serialize(value, serializer), options);
 
-        private object ReadObject(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        private static object? ReadObject(ref Utf8JsonReader reader, JsonSerializerOptions options)
         {
             // https://learn.microsoft.com/en-us/dotnet/standard/serialization/system-text-json/converters-how-to#deserialize-inferred-types-to-object-properties
             switch (reader.TokenType)
@@ -242,12 +184,12 @@ public class JavaScriptSerializer
                     }
                     return reader.GetDecimal();
                 case JsonTokenType.StartObject:
-                    return ReadDictionary(ref reader, typeToConvert, options);
+                    return ReadDictionary(ref reader, options);
                 case JsonTokenType.StartArray:
                     var list = new ArrayList();
                     while (reader.Read() && reader.TokenType != JsonTokenType.EndArray)
                     {
-                        list.Add(ReadObject(ref reader, typeToConvert, options));
+                        list.Add(ReadObject(ref reader, options));
                     }
                     return list;
                 default:
@@ -255,27 +197,37 @@ public class JavaScriptSerializer
             }
         }
 
-        private Dictionary<string, object> ReadDictionary(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        private static Dictionary<string, object> ReadDictionary(ref Utf8JsonReader reader, JsonSerializerOptions options)
         {
             var dictionary = new Dictionary<string, object>();
+
             while (reader.Read())
             {
                 if (reader.TokenType == JsonTokenType.EndObject)
                 {
                     return dictionary;
                 }
+
                 if (reader.TokenType != JsonTokenType.PropertyName)
                 {
                     throw new JsonException("JsonTokenType was not PropertyName");
                 }
+
                 var propertyName = reader.GetString();
+
                 if (string.IsNullOrWhiteSpace(propertyName))
                 {
                     throw new JsonException("Failed to get property name");
                 }
+
                 reader.Read();
-                dictionary.Add(propertyName!, ReadObject(ref reader, typeToConvert, options));
+
+                if (ReadObject(ref reader, options) is { } value)
+                {
+                    dictionary.Add(propertyName, value);
+                }
             }
+
             return dictionary;
         }
     }
