@@ -35,48 +35,46 @@ function EvaluateDefines(defines) {
 // then we can include it.
 function ProcessFile(file) {
   if (file) {
-    const result = fs
-      .readFileSync(file, 'utf-8')
-      .split("\n")
-      .map(str => {
-        const include = str.match(/#include\s*\"(.*)\"/);
+      return fs
+        .readFileSync(file, 'utf-8')
+        .split("\n")
+        .map(str => {
+            const include = str.match(/#include\s*\"(.*)\"/);
 
-        if (include) {
-          return ProcessFile("./src/" + include[1]);
-        }
+            if (include) {
+                return ProcessFile("./src/" + include[1]);
+            }
 
-        return str;
-      })
-      .join("\n").split("\n")
-      .reduce(
-        (acc, cur) => {
-          const ifdef = cur.match(/^\s*#if\W*(\w*)/)
-          const ifelse = cur.match(/^\s*#else/)
-          const endif = cur.match(/^\s*#endif/)
-          const isdebug = cur.match(/^\s*##DEBUG/)
+            return str;
+        })
+        .join("\n").split("\n")
+        .reduce(
+            (acc, cur) => {
+                const ifdef = cur.match(/^\s*#if\W*(\w*)/)
+                const ifelse = cur.match(/^\s*#else/)
+                const endif = cur.match(/^\s*#endif/)
+                const isdebug = cur.match(/^\s*##DEBUG/)
 
 
-          if (ifdef) {
-            return UpdateAccumulator(acc, cur, [...acc.defines, ifdef[1]]);
-          } else if (ifelse) {
-            const d = [...acc.defines];
-            d.pop();
-            return UpdateAccumulator(acc, cur, [...d, "true"], true);
-          } else if (endif) {
-            const d = [...acc.defines];
-            d.pop();
-            return UpdateAccumulator(acc, cur, d, true);
-          } else if (isdebug) {
-            return UpdateAccumulator(acc, cur, acc.defines, true);
-          } else {
-            return UpdateAccumulator(acc, cur, acc.defines);
-          }
-        },
-        { str: [], defines: [] }
-      )
-      .str
-      .join("\n");
-
-    return result;
+                if (ifdef) {
+                    return UpdateAccumulator(acc, cur, [...acc.defines, ifdef[1]]);
+                } else if (ifelse) {
+                    const d = [...acc.defines];
+                    d.pop();
+                    return UpdateAccumulator(acc, cur, [...d, "true"], true);
+                } else if (endif) {
+                    const d = [...acc.defines];
+                    d.pop();
+                    return UpdateAccumulator(acc, cur, d, true);
+                } else if (isdebug) {
+                    return UpdateAccumulator(acc, cur, acc.defines, true);
+                } else {
+                    return UpdateAccumulator(acc, cur, acc.defines);
+                }
+            },
+            {str: [], defines: []}
+        )
+        .str
+        .join("\n");
   }
 }
