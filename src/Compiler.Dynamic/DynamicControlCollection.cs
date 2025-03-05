@@ -39,9 +39,9 @@ internal sealed class DynamicControlCollection : ITypeResolutionService, IMetada
 
         foreach (var file in Directory.EnumerateFiles(AppContext.BaseDirectory, "*.dll"))
         {
-            if (_loader.Load(file, out var assemblyName))
+            if (_loader.Load(file))
             {
-                _context.LoadFromAssemblyName(assemblyName);
+                _context.LoadFromAssemblyPath(file);
             }
         }
     }
@@ -130,7 +130,7 @@ internal sealed class DynamicControlCollection : ITypeResolutionService, IMetada
             }
         }
 
-        public bool Load(string file, [MaybeNullWhen(false)] out AssemblyName result)
+        public bool Load(string file)
         {
             try
             {
@@ -145,7 +145,6 @@ internal sealed class DynamicControlCollection : ITypeResolutionService, IMetada
 
                     if (!_controls.ContainsKey(assemblyName) && HasControls(file))
                     {
-                        result = assemblyName;
                         return true;
                     }
                 }
@@ -155,7 +154,6 @@ internal sealed class DynamicControlCollection : ITypeResolutionService, IMetada
                 // Possibly a native assembly, so we'll ignore it
             }
 
-            result = null;
             return false;
         }
 
