@@ -19,7 +19,7 @@ internal sealed class DynamicControlCollection : ITypeResolutionService, IMetada
     private readonly ILogger<DynamicControlCollection> _logger;
 
     private ImmutableDictionary<AssemblyName, Assembly> _controls = ImmutableDictionary<AssemblyName, Assembly>.Empty.WithComparers(AssemblyNameComparer.Instance);
-    private ImmutableDictionary<AssemblyName, MetadataReference> _map = ImmutableDictionary<AssemblyName, MetadataReference>.Empty.WithComparers(AssemblyNameComparer.Instance);
+    private ImmutableDictionary<AssemblyName, MetadataReference> _metadataReferences = ImmutableDictionary<AssemblyName, MetadataReference>.Empty.WithComparers(AssemblyNameComparer.Instance);
 
     public DynamicControlCollection(ILogger<DynamicControlCollection> logger)
     {
@@ -47,7 +47,7 @@ internal sealed class DynamicControlCollection : ITypeResolutionService, IMetada
     private void CurrentDomain_AssemblyLoad(object? sender, AssemblyLoadEventArgs args)
         => SearchForControls(args.LoadedAssembly);
 
-    IEnumerable<MetadataReference> IMetadataProvider.References => _map.Values;
+    IEnumerable<MetadataReference> IMetadataProvider.References => _metadataReferences.Values;
 
     IEnumerable<Assembly> IMetadataProvider.ControlAssemblies => _controls.Values;
 
@@ -112,10 +112,10 @@ internal sealed class DynamicControlCollection : ITypeResolutionService, IMetada
             ImmutableInterlocked.TryAdd(ref _controls, assemblyName, assembly);
         }
 
-        if (assembly is { Location: { Length: > 0 } location } && !_map.ContainsKey(assemblyName))
+        if (assembly is { Location: { Length: > 0 } location } && !_metadataReferences.ContainsKey(assemblyName))
         {
             _logger.LogTrace("Loading loaded {AssemblyName} for dynamic compilations", assemblyName);
-            ImmutableInterlocked.TryAdd(ref _map, assemblyName, MetadataReference.CreateFromFile(location));
+            ImmutableInterlocked.TryAdd(ref _metadataReferences, assemblyName, MetadataReference.CreateFromFile(location));
         }
     }
 
@@ -125,24 +125,30 @@ internal sealed class DynamicControlCollection : ITypeResolutionService, IMetada
         {
             if (MetadataReader.GetAssemblyName(file) is { } assemblyName)
             {
-                if (!_map.ContainsKey(assemblyName))
-                {
-                    _logger.LogTrace("Loading unloaded {AssemblyName} for dynamic compilations", assemblyName);
-                    var metadataReference = MetadataReference.CreateFromFile(file);
-                    ImmutableInterlocked.TryAdd(ref _map, assemblyName, metadataReference);
-                }
-
+                // Controls must be loaded into the runtime due to WebForms compilation usage
                 if (!_controls.ContainsKey(assemblyName) && HasControls(file))
                 {
+                    _logger.LogTrace("Detected WebForms controls in {AssemblyName}. It will be loaded so it's available for use in WebForms compilations.", assemblyName);
+
                     // If it has a control, we need to eagerly load it so it'll be available for WebForms compilation
                     // Once loaded, it will trigger the event that will search for controls
                     _context.LoadFromAssemblyPath(file);
                 }
+
+                // Other libraries don't need to be loaded, but we need to have the metadata reference in order to compile pages/controls/etc
+                else if (!_metadataReferences.ContainsKey(assemblyName))
+                {
+                    _logger.LogTrace("Registering {AssemblyName} for WebForms compilations", assemblyName);
+
+                    ImmutableInterlocked.TryAdd(ref _metadataReferences, assemblyName, MetadataReference.CreateFromFile(file));
+                }
             }
         }
+
+        // Possibly a native assembly, so we'll ignore it
         catch (BadImageFormatException)
         {
-            // Possibly a native assembly, so we'll ignore it
+            _logger.LogTrace("Attempted to load {Path} for WebForms compilation reference assemblies but it was an invalid image", file);
         }
     }
 
