@@ -3,6 +3,10 @@
 using System.Runtime.CompilerServices;
 
 [assembly: TypeForwardedTo(typeof(System.Web.Script.AjaxFrameworkAssemblyAttribute))]
+[assembly: TypeForwardedTo(typeof(System.Web.Script.Serialization.JavaScriptConverter))]
+[assembly: TypeForwardedTo(typeof(System.Web.Script.Serialization.JavaScriptSerializer))]
+[assembly: TypeForwardedTo(typeof(System.Web.Script.Serialization.JavaScriptTypeResolver))]
+[assembly: TypeForwardedTo(typeof(System.Web.Script.Serialization.ScriptIgnoreAttribute))]
 [assembly: TypeForwardedTo(typeof(System.Web.UI.AjaxFrameworkMode))]
 [assembly: TypeForwardedTo(typeof(System.Web.UI.AsyncPostBackErrorEventArgs))]
 [assembly: TypeForwardedTo(typeof(System.Web.UI.CompositeScriptReference))]
