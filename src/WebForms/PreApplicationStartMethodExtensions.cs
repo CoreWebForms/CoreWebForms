@@ -62,7 +62,7 @@ public static class PreApplicationStartMethodExtensions
                     using var stream = File.OpenRead(file);
                     using var re = new System.Reflection.PortableExecutable.PEReader(stream);
 
-                    if (re.GetMetadataReader().HasAttribute(nameof(PreApplicationStartMethodAttribute), "System.Web"))
+                    if (re.GetMetadataReader().HasAttribute<PreApplicationStartMethodAttribute>())
                     {
                         foreach (var attribute in context.LoadFromAssemblyPath(file).GetCustomAttributes<PreApplicationStartMethodAttribute>())
                         {
