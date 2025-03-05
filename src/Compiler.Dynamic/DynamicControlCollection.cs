@@ -147,7 +147,7 @@ internal sealed class DynamicControlCollection : ITypeResolutionService, IMetada
 
     private static bool HasControls(string file)
     {
-        using var stream = File.OpenRead(file);
+        using var stream = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.Read);
         using var peReader = new PEReader(stream);
 
         var reader = peReader.GetMetadataReader();
