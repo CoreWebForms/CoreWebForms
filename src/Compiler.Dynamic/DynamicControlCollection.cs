@@ -2,7 +2,10 @@
 
 using System.Collections.Immutable;
 using System.ComponentModel.Design;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
+using System.Reflection.Metadata;
+using System.Reflection.PortableExecutable;
 using System.Runtime.Loader;
 using System.Web.UI;
 using Microsoft.CodeAnalysis;
@@ -14,39 +17,39 @@ internal sealed class DynamicControlCollection : ITypeResolutionService, IMetada
 {
     private readonly AssemblyLoadContext _context;
     private readonly ILogger<DynamicControlCollection> _logger;
-    private readonly Lazy<LoadedAssemblies> _loaded;
+
+    private ImmutableDictionary<AssemblyName, Assembly> _controls = ImmutableDictionary<AssemblyName, Assembly>.Empty.WithComparers(AssemblyNameComparer.Instance);
+    private ImmutableDictionary<AssemblyName, MetadataReference> _metadataReferences = ImmutableDictionary<AssemblyName, MetadataReference>.Empty.WithComparers(AssemblyNameComparer.Instance);
 
     public DynamicControlCollection(ILogger<DynamicControlCollection> logger)
     {
         _logger = logger;
         _context = AssemblyLoadContext.Default;
 
-        _loaded = new(() =>
+        Initialize();
+    }
+
+    private void Initialize()
+    {
+        AppDomain.CurrentDomain.AssemblyLoad += CurrentDomain_AssemblyLoad;
+
+        foreach (var assembly in _context.Assemblies)
         {
-            var loader = new LoadedAssemblies(_logger);
+            SearchForControls(assembly);
+        }
 
-            AppDomain.CurrentDomain.AssemblyLoad += CurrentDomain_AssemblyLoad;
-
-            foreach (var assembly in _context.Assemblies)
-            {
-                loader.Load(assembly);
-            }
-
-            foreach (var file in Directory.EnumerateFiles(AppContext.BaseDirectory, "*.dll"))
-            {
-                loader.Load(file);
-            }
-
-            return loader;
-        });
+        foreach (var file in Directory.EnumerateFiles(AppContext.BaseDirectory, "*.dll"))
+        {
+            LoadMetadataReference(file);
+        }
     }
 
     private void CurrentDomain_AssemblyLoad(object? sender, AssemblyLoadEventArgs args)
-        => _loaded.Value.Load(args.LoadedAssembly);
+        => SearchForControls(args.LoadedAssembly);
 
-    IEnumerable<MetadataReference> IMetadataProvider.References => _loaded.Value.References;
+    IEnumerable<MetadataReference> IMetadataProvider.References => _metadataReferences.Values;
 
-    IEnumerable<Assembly> IMetadataProvider.ControlAssemblies => _loaded.Value.Controls;
+    IEnumerable<Assembly> IMetadataProvider.ControlAssemblies => _controls.Values;
 
     Assembly? ITypeResolutionService.GetAssembly(AssemblyName assemblyName)
     {
@@ -55,7 +58,7 @@ internal sealed class DynamicControlCollection : ITypeResolutionService, IMetada
 
     Type? ITypeResolutionService.GetType(string type)
     {
-        foreach (var control in _loaded.Value.Controls)
+        foreach (var control in _controls.Values)
         {
             if (control.GetType(type, throwOnError: false) is { } found)
             {
@@ -97,48 +100,85 @@ internal sealed class DynamicControlCollection : ITypeResolutionService, IMetada
         throw new NotImplementedException();
     }
 
-    private sealed class LoadedAssemblies(ILogger logger)
+    private void SearchForControls(Assembly assembly)
     {
-        private ImmutableHashSet<Assembly> _controls = ImmutableHashSet<Assembly>.Empty;
-        private ImmutableDictionary<AssemblyName, MetadataReference> _map = ImmutableDictionary<AssemblyName, MetadataReference>.Empty;
+        var assemblyName = assembly.GetName();
 
-        public IEnumerable<Assembly> Controls => _controls;
-
-        public IEnumerable<MetadataReference> References => _map.Values;
-
-        public void Load(Assembly assembly)
+        try
         {
-            logger.LogTrace("Searching {Assembly} for tag prefixes", assembly.FullName);
+            _logger.LogTrace("Searching {Assembly} for tag prefixes", assembly.FullName);
 
             if (assembly.GetCustomAttributes<TagPrefixAttribute>().Any())
             {
-                logger.LogInformation("Found tag prefixes in {Assembly}", assembly.FullName);
-                ImmutableInterlocked.Update(ref _controls, c => c.Add(assembly));
+                _logger.LogInformation("Found tag prefixes in {Assembly}", assembly.FullName);
+                ImmutableInterlocked.TryAdd(ref _controls, assemblyName, assembly);
             }
 
-            var assemblyName = assembly.GetName();
-
-            if (assembly is { Location: { Length: > 0 } location } && !_map.ContainsKey(assemblyName))
+            if (assembly is { Location: { Length: > 0 } location } && !_metadataReferences.ContainsKey(assemblyName))
             {
-                logger.LogTrace("Loading loaded {AssemblyName} for dynamic compilations", assemblyName);
-                ImmutableInterlocked.TryAdd(ref _map, assemblyName, MetadataReference.CreateFromFile(location));
+                _logger.LogTrace("Loading loaded {AssemblyName} for dynamic compilations", assemblyName);
+                ImmutableInterlocked.TryAdd(ref _metadataReferences, assemblyName, MetadataReference.CreateFromFile(location));
             }
         }
-
-        public void Load(string file)
+        catch (Exception e)
         {
-            try
+            _logger.LogError(e, "There was an unexpected error trying to search for controls for {AssemblyName}", assemblyName);
+        }
+    }
+
+    private void LoadMetadataReference(string file)
+    {
+        try
+        {
+            if (MetadataReader.GetAssemblyName(file) is { } assemblyName)
             {
-                if (AssemblyName.GetAssemblyName(file) is { } assemblyName && !_map.ContainsKey(assemblyName))
+                // Controls must be loaded into the runtime due to WebForms compilation usage
+                if (!_controls.ContainsKey(assemblyName) && HasControls(file))
                 {
-                    logger.LogTrace("Loading unloaded {AssemblyName} for dynamic compilations", assemblyName);
-                    ImmutableInterlocked.TryAdd(ref _map, assemblyName, MetadataReference.CreateFromFile(file));
+                    _logger.LogTrace("Detected WebForms controls in {AssemblyName}. It will be loaded so it's available for use in WebForms compilations.", assemblyName);
+
+                    // If it has a control, we need to eagerly load it so it'll be available for WebForms compilation
+                    // Once loaded, it will trigger the event that will search for controls
+                    _context.LoadFromAssemblyPath(file);
+                }
+
+                // Other libraries don't need to be loaded, but we need to have the metadata reference in order to compile pages/controls/etc
+                else if (!_metadataReferences.ContainsKey(assemblyName))
+                {
+                    _logger.LogTrace("Registering {AssemblyName} for WebForms compilations", assemblyName);
+
+                    ImmutableInterlocked.TryAdd(ref _metadataReferences, assemblyName, MetadataReference.CreateFromFile(file));
                 }
             }
-            catch (BadImageFormatException)
-            {
-                // Possibly a native assembly, so we'll ignore it
-            }
         }
+
+        // Possibly a native assembly, so we'll ignore it
+        catch (BadImageFormatException)
+        {
+            _logger.LogTrace("Attempted to load {Path} for WebForms compilation reference assemblies but it was an invalid image", file);
+        }
+    }
+
+    private static bool HasControls(string file)
+    {
+        using var stream = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.Read);
+        using var peReader = new PEReader(stream);
+
+        var reader = peReader.GetMetadataReader();
+        return reader.HasAttribute<TagPrefixAttribute>();
+    }
+
+    /// <summary>
+    /// The default comparer for <see cref="AssemblyName"/> is if the reference equals. This provides a comparer that compares
+    /// the <see cref="AssemblyName.FullName"/> property.
+    /// </summary>
+    private sealed class AssemblyNameComparer : IEqualityComparer<AssemblyName>
+    {
+        public static AssemblyNameComparer Instance { get; } = new();
+
+        public bool Equals(AssemblyName? x, AssemblyName? y)
+            => StringComparer.OrdinalIgnoreCase.Equals(x?.FullName, y?.FullName);
+
+        public int GetHashCode([DisallowNull] AssemblyName obj) => StringComparer.OrdinalIgnoreCase.GetHashCode(obj.FullName);
     }
 }
