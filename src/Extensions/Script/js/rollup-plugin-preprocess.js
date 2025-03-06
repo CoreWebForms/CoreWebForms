@@ -35,7 +35,7 @@ function EvaluateDefines(defines) {
 // then we can include it.
 function ProcessFile(file) {
   if (file) {
-    return fs
+    const result = fs
       .readFileSync(file, 'utf-8')
       .split("\n")
       .map(str => {
@@ -76,5 +76,7 @@ function ProcessFile(file) {
       )
       .str
       .join("\n");
+
+    return result;
   }
 }
