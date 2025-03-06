@@ -102,20 +102,27 @@ internal sealed class DynamicControlCollection : ITypeResolutionService, IMetada
 
     private void SearchForControls(Assembly assembly)
     {
-        _logger.LogTrace("Searching {Assembly} for tag prefixes", assembly.FullName);
-
         var assemblyName = assembly.GetName();
 
-        if (assembly.GetCustomAttributes<TagPrefixAttribute>().Any())
+        try
         {
-            _logger.LogInformation("Found tag prefixes in {Assembly}", assembly.FullName);
-            ImmutableInterlocked.TryAdd(ref _controls, assemblyName, assembly);
-        }
+            _logger.LogTrace("Searching {Assembly} for tag prefixes", assembly.FullName);
 
-        if (assembly is { Location: { Length: > 0 } location } && !_metadataReferences.ContainsKey(assemblyName))
+            if (assembly.GetCustomAttributes<TagPrefixAttribute>().Any())
+            {
+                _logger.LogInformation("Found tag prefixes in {Assembly}", assembly.FullName);
+                ImmutableInterlocked.TryAdd(ref _controls, assemblyName, assembly);
+            }
+
+            if (assembly is { Location: { Length: > 0 } location } && !_metadataReferences.ContainsKey(assemblyName))
+            {
+                _logger.LogTrace("Loading loaded {AssemblyName} for dynamic compilations", assemblyName);
+                ImmutableInterlocked.TryAdd(ref _metadataReferences, assemblyName, MetadataReference.CreateFromFile(location));
+            }
+        }
+        catch (Exception e)
         {
-            _logger.LogTrace("Loading loaded {AssemblyName} for dynamic compilations", assemblyName);
-            ImmutableInterlocked.TryAdd(ref _metadataReferences, assemblyName, MetadataReference.CreateFromFile(location));
+            _logger.LogError(e, "There was an unexpected error trying to search for controls for {AssemblyName}", assemblyName);
         }
     }
 
