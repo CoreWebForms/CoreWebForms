@@ -6,8 +6,7 @@
     <OutputType>Exe</OutputType>
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
-    <AssemblyName>WebForms.Tests</AssemblyName>
-    <RootNamespace>WebForms.Tests</RootNamespace>
+    <AssemblyName>WebForms.Extensions.Tests</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="MSTest" Version="3.8.2" />
@@ -15,6 +14,7 @@
     <PackageReference Include="Moq" Version="4.20.72" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\src\Extensions\Extensions.csproj" />
     <ProjectReference Include="..\..\src\Handlers\Handlers.csproj" />
     <ProjectReference Include="..\..\src\WebForms\WebForms.csproj" />
   </ItemGroup>

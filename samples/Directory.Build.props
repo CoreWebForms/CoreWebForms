@@ -5,7 +5,7 @@
   <PropertyGroup>
     <_AspNetArtifactKind>publish</_AspNetArtifactKind>
     <_AspNetArtifactKind Condition="'$(BuildingInsideVisualStudio)' == 'true'">bin</_AspNetArtifactKind>
-    <_AspNetCompilerRoot>$(MSBuildThisFileDirectory)../artifacts/tools/$(_AspNetArtifactKind)/aspnet_compiler/$(Configuration.ToLowerInvariant())_net8.0/</_AspNetCompilerRoot>
+    <_AspNetCompilerRoot>$(MSBuildThisFileDirectory)../artifacts/tools/$(_AspNetArtifactKind)/aspnet_compiler/$(Configuration.ToLowerInvariant())_net9.0/</_AspNetCompilerRoot>
     <_AspNetCompilerRoot>$([MSBuild]::NormalizePath($(_AspNetCompilerRoot)))</_AspNetCompilerRoot>
   </PropertyGroup>
 

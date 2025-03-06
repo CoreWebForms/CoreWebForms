@@ -1,6 +1,6 @@
 <Project>
   <PropertyGroup>
-    <LangVersion>12</LangVersion>
+    <LangVersion>13</LangVersion>
     <UseArtifactsOutput>true</UseArtifactsOutput>
     <ArtifactsPath>$(MSBuildThisFileDirectory)artifacts</ArtifactsPath>
     <WarnOnPackingNonPackableProject>false</WarnOnPackingNonPackableProject>
@@ -14,8 +14,8 @@
   <PropertyGroup>
     <InformationalVersion>$(GitVersion_InformationalVersion)</InformationalVersion>
     <FileVersion>$(GitVersion_MajorMinorPatch)</FileVersion>
-    <AssemblyVersion>$(GitVersion_AssemblySemVer)</AssemblyVersion>
-    <Version>$(GitVersion_NuGetVersionV2)</Version>
+    <AssemblyVersion>$(GitVersion_AssemblySemFileVer)</AssemblyVersion>
+    <Version>$(GitVersion_SemVer)</Version>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -27,6 +27,9 @@
 
     <!-- Disable warnings because of devdoc usage -->
     <NoWarn>$(NoWarn);CS1570;CS1574;CS0419;CS1584;CS1587</NoWarn>
+
+    <!-- Warnings that showed up in .NET 9 that should be addressed-->
+    <NoWarn>$(NoWarn);IDE0073</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup>
