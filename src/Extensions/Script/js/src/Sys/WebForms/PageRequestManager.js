@@ -226,7 +226,7 @@ Sys.WebForms.PageRequestManager.prototype = {
     // Creates a PageRequestManagerTimeoutException representing a request that timed out.
     var displayMessage =
       "Sys.WebForms.PageRequestManagerTimeoutException: " +
-      Sys.WebForms.Res.PRM_TimeoutError;
+      "The server request timed out.";
     var e = Error.create(displayMessage, {
       name: "Sys.WebForms.PageRequestManagerTimeoutException",
     });
@@ -239,7 +239,7 @@ Sys.WebForms.PageRequestManager.prototype = {
     var displayMessage =
       "Sys.WebForms.PageRequestManagerServerErrorException: " +
       (message ||
-        String.format(Sys.WebForms.Res.PRM_ServerError, httpStatusCode));
+        String.format("An unknown error occurred while processing the request on the server. The status code returned from the server was: {0}", httpStatusCode));
     var e = Error.create(displayMessage, {
       name: "Sys.WebForms.PageRequestManagerServerErrorException",
       httpStatusCode: httpStatusCode,
@@ -252,7 +252,8 @@ Sys.WebForms.PageRequestManager.prototype = {
     // Creates a PageRequestManagerParserErrorException representing a parser error that occurred while processing a response from the server.
     var displayMessage =
       "Sys.WebForms.PageRequestManagerParserErrorException: " +
-      String.format(Sys.WebForms.Res.PRM_ParserError, parserErrorMessage);
+      String.format("The message received from the server could not be parsed. Common causes for this error are when the response is modified by calls to Response.Write(), response filters, HttpModules, or server trace is enabled.\n" +
+          "Details: {0}", parserErrorMessage);
     var e = Error.create(displayMessage, {
       name: "Sys.WebForms.PageRequestManagerParserErrorException",
     });
@@ -1017,7 +1018,7 @@ Sys.WebForms.PageRequestManager.prototype = {
     masterPageUniqueID,
   ) {
     if (this._prmInitialized) {
-      throw Error.invalidOperation(Sys.WebForms.Res.PRM_CannotRegisterTwice);
+      throw Error.invalidOperation("The PageRequestManager cannot be initialized more than once.");
     }
     this._prmInitialized = true;
     this._masterPageUniqueID = masterPageUniqueID;
@@ -1467,7 +1468,7 @@ Sys.WebForms.PageRequestManager.prototype = {
         if (!document.getElementById(panelClientID)) {
           this._endPostBack(
             Error.invalidOperation(
-              String.format(Sys.WebForms.Res.PRM_MissingPanel, panelClientID),
+              String.format("Could not find UpdatePanel with ID '{0}'. If it is being updated dynamically then it must be inside another UpdatePanel.", panelClientID),
             ),
             sender,
             data,
@@ -1666,7 +1667,7 @@ Sys.WebForms.PageRequestManager.prototype = {
       this._endPostBack(
         this._createPageRequestManagerParserError(
           String.format(
-            Sys.WebForms.Res.PRM_ParserErrorDetails,
+            "Error parsing near '{0}'.",
             parserErrorDetails,
           ),
         ),
@@ -1805,7 +1806,7 @@ Sys.WebForms.PageRequestManager.prototype = {
           // If there was an unknown message, go into error mode
           this._endPostBack(
             this._createPageRequestManagerParserError(
-              String.format(Sys.WebForms.Res.PRM_UnknownToken, deltaNode.type),
+              String.format("Unknown token: '{0}'.", deltaNode.type),
             ),
             executor,
             null,
@@ -2019,7 +2020,7 @@ Sys.WebForms.PageRequestManager.prototype = {
       if (!updatePanelElement) {
         this._endPostBack(
           Error.invalidOperation(
-            String.format(Sys.WebForms.Res.PRM_MissingPanel, node.id),
+            String.format("Could not find UpdatePanel with ID '{0}'. If it is being updated dynamically then it must be inside another UpdatePanel.", node.id),
           ),
           data.executor,
           data,

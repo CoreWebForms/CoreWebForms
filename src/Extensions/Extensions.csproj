@@ -33,6 +33,18 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>AtlasWeb.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Update="Resources\ScriptLibrary\Res.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\ScriptLibrary\Res.debug.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\ScriptLibrary\WebForms.Res.debug.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\ScriptLibrary\WebForms.Res.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
   </ItemGroup>
 
   <Import Project="Javascript.targets" />
