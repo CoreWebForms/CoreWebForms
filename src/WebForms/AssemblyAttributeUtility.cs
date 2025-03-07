@@ -10,8 +10,11 @@ namespace WebForms;
 
 internal static class AssemblyAttributeUtility
 {
-    public static bool HasAttribute(this MetadataReader reader, string typeName, string typeNamespace)
-        => reader.GetAttributes(typeName, typeNamespace).Any();
+    public static bool HasAttribute<T>(this MetadataReader reader)
+        => reader.GetAttributes<T>().Any();
+
+    public static IEnumerable<CustomAttribute> GetAttributes<T>(this MetadataReader reader)
+        => reader.GetAttributes(typeof(T).Name, typeof(T).Namespace);
 
     public static IEnumerable<CustomAttribute> GetAttributes(this MetadataReader reader, string typeName, string typeNamespace)
     {

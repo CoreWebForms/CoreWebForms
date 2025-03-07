@@ -155,7 +155,7 @@ public class DynamicCompilationTests
                 {
                     currentPage = response.Headers.Location!.ToString();
                 }
-                else if (response.IsSuccessStatusCode)
+                else if (response.IsSuccessStatusCode || response.StatusCode == HttpStatusCode.InternalServerError)
                 {
                     result = await response.Content.ReadAsStringAsync();
                 }

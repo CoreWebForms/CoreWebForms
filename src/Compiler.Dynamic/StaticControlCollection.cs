@@ -34,13 +34,13 @@ internal sealed class StaticControlCollection : AssemblyLoadContext, IDisposable
     }
 
     // We only want to load assemblies that have controls, so we can check for their attribute in its metadata
-    private bool HasTagPrefix(AssemblyMetadata assembly)
+    private static bool HasTagPrefix(AssemblyMetadata assembly)
     {
         foreach (var module in assembly.GetModules())
         {
             var reader = module.GetMetadataReader();
 
-            if (reader.HasAttribute(nameof(TagPrefixAttribute), "System.Web.UI"))
+            if (reader.HasAttribute<TagPrefixAttribute>())
             {
                 return true;
             }

@@ -6,6 +6,7 @@ using System.Globalization;
 using System.Web;
 using System.Web.Routing;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SystemWebAdapters;
 using Microsoft.AspNetCore.SystemWebAdapters.HttpHandlers;
 using Microsoft.CodeAnalysis;
@@ -120,18 +121,39 @@ internal sealed class DynamicSystemWebCompilation : IHttpHandlerCollection
 
         public override Task ProcessRequestAsync(HttpContext context)
         {
+            context.Response.StatusCode = 500;
+
+            return context.AsAspNetCore().Response.WriteAsJsonAsync(GetDetails(context.Request.Path));
+        }
+
+        private ProblemDetails GetDetails(string path)
+        {
             if (e is RoslynCompilationException r)
             {
-                return context.AsAspNetCore().Response.WriteAsJsonAsync(r.Error.Select(e => new
+                var errors = r.Error.Select(e => new
                 {
                     e.Severity,
-                    e.Message
-                }));
+                    e.Message,
+                });
+
+                return new ProblemDetails
+                {
+                    Title = "There was an error compiling the page",
+                    Instance = path,
+                    Detail = e.Message,
+                    Extensions =
+                    {
+                        { "diagnostics", errors }
+                    }
+                };
             }
             else
             {
-                context.Response.Write(e.Message);
-                return Task.CompletedTask;
+                return new ProblemDetails
+                {
+                    Title = "Unknown error while compiling the page",
+                    Detail = e.Message,
+                };
             }
         }
     }
