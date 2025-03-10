@@ -23,6 +23,7 @@ public static class ScriptManagerExtensions
     {
         builder.Services.TryAddSingleton<ScriptResourceHandler>();
         builder.Services.AddSingleton<IScriptResourceHandler>(sp => sp.GetRequiredService<ScriptResourceHandler>());
+        builder.Services.AddSingleton<IBundleResolver, ReflectionBundleResolver>();
 
         return builder;
     }
