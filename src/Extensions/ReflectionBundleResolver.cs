@@ -26,12 +26,13 @@ internal sealed class ReflectionBundleResolver : IBundleResolver
                 if (bundleResolverCurrentProperty is { GetMethod: { } get })
                 {
                     _dispatcher = new Dispatcher(get.CreateDelegate<BundleResolverCurrentDelegate>(null));
+                    logger.LogInformation("Loaded System.Web.Optimization proxy for ScriptManager");
                 }
             }
         }
         catch (Exception ex)
         {
-            logger.LogInformation("Could not fin System.Web.Optimization for bundle usage");
+            logger.LogInformation(ex, "Could not find System.Web.Optimization for bundle usage");
         }
     }
 
@@ -51,9 +52,12 @@ internal sealed class ReflectionBundleResolver : IBundleResolver
             var current = resolver();
             var type = current.GetType();
 
-            IsBundleVirtualPath = type.GetMethod("IsBundleVirtualPath", [typeof(string)]).CreateDelegate<IsBundleVirtualPathDelegate>(current);
-            GetBundleContents = type.GetMethod("GetBundleContents", [typeof(string)]).CreateDelegate<GetBundleContentsDelegate>(current);
-            GetBundleUrl = type.GetMethod("GetBundleUrl", [typeof(string)]).CreateDelegate<GetBundleUrlDelegate>(current);
+            IsBundleVirtualPath = type.GetMethod("IsBundleVirtualPath", [typeof(string)])
+                .CreateDelegate<IsBundleVirtualPathDelegate>(current);
+            GetBundleContents = type.GetMethod("GetBundleContents", [typeof(string)])
+                .CreateDelegate<GetBundleContentsDelegate>(current);
+            GetBundleUrl = type.GetMethod("GetBundleUrl", [typeof(string)])
+                .CreateDelegate<GetBundleUrlDelegate>(current);
         }
 
         public IsBundleVirtualPathDelegate IsBundleVirtualPath { get; }
