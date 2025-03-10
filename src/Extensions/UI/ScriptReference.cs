@@ -8,7 +8,7 @@ using System.Reflection;
 using System.Web.Resources;
 using System.Web.Util;
 using Microsoft.Extensions.DependencyInjection;
-
+using WebForms.Extensions;
 using Debug = System.Diagnostics.Debug;
 
 namespace System.Web.UI
