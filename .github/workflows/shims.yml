@@ -12,7 +12,7 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
     - name: Run type dump
-      run: dotnet run --project tools/TypeDumper/TypeDumper.csproj
+      run: dotnet run --project tools/shim-generator/shim-generator.csproj
     - name: Validate type forwards
       run: |
         if [ "$(git diff --ignore-space-at-eol | wc -l)" -gt "0" ]; then
