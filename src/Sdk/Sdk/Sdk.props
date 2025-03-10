@@ -2,6 +2,10 @@
   <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk.Web"/>
 
   <PropertyGroup>
+    <UseFrameworkOptimization>false</UseFrameworkOptimization>
+  </PropertyGroup>
+
+  <PropertyGroup>
     <WebFormsVersion />
   </PropertyGroup>
 
