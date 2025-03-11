@@ -2,7 +2,7 @@ name: NuGet
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "feature/*" ]
   pull_request:
   workflow_dispatch:
   release:
@@ -73,7 +73,7 @@ jobs:
           artifacts/webforms/package/release/*.nupkg
           artifacts/webforms/package/release/*.snupkg
     - name: Push nuget package to Azure storage
-      if: github.ref == 'refs/heads/main' || github.event_name == 'release' || github.event_name == 'workflow_dispatch'
+      if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/feature/') || github.event_name == 'release' || github.event_name == 'workflow_dispatch'
       env:
         SLEET_FEED_TYPE: azure
         SLEET_FEED_CONTAINER: feed
