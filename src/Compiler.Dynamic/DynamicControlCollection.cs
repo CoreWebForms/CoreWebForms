@@ -35,14 +35,15 @@ internal sealed class DynamicControlCollection : ITypeResolutionService, IMetada
     {
         AppDomain.CurrentDomain.AssemblyLoad += CurrentDomain_AssemblyLoad;
 
-        foreach (var assembly in _context.Assemblies)
-        {
-            SearchForControls(assembly);
-        }
-
+        // Load this first to ensure we get our System.Web.dll
         foreach (var file in Directory.EnumerateFiles(AppContext.BaseDirectory, "*.dll"))
         {
             LoadMetadataReference(file);
+        }
+
+        foreach (var assembly in _context.Assemblies)
+        {
+            SearchForControls(assembly);
         }
 
         foreach (var entry in options.Value.Entries)
