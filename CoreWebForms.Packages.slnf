@@ -18,7 +18,7 @@
       "src\\WebForms.SqlClient\\WebForms.SqlClient.csproj",
       "test\\Compiler.Dynamic.Tests\\Compiler.Dynamic.Tests.csproj",
       "test\\Webforms.Tests\\Webforms.Tests.csproj",
-      "tools\\TypeDumper\\TypeDumper.csproj",
+      "tools\\shim-generator\\shim-generator.csproj",
       "tools\\aspnet_compiler\\aspnet_compiler.csproj",
       "tools\\sr-extractor\\sr-extractor.csproj"
     ]

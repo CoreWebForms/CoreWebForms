@@ -175,25 +175,17 @@ public class PreApplicationStartGenerator : IIncrementalGenerator
                         indented.WriteLine("{");
                         indented.Indent++;
                         indented.WriteLine($"logger.LogInformation(\"Invoking PreApplicationStartMethod: {{TypeName}}.{{MethodName}}\", \"{typeName}\", \"{methodName}\");");
-                    }
 
-                    if (!isValid)
-                    {
-                        context.ReportDiagnostic(Diagnostic.Create(InvalidPreApplicationStartMethod, location: null, assembly, typeName, methodName));
-                        indented.Write("// Invalid pre application start method: ");
-                    }
+                        if (isStatic)
+                        {
+                            indented.WriteLine($"{typeName}.{methodName}();");
+                        }
+                        else
+                        {
+                            indented.WriteLine($"new {typeName}().{methodName}();");
+                        }
 
-                    if (isStatic)
-                    {
-                        indented.WriteLine($"{typeName}.{methodName}();");
-                    }
-                    else
-                    {
-                        indented.WriteLine($"new {typeName}().{methodName}();");
-                    }
-
-                    if (isValid)
-                    {
+                        indented.WriteLine($"logger.LogInformation(\"Successfully invoked PreApplicationStartMethod: {{TypeName}}.{{MethodName}}\", \"{typeName}\", \"{methodName}\");");
                         indented.Indent--;
                         indented.WriteLine("}");
                         indented.WriteLine("catch (Exception e) when (!failOnError)");
@@ -202,6 +194,12 @@ public class PreApplicationStartGenerator : IIncrementalGenerator
                         indented.WriteLine($"logger.LogError(e, \"Unexpected error invoking PreApplicationStartMethod: {{TypeName}}.{{MethodName}}\", \"{typeName}\", \"{methodName}\");");
                         indented.Indent--;
                         indented.WriteLine("}");
+                    }
+                    else
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(InvalidPreApplicationStartMethod, location: null, assembly, typeName, methodName));
+                        indented.WriteLine($"// Invalid pre application start method: {typeName}.{methodName}");
+                        indented.WriteLine($"logger.LogWarning(\"Invalid PreApplicationStartMethod: {{TypeName}}.{{MethodName}}\", \"{typeName}\", \"{methodName}\");");
                     }
 
                     indented.Indent--;
