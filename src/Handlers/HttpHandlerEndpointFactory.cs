@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Microsoft.AspNetCore.SystemWebAdapters.HttpHandlers;
 
-internal sealed class HttpHandlerEndpointFactory(ILogger<HttpHandlerEndpointFactory> logger, IServiceProvider services) : IHttpHandlerEndpointFactory
+internal sealed class HttpHandlerEndpointFactory(ILogger<HttpHandlerEndpointFactory> logger) : IHttpHandlerEndpointFactory
 {
     // Used to ensure we only create a single endpoint instance for a given handler. However,
     // we don't have a way to track when a handler ceases to exist, so we use the
@@ -17,8 +17,6 @@ internal sealed class HttpHandlerEndpointFactory(ILogger<HttpHandlerEndpointFact
     // (i.e. they may be create on demand, so would end up not being cached long, but they also
     // be created once, cached somewhere, and reused multiple times)
     private readonly ConditionalWeakTable<IHttpHandler, Endpoint> _table = new();
-
-    public RequestDelegate DefaultHandler { get; } = BuildDefaultHandler(services);
 
     Endpoint IHttpHandlerEndpointFactory.Create(IHttpHandler handler)
     {
@@ -44,7 +42,7 @@ internal sealed class HttpHandlerEndpointFactory(ILogger<HttpHandlerEndpointFact
     {
         logger.LogTrace("Creating endpoint for {Handler}", handler.GetType());
 
-        var builder = new NonRouteEndpointBuilder(DefaultHandler);
+        var builder = new NonRouteEndpointBuilder();
         var metadata = HandlerMetadata.Create("/", handler);
 
         builder.AddHandler(metadata);
@@ -52,32 +50,8 @@ internal sealed class HttpHandlerEndpointFactory(ILogger<HttpHandlerEndpointFact
         return builder.Build();
     }
 
-    private static RequestDelegate BuildDefaultHandler(IServiceProvider services)
+    private sealed class NonRouteEndpointBuilder : EndpointBuilder
     {
-        var builder = new ApplicationBuilder(services);
-
-        builder.EnsureRequestEndThrows();
-        builder.Run(context =>
-        {
-            if (context.AsSystemWeb().CurrentHandler is { } handler)
-            {
-                return handler.RunHandlerAsync(context).AsTask();
-            }
-
-            context.Response.StatusCode = 500;
-            return context.Response.WriteAsync("Invalid handler");
-        });
-
-        return builder.Build();
-    }
-
-    private sealed class NonRouteEndpointBuilder: EndpointBuilder
-    {
-        public NonRouteEndpointBuilder(RequestDelegate requestDelegate)
-        {
-            RequestDelegate = requestDelegate;
-        }
-
         public override Endpoint Build()
         {
             if (RequestDelegate is null)

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Routing.Patterns;
+using Microsoft.AspNetCore.SystemWebAdapters;
 using Microsoft.AspNetCore.SystemWebAdapters.HttpHandlers;
 using Microsoft.Extensions.Primitives;
 
@@ -13,16 +14,16 @@ namespace System.Web;
 internal sealed class HttpHandlerEndpointConventionBuilder : EndpointDataSource, IEndpointConventionBuilder
 {
     private readonly IHttpHandlerCollection[] _managers;
-    private readonly IHttpHandlerEndpointFactory _factory;
+    private readonly RequestDelegate _defaultHandler;
 
     private List<Action<EndpointBuilder>> _conventions = [];
 
     public HttpHandlerEndpointConventionBuilder(
         IEnumerable<IHttpHandlerCollection> managers,
-        IHttpHandlerEndpointFactory factory)
+        IServiceProvider services)
     {
         _managers = managers.ToArray();
-        _factory = factory;
+        _defaultHandler = BuildDefaultHandler(services);
     }
 
     public override IReadOnlyList<Endpoint> Endpoints
@@ -34,7 +35,7 @@ internal sealed class HttpHandlerEndpointConventionBuilder : EndpointDataSource,
             foreach (var (route, metadataCollection) in CollectMetadata())
             {
                 var pattern = RoutePatternFactory.Parse(route);
-                var builder = new RouteEndpointBuilder(_factory.DefaultHandler, pattern, 0);
+                var builder = new RouteEndpointBuilder(_defaultHandler, pattern, 0);
 
                 builder.AddHandler(metadataCollection);
 
@@ -88,6 +89,25 @@ internal sealed class HttpHandlerEndpointConventionBuilder : EndpointDataSource,
         => (_conventions ??= []).Add(convention);
 
     public override IChangeToken GetChangeToken() => new CompositeChangeToken(_managers.Select(m => m.GetChangeToken()).ToArray());
+
+    private static RequestDelegate BuildDefaultHandler(IServiceProvider services)
+    {
+        var builder = new ApplicationBuilder(services);
+
+        builder.EnsureRequestEndThrows();
+        builder.Run(context =>
+        {
+            if (context.AsSystemWeb().CurrentHandler is { } handler)
+            {
+                return handler.RunHandlerAsync(context).AsTask();
+            }
+
+            context.Response.StatusCode = 500;
+            return context.Response.WriteAsync("Invalid handler");
+        });
+
+        return builder.Build();
+    }
 
     private sealed class MappedHandlerMetadata(string route, IHttpHandlerMetadata metadata) : IHttpHandlerMetadata
     {

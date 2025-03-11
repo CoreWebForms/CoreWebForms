@@ -8,6 +8,4 @@ namespace Microsoft.AspNetCore.SystemWebAdapters.HttpHandlers;
 internal interface IHttpHandlerEndpointFactory
 {
     Endpoint Create(IHttpHandler handler);
-
-    RequestDelegate DefaultHandler { get; }
 }
