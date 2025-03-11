@@ -5,6 +5,7 @@
     <PublicSign>True</PublicSign>
     <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)MSFT.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
+
   <Import Project="..\Directory.Build.targets" />
 
 </Project>
