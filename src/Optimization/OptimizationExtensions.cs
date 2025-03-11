@@ -1,7 +1,6 @@
 // MIT License.
 
 using System.Web.Optimization;
-using System.Web.UI;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -10,9 +9,6 @@ using Microsoft.AspNetCore.Routing.Patterns;
 using Microsoft.AspNetCore.SystemWebAdapters;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Primitives;
-
-[assembly: TagPrefix("Microsoft.AspNet.Web.Optimization.WebForms", "webopt")]
-[assembly: TagPrefix("System.Web.Optimization", "webopt")]
 
 namespace Microsoft.Extensions.DependencyInjection;
 

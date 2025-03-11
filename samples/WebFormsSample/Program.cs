@@ -26,7 +26,11 @@ builder.Services.AddSystemWebAdapters()
             .Include("~/script.js"));
     })
 #if WEBFORMS_DYNAMIC
-    .AddDynamicPages();
+    .AddDynamicPages(options =>
+    {
+        options.RegisterPrefix("webopt", "Microsoft.AspNet.Web.Optimization.WebForms", "WebForms.Optimization");
+        options.RegisterPrefix("webopt", "System.Web.Optimization", "WebForms.Optimization");
+    });
 #else
     .AddCompiledPages();
 #endif

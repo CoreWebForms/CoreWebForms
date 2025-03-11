@@ -3,7 +3,6 @@
 using System.Collections.Immutable;
 using System.ComponentModel.Design;
 using System.Globalization;
-using System.Reflection;
 using System.Web;
 using System.Web.UI;
 using Microsoft.AspNetCore.Builder;
@@ -57,6 +56,7 @@ public static class WebFormsCompilerExtensions
             .Configure<IOptions<WebFormsOptions>>((options, webFormsOptions) =>
             {
                 options.WebFormsFileProvider = webFormsOptions.Value.WebFormsFileProvider;
+
                 options.AddParser<PageDependencyParser>(".aspx");
                 options.AddParser<MasterPageDependencyParser>(".Master");
                 options.AddParser<UserControlDependencyParser>(".ascx");
@@ -77,21 +77,10 @@ public static class WebFormsCompilerExtensions
                     options.Namespaces.NamespaceEntries ??= new();
                     options.Namespaces.NamespaceEntries.Add(ns, new NamespaceEntry { Namespace = ns });
                 }
-
-                foreach (var entry in compilation.Value.Entries)
-                {
-                    options.DefaultTagNamespaceRegisterEntries.Add(entry);
-                }
             })
             .Configure<IMetadataProvider>((options, metadata) =>
             {
-                foreach (var control in metadata.ControlAssemblies)
-                {
-                    foreach (var tag in control.GetCustomAttributes<TagPrefixAttribute>())
-                    {
-                        options.DefaultTagNamespaceRegisterEntries.Add(new(tag.TagPrefix, tag.NamespaceName, control.FullName));
-                    }
-                }
+                options.DefaultTagNamespaceRegisterEntries = metadata.TagRegistrations;
             });
     }
 

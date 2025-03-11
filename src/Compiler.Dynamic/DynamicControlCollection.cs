@@ -10,6 +10,7 @@ using System.Runtime.Loader;
 using System.Web.UI;
 using Microsoft.CodeAnalysis;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace WebForms.Compiler.Dynamic;
 
@@ -20,16 +21,17 @@ internal sealed class DynamicControlCollection : ITypeResolutionService, IMetada
 
     private ImmutableDictionary<AssemblyName, Assembly> _controls = ImmutableDictionary<AssemblyName, Assembly>.Empty.WithComparers(AssemblyNameComparer.Instance);
     private ImmutableDictionary<AssemblyName, MetadataReference> _metadataReferences = ImmutableDictionary<AssemblyName, MetadataReference>.Empty.WithComparers(AssemblyNameComparer.Instance);
+    private ImmutableHashSet<TagNamespaceRegisterEntry> _entries = ImmutableHashSet<TagNamespaceRegisterEntry>.Empty;
 
-    public DynamicControlCollection(ILogger<DynamicControlCollection> logger)
+    public DynamicControlCollection(IOptions<PageCompilationOptions> options, ILogger<DynamicControlCollection> logger)
     {
         _logger = logger;
         _context = AssemblyLoadContext.Default;
 
-        Initialize();
+        Initialize(options);
     }
 
-    private void Initialize()
+    private void Initialize(IOptions<PageCompilationOptions> options)
     {
         AppDomain.CurrentDomain.AssemblyLoad += CurrentDomain_AssemblyLoad;
 
@@ -42,6 +44,16 @@ internal sealed class DynamicControlCollection : ITypeResolutionService, IMetada
         {
             LoadMetadataReference(file);
         }
+
+        foreach (var entry in options.Value.Entries)
+        {
+            LoadRegisteredControls(entry);
+        }
+    }
+
+    public void Configure(PagesSection options)
+    {
+        throw new NotImplementedException();
     }
 
     private void CurrentDomain_AssemblyLoad(object? sender, AssemblyLoadEventArgs args)
@@ -50,6 +62,8 @@ internal sealed class DynamicControlCollection : ITypeResolutionService, IMetada
     IEnumerable<MetadataReference> IMetadataProvider.References => _metadataReferences.Values;
 
     IEnumerable<Assembly> IMetadataProvider.ControlAssemblies => _controls.Values;
+
+    IEnumerable<TagNamespaceRegisterEntry> IMetadataProvider.TagRegistrations => _entries;
 
     Assembly? ITypeResolutionService.GetAssembly(AssemblyName assemblyName)
     {
@@ -100,6 +114,29 @@ internal sealed class DynamicControlCollection : ITypeResolutionService, IMetada
         throw new NotImplementedException();
     }
 
+    private void LoadRegisteredControls(TagNamespaceRegisterEntry entry)
+    {
+        try
+        {
+            var assemblyName = new AssemblyName(entry.AssemblyName);
+            var assembly = _context.LoadFromAssemblyName(assemblyName);
+
+            ImmutableInterlocked.TryAdd(ref _controls, assemblyName, assembly);
+            RegisterEntry(entry);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to load supplied tag prefix {Name} in {Namespace} in assembly {Assembly}", entry.TagPrefix, entry.Namespace, entry.AssemblyName);
+        }
+    }
+
+    private void RegisterEntry(TagNamespaceRegisterEntry entry)
+    {
+        ImmutableInterlocked.Update(ref _entries, static (set, entry) => set.Add(entry), entry);
+
+        _logger.LogInformation("Loaded registered control for prefix {Name} in {Namespace} in assembly {Assembly}", entry.TagPrefix, entry.Namespace, entry.AssemblyName);
+    }
+
     private void SearchForControls(Assembly assembly)
     {
         var assemblyName = assembly.GetName();
@@ -108,9 +145,15 @@ internal sealed class DynamicControlCollection : ITypeResolutionService, IMetada
         {
             _logger.LogTrace("Searching {Assembly} for tag prefixes", assembly.FullName);
 
-            if (assembly.GetCustomAttributes<TagPrefixAttribute>().Any())
+            var hasControls = false;
+
+            foreach (var attr in assembly.GetCustomAttributes<TagPrefixAttribute>())
             {
-                _logger.LogInformation("Found tag prefixes in {Assembly}", assembly.FullName);
+                RegisterEntry(new(attr.TagPrefix, attr.NamespaceName, assembly.FullName));
+            }
+
+            if (hasControls)
+            {
                 ImmutableInterlocked.TryAdd(ref _controls, assemblyName, assembly);
             }
 
