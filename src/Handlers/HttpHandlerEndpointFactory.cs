@@ -5,10 +5,11 @@ using System.Web;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.Logging;
 
 namespace Microsoft.AspNetCore.SystemWebAdapters.HttpHandlers;
 
-internal sealed class HttpHandlerEndpointFactory : IHttpHandlerEndpointFactory
+internal sealed class HttpHandlerEndpointFactory(ILogger<HttpHandlerEndpointFactory> logger) : IHttpHandlerEndpointFactory
 {
     // Used to ensure we only create a single endpoint instance for a given handler. However,
     // we don't have a way to track when a handler ceases to exist, so we use the
@@ -18,12 +19,15 @@ internal sealed class HttpHandlerEndpointFactory : IHttpHandlerEndpointFactory
     private readonly ConditionalWeakTable<IHttpHandler, Endpoint> _table = new();
 
     Endpoint IHttpHandlerEndpointFactory.Create(IHttpHandler handler)
-        => handler.IsReusable ? UseCache(handler) : Create(handler);
+    {
+        return handler.IsReusable ? UseCache(handler) : Create(handler);
+    }
 
     private Endpoint UseCache(IHttpHandler handler)
     {
         if (_table.TryGetValue(handler, out var existing))
         {
+            logger.LogTrace("Using cached endpoint for {Handler}", handler.GetType());
             return existing;
         }
 
@@ -34,8 +38,10 @@ internal sealed class HttpHandlerEndpointFactory : IHttpHandlerEndpointFactory
         return newEndpoint;
     }
 
-    private static Endpoint Create(IHttpHandler handler)
+    private Endpoint Create(IHttpHandler handler)
     {
+        logger.LogTrace("Creating endpoint for {Handler}", handler.GetType());
+
         var builder = new NonRouteEndpointBuilder();
         var metadata = HandlerMetadata.Create("/", handler);
 
@@ -44,7 +50,7 @@ internal sealed class HttpHandlerEndpointFactory : IHttpHandlerEndpointFactory
         return builder.Build();
     }
 
-    internal sealed class NonRouteEndpointBuilder : EndpointBuilder
+    private sealed class NonRouteEndpointBuilder : EndpointBuilder
     {
         public override Endpoint Build()
         {
