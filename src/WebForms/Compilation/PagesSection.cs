@@ -7,7 +7,7 @@ namespace System.Web.UI;
 // This used ConfigurationManager in framework
 internal class PagesSection
 {
-    public ICollection<TagNamespaceRegisterEntry> DefaultTagNamespaceRegisterEntries { get; } = new List<TagNamespaceRegisterEntry>();
+    public IEnumerable<TagNamespaceRegisterEntry> DefaultTagNamespaceRegisterEntries { get; set; }
 
     public IDictionary IgnoreDeviceFilters { get; } = new Hashtable();
 

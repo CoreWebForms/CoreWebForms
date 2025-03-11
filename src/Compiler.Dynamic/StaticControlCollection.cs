@@ -58,6 +58,20 @@ internal sealed class StaticControlCollection : AssemblyLoadContext, IDisposable
 
     public IEnumerable<MetadataReference> References => _reference;
 
+    public IEnumerable<TagNamespaceRegisterEntry> TagRegistrations
+    {
+        get
+        {
+            foreach (var assembly in ControlAssemblies)
+            {
+                foreach (var attr in assembly.GetCustomAttributes<TagPrefixAttribute>())
+                {
+                    yield return new(attr.TagPrefix, attr.NamespaceName, assembly.FullName);
+                }
+            }
+        }
+    }
+
     public void Dispose() => _dispose?.Invoke();
 
     Assembly? ITypeResolutionService.GetAssembly(AssemblyName assemblyName)

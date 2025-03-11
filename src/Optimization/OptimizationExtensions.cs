@@ -11,9 +11,6 @@ using Microsoft.AspNetCore.SystemWebAdapters;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Primitives;
 
-[assembly: TagPrefix("Microsoft.AspNet.Web.Optimization.WebForms", "webopt")]
-[assembly: TagPrefix("System.Web.Optimization", "webopt")]
-
 namespace Microsoft.Extensions.DependencyInjection;
 
 public static class OptimizationExtensions
