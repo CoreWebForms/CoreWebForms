@@ -79,8 +79,7 @@ internal sealed class HttpHandlerEndpointFactory(ILogger<HttpHandlerEndpointFact
                 }
             }
 
-            context.Response.StatusCode = 500;
-            return context.Response.WriteAsync("Invalid handler");
+            throw new InvalidOperationException("No current HTTP handler was registered");
         });
 
         return builder.Build();
