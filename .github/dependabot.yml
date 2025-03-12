@@ -20,7 +20,6 @@ updates:
       MicrosoftCodeAnalysis:
         patterns:
           - "Microsoft.CodeAnalysis.*"
-          - "System.CodeDom"
       MicrosoftExtensions:
         patterns:
           - "Microsoft.Extensions.*"
@@ -28,6 +27,10 @@ updates:
         patterns:
           - "Microsoft.Testing.*"
           - "MSTest"
+      DotNet:
+        patterns:
+          - "System.*"
+          - "Microsoft.*"
 
   - package-ecosystem: "dotnet-sdk"
     directory: "/"
