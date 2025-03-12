@@ -12,6 +12,7 @@ using System.Runtime.CompilerServices;
 [assembly: TypeForwardedTo(typeof(System.Web.UI.AsyncPostBackTrigger))]
 [assembly: TypeForwardedTo(typeof(System.Web.UI.CompositeScriptReference))]
 [assembly: TypeForwardedTo(typeof(System.Web.UI.CompositeScriptReferenceEventArgs))]
+[assembly: TypeForwardedTo(typeof(System.Web.UI.ExtenderControl))]
 [assembly: TypeForwardedTo(typeof(System.Web.UI.HistoryEventArgs))]
 [assembly: TypeForwardedTo(typeof(System.Web.UI.IExtenderControl))]
 [assembly: TypeForwardedTo(typeof(System.Web.UI.IScriptControl))]
