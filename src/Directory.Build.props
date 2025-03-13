@@ -1,6 +1,7 @@
 <Project>
   <Import Project="..\Directory.Build.props" />
-
+  <Import Project="..\StrongName.props" />
+  
   <PropertyGroup>
     <ArtifactsPath>$(ArtifactsPath)/webforms</ArtifactsPath>
   </PropertyGroup>
