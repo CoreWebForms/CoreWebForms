@@ -31,14 +31,14 @@
     <When Condition="'$(SignAssembly)' == 'false'" />
     <When Condition="'$(StrongNameKeyId)' == 'Microsoft'">
       <PropertyGroup>
-        <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)src/MSFT.snk</AssemblyOriginatorKeyFile>
+        <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)MSFT.snk</AssemblyOriginatorKeyFile>
         <PublicKey>$(MicrosoftPublicKey)</PublicKey>
         <PublicKeyToken>b03f5f7f11d50a3a</PublicKeyToken>
       </PropertyGroup>
     </When>
     <When Condition="'$(StrongNameKeyId)' == 'MicrosoftShared'">
       <PropertyGroup>
-        <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)src/35MSSharedLib1024.snk</AssemblyOriginatorKeyFile>
+        <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)35MSSharedLib1024.snk</AssemblyOriginatorKeyFile>
         <PublicKey>$(MicrosoftSharedPublicKey)</PublicKey>
         <PublicKeyToken>31BF3856AD364E35</PublicKeyToken>
       </PropertyGroup>
