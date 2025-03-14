@@ -1,4 +1,11 @@
 <Project>
+
+  <!-- See https://github.com/dotnet/arcade/blob/dbb4142ebc34d0a4b9f26136f86065c037dc4b80/src/Microsoft.DotNet.Arcade.Sdk/tools/StrongName.targets#L33-L37 for where this was copied from -->
+  <PropertyGroup Condition=" '$(MSFTPublicSign)' == 'true' ">
+    <PublicSign>True</PublicSign>
+    <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)MSFT.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+
   <Import Project="..\Directory.Build.targets" />
   <Import Project="StrongName.targets" />
 
