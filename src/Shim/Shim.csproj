@@ -9,7 +9,7 @@
     <AssemblyName>System.Web</AssemblyName>
 
     <!-- Must sign the key so it can be used in compilations -->
-    <MSFTPublicSign>true</MSFTPublicSign>
+    <StrongNameKeyId>Microsoft</StrongNameKeyId>
 
     <!-- Must be higher than 4.0.0.0 so resolution can occur -->
     <AssemblyVersion>4.0.1.0</AssemblyVersion>
