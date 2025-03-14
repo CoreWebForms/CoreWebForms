@@ -4,6 +4,7 @@ using System.Web;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.SystemWebAdapters.Features;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Microsoft.AspNetCore.SystemWebAdapters.HttpHandlers;
 
@@ -42,35 +43,23 @@ internal sealed class HttpHandlerEndpointFeature : IHttpHandlerFeature, IEndpoin
 
     IHttpHandler? IHttpHandlerFeature.Previous => _previous.Handler;
 
-    private struct Container
+    private struct Container(HttpContextCore context, Endpoint? endpoint = null, IHttpHandler? handler = null)
     {
-        private readonly HttpContextCore _context;
-
-        private Endpoint? _endpoint;
-        private IHttpHandler? _handler;
-
-        public Container(HttpContextCore context, Endpoint? endpoint = null, IHttpHandler? handler = null)
-        {
-            _context = context;
-            _endpoint = endpoint;
-            _handler = handler;
-        }
-
         public Endpoint? Endpoint
         {
             get
             {
-                if (_endpoint is null)
+                if (endpoint is null)
                 {
-                    if (_handler is null)
+                    if (handler is null)
                     {
                         return null;
                     }
 
-                    _endpoint = _context.CreateEndpoint(_handler);
+                    endpoint = CreateEndpoint(context, handler);
                 }
 
-                return _endpoint;
+                return endpoint;
             }
         }
 
@@ -78,18 +67,66 @@ internal sealed class HttpHandlerEndpointFeature : IHttpHandlerFeature, IEndpoin
         {
             get
             {
-                if (_handler is null)
+                if (handler is null)
                 {
-                    if (_endpoint is null)
+                    if (endpoint is null)
                     {
                         return null;
                     }
 
-                    _handler = _context.CreateHandler(_endpoint);
+                    handler = CreateHandler(context, endpoint);
                 }
 
-                return _handler;
+                return handler;
             }
+        }
+
+        private static Endpoint CreateEndpoint(HttpContextCore core, IHttpHandler handler)
+        {
+            if (handler is Endpoint endpoint)
+            {
+                return endpoint;
+            }
+
+            var factory = core.RequestServices.GetRequiredService<IHttpHandlerEndpointFactory>();
+
+            return factory.Create(handler);
+        }
+
+        private static IHttpHandler CreateHandler(HttpContextCore context, Endpoint endpoint)
+        {
+            if (endpoint is IHttpHandler handler)
+            {
+                return handler;
+            }
+            else if (endpoint.Metadata.GetMetadata<IHttpHandlerMetadata>() is { } metadata)
+            {
+                return metadata.Create(context);
+            }
+            else
+            {
+                return new EndpointHandler(endpoint);
+            }
+        }
+    }
+
+    private sealed class EndpointHandler : HttpTaskAsyncHandler
+    {
+        public EndpointHandler(Endpoint endpoint)
+        {
+            Endpoint = endpoint;
+        }
+
+        public Endpoint Endpoint { get; }
+
+        public override Task ProcessRequestAsync(System.Web.HttpContext context)
+        {
+            if (Endpoint.RequestDelegate is { } request)
+            {
+                return request(context);
+            }
+
+            return Task.CompletedTask;
         }
     }
 }
