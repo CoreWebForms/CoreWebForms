@@ -16,6 +16,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Extensions.Design\Extensions.Design.csproj" />
     <ProjectReference Include="..\Extensions\Extensions.csproj" />
     <ProjectReference Include="..\WebForms\WebForms.csproj" />
   </ItemGroup>
