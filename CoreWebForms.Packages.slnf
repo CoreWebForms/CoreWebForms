@@ -6,7 +6,7 @@
       "src\\Compiler\\Compiler.csproj",
       "src\\Config\\Config.csproj",
       "src\\Extensions\\Extensions.csproj",
-	  "src\\Extensions\\Extensions.Design.csproj",
+	  "src\\Extensions.Design\\Extensions.Design.csproj",
       "src\\Handlers\\Handlers.csproj",
       "src\\HtmlTextWriter\\HtmlTextWriter.csproj",
       "src\\Routing\\Routing.csproj",
