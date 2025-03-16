@@ -198,6 +198,7 @@ using System.Runtime.CompilerServices;
 [assembly: TypeForwardedTo(typeof(System.Web.UI.DataSourceViewOperationCallback))]
 [assembly: TypeForwardedTo(typeof(System.Web.UI.DataSourceViewSelectCallback))]
 [assembly: TypeForwardedTo(typeof(System.Web.UI.DesignerDataBoundLiteralControl))]
+[assembly: TypeForwardedTo(typeof(System.Web.UI.Design.ExtenderControlDesigner))]
 [assembly: TypeForwardedTo(typeof(System.Web.UI.DesignTimeParseData))]
 [assembly: TypeForwardedTo(typeof(System.Web.UI.DesignTimeTemplateParser))]
 [assembly: TypeForwardedTo(typeof(System.Web.UI.EmptyControlCollection))]

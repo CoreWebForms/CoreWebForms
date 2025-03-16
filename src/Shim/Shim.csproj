@@ -18,6 +18,7 @@
   <ItemGroup>
     <ProjectReference Include="..\WebForms.SqlClient\WebForms.SqlClient.csproj" />
     <ProjectReference Include="..\WebForms\WebForms.csproj" />
+    <ProjectReference Include="..\Extensions.Design\Extensions.Design.csproj" />
   </ItemGroup>
 
   <ItemGroup>

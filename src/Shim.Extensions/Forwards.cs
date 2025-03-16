@@ -2,7 +2,6 @@
 
 using System.Runtime.CompilerServices;
 
-[assembly: TypeForwardedTo(typeof(System.Web.UI.Design.ExtenderControlDesigner))]
 [assembly: TypeForwardedTo(typeof(System.Web.Script.AjaxFrameworkAssemblyAttribute))]
 [assembly: TypeForwardedTo(typeof(System.Web.Script.Serialization.JavaScriptConverter))]
 [assembly: TypeForwardedTo(typeof(System.Web.Script.Serialization.JavaScriptSerializer))]
