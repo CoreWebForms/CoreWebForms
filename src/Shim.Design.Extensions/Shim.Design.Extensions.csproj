@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <IsShipped>true</IsShipped>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+    <PackageId>WebForms.Shim.SystemWeb</PackageId>
+    <AssemblyName>System.Web.Extensions.Design</AssemblyName>
+
+    <!-- Must sign the key so it can be used in compilations -->
+    <StrongNameKeyId>MicrosoftShared</StrongNameKeyId>
+
+    <!-- Must be higher than 4.0.0.0 so resolution can occur -->
+    <AssemblyVersion>4.0.1.0</AssemblyVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\WebForms\WebForms.csproj" />
+    <ProjectReference Include="..\Extensions.Design\Extensions.Design.csproj" />
+  </ItemGroup>
+
+</Project>

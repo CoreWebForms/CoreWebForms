@@ -5,9 +5,14 @@
     <TargetFrameworks>net9.0</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>disable</Nullable>
-    <AssemblyName>WebForms.Extensions.Design</AssemblyName>
-    <RootNamespace>System.Web.Extensions.Design</RootNamespace>
+    <AssemblyName>WebForms.Design</AssemblyName>
+    <RootNamespace>System.Design</RootNamespace>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.ComponentModel" Version="4.3.0" />
+    <PackageReference Include="System.ComponentModel.TypeConverter" Version="4.3.0" />
+  </ItemGroup>
 
   <ItemGroup>
     <Using Include="Microsoft.AspNetCore.Http.HttpContext" Alias="HttpContextCore" />
@@ -16,7 +21,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\WebForms.Design\WebForms.Design.csproj" />
     <ProjectReference Include="..\WebForms\WebForms.csproj" />
   </ItemGroup>
 
