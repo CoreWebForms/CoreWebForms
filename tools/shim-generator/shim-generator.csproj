@@ -26,7 +26,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\Extensions.Design\Extensions.Design.csproj" />
     <ProjectReference Include="..\..\src\Extensions\Extensions.csproj" />
+    <ProjectReference Include="..\..\src\Shim.Design.Extensions\Shim.Design.Extensions.csproj" />
     <ProjectReference Include="..\..\src\WebForms.SqlClient\WebForms.SqlClient.csproj" />
     <ProjectReference Include="..\..\src\WebForms\WebForms.csproj" />
   </ItemGroup>

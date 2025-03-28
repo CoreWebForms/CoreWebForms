@@ -2,7 +2,7 @@
 
 namespace System.Web.UI.Design;
 
-internal interface IControlDesigner
+public interface IControlDesigner
 {
     bool Visible { get; }
     string CreatePlaceHolderDesignTimeHtml();

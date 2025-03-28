@@ -9,8 +9,8 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 
 var assemblies = new[] {
-    ("System.Web", "Shim"),
-    ("System.Web.Extensions", "Shim.Extensions")
+    ("System.Design", "Shim.Design"),
+    ("System.Web.Extensions.Design", "Shim.Design.Extensions")
 };
 
 // Load up types to include
