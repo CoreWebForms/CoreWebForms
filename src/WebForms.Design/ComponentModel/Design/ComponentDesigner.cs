@@ -9,8 +9,6 @@ public class ComponentDesigner : ITreeDesigner, IDesigner, IDisposable, IDesigne
     [TargetedPatchingOptOut("Performance critical to inline this type of method across NGen image boundaries")]
     public ComponentDesigner() { }
 
-    ~ComponentDesigner() { }
-
     public virtual DesignerActionListCollection ActionLists { get; }
     public virtual ICollection AssociatedComponents { get; }
     public IComponent Component { get; }
@@ -95,7 +93,6 @@ public class ComponentDesigner : ITreeDesigner, IDesigner, IDisposable, IDesigne
     {
         throw new NotImplementedException();
     }
-
 
     protected sealed class ShadowPropertyCollection
     {
