@@ -9,6 +9,8 @@
     <PackageReference Include="CoreWebForms.Shim.SystemWeb" Version="$(WebFormsVersion)" />
     <PackageReference Include="CoreWebForms.Shim.SystemWebExtensions" Version="$(WebFormsVersion)" />
     <PackageReference Include="CoreWebForms.SqlClient" Version="$(WebFormsVersion)" />
+    <PackageReference Include="WebForms.Shim.Design" Version="$(WebFormsVersion)" />
+    <PackageReference Include="WebForms.Shim.Design.Extensions" Version="$(WebFormsVersion)" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(EnableRuntimeAspxCompilation)' == 'true' ">
