@@ -1,7 +1,6 @@
 // MIT License.
 
 using System.Runtime.CompilerServices;
-
 [assembly: TypeForwardedTo(typeof(System.ComponentModel.Design.ComponentDesigner))]
 [assembly: TypeForwardedTo(typeof(System.Web.UI.Design.ControlDesigner))]
 [assembly: TypeForwardedTo(typeof(System.Web.UI.Design.ControlDesignerState))]
@@ -21,3 +20,7 @@ using System.Runtime.CompilerServices;
 [assembly: TypeForwardedTo(typeof(System.Web.UI.Design.ViewFlags))]
 [assembly: TypeForwardedTo(typeof(System.Web.UI.Design.ViewRendering))]
 [assembly: TypeForwardedTo(typeof(System.Web.UI.Design.WebFormsRootDesigner))]
+
+[assembly: TypeForwardedTo(typeof(System.Web.UI.Design.WebControls.CompositeControlDesigner))]
+[assembly: TypeForwardedTo(typeof(System.Web.UI.Design.WebControls.DataBoundControlDesigner))]
+[assembly: TypeForwardedTo(typeof(System.Web.UI.Design.WebControls.ListControlDesigner))]
