@@ -1029,4 +1029,28 @@ internal static class Util
     {
         return CommaIndexInTypeName(typeName) > 0;
     }
+
+    internal static string GetClientValidatedPostback(Control control, string validationGroup)
+    {
+        return GetClientValidatedPostback(control, validationGroup, string.Empty);
+    }
+
+    internal static string GetClientValidatedPostback(Control control,
+                                                      string validationGroup,
+                                                      string argument)
+    {
+        var postbackReference = control.Page.ClientScript.GetPostBackEventReference(control, argument, true);
+        return GetClientValidateEvent(validationGroup) + postbackReference;
+    }
+
+    internal static string GetClientValidateEvent(string validationGroup)
+    {
+        if (validationGroup == null)
+        {
+            validationGroup = String.Empty;
+        }
+        return "if (typeof(Page_ClientValidate) == 'function') Page_ClientValidate('" +
+               validationGroup +
+               "'); ";
+    }
 }
