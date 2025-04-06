@@ -1,0 +1,84 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head><title>
+
+</title>
+    <style type="text/css">
+        .Grid td
+        {
+            background-color: #A1DCF2;
+            color: black;
+            font-size: 10pt;
+            line-height: 200%;
+            font-family: Arial;
+            font-size: 10pt;
+        }
+        .Grid th
+        {
+            background-color: #3AC0F2;
+            color: White;
+            font-size: 10pt;
+            line-height: 200%;
+            font-family: Arial;
+            font-size: 10pt;
+        }
+    </style>
+</head>
+<body>
+    <form method="post" action="/ObjectDataSourceSample.aspx" id="form1">
+<div class="aspNetHidden">
+<input type="hidden" name="__EVENTTARGET" id="__EVENTTARGET" value="" />
+<input type="hidden" name="__EVENTARGUMENT" id="__EVENTARGUMENT" value="" />
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="/wEPDwUKLTY0MzA1MzczNA8WAgUTVmFsaWRhdGVSZXF1ZXN0TW9kZQIBFgICAw9kFgICAQ88KwARAwAPFgQFC18hRGF0YUJvdW5kZwULXyFJdGVtQ291bnQCFGQBEBYAFgAWAAwUKwAAFgJmD2QWDAIBD2QWCGYPDxYCBQRUZXh0BQExZGQCAQ8PFgIFBFRleHQFD2ZpcnN0X25hbWUxdGVzdGRkAgIPDxYCBQRUZXh0BQ9sYXN0X25hbWVfMXRlc3RkZAIDDw8WAgUEVGV4dAULdGl0bGVfMXRlc3RkZAICD2QWCGYPDxYCBQRUZXh0BQEyZGQCAQ8PFgIFBFRleHQFD2ZpcnN0X25hbWUydGVzdGRkAgIPDxYCBQRUZXh0BQ9sYXN0X25hbWVfMnRlc3RkZAIDDw8WAgUEVGV4dAULdGl0bGVfMnRlc3RkZAIDD2QWCGYPDxYCBQRUZXh0BQEzZGQCAQ8PFgIFBFRleHQFD2ZpcnN0X25hbWUzdGVzdGRkAgIPDxYCBQRUZXh0BQ9sYXN0X25hbWVfM3Rlc3RkZAIDDw8WAgUEVGV4dAULdGl0bGVfM3Rlc3RkZAIED2QWCGYPDxYCBQRUZXh0BQE0ZGQCAQ8PFgIFBFRleHQFD2ZpcnN0X25hbWU0dGVzdGRkAgIPDxYCBQRUZXh0BQ9sYXN0X25hbWVfNHRlc3RkZAIDDw8WAgUEVGV4dAULdGl0bGVfNHRlc3RkZAIFD2QWCGYPDxYCBQRUZXh0BQE1ZGQCAQ8PFgIFBFRleHQFD2ZpcnN0X25hbWU1dGVzdGRkAgIPDxYCBQRUZXh0BQ9sYXN0X25hbWVfNXRlc3RkZAIDDw8WAgUEVGV4dAULdGl0bGVfNXRlc3RkZAIGDw8WAgUHVmlzaWJsZWhkZBcBBQtndkN1c3RvbWVycw88KwAMAQgCBGQ=" />
+</div>
+
+<script type="text/javascript">
+//<![CDATA[
+var theForm = document.forms['form1'];
+if (!theForm) {
+    theForm = document.form1;
+}
+function __doPostBack(eventTarget, eventArgument) {
+    if (!theForm.onsubmit || (theForm.onsubmit() != false)) {
+        theForm.__EVENTTARGET.value = eventTarget;
+        theForm.__EVENTARGUMENT.value = eventArgument;
+        theForm.submit();
+    }
+}
+//]]>
+</script>
+
+
+    <div>
+	<table class="Grid" cellspacing="0" rules="all" border="1" id="gvCustomers" style="border-collapse:collapse;">
+		<tr>
+			<th scope="col">Customer Id</th><th scope="col">First Name</th><th scope="col">Last Name</th><th scope="col">Title</th>
+		</tr><tr>
+			<td>1</td><td>first_name1test</td><td>last_name_1test</td><td>title_1test</td>
+		</tr><tr>
+			<td>2</td><td>first_name2test</td><td>last_name_2test</td><td>title_2test</td>
+		</tr><tr>
+			<td>3</td><td>first_name3test</td><td>last_name_3test</td><td>title_3test</td>
+		</tr><tr>
+			<td>4</td><td>first_name4test</td><td>last_name_4test</td><td>title_4test</td>
+		</tr><tr>
+			<td>5</td><td>first_name5test</td><td>last_name_5test</td><td>title_5test</td>
+		</tr><tr>
+			<td colspan="4"><table>
+				<tr>
+					<td><span>1</span></td><td><a href="javascript:__doPostBack(&#39;gvCustomers&#39;,&#39;Page$2&#39;)">2</a></td><td><a href="javascript:__doPostBack(&#39;gvCustomers&#39;,&#39;Page$3&#39;)">3</a></td><td><a href="javascript:__doPostBack(&#39;gvCustomers&#39;,&#39;Page$4&#39;)">4</a></td>
+				</tr>
+			</table></td>
+		</tr>
+	</table>
+</div>
+    
+    
+<div class="aspNetHidden">
+
+	<input type="hidden" name="__VIEWSTATEGENERATOR" id="__VIEWSTATEGENERATOR" value="4205EA48" />
+</div></form>
+</body>
+</html>
