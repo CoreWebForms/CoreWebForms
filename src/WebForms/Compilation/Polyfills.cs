@@ -2,11 +2,13 @@
 
 using System.Collections;
 using System.ComponentModel;
+using System.ComponentModel.Design;
 using System.Diagnostics;
 using System.Globalization;
 using System.Reflection;
 using System.Text;
 using System.Web.Compilation;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace System.Web.UI;
 
@@ -140,9 +142,23 @@ internal static class BuildManager
     internal static void ValidateCodeFileVirtualPath(VirtualPath codeFileVirtualPath)
     {
     }
-}
+    public static Type GetType(string typeName, bool throwOnError)
+    {
+        return GetType(typeName, throwOnError, false);
+    }
 
-internal static class HttpRuntime2
+    /*
+     * Look for a type by name in the top level and config assemblies
+     */
+    public static Type GetType(string typeName, bool throwOnError, bool ignoreCase)
+    {
+        var resolutionService = HttpRuntime.WebObjectActivator.GetRequiredService<ITypeResolutionService>();
+        return resolutionService.GetType(typeName, throwOnError, ignoreCase);
+    }
+
+    }
+
+    internal static class HttpRuntime2
 {
     internal static RootBuilder CreateNonPublicInstance(Type fileLevelBuilderType)
     {
