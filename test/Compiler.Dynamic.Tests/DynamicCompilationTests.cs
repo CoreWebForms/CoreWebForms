@@ -42,6 +42,7 @@ public class DynamicCompilationTests
     [DataRow("test12", "folder/subfolder.aspx")]
     [DataRow("test13", "custom_base_property.aspx")]
     [DataRow("test14", "sitemapdemo.aspx")]
+    [DataRow("test15", "ObjectDataSourceSample.aspx")]
     public async Task CompiledPageRuns(string test, params string[] pages)
     {
         if (test == "test08")

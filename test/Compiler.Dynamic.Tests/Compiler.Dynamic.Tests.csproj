@@ -28,6 +28,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\Compiler.Dynamic\Compiler.Dynamic.csproj" />
     <ProjectReference Include="..\..\src\Extensions\Extensions.csproj" />
+    <ProjectReference Include="..\..\src\WebForms.SqlClient\WebForms.SqlClient.csproj" />
   </ItemGroup>
 
   <ItemGroup>
