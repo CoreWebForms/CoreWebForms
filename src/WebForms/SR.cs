@@ -115,6 +115,14 @@ internal static class SR
     public const string BoundField_NullDisplayText = "The text displayed if the data bound to the field is null.";
     public const string BoundField_ReadOnly = "Whether the field does not permit editing of its bound field.";
     public const string BoundField_WrongControlType = "BoundField {0} contains a control that isn't a TextBox.  Override OnDataBindField to inherit from BoundField and add different controls.";
+    public const string BulletedList_SelectionNotSupported = "Setting the SelectedIndex or SelectedValue properties of BulletedList is not supported.";
+    public const string BulletedList_TextNotSupported= "Setting the Text property of BulletedList is not supported.";
+    public const string BulletedList_BulletedListDisplayMode = "The display mode of the bulleted list.";
+    public const string BulletedList_BulletImageUrl = "The URL of an image to use as bullets.";
+    public const string BulletedList_BulletStyle = "The Style used for the bullets.";
+    public const string BulletedList_FirstBulletNumber = "The value at which an ordered list begins numbering.";
+    public const string BulletedList_Target = "The target frame for the URL.";
+    public const string BulletedList_OnClick = "Fires when any linkbutton in list is clicked.";
     public const string Button_CausesValidation = "Whether the button causes validation to fire.";
     public const string Button_OnClick = "Fires when the button is clicked.";
     public const string Button_OnClientClick = "The client-side script that is executed on a client-side OnClick.";
