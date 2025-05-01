@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
+    <PackageId>CoreWebForms.SourceGenerator</PackageId>
     <IsRoslynComponent>true</IsRoslynComponent>
     <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
   </PropertyGroup>

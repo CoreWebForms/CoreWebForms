@@ -6,7 +6,6 @@
 
 <head runat="server">
     <asp:PlaceHolder runat="server">
-        <%: Scripts.Render("~/scriptbundle") %>
     </asp:PlaceHolder>
 </head>
 

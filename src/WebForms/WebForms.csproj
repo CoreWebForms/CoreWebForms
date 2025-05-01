@@ -5,7 +5,7 @@
     <TargetFrameworks>net9.0</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>disable</Nullable>
-    <AssemblyName>WebForms</AssemblyName>
+    <AssemblyName>CoreWebForms</AssemblyName>
     <RootNamespace>System.Web</RootNamespace>
     <NoWarn>$(NoWarn);SYSWEB0003</NoWarn>
   </PropertyGroup>

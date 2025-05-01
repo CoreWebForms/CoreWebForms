@@ -1,10 +1,10 @@
 <Project>
-  <Import Project="WebForms.Compiler.DefaultItems.props"/>
+  <Import Project="CoreWebForms.Compiler.DefaultItems.props"/>
 
   <PropertyGroup>
     <EnableRuntimeAspxCompilation Condition=" '$(EnableRuntimeAspxCompilation)' == '' ">false</EnableRuntimeAspxCompilation>
   </PropertyGroup>
 
-  <Import Project="WebForms.Generator.props" />
+  <Import Project="CoreWebForms.Generator.props" />
 
 </Project>

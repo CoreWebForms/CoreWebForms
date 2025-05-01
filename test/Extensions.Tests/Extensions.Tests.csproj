@@ -6,7 +6,7 @@
     <OutputType>Exe</OutputType>
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
-    <AssemblyName>WebForms.Extensions.Tests</AssemblyName>
+    <AssemblyName>CoreWebForms.Extensions.Tests</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="MSTest" Version="3.8.3" />

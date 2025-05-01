@@ -4,7 +4,7 @@
     <TargetFrameworks>net9.0</TargetFrameworks>
     <Nullable>enable</Nullable>
     <IsShipped>true</IsShipped>
-    <AssemblyName>WebForms.ConfigurationManager</AssemblyName>
+    <AssemblyName>CoreWebForms.ConfigurationManager</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
