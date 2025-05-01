@@ -4,6 +4,11 @@
     <_HasWebFormsError>false</_HasWebFormsError>
   </PropertyGroup>
 
+  <ItemGroup>
+    <WebFormsRegisteredPrefix Include="webopt!Microsoft.AspNet.Web.Optimization.WebForms!WebForms.Optimization" />
+    <WebFormsRegisteredPrefix Include="webopt!System.Web.Optimization!WebForms.Optimization" />
+  </ItemGroup>
+
   <!--
     This target is the beginning of the WebForms compilation system. It hooks into MSBuild after the CoreCompile target as we need the main assembly
     to be passed into the compilation.
@@ -61,6 +66,7 @@
       <__AspNetCompileRsp Include="&quot;$(_WebFormsTempDir)&quot;" />
       <__AspNetCompileRsp Include="-r &quot;%(ReferencePath.Identity)&quot;" />
       <__AspNetCompileRsp Include="-r &quot;%(IntermediateAssembly.Identity)&quot;" />
+      <__AspNetCompileRsp Include="--prefix &quot;%(WebFormsRegisteredPrefix.Identity)&quot;" />
     </ItemGroup>
 
     <WriteLinesToFile File="$(__AspNetCompileRspFilePath)" Lines="@(__AspNetCompileRsp)" Overwrite="true" />

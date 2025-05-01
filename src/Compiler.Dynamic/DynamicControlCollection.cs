@@ -36,7 +36,7 @@ internal sealed class DynamicControlCollection : ITypeResolutionService, IMetada
         AppDomain.CurrentDomain.AssemblyLoad += CurrentDomain_AssemblyLoad;
 
         // Load this first to ensure we get our System.Web.dll
-        foreach (var file in Directory.EnumerateFiles(AppContext.BaseDirectory, "*.dll"))
+        foreach (var file in options.Value.AdditionalReferencePaths)
         {
             LoadMetadataReference(file);
         }
@@ -119,15 +119,27 @@ internal sealed class DynamicControlCollection : ITypeResolutionService, IMetada
     {
         try
         {
-            var assemblyName = new AssemblyName(entry.AssemblyName);
-            var assembly = _context.LoadFromAssemblyName(assemblyName);
-
-            ImmutableInterlocked.TryAdd(ref _controls, assemblyName, assembly);
+            var assembly = LoadAssembly(entry.AssemblyName);
+            ImmutableInterlocked.TryAdd(ref _controls, assembly.GetName(), assembly);
             RegisterEntry(entry);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to load supplied tag prefix {Name} in {Namespace} in assembly {Assembly}", entry.TagPrefix, entry.Namespace, entry.AssemblyName);
+        }
+
+    }
+
+    private Assembly LoadAssembly(string nameOrPath)
+    {
+        if (File.Exists(nameOrPath))
+        {
+            return _context.LoadFromAssemblyPath(nameOrPath);
+        }
+        else
+        {
+            var assemblyName = new AssemblyName(nameOrPath);
+            return _context.LoadFromAssemblyName(assemblyName);
         }
     }
 

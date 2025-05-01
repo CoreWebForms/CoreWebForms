@@ -1,6 +1,7 @@
 // MIT License.
 
 using System.ComponentModel.Design;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Runtime.Loader;
 using System.Web.UI;
@@ -10,111 +11,65 @@ namespace WebForms.Compiler.Dynamic;
 
 internal sealed class StaticControlCollection : AssemblyLoadContext, IDisposable, ITypeResolutionService, IMetadataProvider
 {
-    private readonly List<MetadataReference> _reference = [];
-    private readonly Action? _dispose;
+    private readonly DynamicControlCollection _other;
 
-    public StaticControlCollection(IEnumerable<string> paths)
+    public StaticControlCollection(DynamicControlCollection other)
         : base("WebForms Compilation Context")
     {
-        foreach (var path in paths)
-        {
-            var metadata = AssemblyMetadata.CreateFromFile(path);
-            _dispose += metadata.Dispose;
-
-            if (HasTagPrefix(metadata) && !IsWebFormsLibrary(path))
-            {
-                LoadFromAssemblyPath(path);
-                _reference.Add(metadata.GetReference());
-            }
-            else
-            {
-                _reference.Add(metadata.GetReference());
-            }
-        }
+        _other = other;
     }
 
-    // We only want to load assemblies that have controls, so we can check for their attribute in its metadata
-    private static bool HasTagPrefix(AssemblyMetadata assembly)
+    protected override Assembly? Load(AssemblyName assemblyName)
     {
-        foreach (var module in assembly.GetModules())
-        {
-            var reader = module.GetMetadataReader();
-
-            if (reader.HasAttribute<TagPrefixAttribute>())
-            {
-                return true;
-            }
-        }
-
-        return false;
+        return base.Load(assemblyName);
     }
 
-    private static bool IsWebFormsLibrary(string path)
+    public IEnumerable<MetadataReference> References => ((IMetadataProvider)_other).References;
+
+    public IEnumerable<Assembly> ControlAssemblies => ((IMetadataProvider)_other).ControlAssemblies;
+
+    public IEnumerable<TagNamespaceRegisterEntry> TagRegistrations => ((IMetadataProvider)_other).TagRegistrations;
+
+    public void Dispose()
     {
-        return string.Equals(Path.GetFileName(path), "WebForms.dll", StringComparison.OrdinalIgnoreCase);
+        ((IDisposable)_other).Dispose();
     }
 
-    public IEnumerable<Assembly> ControlAssemblies => [typeof(Page).Assembly, .. Assemblies];
-
-    public IEnumerable<MetadataReference> References => _reference;
-
-    public IEnumerable<TagNamespaceRegisterEntry> TagRegistrations
+    public Assembly? GetAssembly(AssemblyName name)
     {
-        get
-        {
-            foreach (var assembly in ControlAssemblies)
-            {
-                foreach (var attr in assembly.GetCustomAttributes<TagPrefixAttribute>())
-                {
-                    yield return new(attr.TagPrefix, attr.NamespaceName, assembly.FullName);
-                }
-            }
-        }
+        return ((ITypeResolutionService)_other).GetAssembly(name);
     }
 
-    public void Dispose() => _dispose?.Invoke();
-
-    Assembly? ITypeResolutionService.GetAssembly(AssemblyName assemblyName)
+    public Assembly? GetAssembly(AssemblyName name, bool throwOnError)
     {
-        return LoadFromAssemblyName(assemblyName);
+        return ((ITypeResolutionService)_other).GetAssembly(name, throwOnError);
     }
 
-    Type? ITypeResolutionService.GetType(string type)
+    public string? GetPathOfAssembly(AssemblyName name)
     {
-        foreach (var assembly in ControlAssemblies)
-        {
-            if (assembly.GetType(type, throwOnError: false) is { } found)
-            {
-                return found;
-            }
-        }
-
-        return null;
+        return ((ITypeResolutionService)_other).GetPathOfAssembly(name);
     }
 
-    // TODO Unused
-    Assembly? ITypeResolutionService.GetAssembly(AssemblyName name, bool throwOnError)
+    [return: DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)]
+    public Type? GetType([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)] string name)
     {
-        throw new NotImplementedException();
+        return ((ITypeResolutionService)_other).GetType(name);
     }
 
-    string? ITypeResolutionService.GetPathOfAssembly(AssemblyName name)
+    [return: DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)]
+    public Type? GetType([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)] string name, bool throwOnError)
     {
-        throw new NotImplementedException();
+        return ((ITypeResolutionService)_other).GetType(name, throwOnError);
     }
 
-    Type? ITypeResolutionService.GetType(string name, bool throwOnError)
+    [return: DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)]
+    public Type? GetType([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)] string name, bool throwOnError, bool ignoreCase)
     {
-        throw new NotImplementedException();
+        return ((ITypeResolutionService)_other).GetType(name, throwOnError, ignoreCase);
     }
 
-    Type? ITypeResolutionService.GetType(string name, bool throwOnError, bool ignoreCase)
+    public void ReferenceAssembly(AssemblyName name)
     {
-        throw new NotImplementedException();
-    }
-
-    void ITypeResolutionService.ReferenceAssembly(AssemblyName name)
-    {
-        throw new NotImplementedException();
+        ((ITypeResolutionService)_other).ReferenceAssembly(name);
     }
 }

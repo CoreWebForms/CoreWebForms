@@ -26,7 +26,14 @@ public class PageCompilationOptions
 
     public Func<CompilationOptions, CompilationOptions>? OnCreateOption { get; set; }
 
-    public void RegisterPrefix(string tagPrefix, string namespaceName, string assemblyName) => Entries.Add(new(tagPrefix, namespaceName, assemblyName));
+    internal List<string> AdditionalReferencePaths { get; } = [];
+
+    public void RegisterAdditionalReferencePaths(params IEnumerable<string> paths)
+    {
+        AdditionalReferencePaths.AddRange(paths);
+    }
+
+    public void RegisterPrefix(string tagPrefix, string namespaceName, string assemblyNameOrPath) => Entries.Add(new(tagPrefix, namespaceName, assemblyNameOrPath));
 
     internal void AddParser<DParser>(string extension)
         where DParser : DependencyParser, new()

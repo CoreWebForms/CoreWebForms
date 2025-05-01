@@ -17,57 +17,76 @@ namespace WebForms.Compiler;
 
 internal sealed class CompilationHost
 {
-    public static Task RunAsync(DirectoryInfo path, DirectoryInfo targetDir, FileInfo[] references, bool isDebug)
-        => Host.CreateDefaultBuilder()
-            .ConfigureAppConfiguration((ctx, _) =>
-            {
-                ctx.HostingEnvironment.ContentRootPath = path.FullName;
-                ctx.HostingEnvironment.ContentRootFileProvider = new PhysicalFileProvider(path.FullName);
-            })
-            .ConfigureLogging(logging =>
-            {
-                logging.ClearProviders();
-                logging.AddSimpleConsole(options =>
+    public static Task RunAsync(DirectoryInfo path, DirectoryInfo targetDir, FileInfo[] references, string[] prefixes, bool isDebug, bool isVerbose)
+    {
+        var referenceLookup = references.ToDictionary(r => Path.GetFileNameWithoutExtension(r.Name), r => r.FullName);
+
+        return Host.CreateDefaultBuilder()
+                .ConfigureAppConfiguration((ctx, _) =>
                 {
-                    options.SingleLine = true;
-                    options.ColorBehavior = LoggerColorBehavior.Default;
-                });
-
-                logging.AddFilter("Microsoft", LogLevel.Warning);
-                logging.AddFilter("WebForms", LogLevel.Trace);
-            })
-
-            // This is needed so we can enable HttpRuntime APIs
-            .ConfigureWebHost(web =>
-            {
-                web.Configure(app => { });
-            })
-            .ConfigureServices(services =>
-            {
-                services.AddSingleton<IServer, WebFormsCompilationServer>();
-                services.AddOptions<StaticCompilationOptions>()
-                    .Configure(options =>
+                    ctx.HostingEnvironment.ContentRootPath = path.FullName;
+                    ctx.HostingEnvironment.ContentRootFileProvider = new PhysicalFileProvider(path.FullName);
+                })
+                .ConfigureLogging(logging =>
+                {
+                    logging.ClearProviders();
+                    logging.AddSimpleConsole(options =>
                     {
-                        options.TargetDirectory = targetDir.FullName;
-                        options.InputDirectory = path.FullName;
-                    })
-                    .ValidateDataAnnotations();
+                        options.SingleLine = true;
+                        options.ColorBehavior = LoggerColorBehavior.Default;
+                    });
 
-                services
-                    .AddWebForms()
-                    .AddPersistentWebFormsCompilation(references.Select(r => r.FullName));
+                    logging.AddFilter("Microsoft", LogLevel.Warning);
+                    logging.AddFilter("WebForms", isVerbose ? LogLevel.Trace : LogLevel.Information);
+                })
 
-                services.AddHostedService<StaticCompilationService>();
-
-                services.AddOptions<PageCompilationOptions>()
-                    .Configure(options => options.IsDebug = isDebug);
-
-                services.AddOptions<SystemWebAdaptersOptions>().Configure(options =>
+                // This is needed so we can enable HttpRuntime APIs
+                .ConfigureWebHost(web =>
                 {
-                    options.AppDomainAppPath = path.FullName;
-                });
-            })
-            .RunConsoleAsync();
+                    web.Configure(app => { });
+                })
+                .ConfigureServices(services =>
+                {
+                    services.AddSingleton<IServer, WebFormsCompilationServer>();
+                    services.AddOptions<StaticCompilationOptions>()
+                        .Configure(options =>
+                        {
+                            options.TargetDirectory = targetDir.FullName;
+                            options.InputDirectory = path.FullName;
+                        })
+                        .ValidateDataAnnotations();
+
+                    services
+                        .AddWebForms()
+                        .AddPersistentWebFormsCompilation(references.Select(r => r.FullName));
+
+                    services.AddHostedService<StaticCompilationService>();
+
+                    services.AddOptions<PageCompilationOptions>()
+                        .Configure<ILogger<PageCompilationOptions>>((options, logger) =>
+                        {
+                            options.IsDebug = isDebug;
+
+                            foreach (var prefix in prefixes)
+                            {
+                                if (prefix.Split("!", StringSplitOptions.TrimEntries) is [{ } tag, { } ns, { } assembly] && referenceLookup.TryGetValue(assembly, out var assemblyPath))
+                                {
+                                    options.RegisterPrefix(tag, ns, assemblyPath);
+                                }
+                                else
+                                {
+                                    logger.LogWarning("Prefix must be in the form 'prefix!ns!assembly'. Could not parse supplied prefix: {Prefix}", prefix);
+                                }
+                            }
+                        });
+
+                    services.AddOptions<SystemWebAdaptersOptions>().Configure(options =>
+                    {
+                        options.AppDomainAppPath = path.FullName;
+                    });
+                })
+                .RunConsoleAsync();
+    }
 }
 
 sealed class WebFormsCompilationServer : IServer

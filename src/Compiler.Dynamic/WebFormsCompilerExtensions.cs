@@ -24,10 +24,14 @@ public static class WebFormsCompilerExtensions
 
     public static IWebFormsBuilder AddPersistentWebFormsCompilation(this IWebFormsBuilder builder, IEnumerable<string> paths)
     {
-        builder.Services.AddSingleton<StaticControlCollection>(_ => new StaticControlCollection(paths));
+        builder.Services.AddSingleton<DynamicControlCollection>();
+        builder.Services.AddSingleton<StaticControlCollection>();
         builder.Services.AddSingleton<ITypeResolutionService>(ctx => ctx.GetRequiredService<StaticControlCollection>());
         builder.Services.AddSingleton<IMetadataProvider>(ctx => ctx.GetRequiredService<StaticControlCollection>());
-        builder.Services.AddWebFormsCompilationCore(_ => { });
+        builder.Services.AddWebFormsCompilationCore(options =>
+        {
+            options.RegisterAdditionalReferencePaths(paths);
+        });
 
         return builder;
     }
@@ -40,6 +44,11 @@ public static class WebFormsCompilerExtensions
         services.Services.AddSingleton<DynamicControlCollection>();
         services.Services.AddSingleton<ITypeResolutionService>(ctx => ctx.GetRequiredService<DynamicControlCollection>());
         services.Services.AddSingleton<IMetadataProvider>(ctx => ctx.GetRequiredService<DynamicControlCollection>());
+        services.Services.AddOptions<PageCompilationOptions>()
+            .Configure(options =>
+            {
+                options.RegisterAdditionalReferencePaths(Directory.EnumerateFiles(AppContext.BaseDirectory, "*.dll"));
+            });
         services.Services.AddWebFormsCompilationCore(configure);
         services.Services.AddHostedService<WebFormsCompilationService>();
         services.Services.AddSingleton<DynamicSystemWebCompilation>();
