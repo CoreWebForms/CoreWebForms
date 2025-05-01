@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup Condition=" '$(EnableRuntimeAspxCompilation)' == 'true' ">
-    <PackageReference Include="WebForms.Compiler.Dynamic" Version="$(WebFormsVersion)" />
+    <PackageReference Include="CoreWebForms.Compiler.Dynamic" Version="$(WebFormsVersion)" />
   </ItemGroup>
 
   <Import Project="NuGetContent.targets"/>
