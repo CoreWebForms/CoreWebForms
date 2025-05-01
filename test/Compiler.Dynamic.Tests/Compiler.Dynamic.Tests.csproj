@@ -7,7 +7,7 @@
     <EnableMSTestRunner>true</EnableMSTestRunner>
     <OutputType>Exe</OutputType>
     <IsPackable>false</IsPackable>
-    <AssemblyName>WebForms.Compiler.Dynamic.Tests</AssemblyName>
+    <AssemblyName>CoreWebForms.Compiler.Dynamic.Tests</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>

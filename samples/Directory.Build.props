@@ -9,7 +9,7 @@
     <_AspNetCompilerRoot>$([MSBuild]::NormalizePath($(_AspNetCompilerRoot)))</_AspNetCompilerRoot>
   </PropertyGroup>
 
-  <Import Project="..\src\Compiler\Build\WebForms.Compiler.props" />
+  <Import Project="..\src\Compiler\Build\CoreWebForms.Compiler.props" />
 
   <PropertyGroup>
     <ArtifactsPath>$(ArtifactsPath)/samples</ArtifactsPath>

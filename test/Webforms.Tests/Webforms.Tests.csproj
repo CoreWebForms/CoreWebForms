@@ -6,7 +6,7 @@
     <OutputType>Exe</OutputType>
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
-    <AssemblyName>WebForms.Tests</AssemblyName>
+    <AssemblyName>CoreWebForms.Tests</AssemblyName>
     <RootNamespace>WebForms.Tests</RootNamespace>
   </PropertyGroup>
   <ItemGroup>

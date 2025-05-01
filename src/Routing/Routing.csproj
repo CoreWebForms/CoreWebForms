@@ -4,7 +4,7 @@
     <TargetFrameworks>net9.0</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <AssemblyName>WebForms.Routing</AssemblyName>
+    <AssemblyName>CoreWebForms.Routing</AssemblyName>
     <RootNamespace>WebForms.Routing</RootNamespace>
   </PropertyGroup>
 

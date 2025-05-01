@@ -19,7 +19,7 @@
     <ProjectReference Condition=" '$(EnableRuntimeAspxCompilation)' == 'true' " Include="$(MSBuildThisFileDirectory)..\src\Compiler.Dynamic\Compiler.Dynamic.csproj" />
   </ItemGroup>
 
-  <Import Project="$(MSBuildThisFileDirectory)..\src\Shim\Build\WebForms.Shim.SystemWeb.targets" />
-  <Import Project="$(MSBuildThisFileDirectory)..\src\Compiler\Build\WebForms.Compiler.targets" />
+  <Import Project="$(MSBuildThisFileDirectory)..\src\Shim\Build\CoreWebForms.Shim.SystemWeb.targets" />
+  <Import Project="$(MSBuildThisFileDirectory)..\src\Compiler\Build\CoreWebForms.Compiler.targets" />
   <Import Project="$(MSBuildThisFileDirectory)..\Directory.Build.targets" />
 </Project>
