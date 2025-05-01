@@ -14,7 +14,6 @@
     <ProjectReference Include="$(MSBuildThisFileDirectory)..\src\Compiler\Compiler.csproj" />
     <ProjectReference Include="$(MSBuildThisFileDirectory)..\src\Config\Config.csproj" />
     <ProjectReference Include="$(MSBuildThisFileDirectory)..\src\Extensions\Extensions.csproj" />
-    <ProjectReference Include="$(MSBuildThisFileDirectory)..\src\Optimization\Optimization.csproj" />
     <ProjectReference Include="$(MSBuildThisFileDirectory)..\src\WebForms\WebForms.csproj" />
 
     <ProjectReference Condition=" '$(EnableRuntimeAspxCompilation)' == 'true' " Include="$(MSBuildThisFileDirectory)..\src\Compiler.Dynamic\Compiler.Dynamic.csproj" />

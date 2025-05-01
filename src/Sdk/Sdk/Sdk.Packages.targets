@@ -10,14 +10,6 @@
     <PackageReference Include="WebForms.Shim.SystemWeb.Extensions" Version="$(WebFormsVersion)" />
     <PackageReference Include="WebForms.SqlClient" Version="$(WebFormsVersion)" />
   </ItemGroup>
-  
-  <ItemGroup Condition=" '$(UseFrameworkOptimization)' == 'true' ">
-    <PackageReference Include="Microsoft.AspNet.Web.Optimization.WebForms" Version="1.1.3" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(UseFrameworkOptimization)' == 'false' ">
-    <PackageReference Include="WebForms.Optimization" Version="$(WebFormsVersion)" />
-  </ItemGroup>
 
   <ItemGroup Condition=" '$(EnableRuntimeAspxCompilation)' == 'true' ">
     <PackageReference Include="WebForms.Compiler.Dynamic" Version="$(WebFormsVersion)" />
