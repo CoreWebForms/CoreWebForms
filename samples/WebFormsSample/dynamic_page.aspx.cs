@@ -54,4 +54,27 @@ public partial class DynamicPage : Page
         public string Email { get; set; }
     }
 
+   protected void ItemsBulletedList_Click(object sender, System.Web.UI.WebControls.BulletedListEventArgs e)
+    {
+
+        // Change the message displayed in the label based on the index
+        // of the list item that was clicked.
+        switch (e.Index)
+        {
+            case 0:
+                Message.Text = "You clicked list item 1.";
+                break;
+            case 1:
+                Message.Text = "You clicked list item 2.";
+                break;
+            case 2:
+                Message.Text = "You clicked list item 3.";
+                break;
+            default:
+                throw new Exception("You did not click a valid list item.");
+                break;
+        }
+
+    }
+
 }

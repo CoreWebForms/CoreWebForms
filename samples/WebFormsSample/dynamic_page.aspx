@@ -66,4 +66,24 @@
                 <uc:TestUserControl runat="server" ID="OpenAuthLogin" />
             </section>
         </div>
+
+
+<p>Click on an item in the list to raise the Click event.</p> 
+        
+    <asp:BulletedList id="ItemsBulletedList" 
+      BulletStyle="Disc"
+      DisplayMode="LinkButton"
+      OnClick="ItemsBulletedList_Click"
+      runat="server">
+        <asp:ListItem Value="http://www.cohowinery.com">Coho Winery</asp:ListItem>
+        <asp:ListItem Value="http://www.contoso.com">Contoso, Ltd.</asp:ListItem>
+        <asp:ListItem Value="http://www.tailspintoys.com">Tailspin Toys</asp:ListItem>
+    </asp:BulletedList>
+            
+    <asp:Label id="Message" 
+      Font-Size="12"
+      Width="168px" 
+      Font-Bold="True" 
+      runat="server"
+      AssociatedControlID="ItemsBulletedList"/>
 </asp:Content>

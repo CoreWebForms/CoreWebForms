@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Reflection.Metadata;
 using System.Reflection.PortableExecutable;
 using System.Runtime.Loader;
+using System.Web;
 using System.Web.UI;
 using Microsoft.CodeAnalysis;
 using Microsoft.Extensions.Logging;
@@ -102,12 +103,44 @@ internal sealed class DynamicControlCollection : ITypeResolutionService, IMetada
 
     Type? ITypeResolutionService.GetType(string name, bool throwOnError)
     {
-        throw new NotImplementedException();
+        return GetType(name, throwOnError, ignoreCase: false);
+    }
+
+    private static Type? GetType(string typeName, bool throwOnError, bool ignoreCase)
+    {
+        Type? type = null;
+        if (Util.TypeNameContainsAssembly(typeName))
+        {
+            type = Type.GetType(typeName, throwOnError, ignoreCase);
+
+            if (type != null)
+            {
+                return type;
+            }
+        }
+
+        if(type == null)
+        {
+            foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies().Reverse()) //start with Web related assemblies
+            {
+                var tt = assembly.GetType(typeName, false);
+                if (tt != null)
+                {
+                    return tt;
+                }
+            }
+        }
+        if (type == null && throwOnError)
+        {
+            throw new HttpException(
+                SR.GetString(SR.Invalid_type, typeName));
+        }
+        return null;
     }
 
     Type? ITypeResolutionService.GetType(string name, bool throwOnError, bool ignoreCase)
     {
-        throw new NotImplementedException();
+        return GetType(name, throwOnError, ignoreCase);
     }
 
     void ITypeResolutionService.ReferenceAssembly(AssemblyName name)
