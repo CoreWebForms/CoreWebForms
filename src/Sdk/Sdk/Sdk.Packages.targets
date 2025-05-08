@@ -1,26 +1,18 @@
 <Project>
 
   <ItemGroup>
-    <PackageReference Include="WebForms" Version="$(WebFormsVersion)" />
-    <PackageReference Include="WebForms.Compiler" Version="$(WebFormsVersion)" />
-    <PackageReference Include="WebForms.Extensions" Version="$(WebFormsVersion)" />
-    <PackageReference Include="WebForms.ConfigurationManager" Version="$(WebFormsVersion)" />
-    <PackageReference Include="WebForms.Shim.Infrastructure" Version="$(WebFormsVersion)" />
-    <PackageReference Include="WebForms.Shim.SystemWeb" Version="$(WebFormsVersion)" />
-    <PackageReference Include="WebForms.Shim.SystemWeb.Extensions" Version="$(WebFormsVersion)" />
-    <PackageReference Include="WebForms.SqlClient" Version="$(WebFormsVersion)" />
-  </ItemGroup>
-  
-  <ItemGroup Condition=" '$(UseFrameworkOptimization)' == 'true' ">
-    <PackageReference Include="Microsoft.AspNet.Web.Optimization.WebForms" Version="1.1.3" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(UseFrameworkOptimization)' == 'false' ">
-    <PackageReference Include="WebForms.Optimization" Version="$(WebFormsVersion)" />
+    <PackageReference Include="CoreWebForms" Version="$(WebFormsVersion)" />
+    <PackageReference Include="CoreWebForms.Compiler" Version="$(WebFormsVersion)" />
+    <PackageReference Include="CoreWebForms.SystemWebExtensions" Version="$(WebFormsVersion)" />
+    <PackageReference Include="CoreWebForms.ConfigurationManager" Version="$(WebFormsVersion)" />
+    <PackageReference Include="CoreWebForms.Shim.Infrastructure" Version="$(WebFormsVersion)" />
+    <PackageReference Include="CoreWebForms.Shim.SystemWeb" Version="$(WebFormsVersion)" />
+    <PackageReference Include="CoreWebForms.Shim.SystemWebExtensions" Version="$(WebFormsVersion)" />
+    <PackageReference Include="CoreWebForms.SqlClient" Version="$(WebFormsVersion)" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(EnableRuntimeAspxCompilation)' == 'true' ">
-    <PackageReference Include="WebForms.Compiler.Dynamic" Version="$(WebFormsVersion)" />
+    <PackageReference Include="CoreWebForms.Compiler.Dynamic" Version="$(WebFormsVersion)" />
   </ItemGroup>
 
   <Import Project="NuGetContent.targets"/>

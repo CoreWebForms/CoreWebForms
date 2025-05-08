@@ -51,7 +51,7 @@ internal sealed class StaticControlCollection : AssemblyLoadContext, IDisposable
 
     private static bool IsWebFormsLibrary(string path)
     {
-        return string.Equals(Path.GetFileName(path), "WebForms.dll", StringComparison.OrdinalIgnoreCase);
+        return string.Equals(Path.GetFileName(path), "CoreWebForms.dll", StringComparison.OrdinalIgnoreCase);
     }
 
     public IEnumerable<Assembly> ControlAssemblies => [typeof(Page).Assembly, .. Assemblies];

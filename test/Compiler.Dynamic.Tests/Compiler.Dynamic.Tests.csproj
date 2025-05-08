@@ -7,12 +7,12 @@
     <EnableMSTestRunner>true</EnableMSTestRunner>
     <OutputType>Exe</OutputType>
     <IsPackable>false</IsPackable>
-    <AssemblyName>WebForms.Compiler.Dynamic.Tests</AssemblyName>
+    <AssemblyName>CoreWebForms.Compiler.Dynamic.Tests</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MSTest" Version="3.8.2" />
-    <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="9.0.3" />
+    <PackageReference Include="MSTest" Version="3.8.3" />
+    <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="9.0.4" />
     <PackageReference Include="Moq" Version="4.20.72" />
   </ItemGroup>
 
@@ -28,10 +28,11 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\Compiler.Dynamic\Compiler.Dynamic.csproj" />
     <ProjectReference Include="..\..\src\Extensions\Extensions.csproj" />
+    <ProjectReference Include="..\..\src\WebForms.SqlClient\WebForms.SqlClient.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Update="Microsoft.Testing.Extensions.TrxReport" Version="1.6.2" />
+    <PackageReference Update="Microsoft.Testing.Extensions.TrxReport" Version="1.6.3" />
   </ItemGroup>
 
 </Project>

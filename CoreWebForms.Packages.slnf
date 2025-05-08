@@ -8,7 +8,6 @@
       "src\\Extensions\\Extensions.csproj",
       "src\\Handlers\\Handlers.csproj",
       "src\\HtmlTextWriter\\HtmlTextWriter.csproj",
-      "src\\Optimization\\Optimization.csproj",
       "src\\Routing\\Routing.csproj",
       "src\\Sdk\\Sdk.csproj",
       "src\\Shim.Extensions\\Shim.Extensions.csproj",

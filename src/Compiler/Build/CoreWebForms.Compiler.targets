@@ -1,0 +1,17 @@
+<Project>
+
+  <PropertyGroup>
+    <!--
+      This is settable so local debug builds can point somewhere else
+
+      NOTE: This must be in the targets file because $(TargetFramework) is not set until after the .props are imported
+      -->
+    <_AspNetCompilerRoot Condition=" '$(_AspNetCompilerRoot)' == '' ">$(MSBuildThisFileDirectory)../tools/$(TargetFramework)/aspnet_compiler/</_AspNetCompilerRoot>
+    <AspNetCompilePath>$(_AspNetCompilerRoot)aspnet_compiler.dll</AspNetCompilePath>
+  </PropertyGroup>
+ 
+  <Import Project="$(MSBuildThisFileDirectory)CoreWebForms.Compiler.DefaultItems.targets"/>
+  <Import Project="$(MSBuildThisFileDirectory)CoreWebForms.Compiler.Runtime.targets" Condition="$(EnableRuntimeAspxCompilation)" />
+  <Import Project="$(MSBuildThisFileDirectory)CoreWebForms.Compiler.Static.targets" Condition="!$(EnableRuntimeAspxCompilation)" />
+
+</Project>

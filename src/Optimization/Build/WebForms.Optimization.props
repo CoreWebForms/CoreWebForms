@@ -1,7 +1,0 @@
-<Project>
-  <ItemGroup>
-    <Content Update="Bundle.config" Condition="Exists('Bundle.config')">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-</Project>

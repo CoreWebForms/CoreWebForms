@@ -5,7 +5,7 @@
     <IsShipped>true</IsShipped>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <AssemblyName>WebForms.HttpHandler</AssemblyName>
+    <AssemblyName>CoreWebForms.HttpHandler</AssemblyName>
     <RootNamespace>WebForms.HttpHandler</RootNamespace>
     <WarningsAsErrors>Nullable</WarningsAsErrors>
   </PropertyGroup>

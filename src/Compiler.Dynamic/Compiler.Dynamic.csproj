@@ -5,7 +5,7 @@
     <TargetFrameworks>net9.0</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <AssemblyName>WebForms.Compiler.Dynamic</AssemblyName>
+    <AssemblyName>CoreWebForms.Compiler.Dynamic</AssemblyName>
     <RootNamespace>WebForms.Compiler.Dynamic</RootNamespace>
   </PropertyGroup>
 

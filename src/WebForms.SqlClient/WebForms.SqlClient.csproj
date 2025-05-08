@@ -5,7 +5,7 @@
     <TargetFrameworks>net9.0</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>disable</Nullable>
-    <AssemblyName>WebForms.SqlClient</AssemblyName>
+    <AssemblyName>CoreWebForms.SqlClient</AssemblyName>
     <RootNamespace>System.Web</RootNamespace>
   </PropertyGroup>
 
