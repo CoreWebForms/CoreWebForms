@@ -8,18 +8,4 @@
     <MicrosoftPublicKey>002400000480000094000000060200000024000052534131000400000100010007d1fa57c4aed9f0a32e84aa0faefd0de9e8fd6aec8f87fb03766c834c99921eb23be79ad9d5dcc1dd9ad236132102900b723cf980957fc4e177108fc607774f29e8320e92ea05ece4e821c0a5efe8f1645c4c0c93c1ab99285d622caa652c1dfad63d745d6f2de5f17e5eaf0fc4963d261c8a12436518206dc093344d5ad293</MicrosoftPublicKey>
   </PropertyGroup>
 
-  <!--
-      FullAssemblySigningSupported    "false" to use public signing even when full signing is possible. This is useful
-                                      in environments where full signing is non-functional or not desired. For example,
-                                      in some Linux distributions RSA+SHA1 (required for full signing) is not
-                                      functional/available, and trying to use full signing results in the runtime
-                                      throwing an exception. For more details and an example, see
-                                      https://github.com/dotnet/runtime/issues/65874. We default to full assembly
-                                      signing not being supported in source-only modes.
-  -->
-  <!--
-  <PropertyGroup>
-    <FullAssemblySigningSupported Condition="'$(FullAssemblySigningSupported)' == '' and '$(DotNetBuildSourceOnly)' == 'true'">false</FullAssemblySigningSupported>
-  </PropertyGroup>
-   -->
 </Project>

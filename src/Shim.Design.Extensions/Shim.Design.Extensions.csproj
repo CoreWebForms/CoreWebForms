@@ -5,7 +5,7 @@
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>disable</Nullable>
-    <PackageId>WebForms.Shim.Design.Extensions</PackageId>
+    <PackageId>CoreWebForms.Shim.Design.Extensions</PackageId>
     <AssemblyName>System.Web.Extensions.Design</AssemblyName>
 
     <!-- Must sign the key so it can be used in compilations -->
