@@ -19,8 +19,8 @@ public class ListControlDesigner : DataBoundControlDesigner
     protected override bool UseDataSourcePickerActionList { get; }
 
     public override string GetDesignTimeHtml() => throw new NotImplementedException();
-    public IEnumerable GetResolvedSelectedDataSource() => throw new NotImplementedException();
-    public object GetSelectedDataSource() => throw new NotImplementedException();
+    public new IEnumerable GetResolvedSelectedDataSource() => throw new NotImplementedException();
+    public new object GetSelectedDataSource() => throw new NotImplementedException();
     public override void Initialize(IComponent component) => throw new NotImplementedException();
     public virtual void OnDataSourceChanged() => throw new NotImplementedException();
     protected override void DataBind(BaseDataBoundControl dataBoundControl) => throw new NotImplementedException();
