@@ -10,7 +10,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Setup .NET
-      uses: actions/setup-dotnet@v4
+      uses: actions/setup-dotnet@v5
     - name: Run type dump
       run: dotnet run --project tools/shim-generator/shim-generator.csproj
     - name: Validate type forwards
