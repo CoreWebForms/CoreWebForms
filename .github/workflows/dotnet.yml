@@ -75,7 +75,7 @@ jobs:
             ext: "Tests.exe"
     steps:
       - name: Download tests
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         with:
             name: tests-${{ matrix.rid }}
             path: '${{ github.workspace }}/tests'
@@ -115,7 +115,7 @@ jobs:
     needs: [ test ]
     steps:
       - name: Download tests results
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         with:
             pattern: test-result-*
             path: '${{ github.workspace }}/results'
