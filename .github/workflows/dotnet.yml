@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Upload
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: Event File
         path: ${{ github.event_path }}
@@ -50,13 +50,13 @@ jobs:
             dotnet publish $project --no-restore -r ${{ matrix.rid }} -f net9.0
         }
     - name: Upload Samples
-      uses: actions/upload-artifact@v4.3.1
+      uses: actions/upload-artifact@v5
       with:
         name: samples-${{ matrix.rid }}
         path: |
           artifacts/samples/publish/**/*
     - name: Upload tests
-      uses: actions/upload-artifact@v4.3.1
+      uses: actions/upload-artifact@v5
       with:
         name: tests-${{ matrix.rid }}
         path: |
@@ -102,7 +102,7 @@ jobs:
 
           return $LastExitCode
       - name: Upload results
-        uses: actions/upload-artifact@v4.3.1
+        uses: actions/upload-artifact@v5
         with:
           name: test-result-${{ matrix.rid }}
           path: |
