@@ -1,33 +1,46 @@
 // MIT License.
 
 using System.Collections;
-using System.Collections.ObjectModel;
 using System.Text.Json;
 using System.Web.Script.Serialization;
 using System.Web.UI.WebControls;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
+
+#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
+#pragma warning disable CS8601 // Possible null reference assignment.
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+#pragma warning disable CS8603 // Possible null reference return.
+#pragma warning disable CS8604 // Possible null reference argument.
+#pragma warning disable CS8613 // Nullability of reference types in return type doesn't match implicitly implemented member.
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+#pragma warning disable CS8619 // Nullability of reference types in value doesn't match target type.
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
+#pragma warning disable CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
+#pragma warning disable CS8765 // Nullability of type of parameter doesn't match overridden member.
+#pragma warning disable CS8767 // Nullability of type of parameter doesn't match implemented member.
 
 namespace WebForms.Extensions.Tests;
 
-[TestClass]
+[TestFixture]
 public class JavascriptSerializerTest
 {
 
-    [TestMethod]
+    [Test]
     public void JavaScriptSerializerConverterTest()
     {
         var serializer = new JavaScriptSerializer();
         serializer.RegisterConverters([new ListItemCollectionConverter()]);
         var listItemCollection = GetListItemCollection();
         var result = serializer.Serialize(listItemCollection);
-        Assert.IsNotNull(result);
+        Assert.That(result, Is.Not.Null);
         var recoveredList = serializer.Deserialize<ListItemCollection>(result);
+        recoveredList ??= new ListItemCollection();
 
-        Assert.AreEqual(listItemCollection.Count, recoveredList.Count);
+        Assert.That(recoveredList.Count, Is.EqualTo(listItemCollection.Count));
         CheckListItemCollection(recoveredList, listItemCollection);
     }
 
-    [TestMethod]
+    [Test]
     public void JavaScriptSerializerConverterTestWithList()
     {
         var serializer = new JavaScriptSerializer();
@@ -37,10 +50,12 @@ public class JavascriptSerializerTest
         list.Add(listItemCollection);
         list.Add(listItemCollection);
         var result = serializer.Serialize(list);
-        Assert.IsNotNull(result);
+        Assert.That(result, Is.Not.Null);
 
         var recoveredList = serializer.Deserialize<List<ListItemCollection>>(result);
-        Assert.AreEqual(list.Count, recoveredList.Count);
+        recoveredList ??= new List<ListItemCollection>();
+
+        Assert.That(recoveredList.Count, Is.EqualTo(list.Count));
         for (int i = 0; i < recoveredList.Count; i++)
         {
             Assert.IsTrue(recoveredList[i] is ListItemCollection);
@@ -51,11 +66,11 @@ public class JavascriptSerializerTest
         nextList.Add(nextListCollection);
         nextList.Add(nextListCollection);
         var nextresult = serializer.Serialize(nextList);
-        Assert.IsNotNull(result);
-        Assert.AreEqual(result, nextresult);
+        Assert.That(result, Is.Not.Null);
+        Assert.That(nextresult, Is.EqualTo(result));
     }
 
-    [TestMethod]
+    [Test]
     public void JavaScriptSerializerConverterWithCustomClass()
     {
         var serializer = new JavaScriptSerializer();
@@ -67,15 +82,17 @@ public class JavascriptSerializerTest
             Items = listItemCollection
         };
         var result = serializer.Serialize(customer);
-        Assert.IsNotNull(result);
+        Assert.That(result, Is.Not.Null);
 
         var recoveredList = serializer.Deserialize<CustomObject>(result);
-        Assert.AreEqual(customer.Name, recoveredList.Name);
+        recoveredList ??= new CustomObject();
+
+        Assert.That(recoveredList.Name, Is.EqualTo(customer.Name));
         CheckListItemCollection(customer.Items, recoveredList.Items);
 
     }
 
-    [TestMethod]
+    [Test]
     public void JavaScriptSerializerNoConverter()
     {
         var serializer = new JavaScriptSerializer();
@@ -89,13 +106,15 @@ public class JavascriptSerializerTest
         Assert.IsNotNull(result);
 
         var recoveredList = serializer.Deserialize<Customer>(result);
-        Assert.AreEqual(customer.Name, recoveredList.Name);
+        recoveredList ??= new Customer();
+
+        Assert.That(recoveredList.Name, Is.EqualTo(customer.Name));
         recoveredList.Numbers.ForEach(n => Assert.IsTrue(customer.Numbers.Contains(n)));
         recoveredList.Dictionary.ToList().ForEach(kvp => Assert.IsTrue(customer.Dictionary.ContainsKey(kvp.Key)));
 
     }
 
-    [TestMethod]
+    [Test]
     public void JavaScriptDeserialization()
     {
         string jsonString =
@@ -132,17 +151,16 @@ public class JavascriptSerializerTest
         WeatherForecast? weatherForecast2 =
             javaScriptSerializer.Deserialize<WeatherForecast>(jsonString);
 
-        Assert.IsNotNull(weatherForecast);
-        Assert.IsNotNull(weatherForecast2);
-        Assert.AreEqual(weatherForecast.Date, weatherForecast2.Date);
-        Assert.AreEqual(weatherForecast.TemperatureCelsius, weatherForecast2.TemperatureCelsius);
-        Assert.AreEqual(weatherForecast.Summary, weatherForecast2.Summary);
-        Assert.AreEqual(weatherForecast.SummaryField, weatherForecast2.SummaryField);
-        Assert.IsNotNull(weatherForecast.TemperatureRanges);
-        Assert.IsNotNull(weatherForecast2.TemperatureRanges);
-        Assert.AreEqual(weatherForecast.TemperatureRanges.Count, weatherForecast2.TemperatureRanges.Count); 
+        Assert.That(weatherForecast, Is.Not.Null);
+        Assert.That(weatherForecast2, Is.Not.Null);
+        Assert.That(weatherForecast2.Date, Is.EqualTo(weatherForecast.Date));
+        Assert.That(weatherForecast2.TemperatureCelsius, Is.EqualTo(weatherForecast.TemperatureCelsius));
+        Assert.That(weatherForecast2.Summary, Is.EqualTo(weatherForecast.Summary));
+        Assert.That(weatherForecast2.SummaryField, Is.EqualTo(weatherForecast.SummaryField));
+        Assert.That(weatherForecast.TemperatureRanges, Is.Not.Null);
+        Assert.That(weatherForecast2.TemperatureRanges, Is.Not.Null);
+        Assert.That(weatherForecast2.TemperatureRanges.Count, Is.EqualTo(weatherForecast.TemperatureRanges.Count)); 
     }
-
 
     public class WeatherForecast
     {
@@ -161,7 +179,6 @@ public class JavascriptSerializerTest
         public int Low { get; set; }
     }
 
-
 public class Customer
     {
         public string Name { get; set; }
@@ -175,16 +192,16 @@ public class Customer
         public ListItemCollection Items { get; set; }
     }
 
-    private void CheckListItemCollection(ListItemCollection listItemCollection, ListItemCollection recoveredList)
+    private static void CheckListItemCollection(ListItemCollection listItemCollection, ListItemCollection recoveredList)
     {
-        Assert.AreEqual(listItemCollection.Count, recoveredList.Count);
-        for (int i = 0; i < listItemCollection.Count; i++)
+        Assert.That(recoveredList.Count, Is.EqualTo(listItemCollection.Count));
+        for (var i = 0; i < listItemCollection.Count; i++)
         {
-            Assert.IsNotNull(recoveredList.FindByValue(listItemCollection[i].Value));
+            Assert.That(recoveredList.FindByValue(listItemCollection[i].Value), Is.Not.Null);
         }
     }
 
-    private ListItemCollection GetListItemCollection()
+    private static ListItemCollection GetListItemCollection()
     {
         ListItemCollection list = new ListItemCollection();
         list.Add(new ListItem("1", "First Item"));
@@ -227,7 +244,7 @@ public class Customer
         public override object Deserialize(IDictionary<string, object> dictionary, Type type, JavaScriptSerializer serializer)
         {
             if (dictionary == null)
-                throw new ArgumentNullException("dictionary");
+                throw new ArgumentNullException(nameof(dictionary));
 
             if (type == typeof(ListItemCollection))
             {

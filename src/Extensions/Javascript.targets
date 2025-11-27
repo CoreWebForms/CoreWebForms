@@ -13,14 +13,14 @@
 
   <Target Name="IdentifyAjaxFiles" BeforeTargets="BuildAjax">
     <ItemGroup>
-      <MicrosoftAjaxJsaFiles Include="$(MSBuildThisFileDirectory)Script/js/*.jsa" />
-      <MicrosoftAjaxDistFiles Include="$(MSBuildThisFileDirectory)Script/js/dist/%(MicrosoftAjaxJsaFiles.FileName).js" />
-      <MicrosoftAjaxInputFiles Include="$(MSBuildThisFileDirectory)Script/js/**/*" Exclude="@(MicrosoftAjaxDistFiles);@(NodeFiles)" />
+      <MicrosoftAjaxJsaFiles Include="$(MSBuildThisFileDirectory)/Script/js/*.jsa" />
+      <MicrosoftAjaxDistFiles Include="$(MSBuildThisFileDirectory)/Script/js/dist/%(MicrosoftAjaxJsaFiles.FileName).js" />
+      <MicrosoftAjaxInputFiles Include="$(MSBuildThisFileDirectory)/Script/js/**/*" Exclude="@(MicrosoftAjaxDistFiles);@(NodeFiles)" />
     </ItemGroup>
   </Target>
 
   <Target Name="BuildAjax" BeforeTargets="IncludeAjax" Inputs="@(MicrosoftAjaxInputFiles)" Outputs="@(MicrosoftAjaxDistFiles)">
-    <Exec Command="npm run build" WorkingDirectory="$(MSBuildThisFileDirectory)Script/js" />
+    <Exec Command="npm run build" WorkingDirectory="$(MSBuildThisFileDirectory)/Script/js" />
 
     <ItemGroup>
       <FileWrites Include="@(MicrosoftAjaxDistFiles->'%(FullPath)')" />

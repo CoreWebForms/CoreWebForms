@@ -6,14 +6,14 @@ using System.Web.UI.WebControls;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 
 namespace WebForms.Tests;
 
-[TestClass]
+[TestFixture]
 public class PageForRoutingTest : HostedTestBase
 {
-    [TestMethod]
+    [Test]
     public async Task MapPageRouteTest()
     {
         //Arrange/Act
@@ -24,10 +24,10 @@ public class PageForRoutingTest : HostedTestBase
                     .MapPageRoute("ProductsByCategoryRoute", "Category/{categoryName}", "~/");
             })));
 
-        Assert.AreEqual("<span id=\"/Category/MyTest\"></span>", htmlResult);
+        Assert.That(htmlResult, Is.EqualTo("<span id=\"/Category/MyTest\"></span>"));
     }
 
-    [TestMethod]
+    [Test]
     public async Task VerifyMappedRoute()
     {
         //Arrange/Act
@@ -38,10 +38,10 @@ public class PageForRoutingTest : HostedTestBase
                     .MapPageRoute("ProductsByCategoryRoute", "Category/{categoryName}", "~/");
             })), "/category/mycategoryname");
 
-        Assert.AreEqual("<span id=\"mycategoryname\"></span>", htmlResult);
+        Assert.That(htmlResult, Is.EqualTo("<span id=\"mycategoryname\"></span>"));
     }
 
-    [TestMethod]
+    [Test]
     public async Task UnmappedRoute()
     {
         //Arrange/Act
@@ -54,7 +54,7 @@ public class PageForRoutingTest : HostedTestBase
                     .MapPageRoute("ProductsByCategoryRoute2", "Category2/{categoryName}", "~/extra_route");
             })), "/category/mycategoryname");
 
-        Assert.AreEqual("<span id=\"mycategoryname\"></span>", htmlResult);
+        Assert.That(htmlResult, Is.EqualTo("<span id=\"mycategoryname\"></span>"));
     }
 
     private sealed class DelegateStartupFilter(Action<IApplicationBuilder> action) : IStartupFilter

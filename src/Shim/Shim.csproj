@@ -2,8 +2,8 @@
 
   <PropertyGroup>
     <IsShipped>true</IsShipped>
-    <TargetFramework>net9.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>disable</Nullable>
     <PackageId>CoreWebForms.Shim.SystemWeb</PackageId>
     <AssemblyName>System.Web</AssemblyName>
@@ -16,12 +16,19 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Handlers\Handlers.csproj" />
+    <ProjectReference Include="..\HtmlTextWriter\HtmlTextWriter.csproj" />
+    <ProjectReference Include="..\Routing\Routing.csproj" />
     <ProjectReference Include="..\WebForms.SqlClient\WebForms.SqlClient.csproj" />
     <ProjectReference Include="..\WebForms\WebForms.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <None Update="Build\*" Pack="true" PackagePath="" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.SystemWebAdapters" Version="2.0.0" />
   </ItemGroup>
 
 </Project>

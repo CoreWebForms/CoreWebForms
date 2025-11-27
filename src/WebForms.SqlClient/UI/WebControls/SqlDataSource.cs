@@ -10,6 +10,8 @@ using System.Globalization;
 using System.Text;
 using System.Web.Caching;
 
+#pragma warning disable 0618 // Type or member is obsolete
+
 namespace System.Web.UI.WebControls;
 /// <devdoc>
 /// This class represents a datasource that uses an ADO.net connection to get

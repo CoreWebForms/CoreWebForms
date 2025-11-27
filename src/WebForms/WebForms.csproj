@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <IsShipped>true</IsShipped>
-    <TargetFrameworks>net9.0</TargetFrameworks>
+    <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>disable</Nullable>
     <AssemblyName>CoreWebForms</AssemblyName>
@@ -26,7 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.CodeDom" Version="9.0.4" />
+    <PackageReference Include="System.CodeDom" Version="10.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.SystemWebAdapters" Version="2.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.SystemWebAdapters.CoreServices" Version="2.0.0" />
   </ItemGroup>
@@ -36,5 +36,5 @@
     <ProjectReference Include="..\HtmlTextWriter\HtmlTextWriter.csproj" />
     <ProjectReference Include="..\Routing\Routing.csproj" />
   </ItemGroup>
-  
+
 </Project>

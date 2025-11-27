@@ -12,37 +12,30 @@ using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using WebForms.Features;
 
 namespace Compiler.Dynamic.Tests;
 
-[TestClass]
+[TestFixture]
 public class DynamicCompilationTests
 {
-    private readonly TestContext _context;
 
-    public DynamicCompilationTests(TestContext context)
-    {
-        _context = context;
-    }
-
-    [DataTestMethod]
-    [DataRow("test01", "basic_page.aspx", "mapped-page")]
-    [DataRow("test02", "code_behind.aspx")]
-    [DataRow("test03", "page_with_master.aspx")]
-    [DataRow("test04", "page_with_master.aspx", "other_page_with_master.aspx", "page_with_master.aspx")]
-    [DataRow("test05", "error_page.aspx")]
-    [DataRow("test06", "route_url_expressionbuilder.aspx")]
-    [DataRow("test07", "redirect_page.aspx")]
-    [DataRow("test08", "scripts.aspx")]
-    [DataRow("test09", "basic_page_with_usercontrol.aspx")]
-    [DataRow("test10", "loadusercontrol.aspx")]
-    [DataRow("test11", "cspage.aspx")]
-    [DataRow("test12", "folder/subfolder.aspx")]
-    [DataRow("test13", "custom_base_property.aspx")]
-    [DataRow("test14", "sitemapdemo.aspx")]
-    [DataRow("test15", "ObjectDataSourceSample.aspx")]
+    [TestCase("test01", "basic_page.aspx", "mapped-page")]
+    [TestCase("test02", "code_behind.aspx")]
+    [TestCase("test03", "page_with_master.aspx")]
+    [TestCase("test04", "page_with_master.aspx", "other_page_with_master.aspx", "page_with_master.aspx")]
+    [TestCase("test05", "error_page.aspx")]
+    [TestCase("test06", "route_url_expressionbuilder.aspx")]
+    [TestCase("test07", "redirect_page.aspx")]
+    [TestCase("test08", "scripts.aspx")]
+    [TestCase("test09", "basic_page_with_usercontrol.aspx")]
+    [TestCase("test10", "loadusercontrol.aspx")]
+    [TestCase("test11", "cspage.aspx")]
+    [TestCase("test12", "folder/subfolder.aspx")]
+    [TestCase("test13", "custom_base_property.aspx")]
+    [TestCase("test14", "sitemapdemo.aspx")]
+    [TestCase("test15", "ObjectDataSourceSample.aspx")]
     public async Task CompiledPageRuns(string test, params string[] pages)
     {
         if (test == "test08")
@@ -168,7 +161,7 @@ public class DynamicCompilationTests
 
             var tempPath = Path.Combine(Path.GetTempPath(), $"{NormalizePage(page)}._{i}.html");
             File.WriteAllText(tempPath, result);
-            _context.WriteLine($"Wrote result to {tempPath}");
+            TestContext.Out.WriteLine($"Wrote result to {tempPath}");
 
             //TODO avoid this check, needed for Viewstate
             if (test == "test14")
@@ -177,7 +170,7 @@ public class DynamicCompilationTests
             }
             else
             {
-                Assert.AreEqual(expectedHtml.ReplaceLineEndings(), result.ReplaceLineEndings());
+                Assert.That(result.ReplaceLineEndings(), Is.EqualTo(expectedHtml.ReplaceLineEndings()));
             }
         }
     }

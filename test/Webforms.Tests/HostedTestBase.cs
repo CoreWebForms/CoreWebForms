@@ -11,6 +11,7 @@ namespace WebForms.Tests;
 
 public abstract class HostedTestBase
 {
+
     protected async Task<string> RunPage<TPage>(Action<IServiceCollection>? servicesConfigure = null, string? path=null)
         where TPage : Page, new()
     {

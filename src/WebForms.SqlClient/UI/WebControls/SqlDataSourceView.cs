@@ -12,6 +12,8 @@ using System.Text;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
+#pragma warning disable 0618 // Type or member is obsolete
+
 namespace System.Web.UI.WebControls;
 /// <devdoc>
 /// Represents a single view of a SqlDataSource.
